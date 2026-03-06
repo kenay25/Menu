@@ -17,328 +17,72 @@
     --text-muted: #6B5A3E;
     --card-bg: #FFFDF7;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    background-color: var(--cream);
-    font-family: 'DM Sans', sans-serif;
-    color: var(--dark);
-    min-height: 100vh;
-  }
-
-  .header {
-    background: var(--dark);
-    padding: 40px 20px 30px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .header::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 50% 0%, rgba(201,151,58,0.25) 0%, transparent 70%);
-  }
-  .header-ornament {
-    font-size: 13px;
-    letter-spacing: 5px;
-    color: var(--gold);
-    text-transform: uppercase;
-    margin-bottom: 10px;
-    position: relative;
-  }
-  .header h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(38px, 8vw, 64px);
-    color: var(--cream);
-    line-height: 1;
-    position: relative;
-  }
-  .header h1 em {
-    color: var(--gold);
-    font-style: italic;
-  }
-  .header-sub {
-    color: var(--text-muted);
-    font-size: 14px;
-    letter-spacing: 2px;
-    margin-top: 12px;
-    position: relative;
-  }
-  .divider {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 16px auto;
-    max-width: 200px;
-    position: relative;
-  }
-  .divider::before, .divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: var(--gold);
-    opacity: 0.5;
-  }
+  body { background-color: var(--cream); font-family: 'DM Sans', sans-serif; color: var(--dark); min-height: 100vh; }
+  .header { background: var(--dark); padding: 40px 20px 30px; text-align: center; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 0%, rgba(201,151,58,0.25) 0%, transparent 70%); }
+  .header-ornament { font-size: 13px; letter-spacing: 5px; color: var(--gold); text-transform: uppercase; margin-bottom: 10px; position: relative; }
+  .header h1 { font-family: 'Playfair Display', serif; font-size: clamp(38px, 8vw, 64px); color: var(--cream); line-height: 1; position: relative; }
+  .header h1 em { color: var(--gold); font-style: italic; }
+  .header-sub { color: var(--text-muted); font-size: 14px; letter-spacing: 2px; margin-top: 12px; position: relative; }
+  .divider { display: flex; align-items: center; gap: 12px; margin: 16px auto; max-width: 200px; position: relative; }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--gold); opacity: 0.5; }
   .divider span { color: var(--gold); font-size: 16px; }
-
-  .nav-wrap {
-    background: var(--dark);
-    padding: 0 20px 16px;
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    flex-wrap: wrap;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-  }
-  .tab-btn {
-    background: transparent;
-    border: 1px solid rgba(201,151,58,0.3);
-    color: var(--text-muted);
-    padding: 8px 18px;
-    border-radius: 50px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: all 0.25s;
-    text-transform: uppercase;
-  }
-  .tab-btn:hover, .tab-btn.active {
-    background: var(--gold);
-    border-color: var(--gold);
-    color: var(--dark);
-    font-weight: 500;
-  }
-
+  .nav-wrap { background: var(--dark); padding: 0 20px 16px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+  .tab-btn { background: transparent; border: 1px solid rgba(201,151,58,0.3); color: var(--text-muted); padding: 8px 18px; border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 13px; letter-spacing: 1px; cursor: pointer; transition: all 0.25s; text-transform: uppercase; }
+  .tab-btn:hover, .tab-btn.active { background: var(--gold); border-color: var(--gold); color: var(--dark); font-weight: 500; }
   .main { max-width: 900px; margin: 0 auto; padding: 32px 16px 160px; }
-
   .section { display: none; }
   .section.active { display: block; animation: fadeUp 0.35s ease; }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 32px;
-    color: var(--dark);
-    margin-bottom: 4px;
-  }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  .section-title { font-family: 'Playfair Display', serif; font-size: 32px; color: var(--dark); margin-bottom: 4px; }
   .section-title em { color: var(--gold); font-style: italic; }
   .section-desc { color: var(--text-muted); font-size: 14px; margin-bottom: 28px; }
-
-  .menu-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 16px;
-  }
-
-  .menu-card {
-    background: var(--card-bg);
-    border-radius: 16px;
-    padding: 20px;
-    border: 1.5px solid transparent;
-    cursor: pointer;
-    transition: all 0.25s;
-    position: relative;
-    box-shadow: 0 2px 12px rgba(26,18,8,0.06);
-  }
+  .menu-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .menu-card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1.5px solid transparent; cursor: pointer; transition: all 0.25s; position: relative; box-shadow: 0 2px 12px rgba(26,18,8,0.06); }
   .menu-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(26,18,8,0.12); }
-  .menu-card.selected {
-    border-color: var(--green);
-    background: #F0F7F0;
-  }
-  .menu-card.selected::after {
-    content: '✓';
-    position: absolute;
-    top: 14px; right: 14px;
-    background: var(--green);
-    color: white;
-    width: 24px; height: 24px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    font-weight: bold;
-  }
-
+  .menu-card.selected { border-color: var(--green); background: #F0F7F0; }
+  .menu-card.selected::after { content: '✓'; position: absolute; top: 14px; right: 14px; background: var(--green); color: white; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: bold; }
   .card-emoji { font-size: 36px; margin-bottom: 10px; display: block; }
-  .card-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    font-weight: 700;
-    margin-bottom: 6px;
-  }
+  .card-name { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; margin-bottom: 6px; }
   .card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 12px; }
   .card-footer { display: flex; align-items: center; justify-content: space-between; }
   .card-price { font-size: 20px; font-weight: 600; color: var(--gold); }
-  .card-tag {
-    font-size: 11px;
-    padding: 3px 10px;
-    border-radius: 20px;
-    font-weight: 500;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-  }
+  .card-tag { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
   .tag-popular { background: #FFF0D6; color: var(--gold); }
   .tag-new { background: #E8F5E9; color: var(--green); }
   .tag-spicy { background: #FDE8E8; color: var(--rust); }
   .tag-veggie { background: #E8F5E9; color: #2E7D32; }
-
   .qty-wrap { display: flex; align-items: center; gap: 0; margin-top: 12px; }
-  .qty-btn {
-    background: var(--dark);
-    color: white;
-    border: none;
-    width: 30px; height: 30px;
-    border-radius: 50%;
-    font-size: 18px;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s;
-    flex-shrink: 0;
-  }
+  .qty-btn { background: var(--dark); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s; flex-shrink: 0; }
   .qty-btn:hover { background: var(--gold); }
-  .qty-num {
-    width: 36px;
-    text-align: center;
-    font-weight: 600;
-    font-size: 16px;
-  }
+  .qty-num { width: 36px; text-align: center; font-weight: 600; font-size: 16px; }
   .menu-card:not(.selected) .qty-wrap { display: none; }
-
-  .float-bar {
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    background: var(--dark);
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    z-index: 200;
-    box-shadow: 0 -4px 30px rgba(0,0,0,0.3);
-    flex-wrap: wrap;
-  }
+  .float-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--dark); padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; z-index: 200; box-shadow: 0 -4px 30px rgba(0,0,0,0.3); flex-wrap: wrap; }
   .float-info { color: white; }
   .float-info span { display: block; font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
   .float-info strong { font-size: 22px; color: var(--gold-light); }
   .float-info small { font-size: 13px; color: #aaa; }
-
-  .btn-wa {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: #25D366;
-    color: white;
-    border: none;
-    padding: 14px 24px;
-    border-radius: 50px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.25s;
-    text-decoration: none;
-    white-space: nowrap;
-  }
+  .btn-wa { display: flex; align-items: center; gap: 10px; background: #25D366; color: white; border: none; padding: 14px 24px; border-radius: 50px; font-family: 'DM Sans', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.25s; text-decoration: none; white-space: nowrap; }
   .btn-wa:hover { background: #1DA851; transform: scale(1.04); }
   .btn-wa svg { width: 22px; height: 22px; flex-shrink: 0; }
-
-  .btn-clear {
-    background: transparent;
-    border: 1px solid rgba(255,255,255,0.2);
-    color: #aaa;
-    padding: 10px 16px;
-    border-radius: 50px;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
+  .btn-clear { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #aaa; padding: 10px 16px; border-radius: 50px; font-size: 13px; cursor: pointer; transition: all 0.2s; }
   .btn-clear:hover { border-color: var(--rust); color: #ff8a80; }
-
   .notes-section { margin-top: 32px; }
-  .notes-section label {
-    display: block;
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    margin-bottom: 8px;
-  }
-  .notes-section textarea {
-    width: 100%;
-    background: var(--card-bg);
-    border: 1.5px solid rgba(201,151,58,0.3);
-    border-radius: 12px;
-    padding: 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    color: var(--dark);
-    resize: vertical;
-    min-height: 90px;
-    outline: none;
-    transition: border-color 0.2s;
-  }
+  .notes-section label { display: block; font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 8px; }
+  .notes-section textarea { width: 100%; background: var(--card-bg); border: 1.5px solid rgba(201,151,58,0.3); border-radius: 12px; padding: 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--dark); resize: vertical; min-height: 90px; outline: none; transition: border-color 0.2s; }
   .notes-section textarea:focus { border-color: var(--gold); }
-
-  .phone-section { margin-top: 20px; }
-  .phone-section label {
-    display: block;
-    font-family: 'Playfair Display', serif;
-    font-size: 18px;
-    margin-bottom: 8px;
-  }
-  .phone-input {
-    width: 100%;
-    background: var(--card-bg);
-    border: 1.5px solid rgba(201,151,58,0.3);
-    border-radius: 12px;
-    padding: 14px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    color: var(--dark);
-    outline: none;
-    transition: border-color 0.2s;
-  }
-  .phone-input:focus { border-color: var(--gold); }
-  .phone-hint { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
-
   .order-items { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
-  .order-item {
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 14px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  }
+  .order-item { background: var(--card-bg); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
   .oi-emoji { font-size: 28px; }
   .oi-info { flex: 1; }
   .oi-name { font-weight: 600; font-size: 15px; }
   .oi-qty { font-size: 13px; color: var(--text-muted); }
   .oi-price { font-weight: 700; color: var(--gold); font-size: 16px; }
-
-  .empty-state {
-    text-align: center;
-    padding: 60px 20px;
-    color: var(--text-muted);
-  }
+  .empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
   .empty-state p { font-size: 40px; margin-bottom: 12px; }
   .empty-state span { font-size: 15px; }
-
-  @media (max-width: 500px) {
-    .float-bar { padding: 12px 16px; }
-    .btn-wa { padding: 12px 18px; font-size: 14px; }
-    .menu-grid { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 500px) { .float-bar { padding: 12px 16px; } .btn-wa { padding: 12px 18px; font-size: 14px; } .menu-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -351,64 +95,49 @@
 </header>
 
 <nav class="nav-wrap">
-  <button class="tab-btn active" onclick="showSection('entradas')">🥗 Entradas</button>
-  <button class="tab-btn" onclick="showSection('principales')">🍽️ Principales</button>
-  <button class="tab-btn" onclick="showSection('pastas')">🍝 Pastas</button>
-  <button class="tab-btn" onclick="showSection('postres')">🍮 Postres</button>
-  <button class="tab-btn" onclick="showSection('bebidas')">🥤 Bebidas</button>
-  <button class="tab-btn" onclick="showSection('pedido')">🧾 Mi Pedido</button>
+  <button class="tab-btn active" onclick="showSection('entradas', event)">🥗 Entradas</button>
+  <button class="tab-btn" onclick="showSection('principales', event)">🍽️ Principales</button>
+  <button class="tab-btn" onclick="showSection('pastas', event)">🍝 Pastas</button>
+  <button class="tab-btn" onclick="showSection('postres', event)">🍮 Postres</button>
+  <button class="tab-btn" onclick="showSection('bebidas', event)">🥤 Bebidas</button>
+  <button class="tab-btn" onclick="showSection('pedido', event)">🧾 Mi Pedido</button>
 </nav>
 
 <main class="main">
-
   <section class="section active" id="entradas">
     <h2 class="section-title">En<em>tradas</em></h2>
     <p class="section-desc">Para comenzar con el pie derecho</p>
     <div class="menu-grid" id="grid-entradas"></div>
   </section>
-
   <section class="section" id="principales">
     <h2 class="section-title">Platos <em>Principales</em></h2>
     <p class="section-desc">El corazón de nuestra cocina</p>
     <div class="menu-grid" id="grid-principales"></div>
   </section>
-
   <section class="section" id="pastas">
     <h2 class="section-title">Pas<em>tas</em></h2>
     <p class="section-desc">Elaboradas con masa artesanal fresca</p>
     <div class="menu-grid" id="grid-pastas"></div>
   </section>
-
   <section class="section" id="postres">
     <h2 class="section-title">Pos<em>tres</em></h2>
     <p class="section-desc">El dulce final que mereces</p>
     <div class="menu-grid" id="grid-postres"></div>
   </section>
-
   <section class="section" id="bebidas">
     <h2 class="section-title">Bebi<em>das</em></h2>
     <p class="section-desc">Refrescantes y deliciosas opciones</p>
     <div class="menu-grid" id="grid-bebidas"></div>
   </section>
-
   <section class="section" id="pedido">
     <h2 class="section-title">Mi <em>Pedido</em></h2>
     <p class="section-desc">Revisa tu selección antes de enviar</p>
-
     <div class="order-items" id="order-list"></div>
-
-    <div class="phone-section">
-      <label>📱 Número WhatsApp del restaurante</label>
-      <input type="tel" class="phone-input" id="restaurant-phone" placeholder="Ej: 526441234567" value="6624580620">
-      <p class="phone-hint">Incluye código de país sin + (ej: 52 para México, 1 para USA)</p>
-    </div>
-
     <div class="notes-section">
       <label>📝 Notas especiales</label>
       <textarea id="order-notes" placeholder="Alergias, preferencias, mesa, instrucciones de entrega..."></textarea>
     </div>
   </section>
-
 </main>
 
 <div class="float-bar">
@@ -427,6 +156,9 @@
 </div>
 
 <script>
+
+const WHATSAPP_NUMBER = '526624580620';
+
 const MENU = {
   entradas: [
     { id:'e1', emoji:'🥗', name:'Ensalada César', desc:'Lechuga romana, crutones artesanales, queso parmesano y aderezo clásico Caesar.', price:89, tag:'popular' },
@@ -491,20 +223,13 @@ function renderMenu(category) {
         <button class="qty-btn" onclick="changeQty('${item.id}', 1, event)">+</button>
       </div>
     `;
-    card.onclick = (e) => {
-      if (e.target.classList.contains('qty-btn')) return;
-      toggleItem(item);
-    };
+    card.onclick = (e) => { if (e.target.classList.contains('qty-btn')) return; toggleItem(item); };
     grid.appendChild(card);
   });
 }
 
 function toggleItem(item) {
-  if (order[item.id]) {
-    delete order[item.id];
-  } else {
-    order[item.id] = { item, qty: 1 };
-  }
+  if (order[item.id]) { delete order[item.id]; } else { order[item.id] = { item, qty: 1 }; }
   updateCard(item.id);
   updateBar();
 }
@@ -573,12 +298,8 @@ function sendWhatsApp() {
   const items = Object.values(order);
   if (!items.length) {
     alert('¡Primero selecciona al menos un platillo! 🍽️');
-    showSection('entradas');
     return;
   }
-
-  const phone = document.getElementById('restaurant-phone').value.replace(/\D/g,'');
-  if (!phone) { alert('Por favor ingresa el número de WhatsApp del restaurante.'); return; }
 
   const notes = document.getElementById('order-notes').value;
   const total = items.reduce((s, o) => s + o.item.price * o.qty, 0);
@@ -612,15 +333,14 @@ function sendWhatsApp() {
 
   msg += '\n_Pedido generado desde el menú digital de La Bella Cocina_ ✨';
 
-  const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-  window.open(url, '_blank');
+  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
 }
 
-function showSection(id) {
+function showSection(id, e) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  event.target.classList.add('active');
+  e.target.classList.add('active');
   if (id === 'pedido') renderOrderSummary();
 }
 
