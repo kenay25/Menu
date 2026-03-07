@@ -513,7 +513,6 @@ function confirmMods(){
   const hasChanges=Object.keys(currentMods.removed).length>0||Object.keys(currentMods.extras).length>0;
   if(hasChanges)customizations[currentItem.id]=currentMods;
   else delete customizations[currentItem.id];
-  // update extra cost
   if(customizations[currentItem.id]&&currentItem.extras){
     const extraCost=currentItem.extras.filter(ex=>currentMods.extras[ex.id]).reduce((s,ex)=>s+ex.price,0);
     if(order[currentItem.id])order[currentItem.id].extraCost=extraCost;
