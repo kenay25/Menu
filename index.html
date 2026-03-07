@@ -577,7 +577,6 @@ function clearOrder(){
   document.querySelectorAll('.menu-card.selected').forEach(c=>c.classList.remove('selected'));
   updateBar();
 }
-
 function sendWhatsApp(){
   const items=Object.values(order);
   if(!items.length){alert('¡Primero selecciona al menos un platillo! 🍽️');return;}
@@ -599,6 +598,8 @@ function sendWhatsApp(){
   msg+='\n━━━━━━━━━━━━━━━━━━━━\n';
   msg+=`💰 *TOTAL: $${total.toFixed(2)} MXN*\n`;
   if(notes.trim())msg+=`\n📝 *Notas:*\n${notes.trim()}\n`;
+  const fechaPedido = new Date().toLocaleString();
+  console.log("Pedido realizado:", fechaPedido);
   msg+='\n_Menú digital La Bella Cocina_ ✨';
   window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
 }
