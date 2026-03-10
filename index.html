@@ -88,20 +88,25 @@ body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--dark);
 .ing-toggle{background:none;border:1.5px solid rgba(194,48,96,0.25);border-radius:8px;padding:4px 11px;font-family:'DM Sans',sans-serif;font-size:11.5px;cursor:pointer;transition:all 0.15s;color:var(--dark);font-weight:500;}
 .ing-item.removed .ing-toggle{background:#C0392B;border-color:#C0392B;color:white;}
 .ing-item.extra-added .ing-toggle{background:#2E7D32;border-color:#2E7D32;color:white;}
+/* ── Proteins (multi-select) ── */
 .protein-section{margin-bottom:18px;}
 .protein-section-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:600;}
 .protein-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
-.protein-btn{background:#FFF0F4;border:2px solid transparent;border-radius:10px;padding:10px 4px;text-align:center;cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;}
+.protein-btn{background:#FFF0F4;border:2px solid transparent;border-radius:10px;padding:10px 4px;text-align:center;cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;position:relative;}
 .protein-btn:hover{border-color:var(--pink-light);}
 .protein-btn.sel{border-color:var(--pink);background:#FDE0E8;}
 .p-emoji{font-size:22px;display:block;margin-bottom:3px;}
 .p-name{font-size:10.5px;font-weight:600;color:var(--dark);}
+.p-count{position:absolute;top:4px;right:4px;background:var(--pink);color:white;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.protein-note{font-size:10px;color:var(--muted);margin-top:8px;text-align:center;}
+/* ── Sauces (up to 2) ── */
 .sauce-section{margin-bottom:18px;}
 .sauce-section-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:600;}
 .sauce-grid{display:flex;flex-wrap:wrap;gap:7px;}
 .sauce-btn{background:#FFF0F4;border:2px solid transparent;border-radius:20px;padding:7px 13px;cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--dark);}
 .sauce-btn:hover{border-color:var(--pink-light);}
 .sauce-btn.sel{border-color:var(--pink);background:#FDE0E8;color:var(--pink-deep);font-weight:700;}
+.sauce-note{font-size:10px;color:var(--muted);margin-top:8px;}
 .alga-section{margin-bottom:18px;}
 .alga-section-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:600;}
 .alga-grid{display:flex;gap:8px;}
@@ -127,11 +132,16 @@ body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--dark);
 .client-head h3{font-family:'Noto Serif JP',serif;font-size:20px;color:var(--cream);font-weight:700;}
 .client-head p{color:var(--muted);font-size:12px;margin-top:4px;}
 .client-body{padding:20px 22px 22px;display:flex;flex-direction:column;gap:14px;}
+.order-type-toggle{display:flex;gap:8px;margin-bottom:4px;}
+.order-type-btn{flex:1;padding:10px;border-radius:11px;border:1.5px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;color:var(--muted);}
+.order-type-btn.active{background:var(--pink);border-color:var(--pink);color:white;}
+.cf{display:flex;flex-direction:column;}
 .cf label{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px;}
 .cf input,.cf textarea{width:100%;background:#FFF8F9;border:1.5px solid var(--border);border-radius:11px;padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--dark);outline:none;transition:border-color 0.2s;}
 .cf input:focus,.cf textarea:focus{border-color:var(--pink);}
 .cf textarea{resize:vertical;min-height:70px;}
 .cf-required{color:var(--pink);font-size:11px;margin-left:4px;}
+.cf-hidden{display:none;}
 .client-actions{display:flex;gap:10px;margin-top:2px;}
 .btn-cc{flex:1;background:transparent;border:1.5px solid var(--border);color:var(--muted);padding:11px;border-radius:11px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;}
 .btn-cc:hover{border-color:var(--pink);color:var(--pink);}
@@ -239,7 +249,7 @@ body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--dark);
         <span class="salsa-chip">Mixto</span><span class="salsa-chip">BBQ Chipotle</span>
         <span class="salsa-chip">Naranja Chipotle</span><span class="salsa-chip">Tamarindo</span>
         <span class="salsa-chip">Mango Hot</span><span class="salsa-chip">Mango Habanero</span>
-        <span class="salsa-chip">Pipa Hot</span>
+        <span class="salsa-chip">Piña Hot</span>
       </div>
     </div>
     <div style="height:14px"></div>
@@ -296,19 +306,26 @@ body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--dark);
   <div class="client-box">
     <div class="client-head">
       <h3>📋 Datos de tu pedido</h3>
-      <p>Necesitamos tus datos para coordinar la entrega</p>
+      <p>Selecciona si recoges o enviamos</p>
     </div>
     <div class="client-body">
-      <div class="cf">
+      <!-- Order type toggle -->
+      <div class="order-type-toggle">
+        <button class="order-type-btn active" id="btn-recoger" onclick="setOrderType('recoger')">🏪 Recoger en sucursal</button>
+        <button class="order-type-btn" id="btn-envio" onclick="setOrderType('envio')">🛵 Envío a domicilio</button>
+      </div>
+      <!-- Always shown: name -->
+      <div class="cf" id="cf-name-wrap">
         <label>👤 Nombre <span class="cf-required">*</span></label>
         <input type="text" id="cl-name" placeholder="Tu nombre completo" autocomplete="name">
       </div>
-      <div class="cf">
+      <!-- Only for delivery: phone + address -->
+      <div class="cf cf-hidden" id="cf-phone-wrap">
         <label>📱 Teléfono <span class="cf-required">*</span></label>
         <input type="tel" id="cl-phone" placeholder="Ej. 642-123-4567" autocomplete="tel">
       </div>
-      <div class="cf">
-        <label>📍 Dirección de entrega <span style="font-size:10px;color:var(--muted)">(opcional si recoges en sucursal)</span></label>
+      <div class="cf cf-hidden" id="cf-address-wrap">
+        <label>📍 Dirección de entrega <span class="cf-required">*</span></label>
         <textarea id="cl-address" placeholder="Calle, número, colonia, referencias..."></textarea>
       </div>
       <div class="client-actions">
@@ -324,52 +341,59 @@ body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--dark);
 
 <script>
 var WA='526622067409';
+// CHANGED: Piña Hot (was Pipa Hot)
 var PROTEINS=[{id:'p_res',emoji:'&#x1F969;',name:'Res'},{id:'p_pollo',emoji:'&#x1F357;',name:'Pollo'},{id:'p_tocino',emoji:'&#x1F953;',name:'Tocino'},{id:'p_surimi',emoji:'&#x1F980;',name:'Surimi'},{id:'p_camaron',emoji:'&#x1F990;',name:'Camar\xF3n'}];
-var SAUCES=[{id:'sc1',name:'BBQ'},{id:'sc2',name:'B\xFAfalo'},{id:'sc3',name:'Mixto'},{id:'sc4',name:'BBQ Chipotle'},{id:'sc5',name:'Naranja Chipotle'},{id:'sc6',name:'Tamarindo'},{id:'sc7',name:'Mango Hot'},{id:'sc8',name:'Mango Habanero'},{id:'sc9',name:'Pipa Hot'}];
-var EXTRA_INGS=['Camar\xF3n','Pollo','Res','Tocino','Surimi','Tampico','Soya','Anguila','Chipotle'];
+var SAUCES=[{id:'sc1',name:'BBQ'},{id:'sc2',name:'B\xFAfalo'},{id:'sc3',name:'Mixto'},{id:'sc4',name:'BBQ Chipotle'},{id:'sc5',name:'Naranja Chipotle'},{id:'sc6',name:'Tamarindo'},{id:'sc7',name:'Mango Hot'},{id:'sc8',name:'Mango Habanero'},{id:'sc9',name:'Pi\xF1a Hot'}];
+// CHANGED: Added Ranch to extras
+var EXTRA_INGS=['Camar\xF3n','Pollo','Res','Tocino','Surimi','Tampico','Soya','Anguila','Chipotle','Ranch'];
 function ing(id,em,nm,nt,rm){return{id:id,emoji:em,name:nm,note:nt,removable:rm};}
-function base(){return[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true)];}
+function base(){return[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true)];}
+
 var MENU={
 sushis:[
  {id:'s1',emoji:'&#x1F363;',name:'California',price:95,tag:null,hasProtein:true,hasAlga:true,desc:'01 prote\xEDna a elegir: res, camar\xF3n, tocino, pollo o surimi.',ingredients:base(),extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25},{id:'x2',emoji:'&#x1F41F;',name:'Tampico por fuera',note:'+$15',price:15}]},
- {id:'s2',emoji:'&#x1F363;',name:'Bombazo',price:110,tag:'popular',hasProtein:true,hasAlga:true,desc:'Prote\xEDna a elegir, cubierto con tampico, salsa de anguila y ajonjol\xED.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F41F;','Tampico','Por fuera',true),ing('b6','&#x1FAD9;','Anguila','Por fuera',true),ing('b7','&#x26AB;','Ajonjol\xED','Por fuera',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s3',emoji:'&#x1F363;',name:'Sonora',price:110,tag:null,hasAlga:true,desc:'Relleno res y tocino. Queso philadelphia y chile verde.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F969;','Res','Relleno',false),ing('b6','&#x1F953;','Tocino','Relleno',true),ing('b7','&#x1F336;&#xFE0F;','Chile verde','Queso',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s4',emoji:'&#x1F363;',name:'Especial',price:115,tag:'popular',hasAlga:true,desc:'Relleno de surimi, cubierto de tampico, aguacate, anguila y ajonjol\xED.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Cubierta',true),ing('b5','&#x1F980;','Surimi','Relleno',false),ing('b6','&#x1F41F;','Tampico','Cubierta',true),ing('b7','&#x1FAD9;','Anguila','Cubierta',true),ing('b8','&#x26AB;','Ajonjol\xED','Cubierta',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s5',emoji:'&#x1F363;',name:'Tres Quesos',price:135,tag:null,hasProtein:true,hasAlga:true,desc:'01 prote\xEDna a elegir, cubierta de queso gratinado, manchego y ceboll\xEDn.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F9C0;','Queso gratinado','Cubierta',false),ing('b6','&#x1F9C0;','Manchego','Cubierta',true),ing('b7','&#x1F331;','Ceboll\xEDn','Cubierta',true)],extras:[]},
- {id:'s6',emoji:'&#x1F363;',name:'Aguacate',price:100,tag:null,hasProtein:true,hasAlga:true,desc:'01 prote\xEDna a elegir, cubierto de aguacate y ajonjol\xED.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Relleno y cubierta',false),ing('b5','&#x26AB;','Ajonjol\xED','Cubierta',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s7',emoji:'&#x1F363;',name:'Misil',price:80,tag:null,hasAlga:false,desc:'Por dentro: relleno de philadelphia, tampico, tocino y res. Por fuera: chile verde empanizado.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Relleno',false),ing('b2','&#x1F41F;','Tampico','Relleno',true),ing('b3','&#x1F953;','Tocino','Relleno',true),ing('b4','&#x1F969;','Res','Relleno',true),ing('b5','&#x1F336;&#xFE0F;','Chile verde empanizado','Cubierta',false)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s8',emoji:'&#x1F363;',name:'Daishi',price:100,tag:null,hasAlga:true,desc:'Relleno de tampico y tocino.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F41F;','Tampico','Relleno',false),ing('b6','&#x1F953;','Tocino','Relleno',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25},{id:'x2',emoji:'&#x1FAD9;',name:'Anguila',note:'+$15',price:15}]},
- {id:'s9',emoji:'&#x1F363;',name:'Cielo Mar y Tierra',price:120,tag:null,hasAlga:true,desc:'Relleno de camar\xF3n, pollo y res.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F990;','Camar\xF3n','Relleno',false),ing('b6','&#x1F357;','Pollo','Relleno',true),ing('b7','&#x1F969;','Res','Relleno',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s10',emoji:'&#x1F363;',name:'Antojo',price:120,tag:null,hasAlga:true,desc:'Por dentro: relleno res, tocino y camar\xF3n. Por fuera: queso philadelphia y serrano.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F969;','Res','Relleno',false),ing('b6','&#x1F953;','Tocino','Relleno',true),ing('b7','&#x1F990;','Camar\xF3n','Relleno',true),ing('b8','&#x1F336;&#xFE0F;','Serrano','Queso',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s11',emoji:'&#x1F363;',name:'Chipotle',price:135,tag:null,hasAlga:true,desc:'Por dentro: relleno de pollo. Por fuera: camar\xF3n capeado con chipotle y ceboll\xEDn.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F357;','Pollo','Relleno',false),ing('b6','&#x1F990;','Camar\xF3n capeado','Cubierta',false),ing('b7','&#x1FAD9;','Chipotle','Cubierta',true),ing('b8','&#x1F331;','Ceboll\xEDn','Cubierta',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s12',emoji:'&#x1F363;',name:'Queen Roll',price:135,tag:'popular',hasAlga:true,desc:'Por dentro: relleno de pollo y camar\xF3n. Por fuera: cubierto de queso gratinado y tampico.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F357;','Pollo','Relleno',false),ing('b6','&#x1F990;','Camar\xF3n','Relleno',false),ing('b7','&#x1F9C0;','Queso gratinado','Cubierta',false),ing('b8','&#x1F41F;','Tampico','Cubierta',true)],extras:[{id:'x1',emoji:'&#x1F336;&#xFE0F;',name:'Serrano',note:'Gratis',price:0}]},
- {id:'s13',emoji:'&#x1F363;',name:'Mix Roll',price:145,tag:null,hasProtein:true,hasAlga:true,desc:'Por dentro: prote\xEDna a elegir. Por fuera: mix de tocino y queso gratinado.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F953;','Tocino','Mix cubierta',true),ing('b6','&#x1F9C0;','Queso gratinado','Mix cubierta',false)],extras:[]},
- {id:'s14',emoji:'&#x1F363;',name:'Baked',price:145,tag:'hot',hasAlga:true,desc:'Por dentro: relleno de pollo. Por fuera: mix tocino y camar\xF3n con queso gratinado.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F357;','Pollo','Relleno',false),ing('b6','&#x1F953;','Tocino','Cubierta',true),ing('b7','&#x1F990;','Camar\xF3n','Cubierta',true),ing('b8','&#x1F9C0;','Queso gratinado','Cubierta',false)],extras:[{id:'x1',emoji:'&#x1F336;&#xFE0F;',name:'Chile serrano',note:'Gratis',price:0}]},
- {id:'s15',emoji:'&#x1F363;',name:'Fernanda',price:145,tag:null,hasAlga:true,desc:'Por dentro: pollo y res. Por fuera: mix de caribe y chile verde con camar\xF3n empanizado.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F357;','Pollo','Relleno',false),ing('b6','&#x1F969;','Res','Relleno',true),ing('b7','&#x1F336;&#xFE0F;','Caribe y chile verde','Cubierta',true),ing('b8','&#x1F990;','Camar\xF3n empanizado','Cubierta',false)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s16',emoji:'&#x1F363;',name:'Hot',price:145,tag:'hot',hasAlga:true,desc:'Por dentro: relleno de res. Por fuera: cubierto de queso gratinado picante con camar\xF3n y tocino.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F969;','Res','Relleno',false),ing('b6','&#x1F9C0;','Queso gratinado picante','Cubierta',false),ing('b7','&#x1F990;','Camar\xF3n','Cubierta',true),ing('b8','&#x1F953;','Tocino','Cubierta',true)],extras:[]},
- {id:'s17',emoji:'&#x1F363;',name:'Monster',price:165,tag:'hot',hasAlga:true,desc:'Por dentro: surimi empanizado, pollo, res, tocino y camar\xF3n. Por fuera: queso gratinado con chile serrano.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F980;','Surimi empanizado','Relleno',true),ing('b6','&#x1F357;','Pollo','Relleno',true),ing('b7','&#x1F969;','Res','Relleno',true),ing('b8','&#x1F953;','Tocino','Relleno',true),ing('b9','&#x1F990;','Camar\xF3n','Relleno',true),ing('b10','&#x1F9C0;','Queso gratinado','Cubierta',false),ing('b11','&#x1F336;&#xFE0F;','Chile serrano','Cubierta',true)],extras:[]},
- {id:'s18',emoji:'&#x1F363;',name:'Franco Roll',price:165,tag:'new',hasAlga:true,desc:'Por dentro: philadelphia, pepino, camar\xF3n frito, carne asada, mozzarella. Por fuera: aderezo serrano, gratinado c/mozzarella, tocino y ceboll\xEDn.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Relleno',false),ing('b2','&#x1F952;','Pepino','Relleno',true),ing('b3','&#x1F990;','Camar\xF3n frito','Relleno',false),ing('b4','&#x1F969;','Carne asada','Relleno',false),ing('b5','&#x1F9C0;','Mozzarella','Relleno y cubierta',true),ing('b7','&#x1F336;&#xFE0F;','Aderezo serrano','Cubierta',true),ing('b8','&#x1F953;','Tocino','Cubierta',true),ing('b9','&#x1F331;','Ceboll\xEDn','Cubierta',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'M\xE1s mozzarella',note:'+$15',price:15}]},
- {id:'s19',emoji:'&#x1F363;',name:'La Chuyita',price:165,tag:'popular',hasAlga:true,desc:'Por dentro: philadelphia, aguacate, pepino, tampico. Por fuera: camar\xF3n frito aderezado, tocino, gratinado con mozzarella, chipotle y ceboll\xEDn.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Relleno',false),ing('b2','&#x1F951;','Aguacate','Relleno',true),ing('b3','&#x1F952;','Pepino','Relleno',true),ing('b4','&#x1F41F;','Tampico','Relleno',true),ing('b6','&#x1F990;','Camar\xF3n frito aderezado','Cubierta',false),ing('b7','&#x1F953;','Tocino','Cubierta',true),ing('b8','&#x1F9C0;','Mozzarella gratinada','Cubierta',true),ing('b9','&#x1FAD9;','Chipotle','Cubierta',true),ing('b10','&#x1F331;','Ceboll\xEDn','Cubierta',true)],extras:[]},
- {id:'s20',emoji:'&#x1F363;',name:'Mexicano 1',price:145,tag:null,hasAlga:true,desc:'Por dentro: relleno tampico. Por fuera: carne asada, aguacate, serrano y ceboll\xEDn. Ba\xF1ado en aderezo.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Cubierta',true),ing('b5','&#x1F41F;','Tampico','Relleno',false),ing('b6','&#x1F969;','Carne asada','Cubierta',false),ing('b7','&#x1F336;&#xFE0F;','Serrano','Cubierta',true),ing('b8','&#x1F331;','Ceboll\xEDn','Cubierta',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s21',emoji:'&#x1F363;',name:'Mexicano 2',price:165,tag:null,hasAlga:true,desc:'Por dentro: relleno tampico. Por fuera: carne asada, aguacate, serrano y ceboll\xEDn. Gratinado.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Cubierta',true),ing('b5','&#x1F41F;','Tampico','Relleno',false),ing('b6','&#x1F969;','Carne asada','Cubierta',false),ing('b7','&#x1F336;&#xFE0F;','Serrano','Cubierta',true),ing('b8','&#x1F331;','Ceboll\xEDn','Cubierta',true),ing('b9','&#x1F9C0;','Gratinado','Cubierta',false)],extras:[{id:'x1',emoji:'&#x1F953;',name:'Tocino extra',note:'+$15',price:15}]},
- {id:'s22',emoji:'&#x1F363;',name:'Borbon',price:220,tag:'popular',hasSauce:true,hasAlga:true,desc:'Por dentro: surimi empanizado, pollo, res, tocino y camar\xF3n. Por fuera: queso gratinado con chile serrano. Boneles en salsa a elecci\xF3n.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F980;','Surimi empanizado','Relleno',true),ing('b6','&#x1F357;','Pollo','Relleno',true),ing('b7','&#x1F969;','Res','Relleno',true),ing('b8','&#x1F953;','Tocino','Relleno',true),ing('b9','&#x1F990;','Camar\xF3n','Relleno',true),ing('b10','&#x1F9C0;','Queso gratinado','Cubierta',false),ing('b11','&#x1F336;&#xFE0F;','Chile serrano','Cubierta',true)],extras:[]}
+ {id:'s2',emoji:'&#x1F363;',name:'Bombazo',price:110,tag:'popular',hasProtein:true,hasAlga:true,desc:'Prote\xEDna a elegir, cubierto con tampico, salsa de anguila y ajonjol\xED.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F41F;','Tampico','Por fuera',true),ing('b6','&#x1FAD9;','Anguila','Por fuera',true),ing('b7','&#x26AB;','Ajonjol\xED','Por fuera',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s3',emoji:'&#x1F363;',name:'Sonora',price:110,tag:null,hasAlga:true,desc:'Relleno res y tocino. Queso philadelphia y chile verde.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F969;','Res','Relleno',false),ing('b6','&#x1F953;','Tocino','Relleno',true),ing('b7','&#x1F336;&#xFE0F;','Chile verde','Queso',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s4',emoji:'&#x1F363;',name:'Especial',price:115,tag:'popular',hasAlga:true,desc:'Relleno de surimi, cubierto de tampico, aguacate, anguila y ajonjol\xED.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Cubierta',true),ing('b5','&#x1F980;','Surimi','Relleno',false),ing('b6','&#x1F41F;','Tampico','Cubierta',true),ing('b7','&#x1FAD9;','Anguila','Cubierta',true),ing('b8','&#x26AB;','Ajonjol\xED','Cubierta',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s5',emoji:'&#x1F363;',name:'Tres Quesos',price:135,tag:null,hasProtein:true,hasAlga:true,desc:'01 prote\xEDna a elegir, cubierta de queso gratinado, manchego y ceboll\xEDn.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F9C0;','Queso gratinado','Cubierta',false),ing('b6','&#x1F9C0;','Manchego','Cubierta',true),ing('b7','&#x1F331;','Ceboll\xEDn','Cubierta',true)],extras:[]},
+ {id:'s6',emoji:'&#x1F363;',name:'Aguacate',price:100,tag:null,hasProtein:true,hasAlga:true,desc:'01 prote\xEDna a elegir, cubierto de aguacate y ajonjol\xED.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Relleno y cubierta',false),ing('b5','&#x26AB;','Ajonjol\xED','Cubierta',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s7',emoji:'&#x1F363;',name:'Misil',price:80,tag:null,hasAlga:false,desc:'Por dentro: relleno de philadelphia, tampico, tocino y res. Por fuera: chile verde empanizado.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Relleno',true),ing('b2','&#x1F41F;','Tampico','Relleno',true),ing('b3','&#x1F953;','Tocino','Relleno',true),ing('b4','&#x1F969;','Res','Relleno',true),ing('b5','&#x1F336;&#xFE0F;','Chile verde empanizado','Cubierta',false)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s8',emoji:'&#x1F363;',name:'Daishi',price:100,tag:null,hasAlga:true,desc:'Relleno de tampico y tocino.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F41F;','Tampico','Relleno',false),ing('b6','&#x1F953;','Tocino','Relleno',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25},{id:'x2',emoji:'&#x1FAD9;',name:'Anguila',note:'+$15',price:15}]},
+ {id:'s9',emoji:'&#x1F363;',name:'Cielo Mar y Tierra',price:120,tag:null,hasAlga:true,desc:'Relleno de camar\xF3n, pollo y res.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F990;','Camar\xF3n','Relleno',false),ing('b6','&#x1F357;','Pollo','Relleno',true),ing('b7','&#x1F969;','Res','Relleno',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s10',emoji:'&#x1F363;',name:'Antojo',price:120,tag:null,hasAlga:true,desc:'Por dentro: relleno res, tocino y camar\xF3n. Por fuera: queso philadelphia y serrano.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F969;','Res','Relleno',false),ing('b6','&#x1F953;','Tocino','Relleno',true),ing('b7','&#x1F990;','Camar\xF3n','Relleno',true),ing('b8','&#x1F336;&#xFE0F;','Serrano','Queso',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s11',emoji:'&#x1F363;',name:'Chipotle',price:135,tag:null,hasAlga:true,desc:'Por dentro: relleno de pollo. Por fuera: camar\xF3n capeado con chipotle y ceboll\xEDn.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F357;','Pollo','Relleno',false),ing('b6','&#x1F990;','Camar\xF3n capeado','Cubierta',false),ing('b7','&#x1FAD9;','Chipotle','Cubierta',true),ing('b8','&#x1F331;','Ceboll\xEDn','Cubierta',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s12',emoji:'&#x1F363;',name:'Queen Roll',price:135,tag:'popular',hasAlga:true,desc:'Por dentro: relleno de pollo y camar\xF3n. Por fuera: cubierto de queso gratinado y tampico.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F357;','Pollo','Relleno',false),ing('b6','&#x1F990;','Camar\xF3n','Relleno',false),ing('b7','&#x1F9C0;','Queso gratinado','Cubierta',false),ing('b8','&#x1F41F;','Tampico','Cubierta',true)],extras:[{id:'x1',emoji:'&#x1F336;&#xFE0F;',name:'Serrano',note:'Gratis',price:0}]},
+ {id:'s13',emoji:'&#x1F363;',name:'Mix Roll',price:145,tag:null,hasProtein:true,hasAlga:true,desc:'Por dentro: prote\xEDna a elegir. Por fuera: mix de tocino y queso gratinado.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F953;','Tocino','Mix cubierta',true),ing('b6','&#x1F9C0;','Queso gratinado','Mix cubierta',false)],extras:[]},
+ {id:'s14',emoji:'&#x1F363;',name:'Baked',price:145,tag:'hot',hasAlga:true,desc:'Por dentro: relleno de pollo. Por fuera: mix tocino y camar\xF3n con queso gratinado.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F357;','Pollo','Relleno',false),ing('b6','&#x1F953;','Tocino','Cubierta',true),ing('b7','&#x1F990;','Camar\xF3n','Cubierta',true),ing('b8','&#x1F9C0;','Queso gratinado','Cubierta',false)],extras:[{id:'x1',emoji:'&#x1F336;&#xFE0F;',name:'Chile serrano',note:'Gratis',price:0}]},
+ {id:'s15',emoji:'&#x1F363;',name:'Fernanda',price:145,tag:null,hasAlga:true,desc:'Por dentro: pollo y res. Por fuera: mix de caribe y chile verde con camar\xF3n empanizado.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F357;','Pollo','Relleno',false),ing('b6','&#x1F969;','Res','Relleno',true),ing('b7','&#x1F336;&#xFE0F;','Caribe y chile verde','Cubierta',true),ing('b8','&#x1F990;','Camar\xF3n empanizado','Cubierta',false)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s16',emoji:'&#x1F363;',name:'Hot',price:145,tag:'hot',hasAlga:true,desc:'Por dentro: relleno de res. Por fuera: cubierto de queso gratinado picante con camar\xF3n y tocino.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F969;','Res','Relleno',false),ing('b6','&#x1F9C0;','Queso gratinado picante','Cubierta',false),ing('b7','&#x1F990;','Camar\xF3n','Cubierta',true),ing('b8','&#x1F953;','Tocino','Cubierta',true)],extras:[]},
+ {id:'s17',emoji:'&#x1F363;',name:'Monster',price:165,tag:'hot',hasAlga:true,desc:'Por dentro: surimi empanizado, pollo, res, tocino y camar\xF3n. Por fuera: queso gratinado con chile serrano.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F980;','Surimi empanizado','Relleno',true),ing('b6','&#x1F357;','Pollo','Relleno',true),ing('b7','&#x1F969;','Res','Relleno',true),ing('b8','&#x1F953;','Tocino','Relleno',true),ing('b9','&#x1F990;','Camar\xF3n','Relleno',true),ing('b10','&#x1F9C0;','Queso gratinado','Cubierta',false),ing('b11','&#x1F336;&#xFE0F;','Chile serrano','Cubierta',true)],extras:[]},
+ {id:'s18',emoji:'&#x1F363;',name:'Franco Roll',price:165,tag:'new',hasAlga:true,desc:'Por dentro: philadelphia, pepino, camar\xF3n frito, carne asada, mozzarella. Por fuera: aderezo serrano, gratinado c/mozzarella, tocino y ceboll\xEDn.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Relleno',true),ing('b2','&#x1F952;','Pepino','Relleno',true),ing('b3','&#x1F990;','Camar\xF3n frito','Relleno',false),ing('b4','&#x1F969;','Carne asada','Relleno',false),ing('b5','&#x1F9C0;','Mozzarella','Relleno y cubierta',true),ing('b7','&#x1F336;&#xFE0F;','Aderezo serrano','Cubierta',true),ing('b8','&#x1F953;','Tocino','Cubierta',true),ing('b9','&#x1F331;','Ceboll\xEDn','Cubierta',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'M\xE1s mozzarella',note:'+$15',price:15}]},
+ {id:'s19',emoji:'&#x1F363;',name:'La Chuyita',price:165,tag:'popular',hasAlga:true,desc:'Por dentro: philadelphia, aguacate, pepino, tampico. Por fuera: camar\xF3n frito aderezado, tocino, gratinado con mozzarella, chipotle y ceboll\xEDn.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Relleno',true),ing('b2','&#x1F951;','Aguacate','Relleno',true),ing('b3','&#x1F952;','Pepino','Relleno',true),ing('b4','&#x1F41F;','Tampico','Relleno',true),ing('b6','&#x1F990;','Camar\xF3n frito aderezado','Cubierta',false),ing('b7','&#x1F953;','Tocino','Cubierta',true),ing('b8','&#x1F9C0;','Mozzarella gratinada','Cubierta',true),ing('b9','&#x1FAD9;','Chipotle','Cubierta',true),ing('b10','&#x1F331;','Ceboll\xEDn','Cubierta',true)],extras:[]},
+ {id:'s20',emoji:'&#x1F363;',name:'Mexicano 1',price:145,tag:null,hasAlga:true,desc:'Por dentro: relleno tampico. Por fuera: carne asada, aguacate, serrano y ceboll\xEDn. Ba\xF1ado en aderezo.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Cubierta',true),ing('b5','&#x1F41F;','Tampico','Relleno',false),ing('b6','&#x1F969;','Carne asada','Cubierta',false),ing('b7','&#x1F336;&#xFE0F;','Serrano','Cubierta',true),ing('b8','&#x1F331;','Ceboll\xEDn','Cubierta',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s21',emoji:'&#x1F363;',name:'Mexicano 2',price:165,tag:null,hasAlga:true,desc:'Por dentro: relleno tampico. Por fuera: carne asada, aguacate, serrano y ceboll\xEDn. Gratinado.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Cubierta',true),ing('b5','&#x1F41F;','Tampico','Relleno',false),ing('b6','&#x1F969;','Carne asada','Cubierta',false),ing('b7','&#x1F336;&#xFE0F;','Serrano','Cubierta',true),ing('b8','&#x1F331;','Ceboll\xEDn','Cubierta',true),ing('b9','&#x1F9C0;','Gratinado','Cubierta',false)],extras:[{id:'x1',emoji:'&#x1F953;',name:'Tocino extra',note:'+$15',price:15}]},
+ {id:'s22',emoji:'&#x1F363;',name:'Borbon',price:220,tag:'popular',hasSauce:true,hasAlga:true,desc:'Por dentro: surimi empanizado, pollo, res, tocino y camar\xF3n. Por fuera: queso gratinado con chile serrano. Boneles en salsa a elecci\xF3n.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F980;','Surimi empanizado','Relleno',true),ing('b6','&#x1F357;','Pollo','Relleno',true),ing('b7','&#x1F969;','Res','Relleno',true),ing('b8','&#x1F953;','Tocino','Relleno',true),ing('b9','&#x1F990;','Camar\xF3n','Relleno',true),ing('b10','&#x1F9C0;','Queso gratinado','Cubierta',false),ing('b11','&#x1F336;&#xFE0F;','Chile serrano','Cubierta',true)],extras:[]},
+ // MOVED Mayito to sushis
+ {id:'s_mayito',emoji:'&#x1F371;',name:'Mayito',price:145,tag:'popular',hasProtein:true,hasSauce:true,desc:'Prote\xEDna a elegir. Arriba tampico con boneless ba\xF1ados en salsa de elecci\xF3n.',ingredients:[ing('b1','&#x1F363;','Sushi (prot. elegida)','Base',false),ing('b2','&#x1F41F;','Tampico','Arriba',true),ing('b3','&#x1F357;','Boneless','Con salsa',false)],extras:[]}
 ],
 entradas:[
- {id:'en1',emoji:'&#x1F9C6;',name:'Tostibolones',price:70,tag:null,hasSauce:true,desc:'Tostitos ba\xF1ados en queso amarillo y boneles en salsa a elegir.',ingredients:[ing('b1','&#x1F96B;','Tostitos','Base',false),ing('b2','&#x1F9C0;','Queso amarillo','Ba\xF1ados',false),ing('b3','&#x1F357;','Boneles','Con salsa',false)],extras:[]},
+ {id:'en1',emoji:'&#x1F9C6;',name:'Tostibolones',price:150,tag:null,hasSauce:true,desc:'Tostitos ba\xF1ados en queso amarillo y boneles en salsa a elegir.',ingredients:[ing('b1','&#x1F96B;','Tostitos','Base',false),ing('b2','&#x1F9C0;','Queso amarillo','Ba\xF1ados',false),ing('b3','&#x1F357;','Boneles','Con salsa',false)],extras:[]},
  {id:'en2',emoji:'&#x1F32E;',name:'Tostitampico',price:70,tag:null,desc:'Tostitos, tampico y zanahoria, ba\xF1ados en aderezo chipotle, anguila y ajonjol\xED.',ingredients:[ing('b1','&#x1F96B;','Tostitos','Base',false),ing('b2','&#x1F41F;','Tampico','Encima',false),ing('b3','&#x1F955;','Zanahoria','Decorado',true),ing('b4','&#x1FAD9;','Aderezo chipotle','Ba\xF1ado',true),ing('b5','&#x1FAD9;','Anguila','Ba\xF1ado',true),ing('b6','&#x26AB;','Ajonjol\xED','Encima',true)],extras:[]},
  {id:'en3',emoji:'&#x1F9C0;',name:'Dedos de Queso',price:60,tag:'popular',desc:'Philadelphia, 05 unidades.',ingredients:[ing('b1','&#x1F9C0;','Philadelphia','Relleno',false)],extras:[{id:'x1',emoji:'&#x1F336;&#xFE0F;',name:'Serrano al lado',note:'Gratis',price:0}]},
  {id:'en4',emoji:'&#x1F35F;',name:'Papas Sazonadas',price:50,tag:null,desc:'Papas sazonadas al estilo La Esquina.',ingredients:[ing('b1','&#x1F954;','Papas sazonadas','Al estilo',false)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso amarillo',note:'+$15',price:15}]},
  {id:'en5',emoji:'&#x1F336;&#xFE0F;',name:'Chile Caribe Relleno',price:30,tag:null,desc:'Philadelphia, tocino, tampico y empanizado.',ingredients:[ing('b1','&#x1F336;&#xFE0F;','Chile caribe','Base',false),ing('b2','&#x1F9C0;','Philadelphia','Relleno',false),ing('b3','&#x1F953;','Tocino','Relleno',true),ing('b4','&#x1F41F;','Tampico','Relleno',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'en6',emoji:'&#x26AB;',name:'Boliblitz',price:100,tag:'popular',desc:'08 bolitas de tampico, philadelphia, anguila y ceboll\xEDn.',ingredients:[ing('b1','&#x1F41F;','Tampico','Relleno',false),ing('b2','&#x1F9C0;','Philadelphia','Relleno',false),ing('b3','&#x1FAD9;','Anguila','Salsa',true),ing('b4','&#x1F331;','Ceboll\xEDn','Decorado',true)],extras:[{id:'x1',emoji:'&#x26AB;',name:'Ajonjol\xED',note:'Gratis',price:0}]}
+ {id:'en6',emoji:'&#x26AB;',name:'Boliblitz',price:100,tag:'popular',desc:'08 bolitas de tampico, philadelphia, anguila y ceboll\xEDn.',ingredients:[ing('b1','&#x1F41F;','Tampico','Relleno',false),ing('b2','&#x1F9C0;','Philadelphia','Relleno',false),ing('b3','&#x1FAD9;','Anguila','Salsa',true),ing('b4','&#x1F331;','Ceboll\xEDn','Decorado',true)],extras:[{id:'x1',emoji:'&#x26AB;',name:'Ajonjol\xED',note:'Gratis',price:0}]},
+ // NEW: Papiboneles
+ {id:'en7',emoji:'&#x1F35F;',name:'Papiboneles',price:130,tag:'new',hasSauce:true,desc:'Cama de papa sazonada con boneles en salsa a elecci\xF3n, acompa\xF1ados de queso amarillo preparado.',ingredients:[ing('b1','&#x1F954;','Papa sazonada','Cama base',false),ing('b2','&#x1F357;','Boneles','Con salsa',false),ing('b3','&#x1F9C0;','Queso amarillo preparado','Encima',false)],extras:[]}
 ],
 combos:[
- {id:'c1',emoji:'&#x1F371;',name:'Mayito',price:145,tag:'popular',hasProtein:true,hasSauce:true,desc:'Prote\xEDna a elegir. Arriba tampico con boneless ba\xF1ados en salsa de elecci\xF3n.',ingredients:[ing('b1','&#x1F363;','Sushi (prot. elegida)','Base',false),ing('b2','&#x1F41F;','Tampico','Arriba',true),ing('b3','&#x1F357;','Boneless','Con salsa',false)],extras:[]},
  {id:'c2',emoji:'&#x1F371;',name:'Botix',price:120,tag:null,hasSauce:true,desc:'Mitad sushi (bombazo, sonora o california) mitad boneless. Salsa a elegir.',ingredients:[ing('b1','&#x1F363;','1/2 sushi a elegir','Bombazo/Sonora/California',false),ing('b2','&#x1F357;','Boneless','Mitad',false)],extras:[]},
  {id:'c3',emoji:'&#x1F371;',name:'Paquetellenes',price:150,tag:null,hasSauce:true,desc:'1/2 sushi (bombazo, sonora o california), 1/2 boneless, 1/2 papas sazonadas.',ingredients:[ing('b1','&#x1F363;','1/2 sushi a elegir','Bombazo/Sonora/California',false),ing('b2','&#x1F357;','Boneless','Mitad',false),ing('b3','&#x1F35F;','Papas sazonadas','Mitad porci\xF3n',false)],extras:[]},
  {id:'c4',emoji:'&#x1F371;',name:'Charola',price:220,tag:'popular',hasSauce:true,desc:'1/2 California, 1/2 boneless, 1/2 papas sazonadas, dedos de queso y tampico.',ingredients:[ing('b1','&#x1F363;','1/2 California','Sushi',false),ing('b2','&#x1F357;','Boneless','Mitad',false),ing('b3','&#x1F35F;','Papas sazonadas','Mitad',false),ing('b4','&#x1F9C0;','Dedos de queso','Incluidos',true),ing('b5','&#x1F41F;','Tampico','Incluido',true)],extras:[]},
  {id:'c5',emoji:'&#x1F371;',name:'La Botanera',price:350,tag:'popular',hasSauce:true,desc:'01 alitas, 01 papas sazonadas, 01 boneles, 03 caribes, zanahoria, apio, aderezos y salsas.',ingredients:[ing('b1','&#x1F357;','Alitas','1 orden',false),ing('b2','&#x1F35F;','Papas sazonadas','1 orden',false),ing('b3','&#x1F357;','Boneles','1 orden',false),ing('b4','&#x1F336;&#xFE0F;','3 Caribes','Rellenos',true),ing('b5','&#x1F955;','Zanahoria y apio','Al lado',true)],extras:[]},
  {id:'c6',emoji:'&#x1F371;',name:'La Cajita',price:400,tag:null,hasSauce:true,desc:'O. boneles, 03 sushis (bombazo, california y sonora), apio, zanahoria, aderezo, ranch, anguila, soya y siracha.',ingredients:[ing('b1','&#x1F357;','Boneles','1 orden',false),ing('b2','&#x1F363;','California','Sushi',false),ing('b3','&#x1F363;','Bombazo','Sushi',false),ing('b4','&#x1F363;','Sonora','Sushi',false),ing('b5','&#x1F955;','Apio y zanahoria','Al lado',true)],extras:[]},
- {id:'c7',emoji:'&#x1F371;',name:'La Caja',price:650,tag:'new',hasSauce:true,desc:'O. boneles, O. papas sazonadas, 3 sushis, O. dedos queso philadelphia, tampico, chipotle, ranch, anguila, soya y siracha.',ingredients:[ing('b1','&#x1F357;','Boneles','1 orden',false),ing('b2','&#x1F35F;','Papas sazonadas','1 orden',false),ing('b3','&#x1F363;','Sushis x3','California, Bombazo, Sonora',false),ing('b4','&#x1F9C0;','Dedos de queso','1 orden',false),ing('b5','&#x1F41F;','Tampico','Incluido',true)],extras:[]},
+ // CHANGED: La Caja now has 2 orders of boneles, each with its own sauce (maxSauces:2 per order)
+ {id:'c7',emoji:'&#x1F371;',name:'La Caja',price:650,tag:'new',hasSauce:true,hasSauce2:true,desc:'2 \xF3rdenes de boneles (salsa a elecci\xF3n c/u), O. papas sazonadas, 3 sushis, O. dedos queso philadelphia, tampico, chipotle, ranch, anguila, soya y siracha.',ingredients:[ing('b1','&#x1F357;','Boneles x2','2 \xF3rdenes — salsa individual',false),ing('b2','&#x1F35F;','Papas sazonadas','1 orden',false),ing('b3','&#x1F363;','Sushis x3','California, Bombazo, Sonora',false),ing('b4','&#x1F9C0;','Dedos de queso','1 orden',false),ing('b5','&#x1F41F;','Tampico','Incluido',true)],extras:[]},
  {id:'c8',emoji:'&#x1F363;',name:'Rosca',price:350,tag:null,desc:'Orden especial. Consultar disponibilidad.',ingredients:[ing('b1','&#x1F363;','Rosca de sushi','Presentaci\xF3n especial',false)],extras:[]}
 ],
 especiales:[
@@ -378,14 +402,15 @@ especiales:[
  {id:'esp3',emoji:'&#x1F357;',name:'Boneless con Papas',price:120,tag:null,hasSauce:true,desc:'Boneless + papas sazonadas.',ingredients:[ing('b1','&#x1F357;','Pollo empanizado','Tiras',false),ing('b2','&#x1F35F;','Papas sazonadas','Incluidas',false),ing('b3','&#x1F96C;','Apio','Guarnici\xF3n',true),ing('b4','&#x1F955;','Zanahoria','Guarnici\xF3n',true)],extras:[]},
  {id:'esp4',emoji:'&#x1F35A;',name:'Yakimeshi',price:135,tag:null,desc:'Arroz frito con pollo, res, tocino y camar\xF3n decorada con aguacate y tampico.',ingredients:[ing('b1','&#x1F35A;','Arroz frito','Base',false),ing('b2','&#x1F357;','Pollo','Mix',true),ing('b3','&#x1F969;','Res','Mix',true),ing('b4','&#x1F953;','Tocino','Mix',true),ing('b5','&#x1F990;','Camar\xF3n','Mix',true),ing('b6','&#x1F951;','Aguacate','Decorado',true),ing('b7','&#x1F41F;','Tampico','Decorado',true)],extras:[{id:'x1',emoji:'&#x1F969;',name:'Prote\xEDna extra',note:'+$15',price:15}]},
  {id:'esp5',emoji:'&#x1F35A;',name:'Gohan',price:135,tag:'popular',desc:'Plancha de arroz natural o empanizado, philadelphia, tampico, res, pollo, tocino, aguacate, camar\xF3n, serrano y ceboll\xEDn.',ingredients:[ing('b1','&#x1F35A;','Arroz (nat. o empanizado)','Base',false),ing('b2','&#x1F9C0;','Philadelphia','Encima',true),ing('b3','&#x1F41F;','Tampico','Encima',true),ing('b4','&#x1F969;','Res','Mix prot.',true),ing('b5','&#x1F357;','Pollo','Mix prot.',true),ing('b6','&#x1F953;','Tocino','Mix prot.',true),ing('b7','&#x1F990;','Camar\xF3n','Mix prot.',true),ing('b8','&#x1F951;','Aguacate','Decorado',true),ing('b9','&#x1F336;&#xFE0F;','Serrano','Decorado',true),ing('b10','&#x1F331;','Ceboll\xEDn','Decorado',true)],extras:[{id:'x1',emoji:'&#x1F969;',name:'Prote\xEDna extra',note:'+$15',price:15}]},
- {id:'esp6',emoji:'&#x1F363;',name:'Bolas \u2014 B\xE1sica',price:75,tag:null,hasProtein:true,desc:'01 prote\xEDna a elegir: res, camar\xF3n, tocino, pollo o surimi.',ingredients:[ing('b1','&#x1F9C0;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b4','&#x1F41F;','Tampico','Por fuera',true),ing('b5','&#x1FAD9;','Anguila','Por fuera',true),ing('b6','&#x26AB;','Ajonjol\xED','Por fuera',true)],extras:[]},
- {id:'esp7',emoji:'&#x1F363;',name:'Bolas \u2014 Camar\xF3n',price:85,tag:null,desc:'Bolas de sushi con camar\xF3n.',ingredients:[ing('b1','&#x1F9C0;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b4','&#x1F990;','Camar\xF3n','Prote\xEDna',false),ing('b5','&#x1F41F;','Tampico','Por fuera',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'esp8',emoji:'&#x1F363;',name:'Bolas \u2014 Mixta',price:95,tag:null,hasProtein:true,desc:'Bolas de sushi con mix de prote\xEDnas a elegir.',ingredients:[ing('b1','&#x1F9C0;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b4','&#x1F41F;','Tampico','Por fuera',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]}
+ {id:'esp6',emoji:'&#x1F363;',name:'Bolas \u2014 B\xE1sica',price:75,tag:null,hasProtein:true,desc:'01 prote\xEDna a elegir: res, camar\xF3n, tocino, pollo o surimi.',ingredients:[ing('b1','&#x1F9C0;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b4','&#x1F41F;','Tampico','Por fuera',true),ing('b5','&#x1FAD9;','Anguila','Por fuera',true),ing('b6','&#x26AB;','Ajonjol\xED','Por fuera',true)],extras:[]},
+ {id:'esp7',emoji:'&#x1F363;',name:'Bolas \u2014 Camar\xF3n',price:85,tag:null,desc:'Bolas de sushi con camar\xF3n.',ingredients:[ing('b1','&#x1F9C0;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b4','&#x1F990;','Camar\xF3n','Prote\xEDna',false),ing('b5','&#x1F41F;','Tampico','Por fuera',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'esp8',emoji:'&#x1F363;',name:'Bolas \u2014 Mixta',price:95,tag:null,hasProtein:true,desc:'Bolas de sushi con mix de prote\xEDnas a elegir.',ingredients:[ing('b1','&#x1F9C0;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b4','&#x1F41F;','Tampico','Por fuera',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]}
 ],
 bebidas:[
- {id:'b1',emoji:'&#x1F9CB;',name:'T\xE9 1 litro',price:25,tag:null,desc:'T\xE9 helado 1 litro.',ingredients:[ing('b1','&#x1F9CB;','T\xE9 helado','1 litro',false),ing('b2','&#x1F9CA;','Hielo','Al gusto',true)],extras:[{id:'x1',emoji:'&#x1F34B;',name:'Lim\xF3n',note:'Gratis',price:0}]},
- {id:'b2',emoji:'&#x1F964;',name:'Coca Cola',price:25,tag:null,desc:'Refresco Coca Cola.',ingredients:[ing('b1','&#x1F964;','Coca Cola','355ml',false),ing('b2','&#x1F9CA;','Hielo','Al gusto',true)],extras:[{id:'x1',emoji:'&#x1F34B;',name:'Lim\xF3n',note:'Gratis',price:0}]},
- {id:'ex1',emoji:'&#x2795;',name:'Extra \u2014 Ingrediente',price:15,tag:null,isExtraIng:true,desc:'Camar\xF3n, pollo, res, tocino, surimi, tampico, soya, anguila o chipotle. $15 c/u.',ingredients:[],extras:[]},
+ {id:'b1',emoji:'&#x1F9CB;',name:'T\xE9 1 litro',price:25,tag:null,desc:'T\xE9 helado 1 litro.',ingredients:[ing('b1','&#x1F9CB;','T\xE9 helado','1 litro',false)],extras:[{id:'x1',emoji:'&#x1F34B;',name:'Lim\xF3n',note:'Gratis',price:0}]},
+ // CHANGED: Coca-Cola 600ml, no ice
+ {id:'b2',emoji:'&#x1F964;',name:'Coca-Cola 600ml',price:25,tag:null,desc:'Coca-Cola 600ml roja.',ingredients:[ing('b1','&#x1F964;','Coca-Cola','600ml',false)],extras:[]},
+ {id:'ex1',emoji:'&#x2795;',name:'Extra \u2014 Ingrediente',price:15,tag:null,isExtraIng:true,desc:'Camar\xF3n, pollo, res, tocino, surimi, tampico, soya, anguila, chipotle o ranch. $15 c/u.',ingredients:[],extras:[]},
  {id:'ex2',emoji:'&#x1F9C0;',name:'Extra \u2014 Queso Gratinado',price:25,tag:null,desc:'Queso gratinado extra para cualquier platillo.',ingredients:[],extras:[]}
 ]
 };
@@ -398,7 +423,25 @@ var PROMOS=[
 
 // ── State ──────────────────────────────────────────────────────────────────────
 var orderInstances=[],instanceCounter=0,currentItem=null,currentInstanceId=null,isNewInstance=false,currentMods={};
+var orderType='recoger'; // 'recoger' or 'envio'
 function genId(){return 'inst_'+(++instanceCounter);}
+
+// ── Order type toggle ──────────────────────────────────────────────────────────
+function setOrderType(type){
+  orderType=type;
+  document.getElementById('btn-recoger').className='order-type-btn'+(type==='recoger'?' active':'');
+  document.getElementById('btn-envio').className='order-type-btn'+(type==='envio'?' active':'');
+  // Show/hide fields based on type
+  var phoneWrap=document.getElementById('cf-phone-wrap');
+  var addressWrap=document.getElementById('cf-address-wrap');
+  if(type==='envio'){
+    phoneWrap.classList.remove('cf-hidden');
+    addressWrap.classList.remove('cf-hidden');
+  } else {
+    phoneWrap.classList.add('cf-hidden');
+    addressWrap.classList.add('cf-hidden');
+  }
+}
 
 // ── Init ───────────────────────────────────────────────────────────────────────
 function init(){
@@ -450,8 +493,12 @@ function refreshCardState(itemId){
   container.innerHTML=insts.map(function(inst,idx){
     var mods=inst.mods,tags=[];
     if(mods.alga)tags.push(mods.alga==='con'?'Con alga':'Sin alga');
-    if(mods.protein){var pr=PROTEINS.filter(function(x){return x.id===mods.protein;})[0];if(pr)tags.push(pr.name);}
+    if(mods.proteins&&mods.proteins.length){
+      var pnames=mods.proteins.map(function(pid){var pr=PROTEINS.filter(function(x){return x.id===pid;})[0];return pr?pr.name:'';}).filter(Boolean);
+      if(pnames.length)tags.push(pnames.join('+'));
+    }
     if(mods.sauces&&Object.keys(mods.sauces).length){tags.push(SAUCES.filter(function(s){return mods.sauces[s.id];}).map(function(s){return s.name;}).join('/'));}
+    if(mods.sauces2&&Object.keys(mods.sauces2).length){tags.push('Orden2: '+SAUCES.filter(function(s){return mods.sauces2[s.id];}).map(function(s){return s.name;}).join('/'));}
     if(mods.extraIng)tags.push(mods.extraIng);
     var label=tags.length?tags.join(' \xB7 '):('Unidad '+(idx+1));
     return '<div class="inst-row" onclick="event.stopPropagation()">'
@@ -466,7 +513,7 @@ function addNewInstance(itemId,e){
   if(e)e.stopPropagation();
   var item=findItem(itemId);if(!item)return;
   var iid=genId();
-  orderInstances.push({instanceId:iid,itemId:itemId,item:item,mods:{removed:{},extras:{},sauces:{},protein:null,alga:null,extraIng:null},extraCost:0});
+  orderInstances.push({instanceId:iid,itemId:itemId,item:item,mods:{removed:{},extras:{},sauces:{},sauces2:{},proteins:[],alga:null,extraIng:null},extraCost:0});
   isNewInstance=true;
   refreshCardState(itemId);
   openModalEdit(iid,null);
@@ -485,7 +532,15 @@ function openModalEdit(iid,e){
   var inst=orderInstances.filter(function(o){return o.instanceId===iid;})[0];if(!inst)return;
   currentItem=inst.item;currentInstanceId=iid;
   var sv=inst.mods;
-  currentMods={removed:JSON.parse(JSON.stringify(sv.removed||{})),extras:JSON.parse(JSON.stringify(sv.extras||{})),sauces:JSON.parse(JSON.stringify(sv.sauces||{})),protein:sv.protein||null,alga:sv.alga||null,extraIng:sv.extraIng||null};
+  currentMods={
+    removed:JSON.parse(JSON.stringify(sv.removed||{})),
+    extras:JSON.parse(JSON.stringify(sv.extras||{})),
+    sauces:JSON.parse(JSON.stringify(sv.sauces||{})),
+    sauces2:JSON.parse(JSON.stringify(sv.sauces2||{})),
+    proteins:(sv.proteins||[]).slice(),
+    alga:sv.alga||null,
+    extraIng:sv.extraIng||null
+  };
   var insts=getItemInstances(inst.itemId),idx=insts.findIndex(function(o){return o.instanceId===iid;})+1;
   document.getElementById('modal-title').textContent=inst.item.name;
   document.getElementById('modal-subtitle').textContent='Unidad '+idx+' de '+insts.length+' \u2014 Personaliza como quieras';
@@ -493,6 +548,7 @@ function openModalEdit(iid,e){
   document.getElementById('modal-overlay').classList.add('open');
   document.body.style.overflow='hidden';
 }
+
 function buildModalBody(item){
   var fixed=item.ingredients?item.ingredients.filter(function(i){return!i.removable;}):[];
   var removable=item.ingredients?item.ingredients.filter(function(i){return i.removable;}):[];
@@ -508,15 +564,29 @@ function buildModalBody(item){
     html+='<div class="alga-btn'+(currentMods.alga==='sin'?' sel':'')+'" id="alga-sin" onclick="selAlga(\'sin\')">\u274C Sin alga</div>';
     html+='</div></div>';
   }
+  // MULTI-SELECT PROTEINS: first protein free, additional $15 each
   if(item.hasProtein){
-    html+='<div class="protein-section"><div class="protein-section-title">&#x1F969; Elige tu prote\xEDna</div><div class="protein-grid">';
-    PROTEINS.forEach(function(p){html+='<div class="protein-btn'+(currentMods.protein===p.id?' sel':'')+'" id="pb-'+p.id+'" onclick="selProt(\''+p.id+'\')"><span class="p-emoji">'+p.emoji+'</span><span class="p-name">'+p.name+'</span></div>';});
-    html+='</div></div>';
+    html+='<div class="protein-section"><div class="protein-section-title">&#x1F969; Elige tu(s) prote\xEDna(s)</div><div class="protein-grid">';
+    PROTEINS.forEach(function(p){
+      var cnt=currentMods.proteins.filter(function(x){return x===p.id;}).length;
+      var isSel=cnt>0;
+      html+='<div class="protein-btn'+(isSel?' sel':'')+'" id="pb-'+p.id+'" onclick="togProt(\''+p.id+'\')"><span class="p-emoji">'+p.emoji+'</span><span class="p-name">'+p.name+'</span>'+(cnt>1?'<span class="p-count">'+cnt+'</span>':'')+'</div>';
+    });
+    html+='</div><div class="protein-note">Primera prote\xEDna incluida · Extras +$15 c/u</div></div>';
   }
+  // SAUCE — up to 2 selections for boneless items
   if(item.hasSauce){
-    html+='<div class="sauce-section"><div class="sauce-section-title">&#x1FAD9; Elige tu salsa</div><div class="sauce-grid">';
-    SAUCES.forEach(function(s){html+='<div class="sauce-btn'+(currentMods.sauces[s.id]?' sel':'')+'" id="sb-'+s.id+'" onclick="togSauce(\''+s.id+'\')">'+s.name+'</div>';});
-    html+='</div></div>';
+    var maxSauces=2; // boneless can pick up to 2
+    var selCount=Object.keys(currentMods.sauces).length;
+    html+='<div class="sauce-section"><div class="sauce-section-title">&#x1FAD9; Salsa para los boneles (hasta 2)</div><div class="sauce-grid">';
+    SAUCES.forEach(function(s){html+='<div class="sauce-btn'+(currentMods.sauces[s.id]?' sel':'')+'" id="sb-'+s.id+'" onclick="togSauce(\''+s.id+'\','+maxSauces+',\'sauces\',\'sb-\')">'+s.name+'</div>';});
+    html+='</div><div class="sauce-note">Puedes elegir hasta 2 salsas</div></div>';
+  }
+  // SECOND SAUCE SET for La Caja (2nd order of boneles)
+  if(item.hasSauce2){
+    html+='<div class="sauce-section"><div class="sauce-section-title">&#x1FAD9; Salsa para la 2\xAA orden de boneles (hasta 2)</div><div class="sauce-grid">';
+    SAUCES.forEach(function(s){html+='<div class="sauce-btn'+(currentMods.sauces2[s.id]?' sel':'')+'" id="sb2-'+s.id+'" onclick="togSauce(\''+s.id+'\',2,\'sauces2\',\'sb2-\')">'+s.name+'</div>';});
+    html+='</div><div class="sauce-note">Para la 2\xAA orden de boneles</div></div>';
   }
   if(fixed.length){
     html+='<div class="ing-section"><div class="ing-section-title">&#x1F512; Ingredientes fijos</div><div class="ing-list">';
@@ -553,14 +623,43 @@ function selAlga(val){
   currentMods.alga=currentMods.alga===val?null:val;
   ['con','sin'].forEach(function(v){var b=document.getElementById('alga-'+v);if(b)b.className='alga-btn'+(currentMods.alga===v?' sel':'');});
 }
-function selProt(pid){
-  currentMods.protein=currentMods.protein===pid?null:pid;
-  PROTEINS.forEach(function(p){var b=document.getElementById('pb-'+p.id);if(b)b.className='protein-btn'+(currentMods.protein===p.id?' sel':'');});
+
+// MULTI-SELECT proteins: toggle one at a time. First protein free, each additional costs $15
+function togProt(pid){
+  var idx=currentMods.proteins.indexOf(pid);
+  if(idx>=0){
+    currentMods.proteins.splice(idx,1);
+  } else {
+    currentMods.proteins.push(pid);
+  }
+  // Re-render protein buttons
+  PROTEINS.forEach(function(p){
+    var cnt=currentMods.proteins.filter(function(x){return x===p.id;}).length;
+    var isSel=cnt>0;
+    var b=document.getElementById('pb-'+p.id);
+    if(b){
+      b.className='protein-btn'+(isSel?' sel':'');
+      // update count badge
+      var badge=b.querySelector('.p-count');
+      if(cnt>1){if(!badge){badge=document.createElement('span');badge.className='p-count';b.appendChild(badge);}badge.textContent=cnt;}
+      else if(badge){badge.remove();}
+    }
+  });
 }
-function togSauce(sid){
-  if(currentMods.sauces[sid])delete currentMods.sauces[sid];else currentMods.sauces[sid]=true;
-  var b=document.getElementById('sb-'+sid);if(b)b.className='sauce-btn'+(currentMods.sauces[sid]?' sel':'');
+
+// Sauce toggle (up to maxSauces, works for both sauces and sauces2)
+function togSauce(sid,maxSauces,field,prefix){
+  var fieldName=field||'sauces';var pre=prefix||'sb-';
+  if(currentMods[fieldName][sid]){
+    delete currentMods[fieldName][sid];
+  } else {
+    var selCount=Object.keys(currentMods[fieldName]).length;
+    if(selCount>=maxSauces){alert('M\xE1ximo '+maxSauces+' salsa(s) para esta elecci\xF3n.');return;}
+    currentMods[fieldName][sid]=true;
+  }
+  SAUCES.forEach(function(s){var b=document.getElementById(pre+s.id);if(b)b.className='sauce-btn'+(currentMods[fieldName][s.id]?' sel':'');});
 }
+
 function togIng(ingId){
   if(currentMods.removed[ingId])delete currentMods.removed[ingId];else currentMods.removed[ingId]=true;
   var row=document.getElementById('ming-'+ingId),btn=row.querySelector('.ing-toggle'),rm=!!currentMods.removed[ingId];
@@ -571,11 +670,14 @@ function togExtra(exId){
   var row=document.getElementById('mex-'+exId),btn=row.querySelector('.ing-toggle'),ad=!!currentMods.extras[exId];
   row.className='ing-item'+(ad?' extra-added':'');btn.textContent=ad?'Quitar':'Agregar';
 }
+
 function confirmMods(){
   if(!currentInstanceId)return;
   var inst=orderInstances.filter(function(o){return o.instanceId===currentInstanceId;})[0];if(!inst)return;
   inst.mods=currentMods;
-  inst.extraCost=(inst.item.extras||[]).filter(function(ex){return currentMods.extras&&currentMods.extras[ex.id];}).reduce(function(s,ex){return s+ex.price;},0);
+  // Calculate extra protein cost: first protein free, rest $15 each
+  var proteinExtraCost=Math.max(0,(currentMods.proteins.length-1))*15;
+  inst.extraCost=(inst.item.extras||[]).filter(function(ex){return currentMods.extras&&currentMods.extras[ex.id];}).reduce(function(s,ex){return s+ex.price;},0)+proteinExtraCost;
   isNewInstance=false;refreshCardState(inst.itemId);closeModal();updateBar();
 }
 function cancelModal(){
@@ -593,6 +695,8 @@ function sendWhatsApp(){
   if(!orderInstances.length){alert('\xA1Primero selecciona algo del men\xFA! \uD83C\uDF63');return;}
   document.getElementById('client-overlay').classList.add('open');
   document.body.style.overflow='hidden';
+  // Reset to 'recoger' each time
+  setOrderType('recoger');
   setTimeout(function(){document.getElementById('cl-name').focus();},150);
 }
 function closeClientModal(){
@@ -601,12 +705,18 @@ function closeClientModal(){
 }
 function submitOrder(){
   var name=document.getElementById('cl-name').value.trim();
-  var phone=document.getElementById('cl-phone').value.trim();
-  var address=document.getElementById('cl-address').value.trim();
   if(!name){alert('Por favor ingresa tu nombre \uD83D\uDC64');document.getElementById('cl-name').focus();return;}
-  if(!phone){alert('Por favor ingresa tu tel\xE9fono \uD83D\uDCF1');document.getElementById('cl-phone').focus();return;}
-  closeClientModal();
-  doSendWhatsApp(name,phone,address);
+  if(orderType==='envio'){
+    var phone=document.getElementById('cl-phone').value.trim();
+    var address=document.getElementById('cl-address').value.trim();
+    if(!phone){alert('Por favor ingresa tu tel\xE9fono \uD83D\uDCF1');document.getElementById('cl-phone').focus();return;}
+    if(!address){alert('Por favor ingresa la direcci\xF3n de entrega \uD83D\uDCCD');document.getElementById('cl-address').focus();return;}
+    closeClientModal();
+    doSendWhatsApp(name,phone,address);
+  } else {
+    closeClientModal();
+    doSendWhatsApp(name,null,null);
+  }
 }
 
 // ── Bar & Summary ──────────────────────────────────────────────────────────────
@@ -617,18 +727,24 @@ function updateBar(){
   document.getElementById('bar-count').textContent=count+(count===1?' art\xEDculo':' art\xEDculos');
   renderOrderSummary();
 }
+
 function modsLabel(inst){
   var mods=inst.mods,item=inst.item,lines='';
   if(mods.extraIng)lines+='<div class="oi-mod-added">&#x2795; Ingrediente: '+mods.extraIng+'</div>';
   if(mods.alga)lines+='<div class="oi-mod-added">&#x1F33F; Alga: '+(mods.alga==='con'?'Con alga':'Sin alga')+'</div>';
-  if(mods.protein){var pr=PROTEINS.filter(function(x){return x.id===mods.protein;})[0];if(pr)lines+='<div class="oi-mod-added">&#x1F969; Prote\xEDna: '+pr.name+'</div>';}
+  if(mods.proteins&&mods.proteins.length){
+    var pnames=mods.proteins.map(function(pid){var pr=PROTEINS.filter(function(x){return x.id===pid;})[0];return pr?pr.name:'';}).filter(Boolean);
+    lines+='<div class="oi-mod-added">&#x1F969; Prote\xEDna(s): '+pnames.join(', ')+(mods.proteins.length>1?' (+$'+((mods.proteins.length-1)*15)+')':'')+'</div>';
+  }
   if(mods.sauces&&Object.keys(mods.sauces).length){var sn=SAUCES.filter(function(s){return mods.sauces[s.id];}).map(function(s){return s.name;}).join(', ');lines+='<div class="oi-mod-added">&#x1FAD9; Salsa: '+sn+'</div>';}
+  if(mods.sauces2&&Object.keys(mods.sauces2).length){var sn2=SAUCES.filter(function(s){return mods.sauces2[s.id];}).map(function(s){return s.name;}).join(', ');lines+='<div class="oi-mod-added">&#x1FAD9; Salsa 2\xAA orden: '+sn2+'</div>';}
   var rm=(item.ingredients||[]).filter(function(i){return mods.removed&&mods.removed[i.id];});
   if(rm.length)lines+='<div class="oi-mod-removed">&#x1F6AB; Sin: '+rm.map(function(i){return i.name;}).join(' \xB7 ')+'</div>';
   var ax=(item.extras||[]).filter(function(ex){return mods.extras&&mods.extras[ex.id];});
   if(ax.length)lines+='<div class="oi-mod-added">&#x2705; Extra: '+ax.map(function(ex){return ex.name+(ex.price>0?' (+$'+ex.price+')':' (gratis)');}).join(' \xB7 ')+'</div>';
   return lines;
 }
+
 function renderOrderSummary(){
   var list=document.getElementById('order-list');if(!list)return;
   if(!orderInstances.length){list.innerHTML='<div class="empty-state"><p>&#x1F6D2;</p><span>A\xFAn no has seleccionado nada.<br>Explora el men\xFA y elige tus favoritos.</span></div>';return;}
@@ -660,16 +776,21 @@ function doSendWhatsApp(clientName,clientPhone,clientAddress){
   var msg='\uD83C\uDF63 *NUEVO PEDIDO \u2014 La Esquina del Sushi*\n';
   msg+='\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n';
   msg+='\uD83D\uDC64 *Nombre:* '+clientName+'\n';
-  msg+='\uD83D\uDCF1 *Tel\xE9fono:* '+clientPhone+'\n';
+  if(clientPhone)msg+='\uD83D\uDCF1 *Tel\xE9fono:* '+clientPhone+'\n';
   if(clientAddress)msg+='\uD83D\uDCCD *Direcci\xF3n:* '+clientAddress+'\n';
+  msg+='\uD83D\uDCE6 *Tipo:* '+(orderType==='envio'?'Env\xEDo a domicilio':'Recoge en sucursal')+'\n';
   msg+='\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n';
   orderInstances.forEach(function(inst){
     var mods=inst.mods,item=inst.item,ec=inst.extraCost||0;
     msg+='\u2022 '+item.name+' \u2014 $'+(item.price+ec)+'\n';
     if(mods.extraIng)msg+='   + Ingrediente: '+mods.extraIng+'\n';
     if(mods.alga)msg+='   Alga: '+(mods.alga==='con'?'Con alga':'Sin alga')+'\n';
-    if(mods.protein){var pr=PROTEINS.filter(function(x){return x.id===mods.protein;})[0];if(pr)msg+='   Prote\xEDna: '+pr.name+'\n';}
+    if(mods.proteins&&mods.proteins.length){
+      var pnames=mods.proteins.map(function(pid){var pr=PROTEINS.filter(function(x){return x.id===pid;})[0];return pr?pr.name:'';}).filter(Boolean);
+      msg+='   Prote\xEDna(s): '+pnames.join(', ')+(mods.proteins.length>1?' (+$'+((mods.proteins.length-1)*15)+')':'')+'\n';
+    }
     if(mods.sauces&&Object.keys(mods.sauces).length){var sn=SAUCES.filter(function(s){return mods.sauces[s.id];}).map(function(s){return s.name;}).join(', ');msg+='   Salsa: '+sn+'\n';}
+    if(mods.sauces2&&Object.keys(mods.sauces2).length){var sn2=SAUCES.filter(function(s){return mods.sauces2[s.id];}).map(function(s){return s.name;}).join(', ');msg+='   Salsa 2\xAA orden boneles: '+sn2+'\n';}
     var rm=(item.ingredients||[]).filter(function(i){return mods.removed&&mods.removed[i.id];});
     if(rm.length)msg+='   Sin: '+rm.map(function(i){return i.name;}).join(', ')+'\n';
     var ax=(item.extras||[]).filter(function(ex){return mods.extras&&mods.extras[ex.id];});
