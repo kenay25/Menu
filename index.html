@@ -3,188 +3,249 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>La Bella Cocina — Menú</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>La Esquina del Sushi — Menú</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--cream:#F6EFE2;--dark:#18120A;--gold:#C8923A;--gold-light:#E5B96A;--rust:#8B3A1A;--green:#2B4A2D;--green-mid:#3D6B40;--muted:#7A6448;--card:#FDFAF3;--border:rgba(200,146,58,0.18);}
+:root{
+  --pink:#E8547A;--pink-light:#F9D0DC;--pink-deep:#C23060;
+  --cream:#FFF8F9;--dark:#1A0A10;
+  --white:#FFFFFF;--muted:#9E7080;--border:rgba(232,84,122,0.2);
+}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--cream);font-family:'Outfit',sans-serif;color:var(--dark);min-height:100vh;}
-.header{background:var(--dark);padding:36px 20px 28px;text-align:center;position:relative;overflow:hidden;}
-.header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -20%,rgba(200,146,58,0.3) 0%,transparent 65%);}
-.header-badge{display:inline-block;font-size:11px;letter-spacing:5px;color:var(--gold);text-transform:uppercase;margin-bottom:12px;position:relative;}
-.header h1{font-family:'Cormorant Garamond',serif;font-size:clamp(42px,9vw,72px);color:#F6EFE2;line-height:0.95;position:relative;font-weight:600;}
-.header h1 em{color:var(--gold);font-style:italic;}
-.header-rule{display:flex;align-items:center;gap:14px;margin:14px auto;max-width:220px;position:relative;}
-.header-rule::before,.header-rule::after{content:'';flex:1;height:1px;background:rgba(200,146,58,0.4);}
-.header-rule span{color:var(--gold);font-size:14px;}
-.header-sub{color:var(--muted);font-size:13px;letter-spacing:1.5px;position:relative;}
-.main-tabs{background:var(--dark);display:flex;justify-content:center;flex-wrap:wrap;gap:6px;padding:0 16px 14px;position:sticky;top:0;z-index:100;box-shadow:0 4px 24px rgba(0,0,0,0.35);}
-.main-tab{background:transparent;border:1px solid rgba(200,146,58,0.25);color:var(--muted);padding:7px 16px;border-radius:50px;font-family:'Outfit',sans-serif;font-size:12px;letter-spacing:1px;cursor:pointer;transition:all 0.2s;text-transform:uppercase;}
-.main-tab:hover,.main-tab.active{background:var(--gold);border-color:var(--gold);color:var(--dark);font-weight:600;}
-.sub-tabs-wrap{background:rgba(24,18,10,0.04);border-bottom:1px solid var(--border);display:flex;justify-content:center;gap:4px;padding:10px 16px;flex-wrap:wrap;}
-.sub-tab{background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 18px;border-radius:50px;font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;transition:all 0.2s;}
-.sub-tab:hover{border-color:var(--gold);color:var(--gold);}
-.sub-tab.active{background:var(--dark);border-color:var(--dark);color:var(--cream);}
-.sub-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:middle;}
-.dot-simple{background:#7ABEAB;}.dot-mixta{background:var(--gold);}.dot-compuesta{background:var(--rust);}
-.main{max-width:960px;margin:0 auto;padding:28px 16px 160px;}
-.section{display:none;}.section.active{display:block;}
-.subsection{display:none;animation:fadeUp 0.3s ease;}.subsection.active{display:block;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.sub-header{margin-bottom:24px;}
-.sub-header h3{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;margin-bottom:3px;}
-.sub-header h3 em{color:var(--gold);font-style:italic;}
-.sub-header p{color:var(--muted);font-size:13px;}
-.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;}
-.menu-card{background:var(--card);border-radius:18px;padding:20px;border:1.5px solid transparent;cursor:pointer;transition:all 0.22s;position:relative;box-shadow:0 2px 14px rgba(24,18,10,0.06);}
-.menu-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(24,18,10,0.11);}
-.menu-card.selected{border-color:var(--green);background:#EFF6EF;}
-.menu-card.selected::after{content:'✓';position:absolute;top:14px;right:14px;background:var(--green);color:white;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;}
-.card-emoji{font-size:34px;margin-bottom:10px;display:block;}
-.card-name{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;margin-bottom:5px;}
-.card-desc{font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:12px;}
-.card-footer{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
-.card-price{font-size:20px;font-weight:600;color:var(--gold);}
-.card-tag{font-size:10.5px;padding:3px 10px;border-radius:20px;font-weight:500;letter-spacing:0.5px;text-transform:uppercase;}
-.tag-popular{background:#FFF0D6;color:var(--gold);}.tag-new{background:#E8F5E9;color:var(--green);}.tag-spicy{background:#FDE8E8;color:var(--rust);}.tag-veggie{background:#E8F5E9;color:#2E7D32;}
-.btn-customize{display:none;width:100%;margin-top:10px;background:var(--dark);color:var(--cream);border:none;border-radius:10px;padding:9px;font-family:'Outfit',sans-serif;font-size:12px;letter-spacing:0.5px;cursor:pointer;transition:background 0.2s;gap:6px;align-items:center;justify-content:center;}
-.btn-customize:hover{background:var(--gold);color:var(--dark);}
-.menu-card.selected .btn-customize{display:flex;}
-.qty-wrap{display:none;align-items:center;justify-content:center;gap:4px;margin-top:8px;}
-.qty-btn{background:var(--dark);color:white;border:none;width:28px;height:28px;border-radius:50%;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;flex-shrink:0;}
-.qty-btn:hover{background:var(--gold);}
-.qty-num{width:32px;text-align:center;font-weight:600;font-size:15px;}
+body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--dark);min-height:100vh;overflow-x:hidden;}
+.header{background:var(--dark);padding:0;position:relative;overflow:hidden;}
+.header-sakura{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.petal{position:absolute;animation:fall linear infinite;opacity:0.15;}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:0.2}100%{transform:translateY(120px) rotate(360deg);opacity:0}}
+.header-inner{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;gap:16px;flex-wrap:wrap;}
+.logo-area{display:flex;align-items:center;gap:14px;}
+.logo-kanji{font-family:'Noto Serif JP',serif;font-size:52px;color:var(--pink);line-height:1;text-shadow:0 0 30px rgba(232,84,122,0.5);}
+.logo-text h1{font-family:'Noto Serif JP',serif;font-size:clamp(22px,5vw,34px);color:var(--white);line-height:1.1;font-weight:700;}
+.logo-text h1 span{color:var(--pink);}
+.logo-text small{display:block;font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:3px;}
+.header-info{text-align:right;}
+.header-info p{font-size:13px;color:var(--pink-light);margin-bottom:3px;}
+.header-info strong{color:var(--white);}
+.header-info .hours{font-size:11px;color:var(--muted);margin-top:4px;}
+.header-banner{background:linear-gradient(90deg,var(--pink-deep),var(--pink),var(--pink-deep));padding:8px 20px;text-align:center;}
+.header-banner p{font-size:12px;color:var(--white);letter-spacing:1px;font-weight:500;}
+.main-tabs{background:#1F0D15;display:flex;justify-content:center;flex-wrap:wrap;gap:4px;padding:10px 12px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.4);border-bottom:1px solid var(--border);}
+.main-tab{background:transparent;border:1px solid rgba(232,84,122,0.25);color:var(--muted);padding:7px 13px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:11.5px;letter-spacing:0.5px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.main-tab:hover,.main-tab.active{background:var(--pink);border-color:var(--pink);color:white;font-weight:600;}
+.main{max-width:980px;margin:0 auto;padding:20px 14px 160px;}
+.section{display:none;animation:fadeUp 0.3s ease;}
+.section.active{display:block;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.sec-header{text-align:center;margin-bottom:22px;padding:16px 0 10px;border-bottom:1px solid var(--border);}
+.sec-header h2{font-family:'Noto Serif JP',serif;font-size:26px;color:var(--pink);font-weight:700;}
+.sec-header p{font-size:13px;color:var(--muted);margin-top:4px;}
+.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:12px;}
+.menu-card{background:var(--white);border-radius:16px;padding:18px;border:2px solid transparent;cursor:pointer;transition:all 0.22s;position:relative;box-shadow:0 2px 12px rgba(194,48,96,0.07);}
+.menu-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(194,48,96,0.15);}
+.menu-card.selected{border-color:var(--pink);background:#FFF0F4;}
+.card-emoji{font-size:32px;margin-bottom:8px;display:block;}
+.card-name{font-family:'Noto Serif JP',serif;font-size:17px;font-weight:700;margin-bottom:5px;}
+.card-desc{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:10px;}
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.card-price{font-size:22px;font-weight:700;color:var(--pink);}
+.card-tag{font-size:10px;padding:2px 9px;border-radius:20px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;}
+.tag-popular{background:#FDE8EF;color:var(--pink-deep);}
+.tag-hot{background:#FDE8E8;color:#C0392B;}
+.tag-new{background:#E8F5E9;color:#2E7D32;}
+.btn-customize{display:none;width:100%;margin-top:8px;background:var(--dark);color:var(--cream);border:none;border-radius:9px;padding:9px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:background 0.2s;}
+.btn-customize:hover{background:var(--pink);}
+.menu-card.selected .btn-customize{display:block;}
+.qty-wrap{display:none;align-items:center;justify-content:center;gap:6px;margin-top:8px;}
+.qty-btn{background:var(--dark);color:white;border:none;width:28px;height:28px;border-radius:50%;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.2s;}
+.qty-btn:hover{background:var(--pink);}
+.qty-num{width:32px;text-align:center;font-weight:700;font-size:15px;}
 .menu-card.selected .qty-wrap{display:flex;}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(18,12,6,0.65);backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center;padding:20px;}
+.custom-badge{display:inline-block;font-size:10px;padding:2px 8px;background:rgba(232,84,122,0.12);color:var(--pink-deep);border-radius:20px;margin-top:5px;font-weight:500;}
+.info-box{background:var(--white);border-radius:14px;padding:16px 18px;margin-bottom:14px;border-left:4px solid var(--pink);box-shadow:0 2px 10px rgba(194,48,96,0.07);}
+.info-box h4{font-family:'Noto Serif JP',serif;font-size:15px;color:var(--pink-deep);margin-bottom:6px;}
+.salsas-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.salsa-chip{background:var(--pink-light);color:var(--pink-deep);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,4,8,0.7);backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center;padding:20px;}
 .modal-overlay.open{display:flex;}
-.modal{background:var(--card);border-radius:24px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.4);animation:modalIn 0.28s cubic-bezier(0.34,1.56,0.64,1);}
+.modal{background:var(--white);border-radius:22px;width:100%;max-width:460px;max-height:88vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.4);animation:modalIn 0.28s cubic-bezier(0.34,1.56,0.64,1);}
 @keyframes modalIn{from{opacity:0;transform:scale(0.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.modal-head{background:var(--dark);padding:22px 24px 18px;border-radius:24px 24px 0 0;position:relative;}
-.modal-head h3{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--cream);font-weight:600;}
-.modal-head p{color:var(--muted);font-size:13px;margin-top:4px;}
-.modal-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.1);border:none;color:white;width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;justify-content:center;}
-.modal-close:hover{background:rgba(255,255,255,0.2);}
-.modal-body{padding:20px 24px 24px;}
-.ing-section{margin-bottom:20px;}
-.ing-section-title{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:500;}
-.ing-list{display:flex;flex-direction:column;gap:8px;}
-.ing-item{display:flex;align-items:center;justify-content:space-between;background:#F0EBE0;border-radius:10px;padding:10px 14px;transition:background 0.15s;}
+.modal-head{background:var(--dark);padding:20px 22px 16px;border-radius:22px 22px 0 0;position:relative;}
+.modal-head h3{font-family:'Noto Serif JP',serif;font-size:22px;color:var(--cream);font-weight:700;}
+.modal-head p{color:var(--muted);font-size:12px;margin-top:3px;}
+.modal-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.1);border:none;color:white;width:30px;height:30px;border-radius:50%;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.modal-close:hover{background:rgba(232,84,122,0.4);}
+.modal-body{padding:18px 22px 22px;}
+.ing-section{margin-bottom:18px;}
+.ing-section-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:600;}
+.ing-list{display:flex;flex-direction:column;gap:7px;}
+.ing-item{display:flex;align-items:center;justify-content:space-between;background:#FFF0F4;border-radius:10px;padding:9px 13px;transition:background 0.15s;}
 .ing-item.removed{background:#FDE8E8;opacity:0.75;}
 .ing-item.extra-added{background:#E8F5E9;}
-.ing-left{display:flex;align-items:center;gap:10px;}
-.ing-emoji{font-size:20px;}
-.ing-name{font-size:14px;font-weight:500;}
+.ing-left{display:flex;align-items:center;gap:9px;}
+.ing-emoji{font-size:19px;}
+.ing-name{font-size:13.5px;font-weight:500;}
 .ing-note{font-size:11px;color:var(--muted);}
-.ing-toggle{background:none;border:1.5px solid rgba(120,100,72,0.3);border-radius:8px;padding:5px 12px;font-family:'Outfit',sans-serif;font-size:12px;cursor:pointer;transition:all 0.15s;color:var(--dark);font-weight:500;}
-.ing-item.removed .ing-toggle{background:var(--rust);border-color:var(--rust);color:white;}
-.ing-item.extra-added .ing-toggle{background:var(--green);border-color:var(--green);color:white;}
-.oi-mod-removed{font-size:11px;color:var(--rust);margin-top:3px;line-height:1.6;}
-.oi-mod-added{font-size:11px;color:var(--green-mid);margin-top:2px;line-height:1.6;}
-.modal-actions{display:flex;gap:10px;margin-top:20px;}
-.btn-modal-cancel{flex:1;background:transparent;border:1.5px solid var(--border);color:var(--muted);padding:12px;border-radius:12px;font-family:'Outfit',sans-serif;font-size:14px;cursor:pointer;transition:all 0.2s;}
-.btn-modal-cancel:hover{border-color:var(--rust);color:var(--rust);}
-.btn-modal-confirm{flex:2;background:var(--green);color:white;border:none;padding:12px;border-radius:12px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:background 0.2s;}
-.btn-modal-confirm:hover{background:var(--green-mid);}
-.float-bar{position:fixed;bottom:0;left:0;right:0;background:var(--dark);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;z-index:200;box-shadow:0 -4px 30px rgba(0,0,0,0.3);flex-wrap:wrap;}
-.float-info{color:white;}
-.float-info span{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
-.float-info strong{font-size:22px;color:var(--gold-light);}
-.float-info small{font-size:12px;color:#999;}
-.btn-wa{display:flex;align-items:center;gap:8px;background:#25D366;color:white;border:none;padding:13px 22px;border-radius:50px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.22s;white-space:nowrap;}
+.ing-toggle{background:none;border:1.5px solid rgba(194,48,96,0.25);border-radius:8px;padding:4px 11px;font-family:'DM Sans',sans-serif;font-size:11.5px;cursor:pointer;transition:all 0.15s;color:var(--dark);font-weight:500;}
+.ing-item.removed .ing-toggle{background:#C0392B;border-color:#C0392B;color:white;}
+.ing-item.extra-added .ing-toggle{background:#2E7D32;border-color:#2E7D32;color:white;}
+.protein-section{margin-bottom:18px;}
+.protein-section-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:600;}
+.protein-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
+.protein-btn{background:#FFF0F4;border:2px solid transparent;border-radius:10px;padding:10px 4px;text-align:center;cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;}
+.protein-btn:hover{border-color:var(--pink-light);}
+.protein-btn.sel{border-color:var(--pink);background:#FDE0E8;}
+.p-emoji{font-size:22px;display:block;margin-bottom:3px;}
+.p-name{font-size:10.5px;font-weight:600;color:var(--dark);}
+.sauce-section{margin-bottom:18px;}
+.sauce-section-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:600;}
+.sauce-grid{display:flex;flex-wrap:wrap;gap:7px;}
+.sauce-btn{background:#FFF0F4;border:2px solid transparent;border-radius:20px;padding:7px 13px;cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--dark);}
+.sauce-btn:hover{border-color:var(--pink-light);}
+.sauce-btn.sel{border-color:var(--pink);background:#FDE0E8;color:var(--pink-deep);font-weight:700;}
+.alga-section{margin-bottom:18px;}
+.alga-section-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:600;}
+.alga-grid{display:flex;gap:8px;}
+.alga-btn{background:#FFF0F4;border:2px solid transparent;border-radius:20px;padding:8px 16px;cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--dark);}
+.alga-btn:hover{border-color:var(--pink-light);}
+.alga-btn.sel{border-color:var(--pink);background:#FDE0E8;color:var(--pink-deep);font-weight:700;}
+.modal-actions{display:flex;gap:10px;margin-top:18px;}
+.btn-modal-cancel{flex:1;background:transparent;border:1.5px solid var(--border);color:var(--muted);padding:11px;border-radius:11px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;}
+.btn-modal-cancel:hover{border-color:var(--pink);color:var(--pink);}
+.btn-modal-confirm{flex:2;background:var(--pink);color:white;border:none;padding:11px;border-radius:11px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:background 0.2s;}
+.btn-modal-confirm:hover{background:var(--pink-deep);}
+.float-bar{position:fixed;bottom:0;left:0;right:0;background:var(--dark);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:200;box-shadow:0 -4px 30px rgba(0,0,0,0.5);flex-wrap:wrap;}
+.float-info span{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.float-info strong{font-size:22px;color:var(--pink);font-weight:700;}
+.float-info small{font-size:12px;color:#888;}
+.btn-wa{display:flex;align-items:center;gap:8px;background:#25D366;color:white;border:none;padding:13px 20px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.22s;white-space:nowrap;}
 .btn-wa:hover{background:#1DA851;transform:scale(1.04);}
 .btn-wa svg{width:20px;height:20px;}
-.btn-clear{background:transparent;border:1px solid rgba(255,255,255,0.15);color:#888;padding:9px 14px;border-radius:50px;font-size:12px;cursor:pointer;transition:all 0.2s;}
-.btn-clear:hover{border-color:var(--rust);color:#ff8a80;}
-.order-items{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
-.order-item{background:var(--card);border-radius:12px;padding:13px 16px;display:flex;align-items:flex-start;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
-.oi-emoji{font-size:26px;}
+.btn-clear{background:transparent;border:1px solid rgba(255,255,255,0.15);color:#888;padding:8px 12px;border-radius:50px;font-size:12px;cursor:pointer;transition:all 0.2s;}
+.btn-clear:hover{border-color:var(--pink);color:var(--pink);}
+.order-items{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+.order-item{background:var(--white);border-radius:12px;padding:12px 15px;display:flex;align-items:flex-start;gap:11px;box-shadow:0 2px 8px rgba(194,48,96,0.07);}
+.oi-emoji{font-size:25px;}
 .oi-info{flex:1;}
-.oi-name{font-weight:600;font-size:14px;}
+.oi-name{font-weight:700;font-size:14px;}
 .oi-qty{font-size:12px;color:var(--muted);}
-.oi-mods{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.5;}
-.oi-price{font-weight:700;color:var(--gold);font-size:15px;}
+.oi-mod-removed{font-size:11px;color:#C0392B;margin-top:2px;line-height:1.6;}
+.oi-mod-added{font-size:11px;color:#2E7D32;margin-top:2px;line-height:1.6;}
+.oi-price{font-weight:700;color:var(--pink);font-size:15px;white-space:nowrap;}
 .empty-state{text-align:center;padding:50px 20px;color:var(--muted);}
 .empty-state p{font-size:38px;margin-bottom:10px;}
-.notes-section{margin-top:24px;}
-.notes-section label{display:block;font-family:'Cormorant Garamond',serif;font-size:18px;margin-bottom:8px;}
-.notes-section textarea{width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:13px;font-family:'Outfit',sans-serif;font-size:13px;color:var(--dark);resize:vertical;min-height:80px;outline:none;transition:border-color 0.2s;}
-.notes-section textarea:focus{border-color:var(--gold);}
-.custom-badge{display:inline-block;font-size:10px;padding:2px 8px;background:rgba(43,74,45,0.12);color:var(--green);border-radius:20px;margin-top:5px;font-weight:500;}
-@media(max-width:500px){.float-bar{padding:10px 14px;}.btn-wa{padding:11px 16px;font-size:13px;}.menu-grid{grid-template-columns:1fr;}.modal{border-radius:20px 20px 0 0;margin:0;max-width:100%;align-self:flex-end;}.modal-overlay{align-items:flex-end;padding:0;}}
+.notes-section{margin-top:20px;}
+.notes-section label{display:block;font-family:'Noto Serif JP',serif;font-size:17px;margin-bottom:7px;}
+.notes-section textarea{width:100%;background:var(--white);border:1.5px solid var(--border);border-radius:11px;padding:12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--dark);resize:vertical;min-height:75px;outline:none;transition:border-color 0.2s;}
+.notes-section textarea:focus{border-color:var(--pink);}
+.promo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:12px;}
+.promo-card{background:var(--white);border-radius:16px;padding:18px;border:2px solid transparent;cursor:pointer;transition:all 0.22s;position:relative;box-shadow:0 2px 12px rgba(194,48,96,0.07);overflow:hidden;}
+.promo-card::before{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;background:rgba(232,84,122,0.08);border-radius:50%;}
+.promo-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(194,48,96,0.15);}
+.promo-card.selected{border-color:var(--pink);background:#FFF0F4;}
+.promo-num{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-weight:600;}
+.promo-title{font-family:'Noto Serif JP',serif;font-size:18px;color:var(--pink-deep);font-weight:700;margin-bottom:8px;}
+.promo-desc{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px;}
+.promo-price{font-size:26px;font-weight:700;color:var(--pink);}
+.promo-price small{font-size:13px;color:var(--muted);}
+.promo-card .qty-wrap{display:none;align-items:center;justify-content:center;gap:6px;margin-top:8px;}
+.promo-card.selected .qty-wrap{display:flex;}
+.promo-card .btn-customize{display:none;width:100%;margin-top:8px;background:var(--dark);color:var(--cream);border:none;border-radius:9px;padding:9px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:background 0.2s;}
+.promo-card .btn-customize:hover{background:var(--pink);}
+.promo-card.selected .btn-customize{display:block;}
+@media(max-width:500px){
+  .float-bar{padding:9px 13px;}
+  .btn-wa{padding:10px 14px;font-size:13px;}
+  .menu-grid,.promo-grid{grid-template-columns:1fr;}
+  .modal{border-radius:20px 20px 0 0;margin:0;max-width:100%;align-self:flex-end;}
+  .modal-overlay{align-items:flex-end;padding:0;}
+  .header-inner{padding:14px 16px 12px;}
+  .protein-grid{grid-template-columns:repeat(3,1fr);}
+}
 </style>
 </head>
-<script>
-function actualizarFechaHora(){
-      const ahora = new Date();
-
-      const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-      const fechaHoraFormateada = ahora.toLocaleDateString('es-ES', opciones);
-
-      document.getElementById('fecha-hora').textContent = fechaHoraFormateada;
-}
-</script>
 <body>
 <header class="header">
-  <p class="header-badge">✦ Bienvenidos ✦</p>
-  <h1>La Bella <em>Cocina</em></h1>
-  <div class="header-rule"><span>◆</span></div>
-  <p class="header-sub">Personaliza cada platillo a tu gusto</p>
+  <div class="header-sakura" id="sakura"></div>
+  <div class="header-inner">
+    <div class="logo-area">
+      <div class="logo-kanji">鮎</div>
+      <div class="logo-text">
+        <h1>La Esquina<br><span>del Sushi</span></h1>
+        <small>Blvd. Sonora #21 · Media Cuadra del Socum</small>
+      </div>
+    </div>
+    <div class="header-info">
+      <p>📞 <strong>642-134-2959</strong></p>
+      <p>📱 <strong>642-426-7244</strong></p>
+      <div class="hours">🕐 5:30 – 11:30 pm · Descansamos los Martes</div>
+      <div class="hours">🛵 Servicio a domicilio (sujeto a distancia)</div>
+    </div>
+  </div>
+  <div class="header-banner">
+    <p>🌸 Ingrediente Extra $15 · Natural o empanizado · Con alga o sin alga (especificar al pedir) 🌸</p>
+  </div>
 </header>
 <nav class="main-tabs">
-  <button class="main-tab active" onclick="showSection('entradas',this)">🥗 Entradas</button>
-  <button class="main-tab" onclick="showSection('principales',this)">🍽️ Principales</button>
-  <button class="main-tab" onclick="showSection('pastas',this)">🍝 Pastas</button>
-  <button class="main-tab" onclick="showSection('postres',this)">🍮 Postres</button>
+  <button class="main-tab active" onclick="showSection('sushis',this)">🍣 Sushis</button>
+  <button class="main-tab" onclick="showSection('entradas',this)">🧆 Entradas</button>
+  <button class="main-tab" onclick="showSection('combos',this)">🍱 Combos</button>
+  <button class="main-tab" onclick="showSection('otros',this)">🍗 Otros</button>
   <button class="main-tab" onclick="showSection('bebidas',this)">🥤 Bebidas</button>
+  <button class="main-tab" onclick="showSection('promos',this)">🎁 Promociones</button>
   <button class="main-tab" onclick="showSection('pedido',this)">🧾 Mi Pedido</button>
 </nav>
-<div class="sub-tabs-wrap" id="sub-tabs-bar">
-  <button class="sub-tab active" onclick="showSub(this,'simple')"><span class="sub-dot dot-simple"></span>Simple</button>
-  <button class="sub-tab" onclick="showSub(this,'mixta')"><span class="sub-dot dot-mixta"></span>Mixta</button>
-  <button class="sub-tab" onclick="showSub(this,'compuesta')"><span class="sub-dot dot-compuesta"></span>Compuesta</button>
-</div>
 <main class="main">
-  <section class="section active" id="entradas">
-    <div class="subsection active" id="entradas-simple"><div class="sub-header"><h3>Entradas <em>Simples</em></h3><p>Pocos ingredientes, sabores directos y limpios</p></div><div class="menu-grid" id="grid-entradas-simple"></div></div>
-    <div class="subsection" id="entradas-mixta"><div class="sub-header"><h3>Entradas <em>Mixtas</em></h3><p>Ingredientes separados para combinar a tu gusto</p></div><div class="menu-grid" id="grid-entradas-mixta"></div></div>
-    <div class="subsection" id="entradas-compuesta"><div class="sub-header"><h3>Entradas <em>Compuestas</em></h3><p>Elaboradas y creativas, nuestra firma</p></div><div class="menu-grid" id="grid-entradas-compuesta"></div></div>
+  <section class="section active" id="sushis">
+    <div class="sec-header"><h2>🍣 Sushis</h2><p>Todos llevan philadelphia, pepino y aguacate · Empanizados o naturales · Con o sin alga (especificar al pedir)</p></div>
+    <div class="menu-grid" id="grid-sushis"></div>
   </section>
-  <section class="section" id="principales">
-    <div class="subsection active" id="principales-simple"><div class="sub-header"><h3>Principales <em>Simples</em></h3><p>Cortes y proteínas en su expresión más pura</p></div><div class="menu-grid" id="grid-principales-simple"></div></div>
-    <div class="subsection" id="principales-mixta"><div class="sub-header"><h3>Principales <em>Mixtos</em></h3><p>Proteína, guarnición y salsa a elegir</p></div><div class="menu-grid" id="grid-principales-mixta"></div></div>
-    <div class="subsection" id="principales-compuesta"><div class="sub-header"><h3>Principales <em>Compuestos</em></h3><p>Elaboraciones complejas y sabores profundos</p></div><div class="menu-grid" id="grid-principales-compuesta"></div></div>
+  <section class="section" id="entradas">
+    <div class="sec-header"><h2>🧆 Entradas</h2><p>Para compartir o iniciar</p></div>
+    <div class="menu-grid" id="grid-entradas"></div>
   </section>
-  <section class="section" id="pastas">
-    <div class="subsection active" id="pastas-simple"><div class="sub-header"><h3>Pastas <em>Simples</em></h3><p>Clásicas italianas con pocos ingredientes</p></div><div class="menu-grid" id="grid-pastas-simple"></div></div>
-    <div class="subsection" id="pastas-mixta"><div class="sub-header"><h3>Pastas <em>Mixtas</em></h3><p>Base de pasta con toppings a elegir</p></div><div class="menu-grid" id="grid-pastas-mixta"></div></div>
-    <div class="subsection" id="pastas-compuesta"><div class="sub-header"><h3>Pastas <em>Compuestas</em></h3><p>Recetas elaboradas de autor</p></div><div class="menu-grid" id="grid-pastas-compuesta"></div></div>
+  <section class="section" id="combos">
+    <div class="sec-header"><h2>🍱 Combos y Charolas</h2><p>La mejor relación calidad-precio</p></div>
+    <div class="menu-grid" id="grid-combos"></div>
   </section>
-  <section class="section" id="postres">
-    <div class="subsection active" id="postres-simple"><div class="sub-header"><h3>Postres <em>Simples</em></h3><p>Dulces clásicos sin complicaciones</p></div><div class="menu-grid" id="grid-postres-simple"></div></div>
-    <div class="subsection" id="postres-mixta"><div class="sub-header"><h3>Postres <em>Mixtos</em></h3><p>Elige tus acompañantes y toppings</p></div><div class="menu-grid" id="grid-postres-mixta"></div></div>
-    <div class="subsection" id="postres-compuesta"><div class="sub-header"><h3>Postres <em>Compuestos</em></h3><p>Alta repostería, acabados artísticos</p></div><div class="menu-grid" id="grid-postres-compuesta"></div></div>
+  <section class="section" id="otros">
+    <div class="sec-header"><h2>🍗 Otros Platillos</h2><p>Alitas, yakimeshi, gohan y más</p></div>
+    <div class="info-box">
+      <h4>🫙 Salsas disponibles</h4>
+      <div class="salsas-grid">
+        <span class="salsa-chip">BBQ</span><span class="salsa-chip">Búfalo</span>
+        <span class="salsa-chip">Mixto</span><span class="salsa-chip">BBQ Chipotle</span>
+        <span class="salsa-chip">Naranja Chipotle</span><span class="salsa-chip">Tamarindo</span>
+        <span class="salsa-chip">Mango Hot</span><span class="salsa-chip">Mango Habanero</span>
+        <span class="salsa-chip">Piña Hot</span>
+      </div>
+    </div>
+    <div style="height:14px"></div>
+    <div class="menu-grid" id="grid-otros"></div>
   </section>
   <section class="section" id="bebidas">
-    <div class="subsection active" id="bebidas-simple"><div class="sub-header"><h3>Bebidas <em>Simples</em></h3><p>Directas y refrescantes</p></div><div class="menu-grid" id="grid-bebidas-simple"></div></div>
-    <div class="subsection" id="bebidas-mixta"><div class="sub-header"><h3>Bebidas <em>Mixtas</em></h3><p>Combinaciones a tu medida</p></div><div class="menu-grid" id="grid-bebidas-mixta"></div></div>
-    <div class="subsection" id="bebidas-compuesta"><div class="sub-header"><h3>Bebidas <em>Compuestas</em></h3><p>Cócteles y preparaciones especiales</p></div><div class="menu-grid" id="grid-bebidas-compuesta"></div></div>
+    <div class="sec-header"><h2>🥤 Bebidas y Extras</h2></div>
+    <div class="menu-grid" id="grid-bebidas"></div>
+  </section>
+  <section class="section" id="promos">
+    <div class="sec-header"><h2>🎁 Promociones</h2><p>Las mejores combinaciones al mejor precio · Toca para agregar a tu pedido</p></div>
+    <div class="promo-grid" id="grid-promos"></div>
   </section>
   <section class="section" id="pedido">
-    <div class="sub-header"><h3>Mi <em>Pedido</em></h3><p>Revisa tu selección antes de enviar</p></div>
+    <div class="sec-header"><h2>🧾 Mi Pedido</h2><p>Revisa antes de enviar</p></div>
     <div class="order-items" id="order-list"></div>
     <div class="notes-section">
       <label>📝 Notas especiales</label>
-      <textarea id="order-notes" placeholder="Alergias, mesa, instrucciones de entrega..."></textarea>
+      <textarea id="order-notes" placeholder="Instrucciones de entrega, aclaraciones adicionales..."></textarea>
     </div>
   </section>
 </main>
 <div class="float-bar">
   <div class="float-info">
     <span>Tu pedido</span>
-    <strong id="bar-total">$0.00</strong>
+    <strong id="bar-total">$0</strong>
     <small id="bar-count">0 artículos</small>
   </div>
-  <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+  <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap;">
     <button class="btn-clear" onclick="clearOrder()">Limpiar</button>
     <button class="btn-wa" onclick="sendWhatsApp()">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.564 4.14 1.549 5.874L.057 23.617a.5.5 0 0 0 .617.617l5.743-1.492A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22A9.966 9.966 0 0 1 6.57 20.27l-.373-.222-3.865 1.004 1.025-3.755-.243-.389A9.96 9.96 0 0 1 2 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
@@ -196,452 +257,494 @@ function actualizarFechaHora(){
   <div class="modal" id="modal">
     <div class="modal-head">
       <h3 id="modal-title">Personalizar</h3>
-      <p id="modal-subtitle">Agrega o quita ingredientes</p>
-      <button class="modal-close" onclick="closeModal()">✕</button>
+      <p id="modal-subtitle">Personaliza tu orden</p>
+      <button class="modal-close" onclick="closeModal()">&#x2715;</button>
     </div>
     <div class="modal-body" id="modal-body"></div>
   </div>
 </div>
 <script>
-const WHATSAPP_NUMBER='526622067409';
-const MENU={
-  entradas:{
-    simple:[
-      {id:'es1',emoji:'🥗',name:'Ensalada Verde',desc:'Lechuga, pepino y tomate cherry con vinagreta de limón.',price:65,tag:null,
-        ingredients:[{id:'i1',emoji:'🥬',name:'Lechuga',note:'Base',removable:true},{id:'i2',emoji:'🥒',name:'Pepino',note:'Fresco',removable:true},{id:'i3',emoji:'🍅',name:'Tomate cherry',note:'Enteros',removable:true},{id:'i4',emoji:'🍋',name:'Vinagreta limón',note:'Aderezo',removable:true}],
-        extras:[{id:'x1',emoji:'🥑',name:'Aguacate',note:'+$15',price:15},{id:'x2',emoji:'🧀',name:'Queso feta',note:'+$18',price:18},{id:'x3',emoji:'🫒',name:'Aceitunas',note:'+$12',price:12},{id:'x4',emoji:'🥚',name:'Huevo duro',note:'+$10',price:10},{id:'x5',emoji:'🌽',name:'Elote',note:'Gratis',price:0},{id:'x6',emoji:'🥩',name:'Pollo a la plancha',note:'+$25',price:25}]},
-      {id:'es2',emoji:'🍞',name:'Pan de Ajo',desc:'Baguette tostado con mantequilla de ajo y perejil.',price:55,tag:'popular',
-        ingredients:[{id:'i1',emoji:'🥖',name:'Baguette',note:'Tostado',removable:false},{id:'i2',emoji:'🧄',name:'Ajo confitado',note:'Untado',removable:true},{id:'i3',emoji:'🌿',name:'Perejil',note:'Fresco',removable:true},{id:'i4',emoji:'🧈',name:'Mantequilla',note:'Base',removable:true}],
-        extras:[{id:'x1',emoji:'🧀',name:'Queso mozzarella',note:'+$20',price:20},{id:'x2',emoji:'🍅',name:'Tomate fresco',note:'+$8',price:8},{id:'x3',emoji:'🫙',name:'Aceite de trufa',note:'+$25',price:25}]},
-      {id:'es3',emoji:'🫑',name:'Crudités',desc:'Bastones de zanahoria, apio y pimiento con dip de yogurt.',price:60,tag:'veggie',
-        ingredients:[{id:'i1',emoji:'🥕',name:'Zanahoria',note:'En bastones',removable:true},{id:'i2',emoji:'🥬',name:'Apio',note:'En bastones',removable:true},{id:'i3',emoji:'🫑',name:'Pimiento',note:'Tricolor',removable:true},{id:'i4',emoji:'🥣',name:'Dip yogurt',note:'Con hierbas',removable:true}],
-        extras:[{id:'x1',emoji:'🥦',name:'Brócoli',note:'Gratis',price:0},{id:'x2',emoji:'🥒',name:'Pepino extra',note:'Gratis',price:0},{id:'x3',emoji:'🫙',name:'Hummus',note:'+$18',price:18},{id:'x4',emoji:'🧀',name:'Dip de queso',note:'+$20',price:20}]},
-    ],
-    mixta:[
-      {id:'em1',emoji:'🥙',name:'Tabla de Entradas',desc:'Embutidos, quesos, aceitunas y pan artesanal.',price:145,tag:'popular',
-        ingredients:[{id:'i1',emoji:'🧀',name:'Queso manchego',note:'Laminado',removable:true},{id:'i2',emoji:'🥩',name:'Jamón serrano',note:'Finas lascas',removable:true},{id:'i3',emoji:'🫒',name:'Aceitunas mixtas',note:'Con hierbas',removable:true},{id:'i4',emoji:'🥖',name:'Pan artesanal',note:'Variedad',removable:false},{id:'i5',emoji:'🍯',name:'Miel de abeja',note:'Para quesos',removable:true}],
-        extras:[{id:'x1',emoji:'🧀',name:'Queso brie',note:'+$30',price:30},{id:'x2',emoji:'🍇',name:'Uvas frescas',note:'+$15',price:15},{id:'x3',emoji:'🌰',name:'Nueces mixtas',note:'+$18',price:18},{id:'x4',emoji:'🥩',name:'Salami italiano',note:'+$25',price:25}]},
-      {id:'em2',emoji:'🦐',name:'Camarones Mixtos',desc:'Camarones al ajillo y empanizados con dos salsas.',price:155,tag:null,
-        ingredients:[{id:'i1',emoji:'🦐',name:'Camarón al ajillo',note:'6 piezas',removable:false},{id:'i2',emoji:'🦐',name:'Camarón empanizado',note:'6 piezas',removable:false},{id:'i3',emoji:'🌶️',name:'Salsa chipotle',note:'Picante',removable:true},{id:'i4',emoji:'🍋',name:'Salsa tártara',note:'Suave',removable:true},{id:'i5',emoji:'🥬',name:'Cama de lechuga',note:'Decorativa',removable:true}],
-        extras:[{id:'x1',emoji:'🥑',name:'Guacamole',note:'+$20',price:20},{id:'x2',emoji:'🍋',name:'Salsa de mango',note:'+$15',price:15},{id:'x3',emoji:'🦐',name:'Camarones extra (6)',note:'+$45',price:45}]},
-      {id:'em3',emoji:'🌮',name:'Mini Tacos Mixtos',desc:'3 de pollo, 3 de res con salsas.',price:130,tag:'spicy',
-        ingredients:[{id:'i1',emoji:'🍗',name:'Taco de pollo',note:'3 piezas',removable:false},{id:'i2',emoji:'🥩',name:'Taco de res',note:'3 piezas',removable:false},{id:'i3',emoji:'💚',name:'Salsa verde',note:'Tomatillo',removable:true},{id:'i4',emoji:'🔴',name:'Salsa roja',note:'Guajillo',removable:true},{id:'i5',emoji:'🧅',name:'Cebolla y cilantro',note:'Fresco',removable:true}],
-        extras:[{id:'x1',emoji:'🥑',name:'Guacamole',note:'+$20',price:20},{id:'x2',emoji:'🧀',name:'Queso fundido',note:'+$18',price:18},{id:'x3',emoji:'🌮',name:'2 tacos extra',note:'+$35',price:35},{id:'x4',emoji:'🌶️',name:'Chile toreado',note:'+$8',price:8}]},
-    ],
-    compuesta:[
-      {id:'ec1',emoji:'🍅',name:'Bruschetta Tricolore',desc:'Pan tostado, tomate, mozzarella, albahaca y balsámico.',price:95,tag:'new',
-        ingredients:[{id:'i1',emoji:'🥖',name:'Pan ciabatta',note:'Al horno',removable:false},{id:'i2',emoji:'🍅',name:'Tomate concassé',note:'Marinado',removable:true},{id:'i3',emoji:'🧀',name:'Mozzarella fresca',note:'Buffalo',removable:true},{id:'i4',emoji:'🌿',name:'Albahaca fresca',note:'Chiffonade',removable:true},{id:'i5',emoji:'🫙',name:'Reducción balsámico',note:'Caramelizada',removable:true},{id:'i6',emoji:'🫒',name:'Aceite de oliva',note:'Extra virgen',removable:true}],
-        extras:[{id:'x1',emoji:'🍄',name:'Champiñones salteados',note:'+$20',price:20},{id:'x2',emoji:'🥩',name:'Jamón de parma',note:'+$28',price:28},{id:'x3',emoji:'🫙',name:'Aceite de trufa',note:'+$25',price:25}]},
-      {id:'ec2',emoji:'🧄',name:'Champiñones Trufados',desc:'Portobello salteado, crema de trufa y parmesano.',price:135,tag:'veggie',
-        ingredients:[{id:'i1',emoji:'🍄',name:'Portobello',note:'Entero salteado',removable:false},{id:'i2',emoji:'🫙',name:'Crema de trufa negra',note:'Artesanal',removable:true},{id:'i3',emoji:'🧀',name:'Parmesano reggiano',note:'Rallado',removable:true},{id:'i4',emoji:'🌿',name:'Cebollín',note:'Finamente cortado',removable:true},{id:'i5',emoji:'🧄',name:'Ajo dorado',note:'Laminado',removable:true}],
-        extras:[{id:'x1',emoji:'🥚',name:'Huevo pochado',note:'+$12',price:12},{id:'x2',emoji:'🍄',name:'Portobello extra',note:'+$30',price:30},{id:'x3',emoji:'🧀',name:'Parmesano extra',note:'+$15',price:15}]},
-      {id:'ec3',emoji:'🦞',name:'Ceviche de Camarón',desc:'Camarón fresco, aguacate, mango y leche de tigre.',price:175,tag:'popular',
-        ingredients:[{id:'i1',emoji:'🦐',name:'Camarón fresco',note:'Cocido al limón',removable:false},{id:'i2',emoji:'🥑',name:'Aguacate',note:'En cubos',removable:true},{id:'i3',emoji:'🥭',name:'Mango ataulfo',note:'Dulce',removable:true},{id:'i4',emoji:'🌶️',name:'Chile habanero',note:'Sin semillas',removable:true},{id:'i5',emoji:'🍋',name:'Leche de tigre',note:'Cítrica',removable:false},{id:'i6',emoji:'🌽',name:'Tostadas',note:'Para servir',removable:true}],
-        extras:[{id:'x1',emoji:'🦐',name:'Camarones extra',note:'+$40',price:40},{id:'x2',emoji:'🥑',name:'Aguacate extra',note:'+$15',price:15},{id:'x3',emoji:'🌶️',name:'Habanero extra picante',note:'Gratis',price:0},{id:'x4',emoji:'🐙',name:'Pulpo',note:'+$35',price:35}]},
-    ],
-  },
-  principales:{
-    simple:[
-      {id:'ps1',emoji:'🍗',name:'Pollo a la Plancha',desc:'Pechuga marinada en limón y hierbas con arroz blanco.',price:165,tag:null,
-        ingredients:[{id:'i1',emoji:'🍗',name:'Pechuga de pollo',note:'200g',removable:false},{id:'i2',emoji:'🍋',name:'Marinada de limón',note:'Con hierbas',removable:true},{id:'i3',emoji:'🍚',name:'Arroz blanco',note:'Guarnición',removable:true},{id:'i4',emoji:'🌿',name:'Ensalada verde',note:'Al lado',removable:true}],
-        extras:[{id:'x1',emoji:'🥔',name:'Papas fritas',note:'+$25',price:25},{id:'x2',emoji:'🥑',name:'Guacamole',note:'+$20',price:20},{id:'x3',emoji:'🧀',name:'Queso fundido',note:'+$18',price:18},{id:'x4',emoji:'🫙',name:'Salsa BBQ',note:'Gratis',price:0}]},
-      {id:'ps2',emoji:'🥩',name:'Sirloin al Carbón',desc:'300g de sirloin al carbón con sal de mar.',price:295,tag:'popular',
-        ingredients:[{id:'i1',emoji:'🥩',name:'Sirloin',note:'300g',removable:false},{id:'i2',emoji:'🧂',name:'Sal de mar',note:'Gruesa',removable:true},{id:'i3',emoji:'⚫',name:'Pimienta negra',note:'Recién molida',removable:true},{id:'i4',emoji:'🫒',name:'Aceite de oliva',note:'Al acabado',removable:true}],
-        extras:[{id:'x1',emoji:'🥔',name:'Papas al romero',note:'+$30',price:30},{id:'x2',emoji:'🧅',name:'Cebolla caramelizada',note:'+$20',price:20},{id:'x3',emoji:'🥑',name:'Guacamole',note:'+$20',price:20},{id:'x4',emoji:'🫙',name:'Chimichurri',note:'Gratis',price:0},{id:'x5',emoji:'🧀',name:'Mantequilla de hierbas',note:'+$15',price:15}]},
-      {id:'ps3',emoji:'🐟',name:'Filete de Tilapia',desc:'Tilapia al vapor con limón y alcaparras.',price:175,tag:null,
-        ingredients:[{id:'i1',emoji:'🐟',name:'Tilapia',note:'180g',removable:false},{id:'i2',emoji:'🍋',name:'Limón',note:'En rodajas',removable:true},{id:'i3',emoji:'🫙',name:'Alcaparras',note:'En salmuera',removable:true},{id:'i4',emoji:'🧈',name:'Mantequilla',note:'Derretida',removable:true}],
-        extras:[{id:'x1',emoji:'🍚',name:'Arroz blanco',note:'+$20',price:20},{id:'x2',emoji:'🥦',name:'Verduras al vapor',note:'+$18',price:18},{id:'x3',emoji:'🌿',name:'Salsa de hierbas',note:'+$15',price:15}]},
-    ],
-    mixta:[
-      {id:'pm1',emoji:'🍖',name:'Parrillada Mixta',desc:'Res, pollo y chorizo con guarniciones a elegir.',price:385,tag:'popular',
-        ingredients:[{id:'i1',emoji:'🥩',name:'Arrachera de res',note:'150g',removable:false},{id:'i2',emoji:'🍗',name:'Muslo de pollo',note:'Marinado',removable:true},{id:'i3',emoji:'🌭',name:'Chorizo artesanal',note:'2 piezas',removable:true},{id:'i4',emoji:'🫑',name:'Pimientos asados',note:'Tricolor',removable:true},{id:'i5',emoji:'🥑',name:'Guacamole',note:'Fresco',removable:true},{id:'i6',emoji:'🫓',name:'Tortillas',note:'Maíz o harina',removable:true}],
-        extras:[{id:'x1',emoji:'🦐',name:'Camarones al ajillo',note:'+$55',price:55},{id:'x2',emoji:'🌭',name:'Chorizo extra',note:'+$35',price:35},{id:'x3',emoji:'🧀',name:'Queso fundido',note:'+$25',price:25},{id:'x4',emoji:'🫙',name:'Salsa habanero',note:'Gratis',price:0}]},
-      {id:'pm2',emoji:'🥦',name:'Bowl Proteico',desc:'Arroz integral, proteína a elegir y aderezo tahini.',price:175,tag:'veggie',
-        ingredients:[{id:'i1',emoji:'🍚',name:'Arroz integral',note:'Base',removable:false},{id:'i2',emoji:'🥚',name:'Huevo pochado',note:'Opcional',removable:true},{id:'i3',emoji:'🥑',name:'Aguacate',note:'En rebanadas',removable:true},{id:'i4',emoji:'🫘',name:'Garbanzos asados',note:'Crocantes',removable:true},{id:'i5',emoji:'🫙',name:'Aderezo tahini',note:'Con limón',removable:true}],
-        extras:[{id:'x1',emoji:'🍗',name:'Pollo a la plancha',note:'+$30',price:30},{id:'x2',emoji:'🥬',name:'Espinaca fresca',note:'Gratis',price:0},{id:'x3',emoji:'🌱',name:'Semillas de chía',note:'Gratis',price:0},{id:'x4',emoji:'🧀',name:'Queso de cabra',note:'+$20',price:20}]},
-      {id:'pm3',emoji:'🌮',name:'Enchiladas Mixtas',desc:'3 verdes de pollo y 3 rojas de res.',price:165,tag:'spicy',
-        ingredients:[{id:'i1',emoji:'🌮',name:'Enchiladas verdes',note:'Pollo',removable:false},{id:'i2',emoji:'🌮',name:'Enchiladas rojas',note:'Res',removable:false},{id:'i3',emoji:'🧀',name:'Queso fresco',note:'Desmoronado',removable:true},{id:'i4',emoji:'🥣',name:'Crema',note:'Ácida',removable:true},{id:'i5',emoji:'🧅',name:'Cebolla morada',note:'Fresca',removable:true}],
-        extras:[{id:'x1',emoji:'🌮',name:'2 enchiladas extra',note:'+$35',price:35},{id:'x2',emoji:'🥚',name:'Huevo estrellado',note:'+$12',price:12},{id:'x3',emoji:'🫘',name:'Frijoles negros',note:'+$15',price:15},{id:'x4',emoji:'🌶️',name:'Salsa habanero',note:'Gratis',price:0}]},
-    ],
-    compuesta:[
-      {id:'pc1',emoji:'🥩',name:'Rib Eye a la Brasa',desc:'500g con mantequilla de roquefort y papas al romero.',price:495,tag:'popular',
-        ingredients:[{id:'i1',emoji:'🥩',name:'Rib Eye',note:'500g madurado',removable:false},{id:'i2',emoji:'🧀',name:'Mantequilla roquefort',note:'Fundida',removable:true},{id:'i3',emoji:'🥔',name:'Papas al romero',note:'Horneadas',removable:true},{id:'i4',emoji:'🧅',name:'Cebolla caramelizada',note:'45 min',removable:true},{id:'i5',emoji:'🫙',name:'Chimichurri casero',note:'Fresco',removable:true}],
-        extras:[{id:'x1',emoji:'🦐',name:'Camarones al ajillo',note:'+$65',price:65},{id:'x2',emoji:'🍄',name:'Champiñones salteados',note:'+$25',price:25},{id:'x3',emoji:'🧀',name:'Costras de parmesano',note:'+$20',price:20},{id:'x4',emoji:'🫙',name:'Salsa de pimienta',note:'+$18',price:18}]},
-      {id:'pc2',emoji:'🐟',name:'Salmón en Costra',desc:'Salmón con costra de pistache y puré de betabel.',price:315,tag:'new',
-        ingredients:[{id:'i1',emoji:'🐟',name:'Salmón atlántico',note:'200g',removable:false},{id:'i2',emoji:'🫘',name:'Costra de pistache',note:'Con hierbas',removable:true},{id:'i3',emoji:'🫚',name:'Puré de betabel',note:'Ahumado',removable:true},{id:'i4',emoji:'🍋',name:'Gel de limón',note:'Cítrico',removable:true},{id:'i5',emoji:'🌿',name:'Micro vegetales',note:'Acabado',removable:true}],
-        extras:[{id:'x1',emoji:'🦐',name:'Camarones al vapor',note:'+$55',price:55},{id:'x2',emoji:'🥑',name:'Puré de aguacate',note:'+$20',price:20},{id:'x3',emoji:'🖤',name:'Caviar',note:'+$45',price:45}]},
-      {id:'pc3',emoji:'🍖',name:'Costillas Estofadas',desc:'Costilla de res 8h en vino tinto y puré trufado.',price:425,tag:null,
-        ingredients:[{id:'i1',emoji:'🍖',name:'Costilla de res',note:'Estofada 8h',removable:false},{id:'i2',emoji:'🍷',name:'Reducción de vino',note:'Tinto especiado',removable:true},{id:'i3',emoji:'🥔',name:'Puré de papa trufado',note:'Con mantequilla',removable:true},{id:'i4',emoji:'🧅',name:'Cebollitas glaseadas',note:'Cambray',removable:true}],
-        extras:[{id:'x1',emoji:'🥔',name:'Papas fritas extra',note:'+$25',price:25},{id:'x2',emoji:'🍞',name:'Pan artesanal',note:'+$15',price:15},{id:'x3',emoji:'🫙',name:'Salsa extra',note:'Gratis',price:0}]},
-    ],
-  },
-  pastas:{
-    simple:[
-      {id:'pss1',emoji:'🍝',name:'Spaghetti al Pomodoro',desc:'Salsa de tomate natural, ajo y albahaca.',price:125,tag:null,
-        ingredients:[{id:'i1',emoji:'🍝',name:'Spaghetti',note:'Artesanal',removable:false},{id:'i2',emoji:'🍅',name:'Salsa pomodoro',note:'Tomate natural',removable:false},{id:'i3',emoji:'🧄',name:'Ajo',note:'Laminado',removable:true},{id:'i4',emoji:'🌿',name:'Albahaca',note:'Fresca',removable:true},{id:'i5',emoji:'🫒',name:'Aceite de oliva',note:'Extra virgen',removable:true}],
-        extras:[{id:'x1',emoji:'🍗',name:'Pollo a la plancha',note:'+$30',price:30},{id:'x2',emoji:'🧀',name:'Parmesano extra',note:'+$15',price:15},{id:'x3',emoji:'🌶️',name:'Chile en hojuelas',note:'Gratis',price:0},{id:'x4',emoji:'🍄',name:'Champiñones',note:'+$20',price:20}]},
-      {id:'pss2',emoji:'🍜',name:'Fettuccine Burro',desc:'Mantequilla, parmesano y pimienta negra.',price:120,tag:null,
-        ingredients:[{id:'i1',emoji:'🍜',name:'Fettuccine',note:'Fresco',removable:false},{id:'i2',emoji:'🧈',name:'Mantequilla',note:'Europea',removable:false},{id:'i3',emoji:'🧀',name:'Parmesano',note:'Reggiano',removable:true},{id:'i4',emoji:'⚫',name:'Pimienta negra',note:'Recién molida',removable:true}],
-        extras:[{id:'x1',emoji:'🍗',name:'Pollo',note:'+$30',price:30},{id:'x2',emoji:'🍄',name:'Trufa rallada',note:'+$40',price:40},{id:'x3',emoji:'🥓',name:'Tocino crujiente',note:'+$18',price:18},{id:'x4',emoji:'🌿',name:'Cebollín fresco',note:'Gratis',price:0}]},
-      {id:'pss3',emoji:'🌿',name:'Linguine Aglio e Olio',desc:'Ajo, aceite, chile seco y perejil.',price:115,tag:'veggie',
-        ingredients:[{id:'i1',emoji:'🍝',name:'Linguine',note:'Al dente',removable:false},{id:'i2',emoji:'🧄',name:'Ajo dorado',note:'Laminado',removable:false},{id:'i3',emoji:'🫒',name:'Aceite oliva',note:'Abundante',removable:false},{id:'i4',emoji:'🌶️',name:'Chile seco',note:'Al gusto',removable:true},{id:'i5',emoji:'🌿',name:'Perejil',note:'Fresco',removable:true}],
-        extras:[{id:'x1',emoji:'🦐',name:'Camarones',note:'+$45',price:45},{id:'x2',emoji:'🧀',name:'Parmesano',note:'+$15',price:15},{id:'x3',emoji:'🍋',name:'Ralladura de limón',note:'Gratis',price:0}]},
-    ],
-    mixta:[
-      {id:'psm1',emoji:'🍝',name:'Pasta Personalizada',desc:'Elige tu pasta, salsa y proteína favorita.',price:155,tag:'popular',
-        ingredients:[{id:'i1',emoji:'🍝',name:'Spaghetti',note:'O fettuccine',removable:false},{id:'i2',emoji:'🍗',name:'Pollo a la plancha',note:'Laminado',removable:true},{id:'i3',emoji:'🍄',name:'Champiñones',note:'Salteados',removable:true},{id:'i4',emoji:'🧀',name:'Parmesano extra',note:'Rallado',removable:true},{id:'i5',emoji:'🌶️',name:'Chile en hojuelas',note:'Opcional',removable:true}],
-        extras:[{id:'x1',emoji:'🦐',name:'Camarones',note:'+$45',price:45},{id:'x2',emoji:'🥩',name:'Res salteada',note:'+$40',price:40},{id:'x3',emoji:'🥓',name:'Tocino',note:'+$18',price:18},{id:'x4',emoji:'🥬',name:'Espinaca fresca',note:'Gratis',price:0}]},
-      {id:'psm2',emoji:'🦐',name:'Pasta al Mare',desc:'Camarones, mejillones y pulpo en salsa de vino.',price:225,tag:null,
-        ingredients:[{id:'i1',emoji:'🍝',name:'Spaghetti',note:'Al dente',removable:false},{id:'i2',emoji:'🦐',name:'Camarones',note:'6 piezas',removable:true},{id:'i3',emoji:'🦪',name:'Mejillones',note:'4 piezas',removable:true},{id:'i4',emoji:'🦑',name:'Pulpo',note:'En trozos',removable:true},{id:'i5',emoji:'🍷',name:'Salsa vino blanco',note:'Con ajo',removable:false}],
-        extras:[{id:'x1',emoji:'🦞',name:'Langostinos',note:'+$65',price:65},{id:'x2',emoji:'🐚',name:'Vieiras',note:'+$55',price:55},{id:'x3',emoji:'🖤',name:'Tinta de calamar',note:'+$15',price:15},{id:'x4',emoji:'🌶️',name:'Chile en hojuelas',note:'Gratis',price:0}]},
-      {id:'psm3',emoji:'🥬',name:'Pasta Primavera',desc:'Penne con verduras, pesto y queso de cabra.',price:145,tag:'veggie',
-        ingredients:[{id:'i1',emoji:'🍝',name:'Penne',note:'Rigate',removable:false},{id:'i2',emoji:'🫑',name:'Pimientos asados',note:'Tricolor',removable:true},{id:'i3',emoji:'🥦',name:'Brócoli',note:'Al dente',removable:true},{id:'i4',emoji:'🌿',name:'Pesto genovés',note:'Casero',removable:true},{id:'i5',emoji:'🧀',name:'Queso de cabra',note:'Desmoronado',removable:true}],
-        extras:[{id:'x1',emoji:'🍗',name:'Pollo a la plancha',note:'+$30',price:30},{id:'x2',emoji:'🥑',name:'Aguacate',note:'+$15',price:15},{id:'x3',emoji:'🌰',name:'Piñones tostados',note:'+$18',price:18},{id:'x4',emoji:'🧀',name:'Parmesano extra',note:'+$15',price:15}]},
-    ],
-    compuesta:[
-      {id:'psc1',emoji:'🍝',name:'Spaghetti Bolognesa',desc:'Ragú de res y cerdo 4h, vino tinto y trufa.',price:185,tag:'popular',
-        ingredients:[{id:'i1',emoji:'🍝',name:'Spaghetti artesanal',note:'Bronce',removable:false},{id:'i2',emoji:'🥩',name:'Ragú res y cerdo',note:'4 horas',removable:false},{id:'i3',emoji:'🍷',name:'Vino tinto',note:'Reducido',removable:true},{id:'i4',emoji:'🧀',name:'Parmesano curado',note:'36 meses',removable:true},{id:'i5',emoji:'🍄',name:'Trufa negra',note:'Rallada',removable:true}],
-        extras:[{id:'x1',emoji:'🧀',name:'Parmesano extra',note:'+$18',price:18},{id:'x2',emoji:'🍄',name:'Trufa extra',note:'+$45',price:45},{id:'x3',emoji:'🌶️',name:'Chile en hojuelas',note:'Gratis',price:0}]},
-      {id:'psc2',emoji:'🦞',name:'Tagliatelle al Marisco',desc:'Bogavante, vieiras, bisque y caviar.',price:295,tag:'new',
-        ingredients:[{id:'i1',emoji:'🍝',name:'Tagliatelle fresco',note:'Hecho en casa',removable:false},{id:'i2',emoji:'🦞',name:'Bogavante',note:'Medallones',removable:false},{id:'i3',emoji:'🐚',name:'Vieiras',note:'Selladas',removable:true},{id:'i4',emoji:'🫙',name:'Salsa bisque',note:'De marisco',removable:false},{id:'i5',emoji:'🖤',name:'Caviar',note:'Acabado',removable:true}],
-        extras:[{id:'x1',emoji:'🦐',name:'Camarones extra',note:'+$50',price:50},{id:'x2',emoji:'🧀',name:'Parmesano rallado',note:'+$15',price:15},{id:'x3',emoji:'🌶️',name:'Chile en hojuelas',note:'Gratis',price:0}]},
-      {id:'psc3',emoji:'🧆',name:'Penne Arrabbiata Gourmet',desc:'Nduja, burrata y pan grattato.',price:195,tag:'spicy',
-        ingredients:[{id:'i1',emoji:'🍝',name:'Penne rigate',note:'Bronce',removable:false},{id:'i2',emoji:'🌶️',name:'Salsa arrabbiata',note:'Chile profundo',removable:false},{id:'i3',emoji:'🥩',name:'Nduja',note:'Embutido picante',removable:true},{id:'i4',emoji:'🧀',name:'Burrata',note:'Entera al centro',removable:true},{id:'i5',emoji:'🫓',name:'Pan grattato',note:'Crocante',removable:true}],
-        extras:[{id:'x1',emoji:'🍗',name:'Pollo a la plancha',note:'+$30',price:30},{id:'x2',emoji:'🧀',name:'Burrata extra',note:'+$35',price:35},{id:'x3',emoji:'🌶️',name:'Nduja extra (más picante)',note:'+$20',price:20}]},
-    ],
-  },
-  postres:{
-    simple:[
-      {id:'ds1',emoji:'🍮',name:'Flan Napolitano',desc:'Flan clásico con caramelo y crema chantilly.',price:75,tag:'popular',
-        ingredients:[{id:'i1',emoji:'🍮',name:'Flan de vainilla',note:'Cremoso',removable:false},{id:'i2',emoji:'🍯',name:'Caramelo',note:'Dorado',removable:true},{id:'i3',emoji:'🥛',name:'Crema chantilly',note:'Al lado',removable:true}],
-        extras:[{id:'x1',emoji:'🍓',name:'Fresas frescas',note:'+$12',price:12},{id:'x2',emoji:'🍨',name:'Bola de helado',note:'+$20',price:20},{id:'x3',emoji:'🍫',name:'Salsa de chocolate',note:'+$10',price:10},{id:'x4',emoji:'🌰',name:'Nuez caramelizada',note:'+$15',price:15}]},
-      {id:'ds2',emoji:'🍨',name:'Helado Artesanal',desc:'3 bolas a elegir: vainilla, chocolate, fresa o limón.',price:65,tag:null,
-        ingredients:[{id:'i1',emoji:'🍨',name:'Bola 1',note:'A elegir',removable:false},{id:'i2',emoji:'🍨',name:'Bola 2',note:'A elegir',removable:false},{id:'i3',emoji:'🍨',name:'Bola 3',note:'A elegir',removable:false},{id:'i4',emoji:'🍪',name:'Galleta de barquillo',note:'Decorativa',removable:true}],
-        extras:[{id:'x1',emoji:'🍨',name:'Bola extra',note:'+$18',price:18},{id:'x2',emoji:'🍫',name:'Salsa de chocolate',note:'+$10',price:10},{id:'x3',emoji:'🍯',name:'Miel de abeja',note:'+$8',price:8},{id:'x4',emoji:'🌰',name:'Nuez caramelizada',note:'+$12',price:12},{id:'x5',emoji:'🍓',name:'Fresas frescas',note:'+$12',price:12}]},
-      {id:'ds3',emoji:'🍫',name:'Brownie Clásico',desc:'Brownie de chocolate oscuro con azúcar glass.',price:70,tag:null,
-        ingredients:[{id:'i1',emoji:'🍫',name:'Brownie',note:'Chocolate 70%',removable:false},{id:'i2',emoji:'🍬',name:'Azúcar glass',note:'Espolvoreado',removable:true},{id:'i3',emoji:'🥛',name:'Crema chantilly',note:'Opcional',removable:true}],
-        extras:[{id:'x1',emoji:'🍨',name:'Bola de helado',note:'+$20',price:20},{id:'x2',emoji:'🍫',name:'Salsa de chocolate caliente',note:'+$10',price:10},{id:'x3',emoji:'🌰',name:'Nuez caramelizada',note:'+$12',price:12},{id:'x4',emoji:'🍓',name:'Fresas',note:'+$12',price:12}]},
-    ],
-    mixta:[
-      {id:'dm1',emoji:'🍰',name:'Cheesecake + Frutas',desc:'Cheesecake con selección de frutas de temporada.',price:95,tag:'new',
-        ingredients:[{id:'i1',emoji:'🍰',name:'Cheesecake',note:'Base galleta',removable:false},{id:'i2',emoji:'🫐',name:'Arándanos',note:'Frescos',removable:true},{id:'i3',emoji:'🍓',name:'Fresas',note:'En mitades',removable:true},{id:'i4',emoji:'🥭',name:'Mango',note:'En cubos',removable:true},{id:'i5',emoji:'🍯',name:'Coulis de berries',note:'Salsa',removable:true}],
-        extras:[{id:'x1',emoji:'🍨',name:'Bola de helado',note:'+$20',price:20},{id:'x2',emoji:'🍫',name:'Salsa de chocolate',note:'+$10',price:10},{id:'x3',emoji:'🥝',name:'Kiwi fresco',note:'+$10',price:10},{id:'x4',emoji:'🍇',name:'Uvas',note:'+$10',price:10}]},
-      {id:'dm2',emoji:'🧁',name:'Sundae Mixto',desc:'Helado, brownie, fruta y salsas a elegir.',price:105,tag:'popular',
-        ingredients:[{id:'i1',emoji:'🍨',name:'Helado vainilla',note:'2 bolas',removable:false},{id:'i2',emoji:'🍫',name:'Trozo de brownie',note:'Tibio',removable:true},{id:'i3',emoji:'🍓',name:'Frutos rojos',note:'Frescos',removable:true},{id:'i4',emoji:'🍫',name:'Salsa de chocolate',note:'Caliente',removable:true},{id:'i5',emoji:'🥛',name:'Chantilly',note:'Abundante',removable:true},{id:'i6',emoji:'🌰',name:'Nuez caramelizada',note:'Crocante',removable:true}],
-        extras:[{id:'x1',emoji:'🍨',name:'Bola extra de helado',note:'+$18',price:18},{id:'x2',emoji:'🍯',name:'Salsa de caramelo',note:'+$10',price:10},{id:'x3',emoji:'🍌',name:'Plátano',note:'+$8',price:8},{id:'x4',emoji:'🌈',name:'Sprinkles de colores',note:'Gratis',price:0}]},
-      {id:'dm3',emoji:'🫐',name:'Parfait de Berries',desc:'Yogurt griego, granola y berries mixtos.',price:85,tag:'veggie',
-        ingredients:[{id:'i1',emoji:'🥣',name:'Yogurt griego',note:'Natural',removable:false},{id:'i2',emoji:'🌾',name:'Granola artesanal',note:'Con miel',removable:true},{id:'i3',emoji:'🫐',name:'Arándanos',note:'Frescos',removable:true},{id:'i4',emoji:'🍓',name:'Frambuesas',note:'Frescas',removable:true},{id:'i5',emoji:'🍯',name:'Miel de abeja',note:'Al gusto',removable:true}],
-        extras:[{id:'x1',emoji:'🥝',name:'Kiwi',note:'+$10',price:10},{id:'x2',emoji:'🥭',name:'Mango',note:'+$12',price:12},{id:'x3',emoji:'🌱',name:'Semillas de chía',note:'Gratis',price:0},{id:'x4',emoji:'🌰',name:'Almendras fileteadas',note:'+$15',price:15}]},
-    ],
-    compuesta:[
-      {id:'dc1',emoji:'🍫',name:'Lava Cake Trufado',desc:'Bizcocho de chocolate con corazón fundido y oro en polvo.',price:115,tag:'popular',
-        ingredients:[{id:'i1',emoji:'🍫',name:'Bizcocho chocolate',note:'72% cacao',removable:false},{id:'i2',emoji:'🔥',name:'Corazón fundido',note:'Ganache trufa',removable:false},{id:'i3',emoji:'🍨',name:'Helado vainilla Tahití',note:'Artesanal',removable:true},{id:'i4',emoji:'✨',name:'Oro en polvo',note:'Acabado',removable:true},{id:'i5',emoji:'🫐',name:'Coulis de berries',note:'Ácido',removable:true}],
-        extras:[{id:'x1',emoji:'🍨',name:'Bola extra de helado',note:'+$20',price:20},{id:'x2',emoji:'🍫',name:'Salsa de chocolate extra',note:'+$10',price:10},{id:'x3',emoji:'🍓',name:'Fresas frescas',note:'+$12',price:12}]},
-      {id:'dc2',emoji:'🍰',name:'Tiramisú Clásico',desc:'Savoiardi, mascarpone, espresso y cacao belga.',price:105,tag:null,
-        ingredients:[{id:'i1',emoji:'🍪',name:'Savoiardi',note:'En espresso',removable:false},{id:'i2',emoji:'🧀',name:'Crema mascarpone',note:'Con Marsala',removable:false},{id:'i3',emoji:'☕',name:'Espresso',note:'Doble',removable:true},{id:'i4',emoji:'🍫',name:'Cacao belga',note:'Espolvoreado',removable:true}],
-        extras:[{id:'x1',emoji:'☕',name:'Shot extra de espresso',note:'+$12',price:12},{id:'x2',emoji:'🍫',name:'Cacao extra',note:'Gratis',price:0},{id:'x3',emoji:'🍨',name:'Helado de vainilla',note:'+$20',price:20}]},
-      {id:'dc3',emoji:'🫐',name:'Cheesecake de Arándanos',desc:'Base de galleta, crema suave y espejo de arándanos.',price:110,tag:'new',
-        ingredients:[{id:'i1',emoji:'🍪',name:'Base de galleta',note:'Mantequilla browned',removable:false},{id:'i2',emoji:'🧀',name:'Crema de queso',note:'Philadelphia+mascarpone',removable:false},{id:'i3',emoji:'🫐',name:'Espejo de arándanos',note:'Gelificado',removable:true},{id:'i4',emoji:'🫐',name:'Arándanos frescos',note:'Decoración',removable:true},{id:'i5',emoji:'🌸',name:'Flores comestibles',note:'Acabado',removable:true}],
-        extras:[{id:'x1',emoji:'🍨',name:'Bola de helado',note:'+$20',price:20},{id:'x2',emoji:'🍓',name:'Coulis de fresa',note:'+$12',price:12},{id:'x3',emoji:'🌸',name:'Flores extra',note:'Gratis',price:0}]},
-    ],
-  },
-  bebidas:{
-    simple:[
-      {id:'bs1',emoji:'🥤',name:'Refresco / Agua',desc:'Coca-Cola, Sprite, Fanta o agua mineral.',price:30,tag:null,
-        ingredients:[{id:'i1',emoji:'🥤',name:'Bebida a elegir',note:'355ml',removable:false},{id:'i2',emoji:'🧊',name:'Hielo',note:'Al gusto',removable:true},{id:'i3',emoji:'🍋',name:'Limón',note:'Al lado',removable:true}],
-        extras:[{id:'x1',emoji:'🥤',name:'Tamaño grande (600ml)',note:'+$15',price:15},{id:'x2',emoji:'🍋',name:'Limón extra',note:'Gratis',price:0}]},
-      {id:'bs2',emoji:'☕',name:'Café de Olla',desc:'Café de altura con canela y piloncillo.',price:45,tag:null,
-        ingredients:[{id:'i1',emoji:'☕',name:'Café de altura',note:'Oaxaca',removable:false},{id:'i2',emoji:'🫚',name:'Canela',note:'En raja',removable:true},{id:'i3',emoji:'🍯',name:'Piloncillo',note:'Al gusto',removable:true}],
-        extras:[{id:'x1',emoji:'🥛',name:'Leche de vaca',note:'+$10',price:10},{id:'x2',emoji:'🥛',name:'Leche de avena',note:'+$15',price:15},{id:'x3',emoji:'☕',name:'Shot extra de café',note:'+$12',price:12},{id:'x4',emoji:'🍦',name:'Sirope de vainilla',note:'+$8',price:8}]},
-      {id:'bs3',emoji:'🧃',name:'Agua Fresca',desc:'Jamaica, tamarindo, horchata o limón con chía.',price:35,tag:'popular',
-        ingredients:[{id:'i1',emoji:'🧃',name:'Agua a elegir',note:'Grande',removable:false},{id:'i2',emoji:'🧊',name:'Hielo',note:'Abundante',removable:true},{id:'i3',emoji:'🍋',name:'Limón',note:'Opcional',removable:true}],
-        extras:[{id:'x1',emoji:'🌱',name:'Chía',note:'Gratis',price:0},{id:'x2',emoji:'🍯',name:'Miel extra',note:'+$8',price:8},{id:'x3',emoji:'🧃',name:'Vaso extra',note:'+$30',price:30}]},
-    ],
-    mixta:[
-      {id:'bm1',emoji:'🍹',name:'Limonada Mixta',desc:'Natural, mineral o de coco con fruta a elegir.',price:65,tag:null,
-        ingredients:[{id:'i1',emoji:'🍋',name:'Jugo de limón',note:'Fresco',removable:false},{id:'i2',emoji:'💧',name:'Agua mineral',note:'O natural',removable:false},{id:'i3',emoji:'🫐',name:'Frutos rojos',note:'Opcional',removable:true},{id:'i4',emoji:'🌿',name:'Menta fresca',note:'Opcional',removable:true},{id:'i5',emoji:'🍬',name:'Azúcar o stevia',note:'Al gusto',removable:true}],
-        extras:[{id:'x1',emoji:'🥥',name:'Agua de coco',note:'+$15',price:15},{id:'x2',emoji:'🍓',name:'Fresa extra',note:'+$12',price:12},{id:'x3',emoji:'🌿',name:'Menta extra',note:'Gratis',price:0},{id:'x4',emoji:'🌶️',name:'Toque de chile',note:'Gratis',price:0}]},
-      {id:'bm2',emoji:'🧋',name:'Michelada',desc:'Cerveza, clamato, limón y salsas. Personaliza tu mezcla.',price:90,tag:'popular',
-        ingredients:[{id:'i1',emoji:'🍺',name:'Cerveza rubia',note:'Clara',removable:false},{id:'i2',emoji:'🧃',name:'Clamato',note:'Original',removable:false},{id:'i3',emoji:'🍋',name:'Limón',note:'Abundante',removable:true},{id:'i4',emoji:'🌶️',name:'Salsa Valentina',note:'Al gusto',removable:true},{id:'i5',emoji:'🫙',name:'Salsa inglesa',note:'Umami',removable:true},{id:'i6',emoji:'🌶️',name:'Chile en polvo',note:'Escarchado',removable:true}],
-        extras:[{id:'x1',emoji:'🍺',name:'Cerveza oscura',note:'Cambio Gratis',price:0},{id:'x2',emoji:'🦐',name:'Camarón cóctel',note:'+$30',price:30},{id:'x3',emoji:'🫒',name:'Aceitunas',note:'+$15',price:15},{id:'x4',emoji:'🌶️',name:'Habanero extra picante',note:'Gratis',price:0}]},
-      {id:'bm3',emoji:'🍷',name:'Copa de Vino',desc:'Tinto, blanco o rosé de la casa.',price:105,tag:null,
-        ingredients:[{id:'i1',emoji:'🍷',name:'Vino a elegir',note:'Copa 150ml',removable:false},{id:'i2',emoji:'🌰',name:'Nueces mixtas',note:'Botana',removable:true},{id:'i3',emoji:'🫒',name:'Aceitunas',note:'Botana',removable:true}],
-        extras:[{id:'x1',emoji:'🍷',name:'Copa extra (150ml)',note:'+$95',price:95},{id:'x2',emoji:'🧀',name:'Tabla de quesos mini',note:'+$55',price:55},{id:'x3',emoji:'🍇',name:'Uvas frescas',note:'+$15',price:15}]},
-    ],
-    compuesta:[
-      {id:'bc1',emoji:'🍸',name:'Mojito Clásico',desc:'Ron blanco, menta, azúcar morena y soda.',price:120,tag:'popular',
-        ingredients:[{id:'i1',emoji:'🥃',name:'Ron blanco',note:'Bacardí',removable:false},{id:'i2',emoji:'🌿',name:'Menta fresca',note:'Muddleada',removable:false},{id:'i3',emoji:'🍋',name:'Lima',note:'En cubos',removable:false},{id:'i4',emoji:'🍬',name:'Azúcar morena',note:'Al gusto',removable:true},{id:'i5',emoji:'💧',name:'Soda',note:'Top',removable:true},{id:'i6',emoji:'🧊',name:'Hielo crushed',note:'Abundante',removable:true}],
-        extras:[{id:'x1',emoji:'🫐',name:'Mojito de arándanos',note:'+$15',price:15},{id:'x2',emoji:'🍓',name:'Mojito de fresa',note:'+$15',price:15},{id:'x3',emoji:'🥥',name:'Mojito de coco',note:'+$15',price:15},{id:'x4',emoji:'🥃',name:'Ron extra (doble)',note:'+$30',price:30}]},
-      {id:'bc2',emoji:'🍹',name:'Paloma Gourmet',desc:'Tequila reposado, toronja fresca y sal de gusano.',price:135,tag:'new',
-        ingredients:[{id:'i1',emoji:'🥃',name:'Tequila reposado',note:'Herradura',removable:false},{id:'i2',emoji:'🍊',name:'Jugo de toronja',note:'Fresco',removable:false},{id:'i3',emoji:'🧂',name:'Sal de gusano',note:'Escarchado',removable:true},{id:'i4',emoji:'🫧',name:'Espuma de lima',note:'Acabado',removable:true},{id:'i5',emoji:'🌿',name:'Romero fresco',note:'Aromático',removable:true}],
-        extras:[{id:'x1',emoji:'🥃',name:'Tequila doble',note:'+$35',price:35},{id:'x2',emoji:'🧂',name:'Sal negra de Hawái',note:'+$10',price:10},{id:'x3',emoji:'🌶️',name:'Toque de habanero',note:'Gratis',price:0}]},
-      {id:'bc3',emoji:'🍵',name:'Matcha Latte Artesanal',desc:'Matcha ceremonial, leche de avena y vainilla bourbon.',price:95,tag:'veggie',
-        ingredients:[{id:'i1',emoji:'🍵',name:'Matcha ceremonial',note:'Grado A Japón',removable:false},{id:'i2',emoji:'🥛',name:'Leche de avena',note:'Vaporizada',removable:false},{id:'i3',emoji:'🍦',name:'Sirope vainilla bourbon',note:'Artesanal',removable:true},{id:'i4',emoji:'🫧',name:'Espuma de leche',note:'Latte art',removable:true}],
-        extras:[{id:'x1',emoji:'🥛',name:'Leche de coco',note:'Cambio Gratis',price:0},{id:'x2',emoji:'🥛',name:'Leche de almendra',note:'Cambio Gratis',price:0},{id:'x3',emoji:'🍵',name:'Matcha extra (más intenso)',note:'+$15',price:15},{id:'x4',emoji:'🧊',name:'Versión fría (iced)',note:'Gratis',price:0}]},
-    ],
-  },
+var WA = '526622067409';
+var PROTEINS = [
+  {id:'p_res',    emoji:'&#x1F969;', name:'Res'},
+  {id:'p_pollo',  emoji:'&#x1F357;', name:'Pollo'},
+  {id:'p_tocino', emoji:'&#x1F953;', name:'Tocino'},
+  {id:'p_surimi', emoji:'&#x1F980;', name:'Surimi'},
+  {id:'p_camaron',emoji:'&#x1F990;', name:'Camar\xF3n'}
+];
+var SAUCES = [
+  {id:'sc1', name:'BBQ'},
+  {id:'sc2', name:'B\xFAfalo'},
+  {id:'sc3', name:'Mixto'},
+  {id:'sc4', name:'BBQ Chipotle'},
+  {id:'sc5', name:'Naranja Chipotle'},
+  {id:'sc6', name:'Tamarindo'},
+  {id:'sc7', name:'Mango Hot'},
+  {id:'sc8', name:'Mango Habanero'},
+  {id:'sc9', name:'Piña Hot'}
+];
+function ing(id,em,nm,nt,rm){return{id:id,emoji:em,name:nm,note:nt,removable:rm};}
+function base(){return[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true)];}
+var MENU = {
+sushis:[
+ {id:'s1',emoji:'&#x1F363;',name:'California',price:95,tag:null,hasProtein:true,hasAlga:true,
+  desc:'01 prote\xEDna a elegir: res, camar\xF3n, tocino, pollo o surimi.',
+  ingredients:base(),
+  extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25},{id:'x2',emoji:'&#x1F41F;',name:'Tampico por fuera',note:'+$15',price:15}]},
+ {id:'s2',emoji:'&#x1F363;',name:'Bombazo',price:110,tag:'popular',hasProtein:true,hasAlga:true,
+  desc:'Prote\xEDna a elegir, cubierto con tampico, salsa de anguila y ajonjol\xED.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F41F;','Tampico','Por fuera',true),ing('b6','&#x1FAD9;','Anguila','Por fuera',true),ing('b7','&#x26AB;','Ajonjol\xED','Por fuera',true)],
+  extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s3',emoji:'&#x1F363;',name:'Sonora',price:110,tag:null,hasAlga:true,
+  desc:'Relleno res y tocino. Queso philadelphia y chile verde.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F969;','Res','Relleno',false),ing('b6','&#x1F953;','Tocino','Relleno',true),ing('b7','&#x1F336;&#xFE0F;','Chile verde','Queso',true)],
+  extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s4',emoji:'&#x1F363;',name:'Especial',price:115,tag:'popular',hasAlga:true,
+  desc:'Relleno de surimi, cubierto de tampico, aguacate, anguila y ajonjol\xED.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Cubierta',true),ing('b5','&#x1F980;','Surimi','Relleno',false),ing('b6','&#x1F41F;','Tampico','Cubierta',true),ing('b7','&#x1FAD9;','Anguila','Cubierta',true),ing('b8','&#x26AB;','Ajonjol\xED','Cubierta',true)],
+  extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s5',emoji:'&#x1F363;',name:'Tres Quesos',price:135,tag:null,hasProtein:true,hasAlga:true,
+  desc:'01 prote\xEDna a elegir, cubierta de queso gratinado, manchego y ceboll\xEDn.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F9C0;','Queso gratinado','Cubierta',false),ing('b6','&#x1F9C0;','Manchego','Cubierta',true),ing('b7','&#x1F331;','Ceboll\xEDn','Cubierta',true)],
+  extras:[]},
+ {id:'s6',emoji:'&#x1F363;',name:'Aguacate',price:100,tag:null,hasProtein:true,hasAlga:true,
+  desc:'01 prote\xEDna a elegir, cubierto de aguacate y ajonjol\xED.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Relleno y cubierta',false),ing('b5','&#x26AB;','Ajonjol\xED','Cubierta',true)],
+  extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s7',emoji:'&#x1F363;',name:'Misil',price:80,tag:null,hasAlga:false,
+  desc:'Por dentro: relleno de philadelphia, tampico, tocino y res. Por fuera: chile verde empanizado.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Relleno',false),ing('b2','&#x1F41F;','Tampico','Relleno',true),ing('b3','&#x1F953;','Tocino','Relleno',true),ing('b4','&#x1F969;','Res','Relleno',true),ing('b5','&#x1F336;&#xFE0F;','Chile verde empanizado','Cubierta',false)],
+  extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s8',emoji:'&#x1F363;',name:'Daishi',price:100,tag:null,hasAlga:true,
+  desc:'Relleno de tampico y tocino.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F41F;','Tampico','Relleno',false),ing('b6','&#x1F953;','Tocino','Relleno',true)],
+  extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25},{id:'x2',emoji:'&#x1FAD9;',name:'Anguila',note:'+$15',price:15}]},
+ {id:'s9',emoji:'&#x1F363;',name:'Cielo Mar y Tierra',price:120,tag:null,hasAlga:true,
+  desc:'Relleno de camar\xF3n, pollo y res.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F990;','Camar\xF3n','Relleno',false),ing('b6','&#x1F357;','Pollo','Relleno',true),ing('b7','&#x1F969;','Res','Relleno',true)],
+  extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s10',emoji:'&#x1F363;',name:'Antojo',price:120,tag:null,hasAlga:true,
+  desc:'Por dentro: relleno res, tocino y camar\xF3n. Por fuera: queso philadelphia y serrano.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F969;','Res','Relleno',false),ing('b6','&#x1F953;','Tocino','Relleno',true),ing('b7','&#x1F990;','Camar\xF3n','Relleno',true),ing('b8','&#x1F336;&#xFE0F;','Serrano','Queso',true)],
+  extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s11',emoji:'&#x1F363;',name:'Chipotle',price:135,tag:null,hasAlga:true,
+  desc:'Por dentro: relleno de pollo. Por fuera: camar\xF3n capeado con chipotle y ceboll\xEDn.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F357;','Pollo','Relleno',false),ing('b6','&#x1F990;','Camar\xF3n capeado','Cubierta',false),ing('b7','&#x1FAD9;','Chipotle','Cubierta',true),ing('b8','&#x1F331;','Ceboll\xEDn','Cubierta',true)],
+  extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s12',emoji:'&#x1F363;',name:'Queen Roll',price:135,tag:'popular',hasAlga:true,
+  desc:'Por dentro: relleno de pollo y camar\xF3n. Por fuera: cubierto de queso gratinado y tampico.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F357;','Pollo','Relleno',false),ing('b6','&#x1F990;','Camar\xF3n','Relleno',false),ing('b7','&#x1F9C0;','Queso gratinado','Cubierta',false),ing('b8','&#x1F41F;','Tampico','Cubierta',true)],
+  extras:[{id:'x1',emoji:'&#x1F336;&#xFE0F;',name:'Serrano',note:'Gratis',price:0}]},
+ {id:'s13',emoji:'&#x1F363;',name:'Mix Roll',price:145,tag:null,hasProtein:true,hasAlga:true,
+  desc:'Por dentro: prote\xEDna a elegir. Por fuera: mix de tocino y queso gratinado.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F953;','Tocino','Mix cubierta',true),ing('b6','&#x1F9C0;','Queso gratinado','Mix cubierta',false)],
+  extras:[]},
+ {id:'s14',emoji:'&#x1F363;',name:'Baked',price:145,tag:'hot',hasAlga:true,
+  desc:'Por dentro: relleno de pollo. Por fuera: mix tocino y camar\xF3n con queso gratinado.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F357;','Pollo','Relleno',false),ing('b6','&#x1F953;','Tocino','Cubierta',true),ing('b7','&#x1F990;','Camar\xF3n','Cubierta',true),ing('b8','&#x1F9C0;','Queso gratinado','Cubierta',false)],
+  extras:[{id:'x1',emoji:'&#x1F336;&#xFE0F;',name:'Chile serrano',note:'Gratis',price:0}]},
+ {id:'s15',emoji:'&#x1F363;',name:'Fernanda',price:145,tag:null,hasAlga:true,
+  desc:'Por dentro: pollo y res. Por fuera: mix de caribe y chile verde con camar\xF3n empanizado.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F357;','Pollo','Relleno',false),ing('b6','&#x1F969;','Res','Relleno',true),ing('b7','&#x1F336;&#xFE0F;','Caribe y chile verde','Cubierta',true),ing('b8','&#x1F990;','Camar\xF3n empanizado','Cubierta',false)],
+  extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s16',emoji:'&#x1F363;',name:'Hot',price:145,tag:'hot',hasAlga:true,
+  desc:'Por dentro: relleno de res. Por fuera: cubierto de queso gratinado picante con camar\xF3n y tocino.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F969;','Res','Relleno',false),ing('b6','&#x1F9C0;','Queso gratinado picante','Cubierta',false),ing('b7','&#x1F990;','Camar\xF3n','Cubierta',true),ing('b8','&#x1F953;','Tocino','Cubierta',true)],
+  extras:[]},
+ {id:'s17',emoji:'&#x1F363;',name:'Monster',price:165,tag:'hot',hasAlga:true,
+  desc:'Por dentro: surimi empanizado, pollo, res, tocino y camar\xF3n. Por fuera: queso gratinado con chile serrano.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F980;','Surimi empanizado','Relleno',true),ing('b6','&#x1F357;','Pollo','Relleno',true),ing('b7','&#x1F969;','Res','Relleno',true),ing('b8','&#x1F953;','Tocino','Relleno',true),ing('b9','&#x1F990;','Camar\xF3n','Relleno',true),ing('b10','&#x1F9C0;','Queso gratinado','Cubierta',false),ing('b11','&#x1F336;&#xFE0F;','Chile serrano','Cubierta',true)],
+  extras:[]},
+ {id:'s18',emoji:'&#x1F363;',name:'Franco Roll',price:165,tag:'new',hasAlga:true,
+  desc:'Por dentro: philadelphia, pepino, camar\xF3n frito, carne asada, mozzarella. Por fuera: aderezo serrano, gratinado c/mozzarella, tocino y ceboll\xEDn.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Relleno',false),ing('b2','&#x1F952;','Pepino','Relleno',true),ing('b3','&#x1F990;','Camar\xF3n frito','Relleno',false),ing('b4','&#x1F969;','Carne asada','Relleno',false),ing('b5','&#x1F9C0;','Mozzarella','Relleno y cubierta',true),ing('b7','&#x1F336;&#xFE0F;','Aderezo serrano','Cubierta',true),ing('b8','&#x1F953;','Tocino','Cubierta',true),ing('b9','&#x1F331;','Ceboll\xEDn','Cubierta',true)],
+  extras:[{id:'x1',emoji:'&#x1F9C0;',name:'M\xE1s mozzarella',note:'+$15',price:15}]},
+ {id:'s19',emoji:'&#x1F363;',name:'La Chuyita',price:165,tag:'popular',hasAlga:true,
+  desc:'Por dentro: philadelphia, aguacate, pepino, tampico. Por fuera: camar\xF3n frito aderezado, tocino, gratinado con mozzarella, chipotle y ceboll\xEDn.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Relleno',false),ing('b2','&#x1F951;','Aguacate','Relleno',true),ing('b3','&#x1F952;','Pepino','Relleno',true),ing('b4','&#x1F41F;','Tampico','Relleno',true),ing('b6','&#x1F990;','Camar\xF3n frito aderezado','Cubierta',false),ing('b7','&#x1F953;','Tocino','Cubierta',true),ing('b8','&#x1F9C0;','Mozzarella gratinada','Cubierta',true),ing('b9','&#x1FAD9;','Chipotle','Cubierta',true),ing('b10','&#x1F331;','Ceboll\xEDn','Cubierta',true)],
+  extras:[]},
+ {id:'s20',emoji:'&#x1F363;',name:'Mexicano 1',price:145,tag:null,hasAlga:true,
+  desc:'Por dentro: relleno tampico. Por fuera: carne asada, aguacate, serrano y ceboll\xEDn. Ba\xF1ado en aderezo.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Cubierta',true),ing('b5','&#x1F41F;','Tampico','Relleno',false),ing('b6','&#x1F969;','Carne asada','Cubierta',false),ing('b7','&#x1F336;&#xFE0F;','Serrano','Cubierta',true),ing('b8','&#x1F331;','Ceboll\xEDn','Cubierta',true)],
+  extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'s21',emoji:'&#x1F363;',name:'Mexicano 2',price:165,tag:null,hasAlga:true,
+  desc:'Por dentro: relleno tampico. Por fuera: carne asada, aguacate, serrano y ceboll\xEDn. Gratinado.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Cubierta',true),ing('b5','&#x1F41F;','Tampico','Relleno',false),ing('b6','&#x1F969;','Carne asada','Cubierta',false),ing('b7','&#x1F336;&#xFE0F;','Serrano','Cubierta',true),ing('b8','&#x1F331;','Ceboll\xEDn','Cubierta',true),ing('b9','&#x1F9C0;','Gratinado','Cubierta',false)],
+  extras:[{id:'x1',emoji:'&#x1F953;',name:'Tocino extra',note:'+$15',price:15}]},
+ {id:'s22',emoji:'&#x1F363;',name:'Borbon',price:220,tag:'popular',hasSauce:true,hasAlga:true,
+  desc:'Por dentro: surimi empanizado, pollo, res, tocino y camar\xF3n. Por fuera: queso gratinado con chile serrano. Boneles en salsa a elecci\xF3n.',
+  ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F980;','Surimi empanizado','Relleno',true),ing('b6','&#x1F357;','Pollo','Relleno',true),ing('b7','&#x1F969;','Res','Relleno',true),ing('b8','&#x1F953;','Tocino','Relleno',true),ing('b9','&#x1F990;','Camar\xF3n','Relleno',true),ing('b10','&#x1F9C0;','Queso gratinado','Cubierta',false),ing('b11','&#x1F336;&#xFE0F;','Chile serrano','Cubierta',true)],
+  extras:[]}
+],
+entradas:[
+ {id:'e1',emoji:'&#x1F9C6;',name:'Tostibolones',price:70,tag:null,hasSauce:true,
+  desc:'Tostitos ba\xF1ados en queso amarillo y boneles en salsa a elegir.',
+  ingredients:[ing('b1','&#x1F96B;','Tostitos','Base',false),ing('b2','&#x1F9C0;','Queso amarillo','Ba\xF1ados',false),ing('b3','&#x1F357;','Boneles','Con salsa',false)],
+  extras:[]},
+ {id:'e2',emoji:'&#x1F32E;',name:'Tostitampico',price:70,tag:null,
+  desc:'Tostitos, tampico y zanahoria, ba\xF1ados en aderezo chipotle, anguila y ajonjol\xED.',
+  ingredients:[ing('b1','&#x1F96B;','Tostitos','Base',false),ing('b2','&#x1F41F;','Tampico','Encima',false),ing('b3','&#x1F955;','Zanahoria','Decorado',true),ing('b4','&#x1FAD9;','Aderezo chipotle','Ba\xF1ado',true),ing('b5','&#x1FAD9;','Anguila','Ba\xF1ado',true),ing('b6','&#x26AB;','Ajonjol\xED','Encima',true)],
+  extras:[]},
+ {id:'e3',emoji:'&#x1F9C0;',name:'Dedos de Queso',price:60,tag:'popular',
+  desc:'Philadelphia, 05 unidades.',
+  ingredients:[ing('b1','&#x1F9C0;','Philadelphia','Relleno',false)],
+  extras:[{id:'x1',emoji:'&#x1F336;&#xFE0F;',name:'Serrano al lado',note:'Gratis',price:0}]},
+ {id:'e4',emoji:'&#x1F35F;',name:'Papas Sazonadas',price:50,tag:null,
+  desc:'Papas sazonadas al estilo La Esquina.',
+  ingredients:[ing('b1','&#x1F954;','Papas sazonadas','Al estilo',false)],
+  extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso amarillo',note:'+$15',price:15}]},
+ {id:'e5',emoji:'&#x1F336;&#xFE0F;',name:'Chile Caribe Relleno',price:30,tag:null,
+  desc:'Philadelphia, tocino, tampico y empanizado.',
+  ingredients:[ing('b1','&#x1F336;&#xFE0F;','Chile caribe','Base',false),ing('b2','&#x1F9C0;','Philadelphia','Relleno',false),ing('b3','&#x1F953;','Tocino','Relleno',true),ing('b4','&#x1F41F;','Tampico','Relleno',true)],
+  extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'e6',emoji:'&#x26AB;',name:'Boliblitz',price:100,tag:'popular',
+  desc:'08 bolitas de tampico, philadelphia, anguila y ceboll\xEDn.',
+  ingredients:[ing('b1','&#x1F41F;','Tampico','Relleno',false),ing('b2','&#x1F9C0;','Philadelphia','Relleno',false),ing('b3','&#x1FAD9;','Anguila','Salsa',true),ing('b4','&#x1F331;','Ceboll\xEDn','Decorado',true)],
+  extras:[{id:'x1',emoji:'&#x26AB;',name:'Ajonjol\xED',note:'Gratis',price:0}]}
+],
+combos:[
+ {id:'c1',emoji:'&#x1F371;',name:'Mayito',price:145,tag:'popular',hasProtein:true,hasSauce:true,
+  desc:'Prote\xEDna a elegir. Arriba tampico con boneless ba\xF1ados en salsa de elecci\xF3n.',
+  ingredients:[ing('b1','&#x1F363;','Sushi (prot. elegida)','Base',false),ing('b2','&#x1F41F;','Tampico','Arriba',true),ing('b3','&#x1F357;','Boneless','Con salsa',false)],
+  extras:[]},
+ {id:'c2',emoji:'&#x1F371;',name:'Botix',price:120,tag:null,hasSauce:true,
+  desc:'Mitad sushi (bombazo, sonora o california) mitad boneless. Salsa a elegir.',
+  ingredients:[ing('b1','&#x1F363;','1/2 sushi a elegir','Bombazo/Sonora/California',false),ing('b2','&#x1F357;','Boneless','Mitad',false)],
+  extras:[]},
+ {id:'c3',emoji:'&#x1F371;',name:'Paquetellenes',price:150,tag:null,hasSauce:true,
+  desc:'1/2 sushi (bombazo, sonora o california), 1/2 boneless, 1/2 papas sazonadas.',
+  ingredients:[ing('b1','&#x1F363;','1/2 sushi a elegir','Bombazo/Sonora/California',false),ing('b2','&#x1F357;','Boneless','Mitad',false),ing('b3','&#x1F35F;','Papas sazonadas','Mitad porci\xF3n',false)],
+  extras:[]},
+ {id:'c4',emoji:'&#x1F371;',name:'Charola',price:220,tag:'popular',hasSauce:true,
+  desc:'1/2 California, 1/2 boneless, 1/2 papas sazonadas, dedos de queso y tampico.',
+  ingredients:[ing('b1','&#x1F363;','1/2 California','Sushi',false),ing('b2','&#x1F357;','Boneless','Mitad',false),ing('b3','&#x1F35F;','Papas sazonadas','Mitad',false),ing('b4','&#x1F9C0;','Dedos de queso','Incluidos',true),ing('b5','&#x1F41F;','Tampico','Incluido',true)],
+  extras:[]},
+ {id:'c5',emoji:'&#x1F371;',name:'La Botanera',price:350,tag:'popular',hasSauce:true,
+  desc:'01 alitas, 01 papas sazonadas, 01 boneles, 03 caribes, zanahoria, apio, aderezos y salsas.',
+  ingredients:[ing('b1','&#x1F357;','Alitas','1 orden',false),ing('b2','&#x1F35F;','Papas sazonadas','1 orden',false),ing('b3','&#x1F357;','Boneles','1 orden',false),ing('b4','&#x1F336;&#xFE0F;','3 Caribes','Rellenos',true),ing('b5','&#x1F955;','Zanahoria y apio','Al lado',true)],
+  extras:[]},
+ {id:'c6',emoji:'&#x1F371;',name:'La Cajita',price:400,tag:null,hasSauce:true,
+  desc:'O. boneles, 03 sushis (bombazo, california y sonora), apio, zanahoria, aderezo, ranch, anguila, soya y siracha.',
+  ingredients:[ing('b1','&#x1F357;','Boneles','1 orden',false),ing('b2','&#x1F363;','California','Sushi',false),ing('b3','&#x1F363;','Bombazo','Sushi',false),ing('b4','&#x1F363;','Sonora','Sushi',false),ing('b5','&#x1F955;','Apio y zanahoria','Al lado',true)],
+  extras:[]},
+ {id:'c7',emoji:'&#x1F371;',name:'La Caja',price:650,tag:'new',hasSauce:true,
+  desc:'O. boneles, O. papas sazonadas, 3 sushis (bombazo, california y sonora), O. dedos queso philadelphia, tampico, chipotle, ranch, anguila, soya y siracha.',
+  ingredients:[ing('b1','&#x1F357;','Boneles','1 orden',false),ing('b2','&#x1F35F;','Papas sazonadas','1 orden',false),ing('b3','&#x1F363;','Sushis x3','California, Bombazo, Sonora',false),ing('b4','&#x1F9C0;','Dedos de queso','1 orden',false),ing('b5','&#x1F41F;','Tampico','Incluido',true)],
+  extras:[]},
+ {id:'c8',emoji:'&#x1F363;',name:'Rosca',price:350,tag:null,
+  desc:'Orden especial. Consultar disponibilidad.',
+  ingredients:[ing('b1','&#x1F363;','Rosca de sushi','Presentaci\xF3n especial',false)],
+  extras:[]}
+],
+otros:[
+ {id:'o1',emoji:'&#x1F357;',name:'Alitas',price:120,tag:'popular',hasSauce:true,
+  desc:'Picositas o salsa a elecci\xF3n.',
+  ingredients:[ing('b1','&#x1F357;','Alitas de pollo','Orden',false)],
+  extras:[]},
+ {id:'o2',emoji:'&#x1F357;',name:'Boneless',price:120,tag:'popular',hasSauce:true,
+  desc:'Tiras de pollo empanizadas y ba\xF1adas en salsa a elecci\xF3n. Con apio, zanahoria y aderezo.',
+  ingredients:[ing('b1','&#x1F357;','Pollo empanizado','Tiras',false),ing('b2','&#x1F96C;','Apio','Guarnici\xF3n',true),ing('b3','&#x1F955;','Zanahoria','Guarnici\xF3n',true),ing('b4','&#x1FAD9;','Aderezo','Al lado',true)],
+  extras:[]},
+ {id:'o3',emoji:'&#x1F357;',name:'Boneless con Papas',price:120,tag:null,hasSauce:true,
+  desc:'Boneless + papas sazonadas.',
+  ingredients:[ing('b1','&#x1F357;','Pollo empanizado','Tiras',false),ing('b2','&#x1F35F;','Papas sazonadas','Incluidas',false),ing('b3','&#x1F96C;','Apio','Guarnici\xF3n',true),ing('b4','&#x1F955;','Zanahoria','Guarnici\xF3n',true)],
+  extras:[]},
+ {id:'o4',emoji:'&#x1F35A;',name:'Yakimeshi',price:135,tag:null,
+  desc:'Arroz frito con pollo, res, tocino y camar\xF3n decorada con aguacate y tampico.',
+  ingredients:[ing('b1','&#x1F35A;','Arroz frito','Base',false),ing('b2','&#x1F357;','Pollo','Mix',true),ing('b3','&#x1F969;','Res','Mix',true),ing('b4','&#x1F953;','Tocino','Mix',true),ing('b5','&#x1F990;','Camar\xF3n','Mix',true),ing('b6','&#x1F951;','Aguacate','Decorado',true),ing('b7','&#x1F41F;','Tampico','Decorado',true)],
+  extras:[{id:'x1',emoji:'&#x1F969;',name:'Prote\xEDna extra',note:'+$15',price:15}]},
+ {id:'o5',emoji:'&#x1F35A;',name:'Gohan',price:135,tag:'popular',
+  desc:'Plancha de arroz natural o empanizado, philadelphia, tampico, res, pollo, tocino, aguacate, camar\xF3n, serrano y ceboll\xEDn.',
+  ingredients:[ing('b1','&#x1F35A;','Arroz (nat. o empanizado)','Base',false),ing('b2','&#x1F9C0;','Philadelphia','Encima',true),ing('b3','&#x1F41F;','Tampico','Encima',true),ing('b4','&#x1F969;','Res','Mix prot.',true),ing('b5','&#x1F357;','Pollo','Mix prot.',true),ing('b6','&#x1F953;','Tocino','Mix prot.',true),ing('b7','&#x1F990;','Camar\xF3n','Mix prot.',true),ing('b8','&#x1F951;','Aguacate','Decorado',true),ing('b9','&#x1F336;&#xFE0F;','Serrano','Decorado',true),ing('b10','&#x1F331;','Ceboll\xEDn','Decorado',true)],
+  extras:[{id:'x1',emoji:'&#x1F969;',name:'Prote\xEDna extra',note:'+$15',price:15}]},
+ {id:'o6',emoji:'&#x1F363;',name:'Bolas — B\xE1sica',price:75,tag:null,hasProtein:true,
+  desc:'01 prote\xEDna a elegir: res, camar\xF3n, tocino, pollo o surimi.',
+  ingredients:[ing('b1','&#x1F9C0;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b4','&#x1F41F;','Tampico','Por fuera',true),ing('b5','&#x1FAD9;','Anguila','Por fuera',true),ing('b6','&#x26AB;','Ajonjol\xED','Por fuera',true)],
+  extras:[]},
+ {id:'o7',emoji:'&#x1F363;',name:'Bolas — Camar\xF3n',price:85,tag:null,
+  desc:'Bolas de sushi con camar\xF3n.',
+  ingredients:[ing('b1','&#x1F9C0;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b4','&#x1F990;','Camar\xF3n','Prote\xEDna',false),ing('b5','&#x1F41F;','Tampico','Por fuera',true)],
+  extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
+ {id:'o8',emoji:'&#x1F363;',name:'Bolas — Mixta',price:95,tag:null,hasProtein:true,
+  desc:'Bolas de sushi con mix de prote\xEDnas a elegir.',
+  ingredients:[ing('b1','&#x1F9C0;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b4','&#x1F41F;','Tampico','Por fuera',true)],
+  extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]}
+],
+bebidas:[
+ {id:'b1',emoji:'&#x1F9CB;',name:'T\xE9 1 litro',price:25,tag:null,
+  desc:'T\xE9 helado 1 litro.',
+  ingredients:[ing('b1','&#x1F9CB;','T\xE9 helado','1 litro',false),ing('b2','&#x1F9CA;','Hielo','Al gusto',true)],
+  extras:[{id:'x1',emoji:'&#x1F34B;',name:'Lim\xF3n',note:'Gratis',price:0}]},
+ {id:'b2',emoji:'&#x1F964;',name:'Coca Cola',price:25,tag:null,
+  desc:'Refresco Coca Cola.',
+  ingredients:[ing('b1','&#x1F964;','Coca Cola','355ml',false),ing('b2','&#x1F9CA;','Hielo','Al gusto',true)],
+  extras:[{id:'x1',emoji:'&#x1F34B;',name:'Lim\xF3n',note:'Gratis',price:0}]},
+ {id:'ex1',emoji:'&#x2795;',name:'Extra — Ingrediente',price:15,tag:null,
+  desc:'Camar\xF3n, pollo, res, tocino, surimi, tampico, soya, anguila o chipotle. $15 c/u.',
+  ingredients:[],
+  extras:[]},
+ {id:'ex2',emoji:'&#x1F9C0;',name:'Extra — Queso Gratinado',price:25,tag:null,
+  desc:'Queso gratinado extra para cualquier platillo.',
+  ingredients:[],
+  extras:[]}
+]
 };
 
-const order={};
-const customizations={};
-let currentItem=null;
-let currentMods={};
-let currentSection='entradas';
-let currentSub='simple';
+var PROMOS=[
+ {id:'promo1',emoji:'&#x1F363;',num:'Paquete 1',title:'2 Californias + Tostitampico',price:220,tag:'popular',hasProtein:true,
+  desc:'2 Californias con ingrediente a elegir (pollo, tocino, res o surimi) + 1 Tostitampico.',
+  ingredients:[ing('b1','&#x1F363;','2 Californias','Prot. a elegir',false),ing('b2','&#x1F32E;','Tostitampico','Incluido',false)],
+  extras:[]},
+ {id:'promo2',emoji:'&#x1F363;',num:'Paquete 2',title:'2 Sonoras',price:200,tag:null,
+  desc:'2 Sonoras (res, tocino, philadelphia y chile rescoldado).',
+  ingredients:[ing('b1','&#x1F363;','2 Sonoras','Incluidas',false)],
+  extras:[]},
+ {id:'promo3',emoji:'&#x1F363;',num:'Paquete 3',title:'3 Bolas',price:200,tag:null,hasProtein:true,
+  desc:'3 Bolas con ingrediente a elegir (pollo, res, tocino o surimi). Pepino, aguacate, philadelphia, tampico, anguila y ajonjol\xED por fuera.',
+  ingredients:[ing('b1','&#x1F363;','3 Bolas','Prot. a elegir',false),ing('b2','&#x1F951;','Aguacate, pepino, philadelphia','Por fuera',true),ing('b3','&#x1F41F;','Tampico, anguila, ajonjol\xED','Por fuera',true)],
+  extras:[]},
+ {id:'promo4',emoji:'&#x1F371;',num:'Paquete 4',title:'1 Boneless + 1 California',price:200,tag:'popular',hasProtein:true,hasSauce:true,
+  desc:'1 Boneless (BBQ, B\xFAfalo o mixtos) + 1 California con ingrediente a elegir (pollo, tocino, res o surimi).',
+  ingredients:[ing('b1','&#x1F357;','Boneless','Con salsa',false),ing('b2','&#x1F363;','California','Prot. a elegir',false)],
+  extras:[]}
+];
+
+var order={}, customizations={}, currentItem=null, currentMods={};
+
+function init(){
+  var s=document.getElementById('sakura');
+  for(var i=0;i<16;i++){var p=document.createElement('div');p.className='petal';p.textContent='🌸';p.style.left=Math.random()*100+'%';p.style.animationDuration=(3+Math.random()*4)+'s';p.style.animationDelay=(Math.random()*5)+'s';p.style.fontSize=(12+Math.random()*10)+'px';s.appendChild(p);}
+  ['sushis','entradas','combos','otros','bebidas'].forEach(function(k){renderGrid(k,'grid-'+k);});
+  renderPromos();renderOrderSummary();updateBar();
+}
+
+function renderGrid(sec,gid){
+  var g=document.getElementById(gid);if(!g||!MENU[sec])return;
+  g.innerHTML=MENU[sec].map(cardHTML).join('');
+}
+
+function cardHTML(item){
+  var tm={popular:'tag-popular',hot:'tag-hot','new':'tag-new'};
+  var lm={popular:'&#x2B50; Popular',hot:'&#x1F336;&#xFE0F; Hot','new':'&#x2728; Nuevo'};
+  var th=item.tag?'<span class="card-tag '+tm[item.tag]+'">'+lm[item.tag]+'</span>':'';
+  return '<div class="menu-card" id="card-'+item.id+'" onclick="toggleCard(\''+item.id+'\')">'
+    +'<span class="card-emoji">'+item.emoji+'</span>'
+    +'<div class="card-name">'+item.name+'</div>'
+    +'<div class="card-desc">'+item.desc+'</div>'
+    +'<div class="card-footer"><span class="card-price">$'+item.price+'</span>'+th+'</div>'
+    +'<div class="qty-wrap">'
+    +'<button class="qty-btn" onclick="changeQty(\''+item.id+'\',-1,event)">&#x2212;</button>'
+    +'<span class="qty-num" id="qty-'+item.id+'">1</span>'
+    +'<button class="qty-btn" onclick="changeQty(\''+item.id+'\',1,event)">+</button>'
+    +'</div>'
+    +'<button class="btn-customize" onclick="openModal(\''+item.id+'\',event)">&#x270F;&#xFE0F; Personalizar</button>'
+    +'</div>';
+}
+
+function renderPromos(){
+  var g=document.getElementById('grid-promos');if(!g)return;
+  g.innerHTML=PROMOS.map(function(p){
+    var tm={popular:'tag-popular',hot:'tag-hot','new':'tag-new'};
+    var lm={popular:'&#x2B50; Popular',hot:'&#x1F336;&#xFE0F; Hot','new':'&#x2728; Nuevo'};
+    var th=p.tag?'<span class="card-tag '+tm[p.tag]+'">'+lm[p.tag]+'</span>':'';
+    return '<div class="promo-card" id="card-'+p.id+'" onclick="toggleCard(\''+p.id+'\')">'
+      +'<div class="promo-num">'+p.num+'</div>'
+      +'<div class="promo-title">'+p.emoji+' '+p.title+'</div>'
+      +'<div class="card-desc">'+p.desc+'</div>'
+      +'<div class="card-footer"><span class="promo-price">$'+p.price+' <small>MXN</small></span>'+th+'</div>'
+      +'<div class="qty-wrap">'
+      +'<button class="qty-btn" onclick="changeQty(\''+p.id+'\',-1,event)">&#x2212;</button>'
+      +'<span class="qty-num" id="qty-'+p.id+'">1</span>'
+      +'<button class="qty-btn" onclick="changeQty(\''+p.id+'\',1,event)">+</button>'
+      +'</div>'
+      +'<button class="btn-customize" onclick="openModal(\''+p.id+'\',event)">&#x270F;&#xFE0F; Personalizar</button>'
+      +'</div>';
+  }).join('');
+}
 
 function findItem(id){
-  for(const cat of Object.keys(MENU))
-    for(const sub of['simple','mixta','compuesta']){
-      const f=MENU[cat][sub].find(i=>i.id===id);
-      if(f)return f;
-    }
+  var promo=PROMOS.filter(function(x){return x.id===id;});
+  if(promo.length)return promo[0];
+  var ks=Object.keys(MENU),i,found;
+  for(i=0;i<ks.length;i++){found=MENU[ks[i]].filter(function(x){return x.id===id;});if(found.length)return found[0];}
   return null;
 }
 
-function renderAll(){
-  Object.keys(MENU).forEach(cat=>{
-    ['simple','mixta','compuesta'].forEach(sub=>{
-      const grid=document.getElementById('grid-'+cat+'-'+sub);
-      if(!grid)return;
-      grid.innerHTML='';
-      MENU[cat][sub].forEach(item=>{
-        const sel=!!order[item.id];
-        const card=document.createElement('div');
-        card.className='menu-card'+(sel?' selected':'');
-        card.id='card-'+item.id;
-        const hasMod=!!customizations[item.id];
-        const tagMap={popular:'⭐ Popular',new:'🆕 Nuevo',spicy:'🌶️ Picante',veggie:'🌿 Veggie'};
-        card.innerHTML=`
-          <span class="card-emoji">${item.emoji}</span>
-          <div class="card-name">${item.name}</div>
-          <div class="card-desc">${item.desc}</div>
-          <div class="card-footer">
-            <span class="card-price">$${item.price}</span>
-            ${item.tag?`<span class="card-tag tag-${item.tag}">${tagMap[item.tag]}</span>`:''}
-          </div>
-          ${hasMod?'<span class="custom-badge">✏️ Personalizado</span>':''}
-          <div class="qty-wrap">
-            <button class="qty-btn" onclick="changeQty('${item.id}',-1,event)">−</button>
-            <span class="qty-num" id="qty-${item.id}">${order[item.id]?.qty||1}</span>
-            <button class="qty-btn" onclick="changeQty('${item.id}',1,event)">+</button>
-          </div>
-          <button class="btn-customize" onclick="openModal('${item.id}',event)">✏️ Personalizar ingredientes</button>
-        `;
-        card.onclick=e=>{
-          if(e.target.classList.contains('qty-btn')||e.target.classList.contains('btn-customize'))return;
-          toggleItem(item);
-        };
-        grid.appendChild(card);
-      });
-    });
-  });
+function showSection(sec,btn){
+  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
+  document.querySelectorAll('.main-tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById(sec).classList.add('active');
+  btn.classList.add('active');
 }
 
-function toggleItem(item){
-  if(order[item.id])delete order[item.id];
-  else order[item.id]={item,qty:1};
-  const card=document.getElementById('card-'+item.id);
-  if(card)card.classList.toggle('selected',!!order[item.id]);
+function toggleCard(id){
+  var card=document.getElementById('card-'+id),item=findItem(id);
+  if(!card||!item)return;
+  if(order[id]){delete order[id];delete customizations[id];card.classList.remove('selected');var b=card.querySelector('.custom-badge');if(b)b.remove();}
+  else{order[id]={item:item,qty:1,extraCost:0};card.classList.add('selected');var qn=document.getElementById('qty-'+id);if(qn)qn.textContent='1';}
   updateBar();
 }
 
 function changeQty(id,delta,e){
-  e.stopPropagation();
-  if(!order[id])return;
+  e.stopPropagation();if(!order[id])return;
   order[id].qty=Math.max(1,order[id].qty+delta);
-  const el=document.getElementById('qty-'+id);
-  if(el)el.textContent=order[id].qty;
+  var qn=document.getElementById('qty-'+id);if(qn)qn.textContent=order[id].qty;
   updateBar();
 }
 
 function openModal(id,e){
   e.stopPropagation();
-  const item=findItem(id);
-  if(!item)return;
+  var item=findItem(id);if(!item)return;
   currentItem=item;
-  currentMods=JSON.parse(JSON.stringify(customizations[id]||{removed:{},extras:{}}));
-  if(!currentMods.removed)currentMods.removed={};
-  if(!currentMods.extras)currentMods.extras={};
+  var sv=customizations[id]||{};
+  currentMods={removed:JSON.parse(JSON.stringify(sv.removed||{})),extras:JSON.parse(JSON.stringify(sv.extras||{})),sauces:JSON.parse(JSON.stringify(sv.sauces||{})),protein:sv.protein||null,alga:sv.alga||null};
   document.getElementById('modal-title').textContent=item.name;
-  document.getElementById('modal-subtitle').textContent='Personaliza los ingredientes a tu gusto';
-  const body=document.getElementById('modal-body');
-  const removable=item.ingredients.filter(i=>i.removable);
-  const fixed=item.ingredients.filter(i=>!i.removable);
-  const extras=item.extras||[];
-  let html='';
+  var body=document.getElementById('modal-body');
+  var fixed=item.ingredients?item.ingredients.filter(function(i){return!i.removable;}):[];
+  var removable=item.ingredients?item.ingredients.filter(function(i){return i.removable;}):[];
+  var extras=item.extras||[];
+  var html='';
+
+  if(item.hasAlga){
+    html+='<div class="alga-section"><div class="alga-section-title">&#x1F33F; \xBFCon o sin alga?</div><div class="alga-grid">';
+    html+='<div class="alga-btn'+(currentMods.alga==='con'?' sel':'')+'" id="alga-con" onclick="selAlga(\'con\')">&#x1F33F; Con alga</div>';
+    html+='<div class="alga-btn'+(currentMods.alga==='sin'?' sel':'')+'" id="alga-sin" onclick="selAlga(\'sin\')">&#x274C; Sin alga</div>';
+    html+='</div></div>';
+  }
+
+  if(item.hasProtein){
+    html+='<div class="protein-section"><div class="protein-section-title">&#x1F969; Elige tu prote\xEDna</div><div class="protein-grid">';
+    PROTEINS.forEach(function(p){var sel=currentMods.protein===p.id?' sel':'';html+='<div class="protein-btn'+sel+'" id="pb-'+p.id+'" onclick="selProt(\''+p.id+'\')"><span class="p-emoji">'+p.emoji+'</span><span class="p-name">'+p.name+'</span></div>';});
+    html+='</div></div>';
+  }
+  if(item.hasSauce){
+    html+='<div class="sauce-section"><div class="sauce-section-title">&#x1FAD9; Elige tu salsa</div><div class="sauce-grid">';
+    SAUCES.forEach(function(s){var sel=currentMods.sauces[s.id]?' sel':'';html+='<div class="sauce-btn'+sel+'" id="sb-'+s.id+'" onclick="togSauce(\''+s.id+'\')">'+s.name+'</div>';});
+    html+='</div></div>';
+  }
   if(fixed.length){
-    html+='<div class="ing-section"><div class="ing-section-title">🔒 Ingredientes fijos</div><div class="ing-list">';
-    fixed.forEach(ing=>{
-      html+=`<div class="ing-item"><div class="ing-left"><span class="ing-emoji">${ing.emoji}</span><div><div class="ing-name">${ing.name}</div><div class="ing-note">${ing.note}</div></div></div><span style="font-size:11px;color:var(--muted)">Fijo</span></div>`;
-    });
+    html+='<div class="ing-section"><div class="ing-section-title">&#x1F512; Ingredientes fijos</div><div class="ing-list">';
+    fixed.forEach(function(i){html+='<div class="ing-item"><div class="ing-left"><span class="ing-emoji">'+i.emoji+'</span><div><div class="ing-name">'+i.name+'</div><div class="ing-note">'+i.note+'</div></div></div><span style="font-size:11px;color:var(--muted)">Fijo</span></div>';});
     html+='</div></div>';
   }
   if(removable.length){
-    html+='<div class="ing-section"><div class="ing-section-title">✏️ Quitar ingredientes</div><div class="ing-list">';
-    removable.forEach(ing=>{
-      const removed=currentMods.removed[ing.id];
-      html+=`<div class="ing-item ${removed?'removed':''}" id="ming-${ing.id}"><div class="ing-left"><span class="ing-emoji">${ing.emoji}</span><div><div class="ing-name">${ing.name}</div><div class="ing-note">${ing.note}</div></div></div><button class="ing-toggle" onclick="toggleIng('${ing.id}')">${removed?'Volver a agregar':'Quitar'}</button></div>`;
-    });
+    html+='<div class="ing-section"><div class="ing-section-title">&#x270F;&#xFE0F; Quitar ingredientes</div><div class="ing-list">';
+    removable.forEach(function(i){var rm=currentMods.removed[i.id];html+='<div class="ing-item'+(rm?' removed':'')+'" id="ming-'+i.id+'"><div class="ing-left"><span class="ing-emoji">'+i.emoji+'</span><div><div class="ing-name">'+i.name+'</div><div class="ing-note">'+i.note+'</div></div></div><button class="ing-toggle" onclick="togIng(\''+i.id+'\')">'+(rm?'Volver a poner':'Quitar')+'</button></div>';});
     html+='</div></div>';
   }
   if(extras.length){
-    html+='<div class="ing-section"><div class="ing-section-title">➕ Agregar extras</div><div class="ing-list">';
-    extras.forEach(ex=>{
-      const added=currentMods.extras[ex.id];
-      html+=`<div class="ing-item ${added?'extra-added':''}" id="mex-${ex.id}"><div class="ing-left"><span class="ing-emoji">${ex.emoji}</span><div><div class="ing-name">${ex.name}</div><div class="ing-note">${ex.note}</div></div></div><button class="ing-toggle" onclick="toggleExtra('${ex.id}')">${added?'Quitar':'Agregar'}</button></div>`;
-    });
+    html+='<div class="ing-section"><div class="ing-section-title">&#x2795; Agregar extras</div><div class="ing-list">';
+    extras.forEach(function(ex){var ad=currentMods.extras[ex.id];html+='<div class="ing-item'+(ad?' extra-added':'')+'" id="mex-'+ex.id+'"><div class="ing-left"><span class="ing-emoji">'+ex.emoji+'</span><div><div class="ing-name">'+ex.name+'</div><div class="ing-note">'+ex.note+'</div></div></div><button class="ing-toggle" onclick="togExtra(\''+ex.id+'\')">'+(ad?'Quitar':'Agregar')+'</button></div>';});
     html+='</div></div>';
   }
-  html+='<div class="modal-actions"><button class="btn-modal-cancel" onclick="closeModal()">Cancelar</button><button class="btn-modal-confirm" onclick="confirmMods()">✓ Confirmar</button></div>';
+  html+='<div class="modal-actions"><button class="btn-modal-cancel" onclick="closeModal()">Cancelar</button><button class="btn-modal-confirm" onclick="confirmMods()">&#x2713; Listo</button></div>';
   body.innerHTML=html;
   document.getElementById('modal-overlay').classList.add('open');
   document.body.style.overflow='hidden';
 }
 
-function toggleIng(ingId){
-  if(currentMods.removed[ingId])delete currentMods.removed[ingId];
-  else currentMods.removed[ingId]=true;
-  const row=document.getElementById('ming-'+ingId);
-  const btn=row.querySelector('.ing-toggle');
-  const isRemoved=!!currentMods.removed[ingId];
-  row.className='ing-item'+(isRemoved?' removed':'');
-  btn.textContent=isRemoved?'Volver a agregar':'Quitar';
+function selAlga(val){
+  currentMods.alga=currentMods.alga===val?null:val;
+  ['con','sin'].forEach(function(v){var b=document.getElementById('alga-'+v);if(b)b.className='alga-btn'+(currentMods.alga===v?' sel':'');});
 }
 
-function toggleExtra(exId){
-  if(currentMods.extras[exId])delete currentMods.extras[exId];
-  else currentMods.extras[exId]=true;
-  const row=document.getElementById('mex-'+exId);
-  const btn=row.querySelector('.ing-toggle');
-  const isAdded=!!currentMods.extras[exId];
-  row.className='ing-item'+(isAdded?' extra-added':'');
-  btn.textContent=isAdded?'Quitar':'Agregar';
+function selProt(pid){
+  currentMods.protein=currentMods.protein===pid?null:pid;
+  PROTEINS.forEach(function(p){var b=document.getElementById('pb-'+p.id);if(b)b.className='protein-btn'+(currentMods.protein===p.id?' sel':'');});
+}
+
+function togSauce(sid){
+  if(currentMods.sauces[sid])delete currentMods.sauces[sid];else currentMods.sauces[sid]=true;
+  var b=document.getElementById('sb-'+sid);if(b)b.className='sauce-btn'+(currentMods.sauces[sid]?' sel':'');
+}
+
+function togIng(ingId){
+  if(currentMods.removed[ingId])delete currentMods.removed[ingId];else currentMods.removed[ingId]=true;
+  var row=document.getElementById('ming-'+ingId),btn=row.querySelector('.ing-toggle'),rm=!!currentMods.removed[ingId];
+  row.className='ing-item'+(rm?' removed':'');btn.textContent=rm?'Volver a poner':'Quitar';
+}
+
+function togExtra(exId){
+  if(currentMods.extras[exId])delete currentMods.extras[exId];else currentMods.extras[exId]=true;
+  var row=document.getElementById('mex-'+exId),btn=row.querySelector('.ing-toggle'),ad=!!currentMods.extras[exId];
+  row.className='ing-item'+(ad?' extra-added':'');btn.textContent=ad?'Quitar':'Agregar';
 }
 
 function confirmMods(){
   if(!currentItem)return;
-  const hasChanges=Object.keys(currentMods.removed).length>0||Object.keys(currentMods.extras).length>0;
-  if(hasChanges)customizations[currentItem.id]=currentMods;
-  else delete customizations[currentItem.id];
-  if(customizations[currentItem.id]&&currentItem.extras){
-    const extraCost=currentItem.extras.filter(ex=>currentMods.extras[ex.id]).reduce((s,ex)=>s+ex.price,0);
-    if(order[currentItem.id])order[currentItem.id].extraCost=extraCost;
-  } else if(order[currentItem.id]){
-    order[currentItem.id].extraCost=0;
-  }
-  const card=document.getElementById('card-'+currentItem.id);
-  if(card){
-    const old=card.querySelector('.custom-badge');
-    if(old)old.remove();
-    if(customizations[currentItem.id]){
-      const badge=document.createElement('span');
-      badge.className='custom-badge';
-      badge.textContent='✏️ Personalizado';
-      card.querySelector('.card-footer').after(badge);
-    }
-  }
-  closeModal();
-  updateBar();
+  var hasC=Object.keys(currentMods.removed).length>0||Object.keys(currentMods.extras).length>0||currentMods.protein!==null||Object.keys(currentMods.sauces).length>0||currentMods.alga!==null;
+  if(hasC)customizations[currentItem.id]=currentMods;else delete customizations[currentItem.id];
+  if(order[currentItem.id]){var ec=(currentItem.extras||[]).filter(function(ex){return currentMods.extras&&currentMods.extras[ex.id];}).reduce(function(s,ex){return s+ex.price;},0);order[currentItem.id].extraCost=ec;}
+  var card=document.getElementById('card-'+currentItem.id);
+  if(card){var ob=card.querySelector('.custom-badge');if(ob)ob.remove();if(customizations[currentItem.id]){var nb=document.createElement('span');nb.className='custom-badge';nb.textContent='\u270F\uFE0F Personalizado';card.querySelector('.card-footer').after(nb);}}
+  closeModal();updateBar();
 }
 
-function closeModal(){
-  document.getElementById('modal-overlay').classList.remove('open');
-  document.body.style.overflow='';
-  currentItem=null;
-}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');document.body.style.overflow='';currentItem=null;}
 function closeModalOutside(e){if(e.target===document.getElementById('modal-overlay'))closeModal();}
 
 function updateBar(){
-  const items=Object.values(order);
-  const total=items.reduce((s,o)=>s+(o.item.price+(o.extraCost||0))*o.qty,0);
-  const count=items.reduce((s,o)=>s+o.qty,0);
-  document.getElementById('bar-total').textContent='$'+total.toFixed(2);
-  document.getElementById('bar-count').textContent=count+(count===1?' artículo':' artículos');
+  var items=Object.values(order);
+  var total=items.reduce(function(s,o){return s+(o.item.price+(o.extraCost||0))*o.qty;},0);
+  var count=items.reduce(function(s,o){return s+o.qty;},0);
+  document.getElementById('bar-total').textContent='$'+total;
+  document.getElementById('bar-count').textContent=count+(count===1?' art\xEDculo':' art\xEDculos');
   renderOrderSummary();
 }
 
 function renderOrderSummary(){
-  const list=document.getElementById('order-list');
-  if(!list)return;
-  const items=Object.values(order);
-  if(!items.length){list.innerHTML='<div class="empty-state"><p>🛒</p><span>Aún no has seleccionado ningún platillo.<br>Explora el menú y elige tus favoritos.</span></div>';return;}
-  list.innerHTML=items.map(({item,qty,extraCost})=>{
-    const mods=customizations[item.id];
-    let removedHtml='',addedHtml='';
+  var list=document.getElementById('order-list');if(!list)return;
+  var items=Object.values(order);
+  if(!items.length){list.innerHTML='<div class="empty-state"><p>&#x1F6D2;</p><span>A\xFAn no has seleccionado nada.<br>Explora el men\xFA y elige tus favoritos.</span></div>';return;}
+  list.innerHTML=items.map(function(o){
+    var item=o.item,qty=o.qty,ec=o.extraCost||0,mods=customizations[item.id],lines='';
     if(mods){
-      const removed=item.ingredients.filter(i=>mods.removed&&mods.removed[i.id]);
-      if(removed.length)removedHtml=`<div class="oi-mod-removed">🚫 Sin: ${removed.map(i=>i.emoji+' '+i.name).join(' · ')}</div>`;
-      const addedExtras=(item.extras||[]).filter(ex=>mods.extras&&mods.extras[ex.id]);
-      if(addedExtras.length)addedHtml=`<div class="oi-mod-added">✅ Extra: ${addedExtras.map(ex=>ex.emoji+' '+ex.name+(ex.price>0?' (+$'+ex.price+')':' (gratis)')).join(' · ')}</div>`;
+      if(mods.alga)lines+='<div class="oi-mod-added">&#x1F33F; Alga: '+(mods.alga==='con'?'Con alga':'Sin alga')+'</div>';
+      if(mods.protein){var pr=PROTEINS.filter(function(x){return x.id===mods.protein;})[0];if(pr)lines+='<div class="oi-mod-added">&#x1F969; Prote\xEDna: '+pr.name+'</div>';}
+      if(mods.sauces&&Object.keys(mods.sauces).length){var sn=SAUCES.filter(function(s){return mods.sauces[s.id];}).map(function(s){return s.name;}).join(', ');lines+='<div class="oi-mod-added">&#x1FAD9; Salsa: '+sn+'</div>';}
+      var rm=(item.ingredients||[]).filter(function(i){return mods.removed&&mods.removed[i.id];});
+      if(rm.length)lines+='<div class="oi-mod-removed">&#x1F6AB; Sin: '+rm.map(function(i){return i.name;}).join(' \xB7 ')+'</div>';
+      var ax=(item.extras||[]).filter(function(ex){return mods.extras&&mods.extras[ex.id];});
+      if(ax.length)lines+='<div class="oi-mod-added">&#x2705; Extra: '+ax.map(function(ex){return ex.name+(ex.price>0?' (+$'+ex.price+')':' (gratis)');}).join(' \xB7 ')+'</div>';
     }
-    const unitPrice=item.price+(extraCost||0);
-    return `<div class="order-item"><span class="oi-emoji">${item.emoji}</span><div class="oi-info"><div class="oi-name">${item.name}</div><div class="oi-qty">Cantidad: ${qty}</div>${removedHtml}${addedHtml}</div><span class="oi-price">$${(unitPrice*qty).toFixed(2)}</span></div>`;
+    return'<div class="order-item"><span class="oi-emoji">'+item.emoji+'</span><div class="oi-info"><div class="oi-name">'+item.name+'</div><div class="oi-qty">Cantidad: '+qty+'</div>'+lines+'</div><span class="oi-price">$'+((item.price+ec)*qty)+'</span></div>';
   }).join('');
 }
 
 function clearOrder(){
   if(!Object.keys(order).length)return;
-  if(!confirm('¿Deseas limpiar todo tu pedido?'))return;
-  Object.keys(order).forEach(id=>delete order[id]);
-  Object.keys(customizations).forEach(id=>delete customizations[id]);
-  document.querySelectorAll('.menu-card.selected').forEach(c=>c.classList.remove('selected'));
+  if(!confirm('\xBFDeseas limpiar todo tu pedido?'))return;
+  Object.keys(order).forEach(function(id){delete order[id];});
+  Object.keys(customizations).forEach(function(id){delete customizations[id];});
+  document.querySelectorAll('.menu-card.selected,.promo-card.selected').forEach(function(c){c.classList.remove('selected');});
   updateBar();
 }
 
 function sendWhatsApp(){
-  const items=Object.values(order);
-  if(!items.length){alert('¡Primero selecciona al menos un platillo! 🍽️');return;}
-  const notes=document.getElementById('order-notes').value;
-  const total=items.reduce((s,o)=>s+(o.item.price+(o.extraCost||0))*o.qty,0);
-  let msg='🍽️ *NUEVO PEDIDO — La Bella Cocina*\n';
-  msg+='━━━━━━━━━━━━━━━━━━━━\n\n';
-  items.forEach(({item,qty,extraCost})=>{
-    const unitPrice=item.price+(extraCost||0);
-    msg+=`${item.emoji} *${item.name}* x${qty} — $${(unitPrice*qty).toFixed(2)}\n`;
-    const mods=customizations[item.id];
+  var items=Object.values(order);
+  if(!items.length){alert('\xA1Primero selecciona algo del men\xFA! \uD83C\uDF63');return;}
+  var notes=document.getElementById('order-notes').value;
+  var total=items.reduce(function(s,o){return s+(o.item.price+(o.extraCost||0))*o.qty;},0);
+  var msg='🍣 *NUEVO PEDIDO — La Esquina del Sushi*\n━━━━━━━━━━━━━━━━━━━━\n\n';
+  items.forEach(function(o){
+    var item=o.item,qty=o.qty,ec=o.extraCost||0,mods=customizations[item.id];
+    msg+=item.name+' x'+qty+' — $'+((item.price+ec)*qty)+'\n';
     if(mods){
-      const removed=item.ingredients.filter(i=>mods.removed&&mods.removed[i.id]);
-      if(removed.length)msg+=`   🚫 Sin: ${removed.map(i=>i.name).join(', ')}\n`;
-      const added=(item.extras||[]).filter(ex=>mods.extras&&mods.extras[ex.id]);
-      if(added.length)msg+=`   ✅ Extra: ${added.map(ex=>ex.name+(ex.price>0?' (+$'+ex.price+')':'')).join(', ')}\n`;
+      if(mods.alga)msg+='   🌿 Alga: '+(mods.alga==='con'?'Con alga':'Sin alga')+'\n';
+      if(mods.protein){var pr=PROTEINS.filter(function(x){return x.id===mods.protein;})[0];if(pr)msg+='   🥩 Proteína: '+pr.name+'\n';}
+      if(mods.sauces&&Object.keys(mods.sauces).length){var sn=SAUCES.filter(function(s){return mods.sauces[s.id];}).map(function(s){return s.name;}).join(', ');msg+='   🫙 Salsa: '+sn+'\n';}
+      var rm=(item.ingredients||[]).filter(function(i){return mods.removed&&mods.removed[i.id];});
+      if(rm.length)msg+='   🚫 Sin: '+rm.map(function(i){return i.name;}).join(', ')+'\n';
+      var ax=(item.extras||[]).filter(function(ex){return mods.extras&&mods.extras[ex.id];});
+      if(ax.length)msg+='   ✅ Extra: '+ax.map(function(ex){return ex.name+(ex.price>0?' (+$'+ex.price+')':'');}).join(', ')+'\n';
     }
   });
-  msg+='\n━━━━━━━━━━━━━━━━━━━━\n';
-  msg+=`💰 *TOTAL: $${total.toFixed(2)} MXN*\n`;
-  if(notes.trim())msg+=`\n📝 *Notas:*\n${notes.trim()}\n`;
-  const fechaPedido = new Date().toLocaleString();
-  msg+=`\n📅 Pedido realizado el ${fechaPedido}`;
-  msg+='\n_Menú digital La Bella Cocina_ ✨';
-  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
+  msg+='\n━━━━━━━━━━━━━━━━━━━━\n💰 *TOTAL: $'+total+' MXN*\n';
+  if(notes.trim())msg+='\n📝 Notas:\n'+notes.trim()+'\n';
+  msg+='\n🌸 La Esquina del Sushi · Blvd. Sonora #21';
+  window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg),'_blank');
 }
-
-function showSection(id,btn){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  document.querySelectorAll('.main-tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  currentSection=id;
-  const subBar=document.getElementById('sub-tabs-bar');
-  subBar.style.display=id==='pedido'?'none':'flex';
-  if(id!=='pedido'){
-    document.querySelectorAll('.subsection').forEach(s=>s.classList.remove('active'));
-    const t=document.getElementById(id+'-'+currentSub);
-    if(t)t.classList.add('active');
-  }
-  if(id==='pedido')renderOrderSummary();
-}
-
-function showSub(btn,sub){
-  currentSub=sub;
-  document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('.subsection').forEach(s=>s.classList.remove('active'));
-  const t=document.getElementById(currentSection+'-'+sub);
-  if(t)t.classList.add('active');
-}
-
-renderAll();
-updateBar();
+init();
 </script>
 </body>
 </html>
