@@ -184,7 +184,7 @@ body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--dark);
   <button class="main-tab active" onclick="showSection('sushis',this)">🍣 Sushis</button>
   <button class="main-tab" onclick="showSection('entradas',this)">🧆 Entradas</button>
   <button class="main-tab" onclick="showSection('combos',this)">🍱 Combos</button>
-  <button class="main-tab" onclick="showSection('otros',this)">🍗 Otros</button>
+  <button class="main-tab" onclick="showSection('especiales',this)">🍗 Especiales</button>
   <button class="main-tab" onclick="showSection('bebidas',this)">🥤 Bebidas</button>
   <button class="main-tab" onclick="showSection('promos',this)">🎁 Promociones</button>
   <button class="main-tab" onclick="showSection('pedido',this)">🧾 Mi Pedido</button>
@@ -202,8 +202,8 @@ body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--dark);
     <div class="sec-header"><h2>🍱 Combos y Charolas</h2><p>La mejor relación calidad-precio</p></div>
     <div class="menu-grid" id="grid-combos"></div>
   </section>
-  <section class="section" id="otros">
-    <div class="sec-header"><h2>🍗 Otros Platillos</h2><p>Alitas, yakimeshi, gohan y más</p></div>
+  <section class="section" id="Especiales">
+    <div class="sec-header"><h2>🍗 Especiales</h2><p>Alitas, yakimeshi, gohan y más</p></div>
     <div class="info-box">
       <h4>🫙 Salsas disponibles</h4>
       <div class="salsas-grid">
@@ -215,7 +215,7 @@ body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--dark);
       </div>
     </div>
     <div style="height:14px"></div>
-    <div class="menu-grid" id="grid-otros"></div>
+    <div class="menu-grid" id="grid-especiales"></div>
   </section>
   <section class="section" id="bebidas">
     <div class="sec-header"><h2>🥤 Bebidas y Extras</h2></div>
@@ -431,36 +431,36 @@ combos:[
   ingredients:[ing('b1','&#x1F363;','Rosca de sushi','Presentaci\xF3n especial',false)],
   extras:[]}
 ],
-otros:[
- {id:'o1',emoji:'&#x1F357;',name:'Alitas',price:120,tag:'popular',hasSauce:true,
+especiales:[
+ {id:'e1',emoji:'&#x1F357;',name:'Alitas',price:120,tag:'popular',hasSauce:true,
   desc:'Picositas o salsa a elecci\xF3n.',
   ingredients:[ing('b1','&#x1F357;','Alitas de pollo','Orden',false)],
   extras:[]},
- {id:'o2',emoji:'&#x1F357;',name:'Boneless',price:120,tag:'popular',hasSauce:true,
+ {id:'e2',emoji:'&#x1F357;',name:'Boneless',price:120,tag:'popular',hasSauce:true,
   desc:'Tiras de pollo empanizadas y ba\xF1adas en salsa a elecci\xF3n. Con apio, zanahoria y aderezo.',
   ingredients:[ing('b1','&#x1F357;','Pollo empanizado','Tiras',false),ing('b2','&#x1F96C;','Apio','Guarnici\xF3n',true),ing('b3','&#x1F955;','Zanahoria','Guarnici\xF3n',true),ing('b4','&#x1FAD9;','Aderezo','Al lado',true)],
   extras:[]},
- {id:'o3',emoji:'&#x1F357;',name:'Boneless con Papas',price:120,tag:null,hasSauce:true,
+ {id:'e3',emoji:'&#x1F357;',name:'Boneless con Papas',price:120,tag:null,hasSauce:true,
   desc:'Boneless + papas sazonadas.',
   ingredients:[ing('b1','&#x1F357;','Pollo empanizado','Tiras',false),ing('b2','&#x1F35F;','Papas sazonadas','Incluidas',false),ing('b3','&#x1F96C;','Apio','Guarnici\xF3n',true),ing('b4','&#x1F955;','Zanahoria','Guarnici\xF3n',true)],
   extras:[]},
- {id:'o4',emoji:'&#x1F35A;',name:'Yakimeshi',price:135,tag:null,
+ {id:'e4',emoji:'&#x1F35A;',name:'Yakimeshi',price:135,tag:null,
   desc:'Arroz frito con pollo, res, tocino y camar\xF3n decorada con aguacate y tampico.',
   ingredients:[ing('b1','&#x1F35A;','Arroz frito','Base',false),ing('b2','&#x1F357;','Pollo','Mix',true),ing('b3','&#x1F969;','Res','Mix',true),ing('b4','&#x1F953;','Tocino','Mix',true),ing('b5','&#x1F990;','Camar\xF3n','Mix',true),ing('b6','&#x1F951;','Aguacate','Decorado',true),ing('b7','&#x1F41F;','Tampico','Decorado',true)],
   extras:[{id:'x1',emoji:'&#x1F969;',name:'Prote\xEDna extra',note:'+$15',price:15}]},
- {id:'o5',emoji:'&#x1F35A;',name:'Gohan',price:135,tag:'popular',
+ {id:'e5',emoji:'&#x1F35A;',name:'Gohan',price:135,tag:'popular',
   desc:'Plancha de arroz natural o empanizado, philadelphia, tampico, res, pollo, tocino, aguacate, camar\xF3n, serrano y ceboll\xEDn.',
   ingredients:[ing('b1','&#x1F35A;','Arroz (nat. o empanizado)','Base',false),ing('b2','&#x1F9C0;','Philadelphia','Encima',true),ing('b3','&#x1F41F;','Tampico','Encima',true),ing('b4','&#x1F969;','Res','Mix prot.',true),ing('b5','&#x1F357;','Pollo','Mix prot.',true),ing('b6','&#x1F953;','Tocino','Mix prot.',true),ing('b7','&#x1F990;','Camar\xF3n','Mix prot.',true),ing('b8','&#x1F951;','Aguacate','Decorado',true),ing('b9','&#x1F336;&#xFE0F;','Serrano','Decorado',true),ing('b10','&#x1F331;','Ceboll\xEDn','Decorado',true)],
   extras:[{id:'x1',emoji:'&#x1F969;',name:'Prote\xEDna extra',note:'+$15',price:15}]},
- {id:'o6',emoji:'&#x1F363;',name:'Bolas — B\xE1sica',price:75,tag:null,hasProtein:true,
+ {id:'e6',emoji:'&#x1F363;',name:'Bolas — B\xE1sica',price:75,tag:null,hasProtein:true,
   desc:'01 prote\xEDna a elegir: res, camar\xF3n, tocino, pollo o surimi.',
   ingredients:[ing('b1','&#x1F9C0;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b4','&#x1F41F;','Tampico','Por fuera',true),ing('b5','&#x1FAD9;','Anguila','Por fuera',true),ing('b6','&#x26AB;','Ajonjol\xED','Por fuera',true)],
   extras:[]},
- {id:'o7',emoji:'&#x1F363;',name:'Bolas — Camar\xF3n',price:85,tag:null,
+ {id:'e7',emoji:'&#x1F363;',name:'Bolas — Camar\xF3n',price:85,tag:null,
   desc:'Bolas de sushi con camar\xF3n.',
   ingredients:[ing('b1','&#x1F9C0;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b4','&#x1F990;','Camar\xF3n','Prote\xEDna',false),ing('b5','&#x1F41F;','Tampico','Por fuera',true)],
   extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'o8',emoji:'&#x1F363;',name:'Bolas — Mixta',price:95,tag:null,hasProtein:true,
+ {id:'e8',emoji:'&#x1F363;',name:'Bolas — Mixta',price:95,tag:null,hasProtein:true,
   desc:'Bolas de sushi con mix de prote\xEDnas a elegir.',
   ingredients:[ing('b1','&#x1F9C0;','Philadelphia','Base',false),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b4','&#x1F41F;','Tampico','Por fuera',true)],
   extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]}
