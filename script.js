@@ -3,7 +3,7 @@
    ═══════════════════════════════════════════════ */
 
 var WA = '526624580620';
-var API_URL = 'http://127.0.0.1:8000';
+var API_URL = 'https://web-production-97d4.up.railway.app';
 var API_TOKEN = null;
 
 /* ── Datos globales ─────────────────────────── */
