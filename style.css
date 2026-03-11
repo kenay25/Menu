@@ -107,7 +107,16 @@ body {
   font-weight: 600;
 }
 
-/* ── Main content ──────────────────────────── */
+.nav-btn.nav-pedido {
+  border-color: rgba(232,84,122,0.5);
+  color: var(--pink-light);
+}
+.nav-btn.nav-pedido:hover,
+.nav-btn.nav-pedido.active {
+  background: var(--pink-deep);
+  border-color: var(--pink-deep);
+  color: white;
+}
 .main { max-width: 980px; margin: 0 auto; padding: 20px 14px 160px; }
 
 /* ── Section headers ───────────────────────── */
