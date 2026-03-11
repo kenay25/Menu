@@ -1,202 +1,15 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>La Esquina del Sushi — Menú</title>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --pink:#E8547A;--pink-light:#F9D0DC;--pink-deep:#C23060;
-  --cream:#FFF8F9;--dark:#1A0A10;
-  --white:#FFFFFF;--muted:#9E7080;--border:rgba(232,84,122,0.2);
-}
-*{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--dark);min-height:100vh;overflow-x:hidden;}
-.header{background:var(--dark);padding:0;position:relative;overflow:hidden;}
-.header-sakura{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
-.petal{position:absolute;animation:fall linear infinite;opacity:0.15;}
-@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:0.2}100%{transform:translateY(120px) rotate(360deg);opacity:0}}
-.header-inner{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:20px 24px 16px;gap:16px;flex-wrap:wrap;}
-.logo-area{display:flex;align-items:center;gap:14px;}
-.logo-kanji{font-family:'Noto Serif JP',serif;font-size:52px;color:var(--pink);line-height:1;text-shadow:0 0 30px rgba(232,84,122,0.5);}
-.logo-text h1{font-family:'Noto Serif JP',serif;font-size:clamp(22px,5vw,34px);color:var(--white);line-height:1.1;font-weight:700;}
-.logo-text h1 span{color:var(--pink);}
-.logo-text small{display:block;font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:3px;}
-.header-info{text-align:right;}
-.header-info p{font-size:13px;color:var(--pink-light);margin-bottom:3px;}
-.header-info strong{color:var(--white);}
-.header-info .hours{font-size:11px;color:var(--muted);margin-top:4px;}
-.header-banner{background:linear-gradient(90deg,var(--pink-deep),var(--pink),var(--pink-deep));padding:8px 20px;text-align:center;}
-.header-banner p{font-size:12px;color:var(--white);letter-spacing:1px;font-weight:500;}
-.main-tabs{background:#1F0D15;display:flex;justify-content:center;flex-wrap:wrap;gap:4px;padding:10px 12px;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,0.4);border-bottom:1px solid var(--border);}
-.main-tab{background:transparent;border:1px solid rgba(232,84,122,0.25);color:var(--muted);padding:7px 13px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:11.5px;letter-spacing:0.5px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
-.main-tab:hover,.main-tab.active{background:var(--pink);border-color:var(--pink);color:white;font-weight:600;}
-.main{max-width:980px;margin:0 auto;padding:20px 14px 160px;}
-.section{display:none;animation:fadeUp 0.3s ease;}
-.section.active{display:block;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.sec-header{text-align:center;margin-bottom:22px;padding:16px 0 10px;border-bottom:1px solid var(--border);}
-.sec-header h2{font-family:'Noto Serif JP',serif;font-size:26px;color:var(--pink);font-weight:700;}
-.sec-header p{font-size:13px;color:var(--muted);margin-top:4px;}
-.menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:12px;}
-.menu-card{background:var(--white);border-radius:16px;padding:18px;border:2px solid transparent;cursor:pointer;transition:all 0.22s;position:relative;box-shadow:0 2px 12px rgba(194,48,96,0.07);}
-.menu-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(194,48,96,0.15);}
-.menu-card.selected{border-color:var(--pink);background:#FFF0F4;}
-.card-emoji{font-size:32px;margin-bottom:8px;display:block;}
-.card-name{font-family:'Noto Serif JP',serif;font-size:17px;font-weight:700;margin-bottom:5px;}
-.card-desc{font-size:12px;color:var(--muted);line-height:1.55;margin-bottom:10px;}
-.card-footer{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.card-price{font-size:22px;font-weight:700;color:var(--pink);}
-.card-tag{font-size:10px;padding:2px 9px;border-radius:20px;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;}
-.tag-popular{background:#FDE8EF;color:var(--pink-deep);}
-.tag-hot{background:#FDE8E8;color:#C0392B;}
-.tag-new{background:#E8F5E9;color:#2E7D32;}
-.card-instances{margin-top:10px;display:flex;flex-direction:column;gap:6px;}
-.inst-row{display:flex;align-items:center;justify-content:space-between;background:#FFF0F4;border-radius:9px;padding:7px 10px;gap:8px;}
-.inst-label{flex:1;font-size:12px;font-weight:500;color:var(--dark);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.inst-label:hover{color:var(--pink);}
-.inst-remove{background:#FDE8E8;color:#C0392B;border:none;border-radius:6px;width:24px;height:24px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.inst-remove:hover{background:#C0392B;color:white;}
-.inst-add-more{width:100%;margin-top:4px;background:transparent;border:1.5px dashed rgba(232,84,122,0.4);color:var(--pink);border-radius:9px;padding:7px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:all 0.2s;}
-.inst-add-more:hover{background:#FFF0F4;border-color:var(--pink);}
-.info-box{background:var(--white);border-radius:14px;padding:16px 18px;margin-bottom:14px;border-left:4px solid var(--pink);box-shadow:0 2px 10px rgba(194,48,96,0.07);}
-.info-box h4{font-family:'Noto Serif JP',serif;font-size:15px;color:var(--pink-deep);margin-bottom:6px;}
-.salsas-grid{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
-.salsa-chip{background:var(--pink-light);color:var(--pink-deep);border-radius:20px;padding:5px 14px;font-size:12px;font-weight:600;}
-/* ── Item customization modal ── */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(10,4,8,0.7);backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center;padding:20px;}
-.modal-overlay.open{display:flex;}
-.modal{background:var(--white);border-radius:22px;width:100%;max-width:460px;max-height:88vh;overflow-y:auto;box-shadow:0 24px 80px rgba(0,0,0,0.4);animation:modalIn 0.28s cubic-bezier(0.34,1.56,0.64,1);}
-@keyframes modalIn{from{opacity:0;transform:scale(0.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.modal-head{background:var(--dark);padding:20px 22px 16px;border-radius:22px 22px 0 0;position:relative;}
-.modal-head h3{font-family:'Noto Serif JP',serif;font-size:22px;color:var(--cream);font-weight:700;}
-.modal-head p{color:var(--muted);font-size:12px;margin-top:3px;}
-.modal-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,0.1);border:none;color:white;width:30px;height:30px;border-radius:50%;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
-.modal-close:hover{background:rgba(232,84,122,0.4);}
-.modal-body{padding:18px 22px 22px;}
-.ing-section{margin-bottom:18px;}
-.ing-section-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:600;}
-.ing-list{display:flex;flex-direction:column;gap:7px;}
-.ing-item{display:flex;align-items:center;justify-content:space-between;background:#FFF0F4;border-radius:10px;padding:9px 13px;transition:background 0.15s;}
-.ing-item.removed{background:#FDE8E8;opacity:0.75;}
-.ing-item.extra-added{background:#E8F5E9;}
-.ing-left{display:flex;align-items:center;gap:9px;}
-.ing-emoji{font-size:19px;}
-.ing-name{font-size:13.5px;font-weight:500;}
-.ing-note{font-size:11px;color:var(--muted);}
-.ing-toggle{background:none;border:1.5px solid rgba(194,48,96,0.25);border-radius:8px;padding:4px 11px;font-family:'DM Sans',sans-serif;font-size:11.5px;cursor:pointer;transition:all 0.15s;color:var(--dark);font-weight:500;}
-.ing-item.removed .ing-toggle{background:#C0392B;border-color:#C0392B;color:white;}
-.ing-item.extra-added .ing-toggle{background:#2E7D32;border-color:#2E7D32;color:white;}
-/* ── Proteins (multi-select) ── */
-.protein-section{margin-bottom:18px;}
-.protein-section-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:600;}
-.protein-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;}
-.protein-btn{background:#FFF0F4;border:2px solid transparent;border-radius:10px;padding:10px 4px;text-align:center;cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;position:relative;}
-.protein-btn:hover{border-color:var(--pink-light);}
-.protein-btn.sel{border-color:var(--pink);background:#FDE0E8;}
-.p-emoji{font-size:22px;display:block;margin-bottom:3px;}
-.p-name{font-size:10.5px;font-weight:600;color:var(--dark);}
-.p-count{position:absolute;top:4px;right:4px;background:var(--pink);color:white;border-radius:50%;width:16px;height:16px;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;}
-.protein-note{font-size:10px;color:var(--muted);margin-top:8px;text-align:center;}
-/* ── Sauces (up to 2) ── */
-.sauce-section{margin-bottom:18px;}
-.sauce-section-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:600;}
-.sauce-grid{display:flex;flex-wrap:wrap;gap:7px;}
-.sauce-btn{background:#FFF0F4;border:2px solid transparent;border-radius:20px;padding:7px 13px;cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--dark);}
-.sauce-btn:hover{border-color:var(--pink-light);}
-.sauce-btn.sel{border-color:var(--pink);background:#FDE0E8;color:var(--pink-deep);font-weight:700;}
-.sauce-note{font-size:10px;color:var(--muted);margin-top:8px;}
-.alga-section{margin-bottom:18px;}
-.alga-section-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:600;}
-.alga-grid{display:flex;gap:8px;}
-.alga-btn{background:#FFF0F4;border:2px solid transparent;border-radius:20px;padding:8px 16px;cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--dark);}
-.alga-btn:hover{border-color:var(--pink-light);}
-.alga-btn.sel{border-color:var(--pink);background:#FDE0E8;color:var(--pink-deep);font-weight:700;}
-.extra-picker{margin-bottom:18px;}
-.extra-picker-title{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px;font-weight:600;}
-.extra-picker-grid{display:flex;flex-wrap:wrap;gap:7px;}
-.extra-chip{background:#FFF0F4;border:2px solid transparent;border-radius:20px;padding:7px 13px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--dark);transition:all 0.15s;}
-.extra-chip:hover{border-color:var(--pink-light);}
-.extra-chip.sel{border-color:var(--pink);background:#FDE0E8;color:var(--pink-deep);font-weight:700;}
-.modal-actions{display:flex;gap:10px;margin-top:18px;}
-.btn-modal-cancel{flex:1;background:transparent;border:1.5px solid var(--border);color:var(--muted);padding:11px;border-radius:11px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;}
-.btn-modal-cancel:hover{border-color:var(--pink);color:var(--pink);}
-.btn-modal-confirm{flex:2;background:var(--pink);color:white;border:none;padding:11px;border-radius:11px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:background 0.2s;}
-.btn-modal-confirm:hover{background:var(--pink-deep);}
-/* ── Client data modal ── */
-.client-overlay{display:none;position:fixed;inset:0;background:rgba(10,4,8,0.78);backdrop-filter:blur(5px);z-index:600;align-items:center;justify-content:center;padding:20px;}
-.client-overlay.open{display:flex;}
-.client-box{background:var(--white);border-radius:22px;width:100%;max-width:420px;box-shadow:0 28px 90px rgba(0,0,0,0.5);animation:modalIn 0.28s cubic-bezier(0.34,1.56,0.64,1);}
-.client-head{background:var(--dark);padding:20px 22px 16px;border-radius:22px 22px 0 0;}
-.client-head h3{font-family:'Noto Serif JP',serif;font-size:20px;color:var(--cream);font-weight:700;}
-.client-head p{color:var(--muted);font-size:12px;margin-top:4px;}
-.client-body{padding:20px 22px 22px;display:flex;flex-direction:column;gap:14px;}
-.order-type-toggle{display:flex;gap:8px;margin-bottom:4px;}
-.order-type-btn{flex:1;padding:10px;border-radius:11px;border:1.5px solid var(--border);background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;color:var(--muted);}
-.order-type-btn.active{background:var(--pink);border-color:var(--pink);color:white;}
-.cf{display:flex;flex-direction:column;}
-.cf label{display:block;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px;}
-.cf input,.cf textarea{width:100%;background:#FFF8F9;border:1.5px solid var(--border);border-radius:11px;padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--dark);outline:none;transition:border-color 0.2s;}
-.cf input:focus,.cf textarea:focus{border-color:var(--pink);}
-.cf textarea{resize:vertical;min-height:70px;}
-.cf-required{color:var(--pink);font-size:11px;margin-left:4px;}
-.cf-hidden{display:none;}
-.client-actions{display:flex;gap:10px;margin-top:2px;}
-.btn-cc{flex:1;background:transparent;border:1.5px solid var(--border);color:var(--muted);padding:11px;border-radius:11px;font-family:'DM Sans',sans-serif;font-size:13px;cursor:pointer;}
-.btn-cc:hover{border-color:var(--pink);color:var(--pink);}
-.btn-cs{flex:2;background:#25D366;color:white;border:none;padding:11px;border-radius:11px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:background 0.2s;}
-.btn-cs:hover{background:#1DA851;}
-.btn-cs svg{width:18px;height:18px;flex-shrink:0;}
-/* ── Float bar ── */
-.float-bar{position:fixed;bottom:0;left:0;right:0;background:var(--dark);padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:200;box-shadow:0 -4px 30px rgba(0,0,0,0.5);flex-wrap:wrap;}
-.float-info span{display:block;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
-.float-info strong{font-size:22px;color:var(--pink);font-weight:700;}
-.float-info small{font-size:12px;color:#888;}
-.btn-wa{display:flex;align-items:center;gap:8px;background:#25D366;color:white;border:none;padding:13px 20px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.22s;white-space:nowrap;}
-.btn-wa:hover{background:#1DA851;transform:scale(1.04);}
-.btn-wa svg{width:20px;height:20px;}
-.btn-clear{background:transparent;border:1px solid rgba(255,255,255,0.15);color:#888;padding:8px 12px;border-radius:50px;font-size:12px;cursor:pointer;transition:all 0.2s;}
-.btn-clear:hover{border-color:var(--pink);color:var(--pink);}
-/* ── Order summary ── */
-.order-items{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
-.order-item{background:var(--white);border-radius:12px;padding:12px 15px;display:flex;align-items:flex-start;gap:11px;box-shadow:0 2px 8px rgba(194,48,96,0.07);}
-.oi-emoji{font-size:25px;}
-.oi-info{flex:1;}
-.oi-name{font-weight:700;font-size:14px;}
-.oi-mod-removed{font-size:11px;color:#C0392B;margin-top:2px;line-height:1.6;}
-.oi-mod-added{font-size:11px;color:#2E7D32;margin-top:2px;line-height:1.6;}
-.oi-price{font-weight:700;color:var(--pink);font-size:15px;white-space:nowrap;}
-.empty-state{text-align:center;padding:50px 20px;color:var(--muted);}
-.empty-state p{font-size:38px;margin-bottom:10px;}
-.notes-section{margin-top:20px;}
-.notes-section label{display:block;font-family:'Noto Serif JP',serif;font-size:17px;margin-bottom:7px;}
-.notes-section textarea{width:100%;background:var(--white);border:1.5px solid var(--border);border-radius:11px;padding:12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--dark);resize:vertical;min-height:75px;outline:none;transition:border-color 0.2s;}
-.notes-section textarea:focus{border-color:var(--pink);}
-/* ── Promos ── */
-.promo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:12px;}
-.promo-card{background:var(--white);border-radius:16px;padding:18px;border:2px solid transparent;cursor:pointer;transition:all 0.22s;position:relative;box-shadow:0 2px 12px rgba(194,48,96,0.07);overflow:hidden;}
-.promo-card::before{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;background:rgba(232,84,122,0.08);border-radius:50%;}
-.promo-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(194,48,96,0.15);}
-.promo-card.selected{border-color:var(--pink);background:#FFF0F4;}
-.promo-num{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-weight:600;}
-.promo-title{font-family:'Noto Serif JP',serif;font-size:18px;color:var(--pink-deep);font-weight:700;margin-bottom:8px;}
-.promo-price{font-size:26px;font-weight:700;color:var(--pink);}
-.promo-price small{font-size:13px;color:var(--muted);}
-@media(max-width:500px){
-  .float-bar{padding:9px 13px;}
-  .btn-wa{padding:10px 14px;font-size:13px;}
-  .menu-grid,.promo-grid{grid-template-columns:1fr;}
-  .modal{border-radius:20px 20px 0 0;margin:0;max-width:100%;align-self:flex-end;}
-  .modal-overlay{align-items:flex-end;padding:0;}
-  .client-box{border-radius:20px 20px 0 0;margin:0;max-width:100%;align-self:flex-end;}
-  .client-overlay{align-items:flex-end;padding:0;}
-  .header-inner{padding:14px 16px 12px;}
-  .protein-grid{grid-template-columns:repeat(3,1fr);}
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Esquina del Sushi — Menú</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<!-- ═══════ HEADER ═══════════════════════════════════════════ -->
 <header class="header">
   <div class="header-sakura" id="sakura"></div>
   <div class="header-inner">
@@ -218,62 +31,104 @@ body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--dark);
     <p>🌸 Ingrediente Extra $15 · Natural o empanizado · Con alga o sin alga (especificar al pedir) 🌸</p>
   </div>
 </header>
-<nav class="main-tabs">
-  <button class="main-tab active" onclick="showSection('sushis',this)">🍣 Sushis</button>
-  <button class="main-tab" onclick="showSection('entradas',this)">🧆 Entradas</button>
-  <button class="main-tab" onclick="showSection('combos',this)">🍱 Combos</button>
-  <button class="main-tab" onclick="showSection('especiales',this)">🍗 Especiales</button>
-  <button class="main-tab" onclick="showSection('bebidas',this)">🥤 Bebidas</button>
-  <button class="main-tab" onclick="showSection('promos',this)">🎁 Promociones</button>
-  <button class="main-tab" onclick="showSection('pedido',this)">🧾 Mi Pedido</button>
+
+<!-- ═══════ NAV STICKY ════════════════════════════════════════ -->
+<nav class="main-nav">
+  <a class="nav-btn active" href="#combos">🍱 Combos</a>
+  <a class="nav-btn" href="#sushis">🍣 Sushis</a>
+  <a class="nav-btn" href="#entradas">🧆 Entradas</a>
+  <a class="nav-btn" href="#especiales">🍗 Especiales</a>
+  <a class="nav-btn" href="#bebidas">🥤 Bebidas</a>
+  <a class="nav-btn" href="#promos">🎁 Promociones</a>
 </nav>
+
+<!-- ═══════ CONTENIDO PRINCIPAL ══════════════════════════════ -->
 <main class="main">
-  <section class="section active" id="sushis">
-    <div class="sec-header"><h2>🍣 Sushis</h2><p>Todos llevan philadelphia, pepino y aguacate · Empanizados o naturales · Con o sin alga (especificar al pedir)</p></div>
-    <div class="menu-grid" id="grid-sushis"></div>
-  </section>
-  <section class="section" id="entradas">
-    <div class="sec-header"><h2>🧆 Entradas</h2><p>Para compartir o iniciar</p></div>
-    <div class="menu-grid" id="grid-entradas"></div>
-  </section>
-  <section class="section" id="combos">
-    <div class="sec-header"><h2>🍱 Combos y Charolas</h2><p>La mejor relación calidad-precio</p></div>
+
+  <!-- COMBOS ─────────────────────────────────── -->
+  <div id="combos" class="sec-anchor">
+    <div class="sec-header">
+      <h2>🍱 Combos y Charolas</h2>
+      <p>La mejor relación calidad-precio · De mayor a menor</p>
+    </div>
     <div class="menu-grid" id="grid-combos"></div>
-  </section>
-  <section class="section" id="especiales">
-    <div class="sec-header"><h2>🍗 Especiales</h2><p>Alitas, yakimeshi, gohan y más</p></div>
+  </div>
+
+  <!-- SUSHIS ─────────────────────────────────── -->
+  <div id="sushis" class="sec-anchor">
+    <div class="sec-header">
+      <h2>🍣 Sushis</h2>
+      <p>Todos llevan philadelphia, pepino y aguacate · Empanizados o naturales · Con o sin alga</p>
+    </div>
+    <div class="menu-grid" id="grid-sushis"></div>
+  </div>
+
+  <!-- ENTRADAS ───────────────────────────────── -->
+  <div id="entradas" class="sec-anchor">
+    <div class="sec-header">
+      <h2>🧆 Entradas</h2>
+      <p>Para compartir o iniciar</p>
+    </div>
+    <div class="menu-grid" id="grid-entradas"></div>
+  </div>
+
+  <!-- ESPECIALES ─────────────────────────────── -->
+  <div id="especiales" class="sec-anchor">
+    <div class="sec-header">
+      <h2>🍗 Especiales</h2>
+      <p>Alitas, yakimeshi, gohan, bolas y más</p>
+    </div>
     <div class="info-box">
       <h4>🫙 Salsas disponibles</h4>
       <div class="salsas-grid">
-        <span class="salsa-chip">BBQ</span><span class="salsa-chip">Búfalo</span>
-        <span class="salsa-chip">Mixto</span><span class="salsa-chip">BBQ Chipotle</span>
-        <span class="salsa-chip">Naranja Chipotle</span><span class="salsa-chip">Tamarindo</span>
-        <span class="salsa-chip">Mango Hot</span><span class="salsa-chip">Mango Habanero</span>
+        <span class="salsa-chip">BBQ</span>
+        <span class="salsa-chip">Búfalo</span>
+        <span class="salsa-chip">Mixto</span>
+        <span class="salsa-chip">BBQ Chipotle</span>
+        <span class="salsa-chip">Naranja Chipotle</span>
+        <span class="salsa-chip">Tamarindo</span>
+        <span class="salsa-chip">Mango Hot</span>
+        <span class="salsa-chip">Mango Habanero</span>
         <span class="salsa-chip">Piña Hot</span>
       </div>
     </div>
     <div style="height:14px"></div>
     <div class="menu-grid" id="grid-especiales"></div>
-  </section>
-  <section class="section" id="bebidas">
-    <div class="sec-header"><h2>🥤 Bebidas y Extras</h2></div>
+  </div>
+
+  <!-- BEBIDAS ────────────────────────────────── -->
+  <div id="bebidas" class="sec-anchor">
+    <div class="sec-header">
+      <h2>🥤 Bebidas y Extras</h2>
+    </div>
     <div class="menu-grid" id="grid-bebidas"></div>
-  </section>
-  <section class="section" id="promos">
-    <div class="sec-header"><h2>🎁 Promociones</h2><p>Las mejores combinaciones al mejor precio · Toca para agregar a tu pedido</p></div>
-    <div class="promo-grid" id="grid-promos"></div>
-  </section>
-  <section class="section" id="pedido">
-    <div class="sec-header"><h2>🧾 Mi Pedido</h2><p>Revisa antes de enviar</p></div>
+  </div>
+
+  <!-- PROMOCIONES ────────────────────────────── -->
+  <div id="promos" class="sec-anchor">
+    <div class="sec-header">
+      <h2>🎁 Promociones</h2>
+      <p>Las mejores combinaciones al mejor precio · Toca para agregar a tu pedido</p>
+    </div>
+    <div class="menu-grid" id="grid-promos"></div>
+  </div>
+
+  <!-- MI PEDIDO (resumen siempre visible al bajar) -->
+  <div class="sec-anchor order-section">
+    <div class="sec-header">
+      <h2>🧾 Mi Pedido</h2>
+      <p>Revisa antes de enviar</p>
+    </div>
     <div class="order-items" id="order-list"></div>
     <div class="notes-section">
       <label>📝 Notas especiales</label>
       <textarea id="order-notes" placeholder="Instrucciones de entrega, aclaraciones adicionales, horario preferido..."></textarea>
     </div>
-  </section>
+  </div>
+
 </main>
 
-<!-- Float bar -->
+<!-- ═══════ BARRA FLOTANTE ════════════════════════════════════ -->
 <div class="float-bar">
   <div class="float-info">
     <span>Tu pedido</span>
@@ -283,13 +138,16 @@ body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--dark);
   <div style="display:flex;gap:9px;align-items:center;flex-wrap:wrap;">
     <button class="btn-clear" onclick="clearOrder()">Limpiar</button>
     <button class="btn-wa" onclick="sendWhatsApp()">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.564 4.14 1.549 5.874L.057 23.617a.5.5 0 0 0 .617.617l5.743-1.492A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22A9.966 9.966 0 0 1 6.57 20.27l-.373-.222-3.865 1.004 1.025-3.755-.243-.389A9.96 9.96 0 0 1 2 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.564 4.14 1.549 5.874L.057 23.617a.5.5 0 0 0 .617.617l5.743-1.492A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22A9.966 9.966 0 0 1 6.57 20.27l-.373-.222-3.865 1.004 1.025-3.755-.243-.389A9.96 9.96 0 0 1 2 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/>
+      </svg>
       Enviar por WhatsApp
     </button>
   </div>
 </div>
 
-<!-- Item customization modal -->
+<!-- ═══════ MODAL: PERSONALIZAR ITEM ═════════════════════════ -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
   <div class="modal" id="modal">
     <div class="modal-head">
@@ -301,7 +159,7 @@ body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--dark);
   </div>
 </div>
 
-<!-- Client data modal -->
+<!-- ═══════ MODAL: DATOS DEL CLIENTE ═════════════════════════ -->
 <div class="client-overlay" id="client-overlay">
   <div class="client-box">
     <div class="client-head">
@@ -309,17 +167,14 @@ body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--dark);
       <p>Selecciona si recoges o enviamos</p>
     </div>
     <div class="client-body">
-      <!-- Order type toggle -->
       <div class="order-type-toggle">
         <button class="order-type-btn active" id="btn-recoger" onclick="setOrderType('recoger')">🏪 Recoger en sucursal</button>
-        <button class="order-type-btn" id="btn-envio" onclick="setOrderType('envio')">🛵 Envío a domicilio</button>
+        <button class="order-type-btn"         id="btn-envio"   onclick="setOrderType('envio')">🛵 Envío a domicilio</button>
       </div>
-      <!-- Always shown: name -->
       <div class="cf" id="cf-name-wrap">
         <label>👤 Nombre <span class="cf-required">*</span></label>
         <input type="text" id="cl-name" placeholder="Tu nombre completo" autocomplete="name">
       </div>
-      <!-- Only for delivery: phone + address -->
       <div class="cf cf-hidden" id="cf-phone-wrap">
         <label>📱 Teléfono <span class="cf-required">*</span></label>
         <input type="tel" id="cl-phone" placeholder="Ej. 642-123-4567" autocomplete="tel">
@@ -331,7 +186,10 @@ body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--dark);
       <div class="client-actions">
         <button class="btn-cc" onclick="closeClientModal()">Cancelar</button>
         <button class="btn-cs" onclick="submitOrder()">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.564 4.14 1.549 5.874L.057 23.617a.5.5 0 0 0 .617.617l5.743-1.492A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22A9.966 9.966 0 0 1 6.57 20.27l-.373-.222-3.865 1.004 1.025-3.755-.243-.389A9.96 9.96 0 0 1 2 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.564 4.14 1.549 5.874L.057 23.617a.5.5 0 0 0 .617.617l5.743-1.492A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22A9.966 9.966 0 0 1 6.57 20.27l-.373-.222-3.865 1.004 1.025-3.755-.243-.389A9.96 9.96 0 0 1 2 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z"/>
+          </svg>
           Confirmar y enviar
         </button>
       </div>
@@ -339,472 +197,6 @@ body{background:var(--cream);font-family:'DM Sans',sans-serif;color:var(--dark);
   </div>
 </div>
 
-<script>
-var WA='526622067409';
-// CHANGED: Piña Hot (was Pipa Hot)
-var PROTEINS=[{id:'p_res',emoji:'&#x1F969;',name:'Res'},{id:'p_pollo',emoji:'&#x1F357;',name:'Pollo'},{id:'p_tocino',emoji:'&#x1F953;',name:'Tocino'},{id:'p_surimi',emoji:'&#x1F980;',name:'Surimi'},{id:'p_camaron',emoji:'&#x1F990;',name:'Camar\xF3n'}];
-var SAUCES=[{id:'sc1',name:'BBQ'},{id:'sc2',name:'B\xFAfalo'},{id:'sc3',name:'Mixto'},{id:'sc4',name:'BBQ Chipotle'},{id:'sc5',name:'Naranja Chipotle'},{id:'sc6',name:'Tamarindo'},{id:'sc7',name:'Mango Hot'},{id:'sc8',name:'Mango Habanero'},{id:'sc9',name:'Pi\xF1a Hot'}];
-// CHANGED: Added Ranch to extras
-var EXTRA_INGS=['Camar\xF3n','Pollo','Res','Tocino','Surimi','Tampico','Soya','Anguila','Chipotle','Ranch'];
-function ing(id,em,nm,nt,rm){return{id:id,emoji:em,name:nm,note:nt,removable:rm};}
-function base(){return[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true)];}
-
-var MENU={
-sushis:[
- {id:'s1',emoji:'&#x1F363;',name:'California',price:95,tag:null,hasProtein:true,hasAlga:true,desc:'01 prote\xEDna a elegir: res, camar\xF3n, tocino, pollo o surimi.',ingredients:base(),extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25},{id:'x2',emoji:'&#x1F41F;',name:'Tampico por fuera',note:'+$15',price:15}]},
- {id:'s2',emoji:'&#x1F363;',name:'Bombazo',price:110,tag:'popular',hasProtein:true,hasAlga:true,desc:'Prote\xEDna a elegir, cubierto con tampico, salsa de anguila y ajonjol\xED.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F41F;','Tampico','Por fuera',true),ing('b6','&#x1FAD9;','Anguila','Por fuera',true),ing('b7','&#x26AB;','Ajonjol\xED','Por fuera',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s3',emoji:'&#x1F363;',name:'Sonora',price:110,tag:null,hasAlga:true,desc:'Relleno res y tocino. Queso philadelphia y chile verde.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F969;','Res','Relleno',false),ing('b6','&#x1F953;','Tocino','Relleno',true),ing('b7','&#x1F336;&#xFE0F;','Chile verde','Queso',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s4',emoji:'&#x1F363;',name:'Especial',price:115,tag:'popular',hasAlga:true,desc:'Relleno de surimi, cubierto de tampico, aguacate, anguila y ajonjol\xED.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Cubierta',true),ing('b5','&#x1F980;','Surimi','Relleno',false),ing('b6','&#x1F41F;','Tampico','Cubierta',true),ing('b7','&#x1FAD9;','Anguila','Cubierta',true),ing('b8','&#x26AB;','Ajonjol\xED','Cubierta',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s5',emoji:'&#x1F363;',name:'Tres Quesos',price:135,tag:null,hasProtein:true,hasAlga:true,desc:'01 prote\xEDna a elegir, cubierta de queso gratinado, manchego y ceboll\xEDn.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F9C0;','Queso gratinado','Cubierta',false),ing('b6','&#x1F9C0;','Manchego','Cubierta',true),ing('b7','&#x1F331;','Ceboll\xEDn','Cubierta',true)],extras:[]},
- {id:'s6',emoji:'&#x1F363;',name:'Aguacate',price:100,tag:null,hasProtein:true,hasAlga:true,desc:'01 prote\xEDna a elegir, cubierto de aguacate y ajonjol\xED.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Relleno y cubierta',false),ing('b5','&#x26AB;','Ajonjol\xED','Cubierta',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s7',emoji:'&#x1F363;',name:'Misil',price:80,tag:null,hasAlga:false,desc:'Por dentro: relleno de philadelphia, tampico, tocino y res. Por fuera: chile verde empanizado.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Relleno',true),ing('b2','&#x1F41F;','Tampico','Relleno',true),ing('b3','&#x1F953;','Tocino','Relleno',true),ing('b4','&#x1F969;','Res','Relleno',true),ing('b5','&#x1F336;&#xFE0F;','Chile verde empanizado','Cubierta',false)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s8',emoji:'&#x1F363;',name:'Daishi',price:100,tag:null,hasAlga:true,desc:'Relleno de tampico y tocino.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F41F;','Tampico','Relleno',false),ing('b6','&#x1F953;','Tocino','Relleno',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25},{id:'x2',emoji:'&#x1FAD9;',name:'Anguila',note:'+$15',price:15}]},
- {id:'s9',emoji:'&#x1F363;',name:'Cielo Mar y Tierra',price:120,tag:null,hasAlga:true,desc:'Relleno de camar\xF3n, pollo y res.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F990;','Camar\xF3n','Relleno',false),ing('b6','&#x1F357;','Pollo','Relleno',true),ing('b7','&#x1F969;','Res','Relleno',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s10',emoji:'&#x1F363;',name:'Antojo',price:120,tag:null,hasAlga:true,desc:'Por dentro: relleno res, tocino y camar\xF3n. Por fuera: queso philadelphia y serrano.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F969;','Res','Relleno',false),ing('b6','&#x1F953;','Tocino','Relleno',true),ing('b7','&#x1F990;','Camar\xF3n','Relleno',true),ing('b8','&#x1F336;&#xFE0F;','Serrano','Queso',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s11',emoji:'&#x1F363;',name:'Chipotle',price:135,tag:null,hasAlga:true,desc:'Por dentro: relleno de pollo. Por fuera: camar\xF3n capeado con chipotle y ceboll\xEDn.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F357;','Pollo','Relleno',false),ing('b6','&#x1F990;','Camar\xF3n capeado','Cubierta',false),ing('b7','&#x1FAD9;','Chipotle','Cubierta',true),ing('b8','&#x1F331;','Ceboll\xEDn','Cubierta',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s12',emoji:'&#x1F363;',name:'Queen Roll',price:135,tag:'popular',hasAlga:true,desc:'Por dentro: relleno de pollo y camar\xF3n. Por fuera: cubierto de queso gratinado y tampico.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F357;','Pollo','Relleno',false),ing('b6','&#x1F990;','Camar\xF3n','Relleno',false),ing('b7','&#x1F9C0;','Queso gratinado','Cubierta',false),ing('b8','&#x1F41F;','Tampico','Cubierta',true)],extras:[{id:'x1',emoji:'&#x1F336;&#xFE0F;',name:'Serrano',note:'Gratis',price:0}]},
- {id:'s13',emoji:'&#x1F363;',name:'Mix Roll',price:145,tag:null,hasProtein:true,hasAlga:true,desc:'Por dentro: prote\xEDna a elegir. Por fuera: mix de tocino y queso gratinado.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F953;','Tocino','Mix cubierta',true),ing('b6','&#x1F9C0;','Queso gratinado','Mix cubierta',false)],extras:[]},
- {id:'s14',emoji:'&#x1F363;',name:'Baked',price:145,tag:'hot',hasAlga:true,desc:'Por dentro: relleno de pollo. Por fuera: mix tocino y camar\xF3n con queso gratinado.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F357;','Pollo','Relleno',false),ing('b6','&#x1F953;','Tocino','Cubierta',true),ing('b7','&#x1F990;','Camar\xF3n','Cubierta',true),ing('b8','&#x1F9C0;','Queso gratinado','Cubierta',false)],extras:[{id:'x1',emoji:'&#x1F336;&#xFE0F;',name:'Chile serrano',note:'Gratis',price:0}]},
- {id:'s15',emoji:'&#x1F363;',name:'Fernanda',price:145,tag:null,hasAlga:true,desc:'Por dentro: pollo y res. Por fuera: mix de caribe y chile verde con camar\xF3n empanizado.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F357;','Pollo','Relleno',false),ing('b6','&#x1F969;','Res','Relleno',true),ing('b7','&#x1F336;&#xFE0F;','Caribe y chile verde','Cubierta',true),ing('b8','&#x1F990;','Camar\xF3n empanizado','Cubierta',false)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s16',emoji:'&#x1F363;',name:'Hot',price:145,tag:'hot',hasAlga:true,desc:'Por dentro: relleno de res. Por fuera: cubierto de queso gratinado picante con camar\xF3n y tocino.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F969;','Res','Relleno',false),ing('b6','&#x1F9C0;','Queso gratinado picante','Cubierta',false),ing('b7','&#x1F990;','Camar\xF3n','Cubierta',true),ing('b8','&#x1F953;','Tocino','Cubierta',true)],extras:[]},
- {id:'s17',emoji:'&#x1F363;',name:'Monster',price:165,tag:'hot',hasAlga:true,desc:'Por dentro: surimi empanizado, pollo, res, tocino y camar\xF3n. Por fuera: queso gratinado con chile serrano.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F980;','Surimi empanizado','Relleno',true),ing('b6','&#x1F357;','Pollo','Relleno',true),ing('b7','&#x1F969;','Res','Relleno',true),ing('b8','&#x1F953;','Tocino','Relleno',true),ing('b9','&#x1F990;','Camar\xF3n','Relleno',true),ing('b10','&#x1F9C0;','Queso gratinado','Cubierta',false),ing('b11','&#x1F336;&#xFE0F;','Chile serrano','Cubierta',true)],extras:[]},
- {id:'s18',emoji:'&#x1F363;',name:'Franco Roll',price:165,tag:'new',hasAlga:true,desc:'Por dentro: philadelphia, pepino, camar\xF3n frito, carne asada, mozzarella. Por fuera: aderezo serrano, gratinado c/mozzarella, tocino y ceboll\xEDn.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Relleno',true),ing('b2','&#x1F952;','Pepino','Relleno',true),ing('b3','&#x1F990;','Camar\xF3n frito','Relleno',false),ing('b4','&#x1F969;','Carne asada','Relleno',false),ing('b5','&#x1F9C0;','Mozzarella','Relleno y cubierta',true),ing('b7','&#x1F336;&#xFE0F;','Aderezo serrano','Cubierta',true),ing('b8','&#x1F953;','Tocino','Cubierta',true),ing('b9','&#x1F331;','Ceboll\xEDn','Cubierta',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'M\xE1s mozzarella',note:'+$15',price:15}]},
- {id:'s19',emoji:'&#x1F363;',name:'La Chuyita',price:165,tag:'popular',hasAlga:true,desc:'Por dentro: philadelphia, aguacate, pepino, tampico. Por fuera: camar\xF3n frito aderezado, tocino, gratinado con mozzarella, chipotle y ceboll\xEDn.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Relleno',true),ing('b2','&#x1F951;','Aguacate','Relleno',true),ing('b3','&#x1F952;','Pepino','Relleno',true),ing('b4','&#x1F41F;','Tampico','Relleno',true),ing('b6','&#x1F990;','Camar\xF3n frito aderezado','Cubierta',false),ing('b7','&#x1F953;','Tocino','Cubierta',true),ing('b8','&#x1F9C0;','Mozzarella gratinada','Cubierta',true),ing('b9','&#x1FAD9;','Chipotle','Cubierta',true),ing('b10','&#x1F331;','Ceboll\xEDn','Cubierta',true)],extras:[]},
- {id:'s20',emoji:'&#x1F363;',name:'Mexicano 1',price:145,tag:null,hasAlga:true,desc:'Por dentro: relleno tampico. Por fuera: carne asada, aguacate, serrano y ceboll\xEDn. Ba\xF1ado en aderezo.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Cubierta',true),ing('b5','&#x1F41F;','Tampico','Relleno',false),ing('b6','&#x1F969;','Carne asada','Cubierta',false),ing('b7','&#x1F336;&#xFE0F;','Serrano','Cubierta',true),ing('b8','&#x1F331;','Ceboll\xEDn','Cubierta',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'s21',emoji:'&#x1F363;',name:'Mexicano 2',price:165,tag:null,hasAlga:true,desc:'Por dentro: relleno tampico. Por fuera: carne asada, aguacate, serrano y ceboll\xEDn. Gratinado.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Cubierta',true),ing('b5','&#x1F41F;','Tampico','Relleno',false),ing('b6','&#x1F969;','Carne asada','Cubierta',false),ing('b7','&#x1F336;&#xFE0F;','Serrano','Cubierta',true),ing('b8','&#x1F331;','Ceboll\xEDn','Cubierta',true),ing('b9','&#x1F9C0;','Gratinado','Cubierta',false)],extras:[{id:'x1',emoji:'&#x1F953;',name:'Tocino extra',note:'+$15',price:15}]},
- {id:'s22',emoji:'&#x1F363;',name:'Borbon',price:220,tag:'popular',hasSauce:true,hasAlga:true,desc:'Por dentro: surimi empanizado, pollo, res, tocino y camar\xF3n. Por fuera: queso gratinado con chile serrano. Boneles en salsa a elecci\xF3n.',ingredients:[ing('b1','&#x1F359;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b5','&#x1F980;','Surimi empanizado','Relleno',true),ing('b6','&#x1F357;','Pollo','Relleno',true),ing('b7','&#x1F969;','Res','Relleno',true),ing('b8','&#x1F953;','Tocino','Relleno',true),ing('b9','&#x1F990;','Camar\xF3n','Relleno',true),ing('b10','&#x1F9C0;','Queso gratinado','Cubierta',false),ing('b11','&#x1F336;&#xFE0F;','Chile serrano','Cubierta',true)],extras:[]},
- {id:'s_mayito',emoji:'&#x1F371;',name:'Mayito',price:145,tag:'popular',hasProtein:true,hasSauce:true,desc:'Prote\xEDna a elegir. Arriba tampico con boneless ba\xF1ados en salsa de elecci\xF3n.',ingredients:[ing('b1','&#x1F363;','Sushi (prot. elegida)','Base',false),ing('b2','&#x1F41F;','Tampico','Arriba',true),ing('b3','&#x1F357;','Boneless','Con salsa',false)],extras:[]}
-],
-entradas:[
- {id:'en1',emoji:'&#x1F9C6;',name:'Tostiboneles ',price:150,tag:null,hasSauce:true,desc:'Tostitos ba\xF1ados en queso amarillo y boneles en salsa a elegir.',ingredients:[ing('b1','&#x1F96B;','Tostitos','Base',false),ing('b2','&#x1F9C0;','Queso amarillo','Ba\xF1ados',false),ing('b3','&#x1F357;','Boneles','Con salsa',false)],extras:[]},
- {id:'en2',emoji:'&#x1F32E;',name:'Tostitampico',price:70,tag:null,desc:'Tostitos, tampico y zanahoria, ba\xF1ados en aderezo chipotle, anguila y ajonjol\xED.',ingredients:[ing('b1','&#x1F96B;','Tostitos','Base',false),ing('b2','&#x1F41F;','Tampico','Encima',false),ing('b3','&#x1F955;','Zanahoria','Decorado',true),ing('b4','&#x1FAD9;','Aderezo chipotle','Ba\xF1ado',true),ing('b5','&#x1FAD9;','Anguila','Ba\xF1ado',true),ing('b6','&#x26AB;','Ajonjol\xED','Encima',true)],extras:[]},
- {id:'en3',emoji:'&#x1F9C0;',name:'Dedos de Queso',price:60,tag:'popular',desc:'Philadelphia, 05 unidades.',ingredients:[ing('b1','&#x1F9C0;','Philadelphia','Relleno',false)],extras:[{id:'x1',emoji:'&#x1F336;&#xFE0F;',name:'Serrano al lado',note:'Gratis',price:0}]},
- {id:'en4',emoji:'&#x1F35F;',name:'Papas Sazonadas',price:50,tag:null,desc:'Papas sazonadas al estilo La Esquina.',ingredients:[ing('b1','&#x1F954;','Papas sazonadas','Al estilo',false)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso amarillo',note:'+$15',price:15}]},
- {id:'en5',emoji:'&#x1F336;&#xFE0F;',name:'Chile Caribe Relleno',price:30,tag:null,desc:'Philadelphia, tocino, tampico y empanizado.',ingredients:[ing('b1','&#x1F336;&#xFE0F;','Chile caribe','Base',false),ing('b2','&#x1F9C0;','Philadelphia','Relleno',false),ing('b3','&#x1F953;','Tocino','Relleno',true),ing('b4','&#x1F41F;','Tampico','Relleno',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'en6',emoji:'&#x26AB;',name:'Boliblitz',price:100,tag:'popular',desc:'08 bolitas de tampico, philadelphia, anguila y ceboll\xEDn.',ingredients:[ing('b1','&#x1F41F;','Tampico','Relleno',false),ing('b2','&#x1F9C0;','Philadelphia','Relleno',false),ing('b3','&#x1FAD9;','Anguila','Salsa',true),ing('b4','&#x1F331;','Ceboll\xEDn','Decorado',true)],extras:[{id:'x1',emoji:'&#x26AB;',name:'Ajonjol\xED',note:'Gratis',price:0}]},
- {id:'en7',emoji:'&#x1F35F;',name:'Papiboneles',price:130,tag:'new',hasSauce:true,desc:'Cama de papa sazonada con boneles en salsa a elecci\xF3n, acompa\xF1ados de queso amarillo preparado.',ingredients:[ing('b1','&#x1F954;','Papa sazonada','Cama base',false),ing('b2','&#x1F357;','Boneles','Con salsa',false),ing('b3','&#x1F9C0;','Queso amarillo preparado','Encima',false)],extras:[]}
-],
-combos:[
- {id:'c2',emoji:'&#x1F371;',name:'Botix',price:120,tag:null,hasSauce:true,desc:'Mitad sushi (bombazo, sonora o california) mitad boneless. Salsa a elegir.',ingredients:[ing('b1','&#x1F363;','1/2 sushi a elegir','Bombazo/Sonora/California',false),ing('b2','&#x1F357;','Boneless','Mitad',false)],extras:[]},
- {id:'c3',emoji:'&#x1F371;',name:'Paquetellenes',price:150,tag:null,hasSauce:true,desc:'1/2 sushi (bombazo, sonora o california), 1/2 boneless, 1/2 papas sazonadas.',ingredients:[ing('b1','&#x1F363;','1/2 sushi a elegir','Bombazo/Sonora/California',false),ing('b2','&#x1F357;','Boneless','Mitad',false),ing('b3','&#x1F35F;','Papas sazonadas','Mitad porci\xF3n',false)],extras:[]},
- {id:'c4',emoji:'&#x1F371;',name:'Charola',price:220,tag:'popular',hasSauce:true,desc:'1/2 California, 1/2 boneless, 1/2 papas sazonadas, dedos de queso y tampico.',ingredients:[ing('b1','&#x1F363;','1/2 California','Sushi',false),ing('b2','&#x1F357;','Boneless','Mitad',false),ing('b3','&#x1F35F;','Papas sazonadas','Mitad',false),ing('b4','&#x1F9C0;','Dedos de queso','Incluidos',true),ing('b5','&#x1F41F;','Tampico','Incluido',true)],extras:[]},
- {id:'c5',emoji:'&#x1F371;',name:'La Botanera',price:350,tag:'popular',hasSauce:true,desc:'01 alitas, 01 papas sazonadas, 01 boneles, 03 caribes, zanahoria, apio, aderezos y salsas.',ingredients:[ing('b1','&#x1F357;','Alitas','1 orden',false),ing('b2','&#x1F35F;','Papas sazonadas','1 orden',false),ing('b3','&#x1F357;','Boneles','1 orden',false),ing('b4','&#x1F336;&#xFE0F;','3 Caribes','Rellenos',true),ing('b5','&#x1F955;','Zanahoria y apio','Al lado',true)],extras:[]},
- {id:'c6',emoji:'&#x1F371;',name:'La Cajita',price:400,tag:null,hasSauce:true,desc:'O. boneles, 03 sushis (bombazo, california y sonora), apio, zanahoria, aderezo, ranch, anguila, soya y siracha.',ingredients:[ing('b1','&#x1F357;','Boneles','1 orden',false),ing('b2','&#x1F363;','California','Sushi',false),ing('b3','&#x1F363;','Bombazo','Sushi',false),ing('b4','&#x1F363;','Sonora','Sushi',false),ing('b5','&#x1F955;','Apio y zanahoria','Al lado',true)],extras:[]},
- {id:'c7',emoji:'&#x1F371;',name:'La Caja',price:650,tag:'new',hasSauce:true,hasSauce2:true,desc:'2 \xF3rdenes de boneles (salsa a elecci\xF3n c/u), O. papas sazonadas, 3 sushis, O. dedos queso philadelphia, tampico, chipotle, ranch, anguila, soya y siracha.',ingredients:[ing('b1','&#x1F357;','Boneles x2','2 \xF3rdenes — salsa individual',false),ing('b2','&#x1F35F;','Papas sazonadas','1 orden',false),ing('b3','&#x1F363;','Sushis x3','California, Bombazo, Sonora',false),ing('b4','&#x1F9C0;','Dedos de queso','1 orden',false),ing('b5','&#x1F41F;','Tampico','Incluido',true)],extras:[]},
- {id:'c8',emoji:'&#x1F363;',name:'Rosca',price:350,tag:null,desc:'Orden especial. Consultar disponibilidad.',ingredients:[ing('b1','&#x1F363;','Rosca de sushi','Presentaci\xF3n especial',false)],extras:[]}
-],
-especiales:[
- {id:'esp1',emoji:'&#x1F357;',name:'Alitas',price:120,tag:'popular',hasSauce:true,desc:'Picositas o salsa a elecci\xF3n.',ingredients:[ing('b1','&#x1F357;','Alitas de pollo','Orden',false)],extras:[]},
- {id:'esp2',emoji:'&#x1F357;',name:'Boneless',price:120,tag:'popular',hasSauce:true,desc:'Tiras de pollo empanizadas y ba\xF1adas en salsa a elecci\xF3n. Con apio, zanahoria y aderezo.',ingredients:[ing('b1','&#x1F357;','Pollo empanizado','Tiras',false),ing('b2','&#x1F96C;','Apio','Guarnici\xF3n',true),ing('b3','&#x1F955;','Zanahoria','Guarnici\xF3n',true),ing('b4','&#x1FAD9;','Aderezo','Al lado',true)],extras:[]},
- {id:'esp3',emoji:'&#x1F357;',name:'Boneless con Papas',price:120,tag:null,hasSauce:true,desc:'Boneless + papas sazonadas.',ingredients:[ing('b1','&#x1F357;','Pollo empanizado','Tiras',false),ing('b2','&#x1F35F;','Papas sazonadas','Incluidas',false),ing('b3','&#x1F96C;','Apio','Guarnici\xF3n',true),ing('b4','&#x1F955;','Zanahoria','Guarnici\xF3n',true)],extras:[]},
- {id:'esp4',emoji:'&#x1F35A;',name:'Yakimeshi',price:135,tag:null,desc:'Arroz frito con pollo, res, tocino y camar\xF3n decorada con aguacate y tampico.',ingredients:[ing('b1','&#x1F35A;','Arroz frito','Base',false),ing('b2','&#x1F357;','Pollo','Mix',true),ing('b3','&#x1F969;','Res','Mix',true),ing('b4','&#x1F953;','Tocino','Mix',true),ing('b5','&#x1F990;','Camar\xF3n','Mix',true),ing('b6','&#x1F951;','Aguacate','Decorado',true),ing('b7','&#x1F41F;','Tampico','Decorado',true)],extras:[{id:'x1',emoji:'&#x1F969;',name:'Prote\xEDna extra',note:'+$15',price:15}]},
- {id:'esp5',emoji:'&#x1F35A;',name:'Gohan',price:135,tag:'popular',desc:'Plancha de arroz natural o empanizado, philadelphia, tampico, res, pollo, tocino, aguacate, camar\xF3n, serrano y ceboll\xEDn.',ingredients:[ing('b1','&#x1F35A;','Arroz (nat. o empanizado)','Base',false),ing('b2','&#x1F9C0;','Philadelphia','Encima',true),ing('b3','&#x1F41F;','Tampico','Encima',true),ing('b4','&#x1F969;','Res','Mix prot.',true),ing('b5','&#x1F357;','Pollo','Mix prot.',true),ing('b6','&#x1F953;','Tocino','Mix prot.',true),ing('b7','&#x1F990;','Camar\xF3n','Mix prot.',true),ing('b8','&#x1F951;','Aguacate','Decorado',true),ing('b9','&#x1F336;&#xFE0F;','Serrano','Decorado',true),ing('b10','&#x1F331;','Ceboll\xEDn','Decorado',true)],extras:[{id:'x1',emoji:'&#x1F969;',name:'Prote\xEDna extra',note:'+$15',price:15}]},
- {id:'esp6',emoji:'&#x1F363;',name:'Bolas \u2014 B\xE1sica',price:75,tag:null,hasProtein:true,desc:'01 prote\xEDna a elegir: res, camar\xF3n, tocino, pollo o surimi.',ingredients:[ing('b1','&#x1F9C0;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b4','&#x1F41F;','Tampico','Por fuera',true),ing('b5','&#x1FAD9;','Anguila','Por fuera',true),ing('b6','&#x26AB;','Ajonjol\xED','Por fuera',true)],extras:[]},
- {id:'esp7',emoji:'&#x1F363;',name:'Bolas \u2014 Camar\xF3n',price:85,tag:null,desc:'Bolas de sushi con camar\xF3n.',ingredients:[ing('b1','&#x1F9C0;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b4','&#x1F990;','Camar\xF3n','Prote\xEDna',false),ing('b5','&#x1F41F;','Tampico','Por fuera',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]},
- {id:'esp8',emoji:'&#x1F363;',name:'Bolas \u2014 Mixta',price:95,tag:null,hasProtein:true,desc:'Bolas de sushi con mix de prote\xEDnas a elegir.',ingredients:[ing('b1','&#x1F9C0;','Philadelphia','Base',true),ing('b2','&#x1F952;','Pepino','Base',true),ing('b3','&#x1F951;','Aguacate','Base',true),ing('b4','&#x1F41F;','Tampico','Por fuera',true)],extras:[{id:'x1',emoji:'&#x1F9C0;',name:'Queso gratinado',note:'+$25',price:25}]}
-],
-bebidas:[
- {id:'b1',emoji:'&#x1F9CB;',name:'T\xE9 1 litro',price:25,tag:null,desc:'T\xE9 helado 1 litro.',ingredients:[ing('b1','&#x1F9CB;','T\xE9 helado','1 litro',false)],extras:[{id:'x1',emoji:'&#x1F34B;',name:'Lim\xF3n',note:'Gratis',price:0}]},
- {id:'b2',emoji:'&#x1F964;',name:'Coca-Cola 600ml',price:25,tag:null,desc:'Coca-Cola 600ml roja.',ingredients:[ing('b1','&#x1F964;','Coca-Cola','600ml',false)],extras:[]},
- {id:'ex1',emoji:'&#x2795;',name:'Extra \u2014 Ingrediente',price:15,tag:null,isExtraIng:true,desc:'Camar\xF3n, pollo, res, tocino, surimi, tampico, soya, anguila, chipotle o ranch. $15 c/u.',ingredients:[],extras:[]},
- {id:'ex2',emoji:'&#x1F9C0;',name:'Extra \u2014 Queso Gratinado',price:25,tag:null,desc:'Queso gratinado extra para cualquier platillo.',ingredients:[],extras:[]}
-]
-};
-var PROMOS=[
- {id:'promo1',emoji:'&#x1F363;',num:'Paquete 1',title:'2 Californias + Tostitampico',price:220,tag:'popular',hasProtein:true,desc:'2 Californias con ingrediente a elegir (pollo, tocino, res o surimi) + 1 Tostitampico.',ingredients:[ing('b1','&#x1F363;','2 Californias','Prot. a elegir',false),ing('b2','&#x1F32E;','Tostitampico','Incluido',false)],extras:[]},
- {id:'promo2',emoji:'&#x1F363;',num:'Paquete 2',title:'2 Sonoras',price:200,tag:null,desc:'2 Sonoras (res, tocino, philadelphia y chile rescoldado).',ingredients:[ing('b1','&#x1F363;','2 Sonoras','Incluidas',false)],extras:[]},
- {id:'promo3',emoji:'&#x1F363;',num:'Paquete 3',title:'3 Bolas',price:200,tag:null,hasProtein:true,desc:'3 Bolas con ingrediente a elegir (pollo, res, tocino o surimi). Pepino, aguacate, philadelphia, tampico, anguila y ajonjol\xED por fuera.',ingredients:[ing('b1','&#x1F363;','3 Bolas','Prot. a elegir',false),ing('b2','&#x1F951;','Aguacate, pepino, philadelphia','Por fuera',true),ing('b3','&#x1F41F;','Tampico, anguila, ajonjol\xED','Por fuera',true)],extras:[]},
- {id:'promo4',emoji:'&#x1F371;',num:'Paquete 4',title:'1 Boneless + 1 California',price:150,tag:'popular',hasProtein:true,hasSauce:true,desc:'1 Boneless (BBQ, B\xFAfalo o mixtos) + 1 California con ingrediente a elegir (pollo, tocino, res o surimi).',ingredients:[ing('b1','&#x1F357;','Boneless','Con salsa',false),ing('b2','&#x1F363;','California','Prot. a elegir',false)],extras:[]}
-];
-
-// ── State ──────────────────────────────────────────────────────────────────────
-var orderInstances=[],instanceCounter=0,currentItem=null,currentInstanceId=null,isNewInstance=false,currentMods={};
-var orderType='recoger'; // 'recoger' or 'envio'
-function genId(){return 'inst_'+(++instanceCounter);}
-
-// ── Order type toggle ──────────────────────────────────────────────────────────
-function setOrderType(type){
-  orderType=type;
-  document.getElementById('btn-recoger').className='order-type-btn'+(type==='recoger'?' active':'');
-  document.getElementById('btn-envio').className='order-type-btn'+(type==='envio'?' active':'');
-  // Show/hide fields based on type
-  var phoneWrap=document.getElementById('cf-phone-wrap');
-  var addressWrap=document.getElementById('cf-address-wrap');
-  if(type==='envio'){
-    phoneWrap.classList.remove('cf-hidden');
-    addressWrap.classList.remove('cf-hidden');
-  } else {
-    phoneWrap.classList.add('cf-hidden');
-    addressWrap.classList.add('cf-hidden');
-  }
-}
-
-// ── Init ───────────────────────────────────────────────────────────────────────
-function init(){
-  var s=document.getElementById('sakura');
-  for(var i=0;i<16;i++){var p=document.createElement('div');p.className='petal';p.textContent='🌸';p.style.left=Math.random()*100+'%';p.style.animationDuration=(3+Math.random()*4)+'s';p.style.animationDelay=(Math.random()*5)+'s';p.style.fontSize=(12+Math.random()*10)+'px';s.appendChild(p);}
-  ['sushis','entradas','combos','especiales','bebidas'].forEach(function(k){renderGrid(k,'grid-'+k);});
-  renderPromos();renderOrderSummary();updateBar();
-}
-
-// ── Render ─────────────────────────────────────────────────────────────────────
-function renderGrid(sec,gid){var g=document.getElementById(gid);if(!g||!MENU[sec])return;g.innerHTML=MENU[sec].map(cardHTML).join('');}
-function cardHTML(item){
-  var tm={popular:'tag-popular',hot:'tag-hot','new':'tag-new'},lm={popular:'&#x2B50; Popular',hot:'&#x1F336;&#xFE0F; Hot','new':'&#x2728; Nuevo'};
-  var th=item.tag?'<span class="card-tag '+tm[item.tag]+'">'+lm[item.tag]+'</span>':'';
-  return '<div class="menu-card" id="card-'+item.id+'" onclick="addNewInstance(\''+item.id+'\')">'
-    +'<span class="card-emoji">'+item.emoji+'</span><div class="card-name">'+item.name+'</div>'
-    +'<div class="card-desc">'+item.desc+'</div>'
-    +'<div class="card-footer"><span class="card-price">$'+item.price+'</span>'+th+'</div>'
-    +'<div class="card-instances" id="instances-'+item.id+'"></div></div>';
-}
-function renderPromos(){
-  var g=document.getElementById('grid-promos');if(!g)return;
-  g.innerHTML=PROMOS.map(function(p){
-    var tm={popular:'tag-popular',hot:'tag-hot','new':'tag-new'},lm={popular:'&#x2B50; Popular',hot:'&#x1F336;&#xFE0F; Hot','new':'&#x2728; Nuevo'};
-    var th=p.tag?'<span class="card-tag '+tm[p.tag]+'">'+lm[p.tag]+'</span>':'';
-    return '<div class="promo-card" id="card-'+p.id+'" onclick="addNewInstance(\''+p.id+'\')">'
-      +'<div class="promo-num">'+p.num+'</div><div class="promo-title">'+p.emoji+' '+p.title+'</div>'
-      +'<div class="card-desc">'+p.desc+'</div>'
-      +'<div class="card-footer"><span class="promo-price">$'+p.price+' <small>MXN</small></span>'+th+'</div>'
-      +'<div class="card-instances" id="instances-'+p.id+'"></div></div>';
-  }).join('');
-}
-
-// ── Lookup ─────────────────────────────────────────────────────────────────────
-function findItem(id){
-  var pr=PROMOS.filter(function(x){return x.id===id;});if(pr.length)return pr[0];
-  var ks=Object.keys(MENU),f;
-  for(var i=0;i<ks.length;i++){f=MENU[ks[i]].filter(function(x){return x.id===id;});if(f.length)return f[0];}
-  return null;
-}
-function getItemInstances(id){return orderInstances.filter(function(o){return o.itemId===id;});}
-
-// ── Card state ─────────────────────────────────────────────────────────────────
-function refreshCardState(itemId){
-  var card=document.getElementById('card-'+itemId);if(!card)return;
-  var insts=getItemInstances(itemId),container=document.getElementById('instances-'+itemId);if(!container)return;
-  if(!insts.length){card.classList.remove('selected');container.innerHTML='';return;}
-  card.classList.add('selected');
-  container.innerHTML=insts.map(function(inst,idx){
-    var mods=inst.mods,tags=[];
-    if(mods.alga)tags.push(mods.alga==='con'?'Con alga':'Sin alga');
-    if(mods.proteins&&mods.proteins.length){
-      var pnames=mods.proteins.map(function(pid){var pr=PROTEINS.filter(function(x){return x.id===pid;})[0];return pr?pr.name:'';}).filter(Boolean);
-      if(pnames.length)tags.push(pnames.join('+'));
-    }
-    if(mods.sauces&&Object.keys(mods.sauces).length){tags.push(SAUCES.filter(function(s){return mods.sauces[s.id];}).map(function(s){return s.name;}).join('/'));}
-    if(mods.sauces2&&Object.keys(mods.sauces2).length){tags.push('Orden2: '+SAUCES.filter(function(s){return mods.sauces2[s.id];}).map(function(s){return s.name;}).join('/'));}
-    if(mods.extraIngs&&mods.extraIngs.length)tags.push(mods.extraIngs.join(', '));
-    var label=tags.length?tags.join(' \xB7 '):('Unidad '+(idx+1));
-    return '<div class="inst-row" onclick="event.stopPropagation()">'
-      +'<span class="inst-label" onclick="openModalEdit(\''+inst.instanceId+'\',event)">\u270F\uFE0F '+label+'</span>'
-      +'<button class="inst-remove" onclick="removeInstance(\''+inst.instanceId+'\',event)">\u2212</button>'
-      +'</div>';
-  }).join('')+'<button class="inst-add-more" onclick="addNewInstance(\''+itemId+'\',event)">+ Agregar otro igual</button>';
-}
-
-// ── Add / Remove ───────────────────────────────────────────────────────────────
-function addNewInstance(itemId,e){
-  if(e)e.stopPropagation();
-  var item=findItem(itemId);if(!item)return;
-  var iid=genId();
-  orderInstances.push({instanceId:iid,itemId:itemId,item:item,mods:{removed:{},extras:{},sauces:{},sauces2:{},proteins:[],alga:null,extraIngs:[]},extraCost:0});
-  isNewInstance=true;
-  refreshCardState(itemId);
-  openModalEdit(iid,null);
-}
-function removeInstance(iid,e){
-  if(e)e.stopPropagation();
-  var inst=orderInstances.filter(function(o){return o.instanceId===iid;})[0];if(!inst)return;
-  var itemId=inst.itemId;
-  orderInstances=orderInstances.filter(function(o){return o.instanceId!==iid;});
-  refreshCardState(itemId);updateBar();
-}
-
-// ── Item modal ─────────────────────────────────────────────────────────────────
-function openModalEdit(iid,e){
-  if(e)e.stopPropagation();
-  var inst=orderInstances.filter(function(o){return o.instanceId===iid;})[0];if(!inst)return;
-  currentItem=inst.item;currentInstanceId=iid;
-  var sv=inst.mods;
-  currentMods={
-    removed:JSON.parse(JSON.stringify(sv.removed||{})),
-    extras:JSON.parse(JSON.stringify(sv.extras||{})),
-    sauces:JSON.parse(JSON.stringify(sv.sauces||{})),
-    sauces2:JSON.parse(JSON.stringify(sv.sauces2||{})),
-    proteins:(sv.proteins||[]).slice(),
-    alga:sv.alga||null,
-    extraIngs:(sv.extraIngs||[]).slice()
-  };
-  var insts=getItemInstances(inst.itemId),idx=insts.findIndex(function(o){return o.instanceId===iid;})+1;
-  document.getElementById('modal-title').textContent=inst.item.name;
-  document.getElementById('modal-subtitle').textContent='Unidad '+idx+' de '+insts.length+' \u2014 Personaliza como quieras';
-  buildModalBody(inst.item);
-  document.getElementById('modal-overlay').classList.add('open');
-  document.body.style.overflow='hidden';
-}
-
-function buildModalBody(item){
-  var fixed=item.ingredients?item.ingredients.filter(function(i){return!i.removable;}):[];
-  var removable=item.ingredients?item.ingredients.filter(function(i){return i.removable;}):[];
-  var extras=item.extras||[];var html='';
-  if(item.isExtraIng){
-    html+='<div class="extra-picker"><div class="extra-picker-title">&#x2795; \xBFQu\xE9 ingrediente(s) deseas? (elige uno o varios)</div><div class="extra-picker-grid">';
-    EXTRA_INGS.forEach(function(nm){html+='<div class="extra-chip'+(currentMods.extraIngs.indexOf(nm)>=0?' sel':'')+'" onclick="togExtraIng(\''+nm+'\')">'+nm+'</div>';});
-    html+='</div><div class="sauce-note">$15 por ingrediente · Puedes elegir varios</div></div>';
-  }
-  if(item.hasAlga){
-    html+='<div class="alga-section"><div class="alga-section-title">&#x1F33F; \xBFCon o sin alga?</div><div class="alga-grid">';
-    html+='<div class="alga-btn'+(currentMods.alga==='con'?' sel':'')+'" id="alga-con" onclick="selAlga(\'con\')">&#x1F33F; Con alga</div>';
-    html+='<div class="alga-btn'+(currentMods.alga==='sin'?' sel':'')+'" id="alga-sin" onclick="selAlga(\'sin\')">\u274C Sin alga</div>';
-    html+='</div></div>';
-  }
-  // MULTI-SELECT PROTEINS: first protein free, additional $15 each
-  if(item.hasProtein){
-    html+='<div class="protein-section"><div class="protein-section-title">&#x1F969; Elige tu(s) prote\xEDna(s)</div><div class="protein-grid">';
-    PROTEINS.forEach(function(p){
-      var cnt=currentMods.proteins.filter(function(x){return x===p.id;}).length;
-      var isSel=cnt>0;
-      html+='<div class="protein-btn'+(isSel?' sel':'')+'" id="pb-'+p.id+'" onclick="togProt(\''+p.id+'\')"><span class="p-emoji">'+p.emoji+'</span><span class="p-name">'+p.name+'</span>'+(cnt>1?'<span class="p-count">'+cnt+'</span>':'')+'</div>';
-    });
-    html+='</div><div class="protein-note">Primera prote\xEDna incluida · Extras +$15 c/u</div></div>';
-  }
-  // SAUCE — up to 2 selections for boneless items
-  if(item.hasSauce){
-    var maxSauces=2; // boneless can pick up to 2
-    var selCount=Object.keys(currentMods.sauces).length;
-    html+='<div class="sauce-section"><div class="sauce-section-title">&#x1FAD9; Salsa para los boneles (hasta 2)</div><div class="sauce-grid">';
-    SAUCES.forEach(function(s){html+='<div class="sauce-btn'+(currentMods.sauces[s.id]?' sel':'')+'" id="sb-'+s.id+'" onclick="togSauce(\''+s.id+'\','+maxSauces+',\'sauces\',\'sb-\')">'+s.name+'</div>';});
-    html+='</div><div class="sauce-note">Puedes elegir hasta 2 salsas</div></div>';
-  }
-  // SECOND SAUCE SET for La Caja (2nd order of boneles)
-  if(item.hasSauce2){
-    html+='<div class="sauce-section"><div class="sauce-section-title">&#x1FAD9; Salsa para la 2\xAA orden de boneles (hasta 2)</div><div class="sauce-grid">';
-    SAUCES.forEach(function(s){html+='<div class="sauce-btn'+(currentMods.sauces2[s.id]?' sel':'')+'" id="sb2-'+s.id+'" onclick="togSauce(\''+s.id+'\',2,\'sauces2\',\'sb2-\')">'+s.name+'</div>';});
-    html+='</div><div class="sauce-note">Para la 2\xAA orden de boneles</div></div>';
-  }
-  if(fixed.length){
-    html+='<div class="ing-section"><div class="ing-section-title">&#x1F512; Ingredientes fijos</div><div class="ing-list">';
-    fixed.forEach(function(i){html+='<div class="ing-item"><div class="ing-left"><span class="ing-emoji">'+i.emoji+'</span><div><div class="ing-name">'+i.name+'</div><div class="ing-note">'+i.note+'</div></div></div><span style="font-size:11px;color:var(--muted)">Fijo</span></div>';});
-    html+='</div></div>';
-  }
-  if(removable.length){
-    html+='<div class="ing-section"><div class="ing-section-title">\u270F\uFE0F Quitar ingredientes</div><div class="ing-list">';
-    removable.forEach(function(i){var rm=currentMods.removed[i.id];html+='<div class="ing-item'+(rm?' removed':'')+'" id="ming-'+i.id+'"><div class="ing-left"><span class="ing-emoji">'+i.emoji+'</span><div><div class="ing-name">'+i.name+'</div><div class="ing-note">'+i.note+'</div></div></div><button class="ing-toggle" onclick="togIng(\''+i.id+'\')">'+(rm?'Volver a poner':'Quitar')+'</button></div>';});
-    html+='</div></div>';
-  }
-  if(extras.length){
-    html+='<div class="ing-section"><div class="ing-section-title">&#x2795; Agregar extras</div><div class="ing-list">';
-    extras.forEach(function(ex){var ad=currentMods.extras[ex.id];html+='<div class="ing-item'+(ad?' extra-added':'')+'" id="mex-'+ex.id+'"><div class="ing-left"><span class="ing-emoji">'+ex.emoji+'</span><div><div class="ing-name">'+ex.name+'</div><div class="ing-note">'+ex.note+'</div></div></div><button class="ing-toggle" onclick="togExtra(\''+ex.id+'\')">'+(ad?'Quitar':'Agregar')+'</button></div>';});
-    html+='</div></div>';
-  }
-  html+='<div class="modal-actions"><button class="btn-modal-cancel" onclick="cancelModal()">Cancelar</button><button class="btn-modal-confirm" onclick="confirmMods()">\u2713 Listo</button></div>';
-  document.getElementById('modal-body').innerHTML=html;
-}
-
-// ── Nav ────────────────────────────────────────────────────────────────────────
-function showSection(sec,btn){
-  document.querySelectorAll('.section').forEach(function(s){s.classList.remove('active');});
-  document.querySelectorAll('.main-tab').forEach(function(t){t.classList.remove('active');});
-  document.getElementById(sec).classList.add('active');btn.classList.add('active');
-}
-
-// ── Modal interactions ─────────────────────────────────────────────────────────
-function togExtraIng(nm){
-  var idx=currentMods.extraIngs.indexOf(nm);
-  if(idx>=0){currentMods.extraIngs.splice(idx,1);}else{currentMods.extraIngs.push(nm);}
-  document.querySelectorAll('.extra-chip').forEach(function(el){
-    var name=el.textContent.trim();
-    el.className='extra-chip'+(currentMods.extraIngs.indexOf(name)>=0?' sel':'');
-  });
-}
-function selAlga(val){
-  currentMods.alga=currentMods.alga===val?null:val;
-  ['con','sin'].forEach(function(v){var b=document.getElementById('alga-'+v);if(b)b.className='alga-btn'+(currentMods.alga===v?' sel':'');});
-}
-
-// MULTI-SELECT proteins: toggle one at a time. First protein free, each additional costs $15
-function togProt(pid){
-  var idx=currentMods.proteins.indexOf(pid);
-  if(idx>=0){
-    currentMods.proteins.splice(idx,1);
-  } else {
-    currentMods.proteins.push(pid);
-  }
-  // Re-render protein buttons
-  PROTEINS.forEach(function(p){
-    var cnt=currentMods.proteins.filter(function(x){return x===p.id;}).length;
-    var isSel=cnt>0;
-    var b=document.getElementById('pb-'+p.id);
-    if(b){
-      b.className='protein-btn'+(isSel?' sel':'');
-      // update count badge
-      var badge=b.querySelector('.p-count');
-      if(cnt>1){if(!badge){badge=document.createElement('span');badge.className='p-count';b.appendChild(badge);}badge.textContent=cnt;}
-      else if(badge){badge.remove();}
-    }
-  });
-}
-
-// Sauce toggle (up to maxSauces, works for both sauces and sauces2)
-function togSauce(sid,maxSauces,field,prefix){
-  var fieldName=field||'sauces';var pre=prefix||'sb-';
-  if(currentMods[fieldName][sid]){
-    delete currentMods[fieldName][sid];
-  } else {
-    var selCount=Object.keys(currentMods[fieldName]).length;
-    if(selCount>=maxSauces){alert('M\xE1ximo '+maxSauces+' salsa(s) para esta elecci\xF3n.');return;}
-    currentMods[fieldName][sid]=true;
-  }
-  SAUCES.forEach(function(s){var b=document.getElementById(pre+s.id);if(b)b.className='sauce-btn'+(currentMods[fieldName][s.id]?' sel':'');});
-}
-
-function togIng(ingId){
-  if(currentMods.removed[ingId])delete currentMods.removed[ingId];else currentMods.removed[ingId]=true;
-  var row=document.getElementById('ming-'+ingId),btn=row.querySelector('.ing-toggle'),rm=!!currentMods.removed[ingId];
-  row.className='ing-item'+(rm?' removed':'');btn.textContent=rm?'Volver a poner':'Quitar';
-}
-function togExtra(exId){
-  if(currentMods.extras[exId])delete currentMods.extras[exId];else currentMods.extras[exId]=true;
-  var row=document.getElementById('mex-'+exId),btn=row.querySelector('.ing-toggle'),ad=!!currentMods.extras[exId];
-  row.className='ing-item'+(ad?' extra-added':'');btn.textContent=ad?'Quitar':'Agregar';
-}
-
-function confirmMods(){
-  if(!currentInstanceId)return;
-  var inst=orderInstances.filter(function(o){return o.instanceId===currentInstanceId;})[0];if(!inst)return;
-  inst.mods=currentMods;
-  // Calculate extra protein cost: first protein free, rest $15 each
-  var proteinExtraCost=Math.max(0,(currentMods.proteins.length-1))*15;
-  // extraIngs: each $15
-  var extraIngsCost=(currentMods.extraIngs||[]).length*15;
-  inst.extraCost=(inst.item.extras||[]).filter(function(ex){return currentMods.extras&&currentMods.extras[ex.id];}).reduce(function(s,ex){return s+ex.price;},0)+proteinExtraCost+extraIngsCost;
-  isNewInstance=false;refreshCardState(inst.itemId);closeModal();updateBar();
-}
-function cancelModal(){
-  if(isNewInstance&&currentInstanceId){
-    var inst=orderInstances.filter(function(o){return o.instanceId===currentInstanceId;})[0];
-    if(inst){var itemId=inst.itemId;orderInstances=orderInstances.filter(function(o){return o.instanceId!==currentInstanceId;});refreshCardState(itemId);updateBar();}
-  }
-  isNewInstance=false;closeModal();
-}
-function closeModal(){document.getElementById('modal-overlay').classList.remove('open');document.body.style.overflow='';currentItem=null;currentInstanceId=null;}
-function closeModalOutside(e){if(e.target===document.getElementById('modal-overlay'))cancelModal();}
-
-// ── Client modal ───────────────────────────────────────────────────────────────
-function sendWhatsApp(){
-  if(!orderInstances.length){alert('\xA1Primero selecciona algo del men\xFA! \uD83C\uDF63');return;}
-  document.getElementById('client-overlay').classList.add('open');
-  document.body.style.overflow='hidden';
-  // Reset to 'recoger' each time
-  setOrderType('recoger');
-  setTimeout(function(){document.getElementById('cl-name').focus();},150);
-}
-function closeClientModal(){
-  document.getElementById('client-overlay').classList.remove('open');
-  document.body.style.overflow='';
-}
-function submitOrder(){
-  var name=document.getElementById('cl-name').value.trim();
-  if(!name){alert('Por favor ingresa tu nombre \uD83D\uDC64');document.getElementById('cl-name').focus();return;}
-  if(orderType==='envio'){
-    var phone=document.getElementById('cl-phone').value.trim();
-    var address=document.getElementById('cl-address').value.trim();
-    if(!phone){alert('Por favor ingresa tu tel\xE9fono \uD83D\uDCF1');document.getElementById('cl-phone').focus();return;}
-    if(!address){alert('Por favor ingresa la direcci\xF3n de entrega \uD83D\uDCCD');document.getElementById('cl-address').focus();return;}
-    closeClientModal();
-    doSendWhatsApp(name,phone,address);
-  } else {
-    closeClientModal();
-    doSendWhatsApp(name,null,null);
-  }
-}
-
-// ── Bar & Summary ──────────────────────────────────────────────────────────────
-function updateBar(){
-  var total=orderInstances.reduce(function(s,o){return s+(o.item.price+(o.extraCost||0));},0);
-  var count=orderInstances.length;
-  document.getElementById('bar-total').textContent='$'+total;
-  document.getElementById('bar-count').textContent=count+(count===1?' art\xEDculo':' art\xEDculos');
-  renderOrderSummary();
-}
-
-function modsLabel(inst){
-  var mods=inst.mods,item=inst.item,lines='';
-  if(mods.extraIngs&&mods.extraIngs.length)lines+='<div class="oi-mod-added">&#x2795; Ingrediente(s): '+mods.extraIngs.join(', ')+(mods.extraIngs.length>1?' ($'+mods.extraIngs.length*15+')':'')+'</div>';
-  if(mods.alga)lines+='<div class="oi-mod-added">&#x1F33F; Alga: '+(mods.alga==='con'?'Con alga':'Sin alga')+'</div>';
-  if(mods.proteins&&mods.proteins.length){
-    var pnames=mods.proteins.map(function(pid){var pr=PROTEINS.filter(function(x){return x.id===pid;})[0];return pr?pr.name:'';}).filter(Boolean);
-    lines+='<div class="oi-mod-added">&#x1F969; Prote\xEDna(s): '+pnames.join(', ')+(mods.proteins.length>1?' (+$'+((mods.proteins.length-1)*15)+')':'')+'</div>';
-  }
-  if(mods.sauces&&Object.keys(mods.sauces).length){var sn=SAUCES.filter(function(s){return mods.sauces[s.id];}).map(function(s){return s.name;}).join(', ');lines+='<div class="oi-mod-added">&#x1FAD9; Salsa: '+sn+'</div>';}
-  if(mods.sauces2&&Object.keys(mods.sauces2).length){var sn2=SAUCES.filter(function(s){return mods.sauces2[s.id];}).map(function(s){return s.name;}).join(', ');lines+='<div class="oi-mod-added">&#x1FAD9; Salsa 2\xAA orden: '+sn2+'</div>';}
-  var rm=(item.ingredients||[]).filter(function(i){return mods.removed&&mods.removed[i.id];});
-  if(rm.length)lines+='<div class="oi-mod-removed">&#x1F6AB; Sin: '+rm.map(function(i){return i.name;}).join(' \xB7 ')+'</div>';
-  var ax=(item.extras||[]).filter(function(ex){return mods.extras&&mods.extras[ex.id];});
-  if(ax.length)lines+='<div class="oi-mod-added">&#x2705; Extra: '+ax.map(function(ex){return ex.name+(ex.price>0?' (+$'+ex.price+')':' (gratis)');}).join(' \xB7 ')+'</div>';
-  return lines;
-}
-
-function renderOrderSummary(){
-  var list=document.getElementById('order-list');if(!list)return;
-  if(!orderInstances.length){list.innerHTML='<div class="empty-state"><p>&#x1F6D2;</p><span>A\xFAn no has seleccionado nada.<br>Explora el men\xFA y elige tus favoritos.</span></div>';return;}
-  list.innerHTML=orderInstances.map(function(inst,idx){
-    var lines=modsLabel(inst),price=inst.item.price+(inst.extraCost||0);
-    return'<div class="order-item"><span class="oi-emoji">'+inst.item.emoji+'</span>'
-      +'<div class="oi-info"><div class="oi-name">'+inst.item.name+' <span style="font-size:11px;color:var(--muted)">#'+(idx+1)+'</span></div>'+lines+'</div>'
-      +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">'
-      +'<span class="oi-price">$'+price+'</span>'
-      +'<button onclick="openModalEdit(\''+inst.instanceId+'\',event)" style="font-size:11px;background:var(--dark);color:white;border:none;border-radius:7px;padding:4px 9px;cursor:pointer;">\u270F\uFE0F Editar</button>'
-      +'<button onclick="removeInstance(\''+inst.instanceId+'\',event)" style="font-size:11px;background:#FDE8E8;color:#C0392B;border:none;border-radius:7px;padding:4px 9px;cursor:pointer;">\u2715 Quitar</button>'
-      +'</div></div>';
-  }).join('');
-}
-
-// ── Clear ──────────────────────────────────────────────────────────────────────
-function clearOrder(){
-  if(!orderInstances.length)return;
-  if(!confirm('\xBFDeseas limpiar todo tu pedido?'))return;
-  orderInstances=[];
-  document.querySelectorAll('.menu-card.selected,.promo-card.selected').forEach(function(c){c.classList.remove('selected');var ci=c.querySelector('.card-instances');if(ci)ci.innerHTML='';});
-  updateBar();
-}
-
-// ── WhatsApp send ──────────────────────────────────────────────────────────────
-function doSendWhatsApp(clientName,clientPhone,clientAddress){
-  var notes=document.getElementById('order-notes').value;
-  var total=orderInstances.reduce(function(s,o){return s+(o.item.price+(o.extraCost||0));},0);
-  var msg='\uD83C\uDF63 *NUEVO PEDIDO \u2014 La Esquina del Sushi*\n';
-  msg+='\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n';
-  msg+='\uD83D\uDC64 *Nombre:* '+clientName+'\n';
-  if(clientPhone)msg+='\uD83D\uDCF1 *Tel\xE9fono:* '+clientPhone+'\n';
-  if(clientAddress)msg+='\uD83D\uDCCD *Direcci\xF3n:* '+clientAddress+'\n';
-  msg+='\uD83D\uDCE6 *Tipo:* '+(orderType==='envio'?'Env\xEDo a domicilio':'Recoge en sucursal')+'\n';
-  msg+='\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n\n';
-  orderInstances.forEach(function(inst){
-    var mods=inst.mods,item=inst.item,ec=inst.extraCost||0;
-    msg+='\u2022 '+item.name+' \u2014 $'+(item.price+ec)+'\n';
-    if(mods.extraIngs&&mods.extraIngs.length)msg+='   + Ingrediente(s): '+mods.extraIngs.join(', ')+'\n';
-    if(mods.alga)msg+='   Alga: '+(mods.alga==='con'?'Con alga':'Sin alga')+'\n';
-    if(mods.proteins&&mods.proteins.length){
-      var pnames=mods.proteins.map(function(pid){var pr=PROTEINS.filter(function(x){return x.id===pid;})[0];return pr?pr.name:'';}).filter(Boolean);
-      msg+='   Prote\xEDna(s): '+pnames.join(', ')+(mods.proteins.length>1?' (+$'+((mods.proteins.length-1)*15)+')':'')+'\n';
-    }
-    if(mods.sauces&&Object.keys(mods.sauces).length){var sn=SAUCES.filter(function(s){return mods.sauces[s.id];}).map(function(s){return s.name;}).join(', ');msg+='   Salsa: '+sn+'\n';}
-    if(mods.sauces2&&Object.keys(mods.sauces2).length){var sn2=SAUCES.filter(function(s){return mods.sauces2[s.id];}).map(function(s){return s.name;}).join(', ');msg+='   Salsa 2\xAA orden boneles: '+sn2+'\n';}
-    var rm=(item.ingredients||[]).filter(function(i){return mods.removed&&mods.removed[i.id];});
-    if(rm.length)msg+='   Sin: '+rm.map(function(i){return i.name;}).join(', ')+'\n';
-    var ax=(item.extras||[]).filter(function(ex){return mods.extras&&mods.extras[ex.id];});
-    if(ax.length)msg+='   Extra: '+ax.map(function(ex){return ex.name+(ex.price>0?' (+$'+ex.price+')':'');}).join(', ')+'\n';
-  });
-  msg+='\n\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\n';
-  msg+='\uD83D\uDCB0 *TOTAL: $'+total+' MXN*\n';
-  if(notes.trim())msg+='\n\uD83D\uDCDD Notas:\n'+notes.trim()+'\n';
-  msg+='\n\uD83C\uDF38 La Esquina del Sushi \xB7 Blvd. Sonora #21';
-  window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg),'_blank');
-}
-init();
-</script>
+<script src="script.js"></script>
 </body>
 </html>
