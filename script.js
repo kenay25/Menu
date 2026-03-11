@@ -3,6 +3,8 @@
    ═══════════════════════════════════════════════ */
 
 var WA = '526622067409';
+var API_URL = 'http://127.0.0.1:8000';
+var API_TOKEN = null;
 
 /* ── Datos globales ─────────────────────────── */
 var PROTEINS = [
@@ -679,9 +681,99 @@ function submitOrder() {
     var address = document.getElementById('cl-address').value.trim();
     if (!phone)   { alert('Por favor ingresa tu teléfono 📱'); document.getElementById('cl-phone').focus();   return; }
     if (!address) { alert('Por favor ingresa la dirección de entrega 📍'); document.getElementById('cl-address').focus(); return; }
-    closeClientModal(); doSendWhatsApp(name, phone, address);
+    closeClientModal();
+    guardarPedidoBackend(name, phone, address).then(function() {
+      doSendWhatsApp(name, phone, address);
+    });
   } else {
-    closeClientModal(); doSendWhatsApp(name, null, null);
+    closeClientModal();
+    guardarPedidoBackend(name, null, null).then(function() {
+      doSendWhatsApp(name, null, null);
+    });
+  }
+}
+async function obtenerToken() {
+  if (API_TOKEN) return API_TOKEN;
+  try {
+    var res = await fetch(API_URL + '/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: 'menu@laesquinasushi.com',
+        password: 'MenuPublico2024!'
+      })
+    });
+    var data = await res.json();
+    API_TOKEN = data.access_token;
+    return API_TOKEN;
+  } catch(e) {
+    console.error('No se pudo conectar al backend', e);
+    return null;
+  }
+}
+async function guardarPedidoBackend(clientName, clientPhone, clientAddress) {
+  try {
+    var token = await obtenerToken();
+    if (!token) return null;
+
+    var notes  = document.getElementById('order-notes').value;
+    var total  = orderInstances.reduce(function(s,o){ return s + (o.item.price + (o.extraCost||0)); }, 0);
+    var tipo   = orderType === 'envio' ? 'domicilio' : 'sucursal';
+
+    var productos = orderInstances.map(function(inst) {
+      var m = inst.mods, item = inst.item, ec = inst.extraCost || 0;
+
+      // Construir modificaciones en el formato del backend
+      var mods = {};
+      if (m.alga)     mods.alga = m.alga;
+      if (m.proteins && m.proteins.length) mods.proteinas = m.proteins;
+      if (m.sauces)   mods.salsas = Object.keys(m.sauces).filter(function(k){ return m.sauces[k]; });
+      if (m.sauces2)  mods.salsas2 = Object.keys(m.sauces2).filter(function(k){ return m.sauces2[k]; });
+      if (m.removed)  mods.sin_ingredientes = Object.keys(m.removed).filter(function(k){ return m.removed[k]; });
+      if (m.extraIngs && m.extraIngs.length) mods.extras_ingredientes = m.extraIngs;
+      if (m.extras)   mods.extras_producto = Object.keys(m.extras).filter(function(k){ return m.extras[k]; });
+
+      return {
+        id_producto:     item.dbId || 0,
+        nombre_producto: item.name,
+        precio_unitario: item.price,
+        cantidad:        1,
+        modificaciones:  mods,
+        costo_extra:     ec,
+        subtotal:        item.price + ec
+      };
+    });
+
+    var payload = {
+      nombre_cliente:    clientName,
+      telefono_cliente:  clientPhone  || null,
+      tipo_entrega:      tipo,
+      direccion_entrega: clientAddress || null,
+      notas:             notes.trim()  || null,
+      total:             total,
+      productos:         productos
+    };
+
+    var res = await fetch(API_URL + '/pedidos/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
+      var data = await res.json();
+      console.log('✅ Pedido guardado #' + data.id_pedido);
+      return data.id_pedido;
+    } else {
+      console.error('Error al guardar pedido', await res.text());
+      return null;
+    }
+  } catch(e) {
+    console.error('Error de conexión', e);
+    return null;
   }
 }
 
