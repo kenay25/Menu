@@ -4,6 +4,7 @@ from app.core.config import settings
 from app.database import engine, Base, SessionLocal
 from app.core.security import hashear_password
 from app.models.usuario import Usuario
+from app.routers import auth
 
 # Crear todas las tablas si no existen
 Base.metadata.create_all(bind=engine)
@@ -47,7 +48,7 @@ def crear_admin_inicial():
     finally:
         db.close()
 
-
+app.include_router(auth.router)
 @app.get("/")
 def raiz():
     return {
