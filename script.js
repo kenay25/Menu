@@ -364,7 +364,7 @@ function renderPromos() {
 
 /* ── Scroll spy para nav activo ─────────────── */
 function initScrollSpy() {
-  var sections = ['combos','sushis','entradas','especiales','bebidas','promos'];
+  var sections = ['combos','sushis','entradas','especiales','bebidas','promos','pedido'];
   var observer = new IntersectionObserver(function(entries) {
     entries.forEach(function(entry) {
       if (entry.isIntersecting) {
