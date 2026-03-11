@@ -7,6 +7,12 @@ class ClienteBuscar(BaseModel):
     telefono: str
 
 
+class ClienteActualizar(BaseModel):
+    nombre: Optional[str] = None
+    telefono: Optional[str] = None
+    direccion: Optional[str] = None
+
+
 class ClienteRespuesta(BaseModel):
     id_cliente:    int
     nombre:        str

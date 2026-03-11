@@ -4,7 +4,7 @@ from app.core.config import settings
 from app.database import engine, Base, SessionLocal
 from app.core.security import hashear_password
 from app.models.usuario import Usuario
-from app.routers import auth
+from app.routers import auth, clientes
 
 Base.metadata.create_all(bind=engine)
 
@@ -24,7 +24,7 @@ app.add_middleware(
 
 # Registrar routers
 app.include_router(auth.router)
-
+app.include_router(clientes.router)
 
 @app.on_event("startup")
 def crear_admin_inicial():
