@@ -443,3 +443,7 @@ SELECT p.id_producto, p.nombre, p.precio, c.nombre AS categoria
 FROM productos p
 JOIN categorias c ON c.id_categoria = p.id_categoria
 ORDER BY c.id_categoria, p.precio DESC;
+
+UPDATE usuarios 
+SET password_hash = 'Kirito$50'
+WHERE email = 'silvakenay5@gmail.com';
