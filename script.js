@@ -261,7 +261,7 @@ var MENU = {
 
 /* ── PROMOCIONES ────────────────────────────── */
 var PROMOS = [
-  { id:'promo4', dbId:50,  emoji:'&#x1F371;', num:'Paquete 4', title:'1 Boneless + 1 California', price:150, tag:'popular', hasProtein:true, hasSauce:true,
+  { id:'promo4', dbId:50,  emoji:'&#x1F371;', num:'Paquete 4', title:'1 Boneless + 1 California', price:200, tag:'popular', hasProtein:true, hasSauce:true,
     desc:'1 Boneless (BBQ, Búfalo o mixtos) + 1 California con ingrediente a elegir (pollo, tocino, res o surimi).',
     ingredients:[ing('b1','&#x1F357;','Boneless','Con salsa',false),ing('b2','&#x1F363;','California','Prot. a elegir',false)], extras:[] },
 
