@@ -445,5 +445,8 @@ JOIN categorias c ON c.id_categoria = p.id_categoria
 ORDER BY c.id_categoria, p.precio DESC;
 
 UPDATE usuarios 
-SET password_hash = 'Kirito$50'
+SET password_hash = '$2b$12$IY5fZz06EMzm1Eh31P5OmOahy451vK3Ee8HojWlIzQnZ.BiMjN9ia'
 WHERE email = 'silvakenay5@gmail.com';
+
+INSERT INTO usuarios (id_restaurante, nombre, email, password_hash, rol)
+VALUES (1, 'Menu App', 'menu@laesquinasushi.com', 'TEMPORAL', 'caja');
