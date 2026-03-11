@@ -6,17 +6,14 @@ from app.core.security import hashear_password
 from app.models.usuario import Usuario
 from app.routers import auth
 
-# Crear todas las tablas si no existen
 Base.metadata.create_all(bind=engine)
 
-# Inicializar la aplicación
 app = FastAPI(
     title="La Esquina del Sushi — API",
     description="Backend del sistema de pedidos",
     version="1.0.0"
 )
 
-# Configurar CORS — permite que el menú HTML se conecte al backend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.get_cors_origins(),
@@ -25,10 +22,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Registrar routers
+app.include_router(auth.router)
+
 
 @app.on_event("startup")
 def crear_admin_inicial():
-    """Crea el usuario admin si no existe al arrancar el servidor."""
     db = SessionLocal()
     try:
         admin = db.query(Usuario).filter(Usuario.email == settings.ADMIN_EMAIL).first()
@@ -48,7 +47,7 @@ def crear_admin_inicial():
     finally:
         db.close()
 
-app.include_router(auth.router)
+
 @app.get("/")
 def raiz():
     return {
