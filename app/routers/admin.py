@@ -7,6 +7,8 @@ from app.models.pedido import Pedido, DetallePedido
 from app.models.cliente import Cliente
 from app.models.usuario import Usuario
 from app.routers.deps import requerir_admin
+from fastapi import HTTPException, status
+from app.core.security import hashear_password
 
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
@@ -148,3 +150,250 @@ def listar_usuarios(
         }
         for u in usuarios
     ]
+
+# ── Pedidos ──────────────────────────────────────────────────
+
+@router.get("/pedidos")
+def listar_pedidos_admin(
+    estado: str = None,
+    limite: int = 50,
+    db: Session = Depends(get_db),
+    usuario=Depends(requerir_admin)
+):
+    """Lista pedidos con filtro opcional por estado."""
+    query = db.query(Pedido).filter(
+        Pedido.id_restaurante == usuario.id_restaurante
+    )
+    if estado:
+        query = query.filter(Pedido.estado == estado)
+    pedidos = query.order_by(Pedido.fecha_pedido.desc()).limit(limite).all()
+
+    return [
+        {
+            "id_pedido": p.id_pedido,
+            "nombre_cliente": p.nombre_cliente,
+            "telefono_cliente": p.telefono_cliente,
+            "tipo_entrega": p.tipo_entrega,
+            "direccion_entrega": p.direccion_entrega,
+            "estado": p.estado,
+            "total": float(p.total),
+            "notas": p.notas,
+            "fecha_pedido": p.fecha_pedido.isoformat(),
+        }
+        for p in pedidos
+    ]
+
+
+@router.get("/pedidos/{id_pedido}/detalle")
+def detalle_pedido_admin(
+    id_pedido: int,
+    db: Session = Depends(get_db),
+    usuario=Depends(requerir_admin)
+):
+    """Detalle completo de un pedido."""
+    pedido = db.query(Pedido).filter(
+        Pedido.id_pedido == id_pedido,
+        Pedido.id_restaurante == usuario.id_restaurante
+    ).first()
+    if not pedido:
+        raise HTTPException(status_code=404, detail="Pedido no encontrado")
+
+    detalles = db.query(DetallePedido).filter(
+        DetallePedido.id_pedido == id_pedido
+    ).all()
+
+    return {
+        "id_pedido": pedido.id_pedido,
+        "nombre_cliente": pedido.nombre_cliente,
+        "telefono_cliente": pedido.telefono_cliente,
+        "tipo_entrega": pedido.tipo_entrega,
+        "direccion_entrega": pedido.direccion_entrega,
+        "estado": pedido.estado,
+        "total": float(pedido.total),
+        "notas": pedido.notas,
+        "fecha_pedido": pedido.fecha_pedido.isoformat(),
+        "productos": [
+            {
+                "nombre_producto": d.nombre_producto,
+                "cantidad": d.cantidad,
+                "precio_unitario": float(d.precio_unitario),
+                "costo_extra": float(d.costo_extra),
+                "subtotal": float(d.subtotal),
+                "modificaciones": d.modificaciones
+            }
+            for d in detalles
+        ]
+    }
+
+
+@router.patch("/pedidos/{id_pedido}/estado")
+def cambiar_estado_pedido(
+    id_pedido: int,
+    body: dict,
+    db: Session = Depends(get_db),
+    usuario=Depends(requerir_admin)
+):
+    """Cambia el estado de un pedido."""
+    pedido = db.query(Pedido).filter(
+        Pedido.id_pedido == id_pedido,
+        Pedido.id_restaurante == usuario.id_restaurante
+    ).first()
+    if not pedido:
+        raise HTTPException(status_code=404, detail="Pedido no encontrado")
+
+    estados_validos = ["recibido", "preparando", "listo", "entregado", "cancelado"]
+    nuevo_estado = body.get("estado")
+    if nuevo_estado not in estados_validos:
+        raise HTTPException(status_code=400, detail="Estado inválido")
+
+    pedido.estado = nuevo_estado
+    db.commit()
+    return {"ok": True, "estado": nuevo_estado}
+
+
+# ── Estadísticas adicionales ─────────────────────────────────
+
+@router.get("/estadisticas/horas-pico")
+def horas_pico(
+    db: Session = Depends(get_db),
+    usuario=Depends(requerir_admin)
+):
+    """Pedidos agrupados por hora del día."""
+    resultado = db.query(
+        func.hour(Pedido.fecha_pedido).label("hora"),
+        func.count(Pedido.id_pedido).label("total_pedidos"),
+        func.sum(Pedido.total).label("total_ventas")
+    ).filter(
+        Pedido.id_restaurante == usuario.id_restaurante,
+        Pedido.estado != "cancelado"
+    ).group_by(
+        func.hour(Pedido.fecha_pedido)
+    ).order_by(
+        func.count(Pedido.id_pedido).desc()
+    ).all()
+
+    return [
+        {
+            "hora": r.hora,
+            "label": f"{r.hora}:00",
+            "total_pedidos": r.total_pedidos,
+            "total_ventas": round(float(r.total_ventas), 2)
+        }
+        for r in resultado
+    ]
+
+
+@router.get("/estadisticas/mes")
+def estadisticas_mes(
+    db: Session = Depends(get_db),
+    usuario=Depends(requerir_admin)
+):
+    """Ventas agrupadas por día del mes actual."""
+    resultado = db.query(
+        cast(Pedido.fecha_pedido, Date).label("fecha"),
+        func.count(Pedido.id_pedido).label("total_pedidos"),
+        func.sum(Pedido.total).label("total_ventas")
+    ).filter(
+        Pedido.id_restaurante == usuario.id_restaurante,
+        Pedido.estado != "cancelado",
+        func.month(Pedido.fecha_pedido) == func.month(func.now()),
+        func.year(Pedido.fecha_pedido) == func.year(func.now())
+    ).group_by(
+        cast(Pedido.fecha_pedido, Date)
+    ).order_by(
+        cast(Pedido.fecha_pedido, Date).asc()
+    ).all()
+
+    return [
+        {
+            "fecha": str(r.fecha),
+            "total_pedidos": r.total_pedidos,
+            "total_ventas": round(float(r.total_ventas), 2)
+        }
+        for r in resultado
+    ]
+
+
+# ── Usuarios ─────────────────────────────────────────────────
+
+@router.post("/usuarios")
+def crear_usuario(
+    body: dict,
+    db: Session = Depends(get_db),
+    usuario=Depends(requerir_admin)
+):
+    """Crea un nuevo usuario del restaurante."""
+    email    = body.get("email", "").strip().lower()
+    password = body.get("password", "").strip()
+    nombre   = body.get("nombre", "").strip()
+    rol      = body.get("rol", "caja")
+    telefono = body.get("telefono", "").strip() or None
+
+    if not email or not password or not nombre:
+        raise HTTPException(status_code=400, detail="Nombre, email y contraseña son obligatorios")
+
+    existente = db.query(Usuario).filter(Usuario.email == email).first()
+    if existente:
+        raise HTTPException(status_code=400, detail="Ya existe un usuario con ese email")
+
+    nuevo = Usuario(
+        id_restaurante = usuario.id_restaurante,
+        email          = email,
+        password_hash  = hashear_password(password),
+        nombre         = nombre,
+        telefono       = telefono,
+        rol            = rol,
+        activo         = True
+    )
+    db.add(nuevo)
+    db.commit()
+    db.refresh(nuevo)
+    return {"ok": True, "id_usuario": nuevo.id_usuario}
+
+
+@router.patch("/usuarios/{id_usuario}")
+def editar_usuario(
+    id_usuario: int,
+    body: dict,
+    db: Session = Depends(get_db),
+    usuario=Depends(requerir_admin)
+):
+    """Edita un usuario existente."""
+    u = db.query(Usuario).filter(
+        Usuario.id_usuario == id_usuario,
+        Usuario.id_restaurante == usuario.id_restaurante
+    ).first()
+    if not u:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    if "nombre"   in body: u.nombre  = body["nombre"]
+    if "rol"      in body: u.rol     = body["rol"]
+    if "activo"   in body: u.activo  = body["activo"]
+    if "telefono" in body: u.telefono = body["telefono"]
+    if "password" in body and body["password"]:
+        u.password_hash = hashear_password(body["password"])
+
+    db.commit()
+    return {"ok": True}
+
+
+@router.delete("/usuarios/{id_usuario}")
+def eliminar_usuario(
+    id_usuario: int,
+    db: Session = Depends(get_db),
+    usuario=Depends(requerir_admin)
+):
+    """Elimina un usuario (no puede eliminarse a sí mismo)."""
+    if id_usuario == usuario.id_usuario:
+        raise HTTPException(status_code=400, detail="No puedes eliminarte a ti mismo")
+
+    u = db.query(Usuario).filter(
+        Usuario.id_usuario == id_usuario,
+        Usuario.id_restaurante == usuario.id_restaurante
+    ).first()
+    if not u:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+    db.delete(u)
+    db.commit()
+    return {"ok": True}
