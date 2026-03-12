@@ -974,6 +974,12 @@ async function hacerRegistro() {
   var errEl    = document.getElementById('login-error');
   var okEl     = document.getElementById('login-success');
 
+  if (!nombre || !email || !password || !telefono) {
+    errEl.textContent = 'Por favor llena todos los campos';
+    errEl.style.display = 'block';
+    return;
+  }
+
   if (!nombre || !email || !password) {
     errEl.textContent = 'Por favor llena nombre, email y contraseña';
     errEl.style.display = 'block';
