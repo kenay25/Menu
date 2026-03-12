@@ -86,12 +86,13 @@ def registro(datos: dict, db: Session = Depends(get_db)):
 
     # Crear usuario con rol caja (cliente)
     nuevo = Usuario(
-        email         = email,
-        password_hash = hashear_password(password),
-        nombre        = nombre,
-        telefono      = telefono,
-        rol           = "caja",
-        activo        = True
+        id_restaurante = 1,
+        email          = email,
+        password_hash  = hashear_password(password),
+        nombre         = nombre,
+        telefono       = telefono,
+        rol            = "caja",
+        activo         = True
     )
     db.add(nuevo)
     db.commit()
