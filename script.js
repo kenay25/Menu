@@ -1109,6 +1109,10 @@ async function cargarHistorialSesion() {
       headers: { 'Authorization': 'Bearer ' + sesionActual.token }
     });
     var data = await res.json();
+        (data.pedidos||[]).forEach(function(p){
+      if(p.fecha&&!p.fecha.endsWith('Z')&&!p.fecha.includes('+'))
+        p.fecha=p.fecha.replace(' ','T')+'Z';
+    });
     if (!res.ok) {
       mostrarHistorialError(data.detail || 'No se encontraron pedidos');
       return;
@@ -1135,6 +1139,10 @@ async function buscarHistorialTelefono() {
   try {
     var res = await fetch(API_URL + '/historial/telefono/' + encodeURIComponent(tel));
     var data = await res.json();
+        (data.pedidos||[]).forEach(function(p){
+      if(p.fecha&&!p.fecha.endsWith('Z')&&!p.fecha.includes('+'))
+        p.fecha=p.fecha.replace(' ','T')+'Z';
+    });
     if (!res.ok) {
       document.getElementById('historial-loading').style.display = 'none';
       document.getElementById('historial-buscar').style.display = 'block';
