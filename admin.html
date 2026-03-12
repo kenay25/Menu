@@ -58,7 +58,7 @@
       -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
-      user-select: none;
+      -o-user-select: none;
     }
     .nav-item:hover { color: var(--pink-light); background: rgba(232,84,122,0.07); }
     .nav-item.active { color: var(--white); background: rgba(232,84,122,0.12); border-left-color: var(--pink); }
@@ -515,8 +515,15 @@
           <input type="number" id="prod-precio" placeholder="0.00" step="0.01">
         </div>
         <div class="form-group">
-          <label>Categoría (ID)</label>
-          <input type="number" id="prod-categoria" placeholder="1">
+          <label>Categoría</label>
+          <select id="prod-categoria">
+            <option value="1">Combos y Charolas</option>
+            <option value="2">Sushis</option>
+            <option value="3">Entradas</option>
+            <option value="4">Especiales</option>
+            <option value="5">Bebidas y Extras</option>
+            <option value="6">Promociones</option>
+          </select>
         </div>
         <div class="form-group">
           <label>Disponible</label>
@@ -586,8 +593,8 @@
           <input type="email" id="usr-email" placeholder="correo@email.com">
         </div>
         <div class="form-group">
-          <label>Contraseña <small style="text-transform:none;letter-spacing:0">(dejar vacío para no cambiar)</small></label>
-          <input type="password" id="usr-password" placeholder="••••••••">
+          <label>Teléfono</label>
+          <input type="tel" id="usr-telefono" placeholder="642-123-4567">
         </div>
         <div class="form-group">
           <label>Rol</label>
@@ -598,15 +605,15 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Teléfono</label>
-          <input type="tel" id="usr-telefono" placeholder="642-123-4567">
-        </div>
-        <div class="form-group">
           <label>Estado</label>
           <select id="usr-activo">
             <option value="true">✅ Activo</option>
             <option value="false">🚫 Inactivo</option>
           </select>
+        </div>
+        <div class="form-group" id="usr-password-wrap">
+          <label>Contraseña <small style="text-transform:none;letter-spacing:0" id="usr-password-hint">(obligatoria para nuevo usuario)</small></label>
+          <input type="password" id="usr-password" placeholder="••••••••">
         </div>
       </div>
       <input type="hidden" id="usr-id">
@@ -619,7 +626,7 @@
     <div class="table-wrap">
       <table class="data-table">
         <thead>
-          <tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Estado</th><th>Último acceso</th><th>Acciones</th></tr>
+          <tr><th>Nombre</th><th>Email</th><th>Teléfono</th><th>Rol</th><th>Estado</th><th>Último acceso</th><th>Acciones</th></tr>
         </thead>
         <tbody id="tbody-usuarios"><tr><td colspan="6" class="loading">Cargando...</td></tr></tbody>
       </table>
@@ -684,6 +691,7 @@ function mostrarPanel() {
   document.getElementById('admin-name').textContent = USUARIO.nombre;
   document.getElementById('admin-avatar').textContent = USUARIO.nombre.charAt(0).toUpperCase();
   cargarDashboard();
+  iniciarAutoRefresh();
 }
 
 async function api(path, method='GET', body=null) {
@@ -833,12 +841,81 @@ async function verDetallePedido(id) {
       <div style="background:#FFF8F9;border-radius:10px;padding:12px;margin-bottom:8px">
         <div style="display:flex;justify-content:space-between;font-weight:700">${p.nombre_producto}<span>$${parseFloat(p.subtotal).toLocaleString()}</span></div>
         <div style="font-size:12px;color:var(--muted)">Cant: ${p.cantidad} · Precio: $${parseFloat(p.precio_unitario)} ${p.costo_extra > 0 ? `· Extras: +$${p.costo_extra}` : ''}</div>
-        ${p.modificaciones ? `<div style="font-size:11px;color:#2E7D32;margin-top:4px">${JSON.stringify(p.modificaciones)}</div>` : ''}
+        ${p.modificaciones ? `<div style="font-size:11px;color:#2E7D32;margin-top:4px">${formatearMods(p.modificaciones)}</div>` : ''}
       </div>
     `).join('')}
     <div style="text-align:right;font-size:18px;font-weight:700;color:var(--pink);margin-top:12px">Total: $${parseFloat(data.total).toLocaleString()}</div>
   `;
   document.getElementById('modal-pedido').classList.add('open');
+}
+
+/* ══ CATEGORÍAS ═════════════════════════════════════════════ */
+const CATEGORIAS = {
+  1: 'Combos y Charolas',
+  2: 'Sushis',
+  3: 'Entradas',
+  4: 'Especiales',
+  5: 'Bebidas y Extras',
+  6: 'Promociones'
+};
+
+/* ══ FORMATEAR MODIFICACIONES ═══════════════════════════════ */
+const SALSAS_NOMBRES = {
+  sc1:'BBQ', sc2:'Búfalo', sc3:'Mixto', sc4:'BBQ Chipotle',
+  sc5:'Naranja Chipotle', sc6:'Tamarindo', sc7:'Mango Hot',
+  sc8:'Mango Habanero', sc9:'Piña Hot'
+};
+const PROTEINAS_NOMBRES = {
+  p_res:'Res', p_pollo:'Pollo', p_tocino:'Tocino', p_surimi:'Surimi', p_camaron:'Camarón'
+};
+
+function formatearMods(mods) {
+  if (!mods) return '';
+  let m = typeof mods === 'string' ? JSON.parse(mods) : mods;
+  let lines = [];
+
+  if (m.alga) lines.push('🌿 Alga: ' + (m.alga === 'con' ? 'Con alga' : 'Sin alga'));
+
+  if (m.proteinas && m.proteinas.length) {
+    const nombres = m.proteinas.map(p => PROTEINAS_NOMBRES[p] || p);
+    lines.push('🥩 Proteína: ' + nombres.join(', '));
+  }
+
+  if (m.salsas && m.salsas.length) {
+    const nombres = m.salsas.map(s => SALSAS_NOMBRES[s] || s);
+    lines.push('🫙 Salsa: ' + nombres.join(', '));
+  }
+
+  if (m.salsas2 && m.salsas2.length) {
+    const nombres = m.salsas2.map(s => SALSAS_NOMBRES[s] || s);
+    lines.push('🫙 Salsa 2ª orden: ' + nombres.join(', '));
+  }
+
+  if (m.sin_ingredientes && m.sin_ingredientes.length)
+    lines.push('🚫 Sin: ' + m.sin_ingredientes.join(', '));
+
+  if (m.extras_ingredientes && m.extras_ingredientes.length)
+    lines.push('➕ Extra ingrediente: ' + m.extras_ingredientes.join(', '));
+
+  if (m.extras_producto && m.extras_producto.length)
+    lines.push('✅ Extra: ' + m.extras_producto.join(', '));
+
+  return lines.length ? lines.join(' · ') : '';
+}
+
+/* ══ AUTO-REFRESH ═══════════════════════════════════════════ */
+let autoRefreshInterval = null;
+
+function iniciarAutoRefresh() {
+  if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+  autoRefreshInterval = setInterval(() => {
+    const active = document.querySelector('.page.active');
+    if (!active) return;
+    const name = active.id.replace('page-', '');
+    if (name === 'dashboard') cargarDashboard();
+    else if (name === 'pedidos') cargarPedidos(pedidosFiltro);
+    else if (name === 'menu') cargarMenu();
+  }, 30000); // cada 30 segundos
 }
 
 /* ══ MENÚ ═══════════════════════════════════════════════════ */
@@ -850,7 +927,7 @@ async function cargarMenu() {
     <td>${p.id_producto}</td>
     <td><strong>${p.nombre}</strong></td>
     <td>$${parseFloat(p.precio).toLocaleString()}</td>
-    <td>${p.id_categoria || '—'}</td>
+    <td>${CATEGORIAS[p.id_categoria] || '—'}</td>
     <td>
       <div class="toggle-wrap">
         <div class="toggle ${p.disponible ? 'on' : ''}" onclick="toggleDisponible(${p.id_producto}, ${!p.disponible}, this)"></div>
@@ -977,24 +1054,27 @@ async function cargarUsuarios() {
     return `<tr>
       <td><strong>${u.nombre}</strong></td>
       <td>${u.email}</td>
+      <td>${u.telefono || '—'}</td>
       <td><span class="badge badge-${u.rol}">${u.rol}</span></td>
       <td><span class="badge" style="${u.activo ? 'background:#E9F7EF;color:#1E8449' : 'background:#FDEDEC;color:#C0392B'}">${u.activo ? '✅ Activo' : '🚫 Inactivo'}</span></td>
       <td>${acceso}</td>
       <td>
-        <button class="btn-action" onclick="editarUsuario(${u.id_usuario},'${u.nombre.replace(/'/g,"\\'")}','${u.email}','${u.rol}',${u.activo})">✏️ Editar</button>
+        <button class="btn-action" onclick="editarUsuario(${u.id_usuario},'${u.nombre.replace(/'/g,"\\'")}','${u.email}','${u.rol}',${u.activo},'${u.telefono||''}')">✏️ Editar</button>
         <button class="btn-action danger" onclick="eliminarUsuario(${u.id_usuario},'${u.nombre.replace(/'/g,"\\'")}')">🗑 Borrar</button>
       </td>
     </tr>`;
   }).join('');
 }
 
-function editarUsuario(id, nombre, email, rol, activo) {
+function editarUsuario(id, nombre, email, rol, activo, telefono) {
   document.getElementById('usr-id').value = id;
   document.getElementById('usr-nombre').value = nombre;
   document.getElementById('usr-email').value = email;
   document.getElementById('usr-rol').value = rol;
   document.getElementById('usr-activo').value = activo ? 'true' : 'false';
+  document.getElementById('usr-telefono').value = telefono || '';
   document.getElementById('usr-password').value = '';
+  document.getElementById('usr-password-hint').textContent = '(dejar vacío para no cambiar)';
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
@@ -1002,6 +1082,7 @@ function limpiarFormUsuario() {
   ['usr-id','usr-nombre','usr-email','usr-password','usr-telefono'].forEach(id => document.getElementById(id).value = '');
   document.getElementById('usr-rol').value = 'caja';
   document.getElementById('usr-activo').value = 'true';
+  document.getElementById('usr-password-hint').textContent = '(obligatoria para nuevo usuario)';
 }
 
 async function guardarUsuario() {
@@ -1042,6 +1123,7 @@ window.addEventListener('DOMContentLoaded', () => {
   if (t && u) {
     TOKEN = t; USUARIO = JSON.parse(u);
     mostrarPanel();
+    iniciarAutoRefresh();
   }
 });
 </script>

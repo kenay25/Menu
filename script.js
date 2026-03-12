@@ -645,6 +645,10 @@ function confirmMods() {
   inst.extraCost = (inst.item.extras || []).filter(function(ex){ return currentMods.extras && currentMods.extras[ex.id]; })
     .reduce(function(s, ex){ return s + ex.price; }, 0) + proteinExtraCost + extraIngsCost;
   isNewInstance = false; refreshCardState(inst.itemId); closeModal(); updateBar();
+   if (inst.item.hasAlga && !currentMods.alga) {
+    alert('🌿 Por favor indica si lo quieres con alga o sin alga');
+    return;
+  }
 }
 function cancelModal() {
   if (isNewInstance && currentInstanceId) {
