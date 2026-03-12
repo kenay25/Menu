@@ -9,7 +9,9 @@ from app.models.usuario import Usuario
 from app.routers.deps import requerir_admin
 from fastapi import HTTPException, status
 from app.core.security import hashear_password
+from zoneinfo import ZoneInfo
 
+ZONA = ZoneInfo("America/Hermosillo")
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
 
@@ -146,6 +148,7 @@ def listar_usuarios(
             "id_usuario": u.id_usuario,
             "nombre": u.nombre,
             "email": u.email,
+            "telefono": u.telefono,
             "rol": u.rol,
             "activo": u.activo,
             "ultimo_acceso": u.ultimo_acceso.isoformat() if u.ultimo_acceso else None

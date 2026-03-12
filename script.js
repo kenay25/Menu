@@ -638,17 +638,18 @@ function togExtra(exId) {
 }
 function confirmMods() {
   if (!currentInstanceId) return;
-  var inst = orderInstances.filter(function(o){ return o.instanceId === currentInstanceId; })[0]; if (!inst) return;
-  inst.mods = currentMods;
-  var proteinExtraCost = Math.max(0, (currentMods.proteins.length - 1)) * 15;
-  var extraIngsCost    = (currentMods.extraIngs || []).length * 15;
-  inst.extraCost = (inst.item.extras || []).filter(function(ex){ return currentMods.extras && currentMods.extras[ex.id]; })
-    .reduce(function(s, ex){ return s + ex.price; }, 0) + proteinExtraCost + extraIngsCost;
-  isNewInstance = false; refreshCardState(inst.itemId); closeModal(); updateBar();
-   if (inst.item.hasAlga && !currentMods.alga) {
+  var inst = orderInstances.filter(function(o){ return o.instanceId === currentInstanceId; })[0];
+  if (!inst) return;
+
+  if (inst.item.hasAlga && !currentMods.alga) {
     alert('🌿 Por favor indica si lo quieres con alga o sin alga');
     return;
   }
+
+  inst.mods = JSON.stringify(currentMods);
+  refreshCardState(inst.itemId);
+  updateBar();
+  closeModal();
 }
 function cancelModal() {
   if (isNewInstance && currentInstanceId) {
