@@ -975,19 +975,28 @@ function closeModalOutside(e){if(e.target===document.getElementById('modal-overl
 /* ══ MODAL CLIENTE ══ */
 function sendWhatsApp(){
   if(!orderInstances.length){alert('¡Primero selecciona algo del menú! 🍣');return;}
-  // ── Pre-llenar con datos de sesión si existe ──
-  if(sesionActual&&sesionActual.usuario){
-    var u=sesionActual.usuario;
-    var nameEl=document.getElementById('cl-name');
-    var phoneEl=document.getElementById('cl-phone');
-    var addressEl=document.getElementById('cl-address');
-    if(nameEl&&u.nombre&&!nameEl.value)    nameEl.value=u.nombre;
-    if(phoneEl&&u.telefono&&!phoneEl.value) phoneEl.value=u.telefono;
-    if(phoneEl&&u.telefono&&addressEl&&!addressEl.value) buscarClientePorTelefono(u.telefono);
-  }
   document.getElementById('client-overlay').classList.add('open');
   document.body.style.overflow='hidden';
   setOrderType('recoger');
+
+  // Si hay sesión, prellenar datos automáticamente
+  if(sesionActual&&sesionActual.usuario){
+    var u=sesionActual.usuario;
+    var nameEl=document.getElementById('cl-name');
+    if(nameEl)nameEl.value=u.nombre||'';
+    
+    if(u.telefono){
+      var phoneEl=document.getElementById('cl-phone');
+      if(phoneEl){
+        phoneEl.value=u.telefono;
+        // Buscar dirección guardada
+        buscarClientePorTelefono(u.telefono);
+      }
+      // Cambiar automáticamente a domicilio si tiene teléfono
+      setOrderType('envio');
+    }
+  }
+
   setTimeout(function(){document.getElementById('cl-name').focus();},150);
 }
 function closeClientModal(){document.getElementById('client-overlay').classList.remove('open');document.body.style.overflow='';}
@@ -1011,7 +1020,7 @@ function submitOrder(){
 async function obtenerToken(){
   if(API_TOKEN)return API_TOKEN;
   try{
-    var res=await fetch(API_URL+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'menu@laesquinasushi.com',password:'MenuPublico2024!'})});
+    var res=await fetch(API_URL+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'menu@laesquinasushi.com',password:'!sushi2026'})});
     var data=await res.json();API_TOKEN=data.access_token;return API_TOKEN;
   }catch(e){console.error('No se pudo conectar al backend',e);return null;}
 }
