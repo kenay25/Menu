@@ -1118,6 +1118,16 @@ async function eliminarUsuario(id, nombre) {
 }
 
 /* ══ ARRANQUE ═══════════════════════════════════════════════ */
+function iniciarReloj() {
+  function actualizar() {
+    const ahora = new Date();
+    const opts = { weekday:'short', day:'numeric', month:'short', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12: true, timeZone: 'America/Hermosillo' };
+    const el = document.getElementById('reloj');
+    if (el) el.textContent = ahora.toLocaleString('es-MX', opts);
+  }
+  actualizar();
+  setInterval(actualizar, 1000);
+}
 window.addEventListener('DOMContentLoaded', () => {
   const t = localStorage.getItem('admin_token');
   const u = localStorage.getItem('admin_usuario');
