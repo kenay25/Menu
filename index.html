@@ -1310,9 +1310,10 @@ function mostrarHistorialError(msg){
 
 async function buscarClientePorTelefono(telefono){
   if(telefono.length<10)return;
-  if(!sesionActual)return;
   try{
-    var res=await fetch(API_URL+'/clientes/buscar/'+telefono,{headers:{'Authorization':'Bearer '+sesionActual.token}});
+    var token=sesionActual?sesionActual.token:await obtenerToken();
+    if(!token)return;
+    var res=await fetch(API_URL+'/clientes/buscar/'+telefono,{headers:{'Authorization':'Bearer '+token}});
     if(res.ok){
       var cliente=await res.json();
       var nameEl=document.getElementById('cl-name');

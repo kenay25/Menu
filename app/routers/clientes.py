@@ -8,24 +8,18 @@ from app.routers.deps import get_usuario_actual
 router = APIRouter(prefix="/clientes", tags=["Clientes"])
 
 
-@router.get("/buscar/{telefono}", response_model=ClienteRespuesta)
-def buscar_cliente(
-    telefono: str,
-    db: Session = Depends(get_db),
-    usuario=Depends(get_usuario_actual)
-):
-    """Busca un cliente por teléfono para autocompletar el formulario."""
+@router.get("/buscar/{telefono}")
+def buscar_cliente(telefono: str, db: Session = Depends(get_db), usuario=Depends(get_usuario_actual)):
+    # Buscar con y sin código de país
+    tel_limpio = telefono.lstrip('52') if telefono.startswith('52') and len(telefono) > 10 else telefono
+    tel_con_codigo = '52' + tel_limpio if not tel_limpio.startswith('52') else tel_limpio
+    
     cliente = db.query(Cliente).filter(
-        Cliente.telefono == telefono,
-        Cliente.id_restaurante == usuario.id_restaurante
+        Cliente.telefono.in_([telefono, tel_limpio, tel_con_codigo])
     ).first()
-
+    
     if not cliente:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Cliente no encontrado"
-        )
-
+        raise HTTPException(status_code=404, detail="Cliente no encontrado")
     return cliente
 
 

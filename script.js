@@ -704,10 +704,7 @@ async function obtenerToken() {
     var res = await fetch(API_URL + '/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: 'menu@laesquinasushi.com',
-        password: 'MenuPublico2024!'
-      })
+      body:JSON.stringify({email:'menu@laesquinasushi.com',password:'!sushi2026'})
     });
     var data = await res.json();
     API_TOKEN = data.access_token;
