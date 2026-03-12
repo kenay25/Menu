@@ -645,10 +645,3 @@ body {
 .btn-admin-panel:hover {
   background: var(--pink-light);
 }
-#login-overlay {
-  display: none;
-}
-
-#login-overlay.open {
-  display: flex;
-}
