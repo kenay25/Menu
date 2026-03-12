@@ -954,9 +954,13 @@ async function hacerLogin() {
     cerrarLoginModal();
     actualizarHeaderSesion();
 
-    // Si es admin redirigir al panel
+    // Si es admin mostrar opción
     if (data.usuario.rol === 'admin') {
-      window.location.href = 'admin.html';
+      if (confirm('👋 Bienvenido ' + data.usuario.nombre + '\n\n¿Quieres ir al Panel Admin?')) {
+        window.location.href = 'admin.html';
+      }
+    } else {
+      alert('👋 Bienvenido ' + data.usuario.nombre);
     }
 
   } catch(e) {
