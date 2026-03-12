@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import func, cast, Date
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from app.database import get_db
 from app.models.pedido import Pedido, DetallePedido
 from app.models.cliente import Cliente
@@ -49,6 +49,8 @@ def estadisticas_semana(
     usuario=Depends(requerir_admin)
 ):
     """Ventas agrupadas por día de los últimos 7 días."""
+    hace_7_dias = datetime.utcnow() - timedelta(days=7)
+
     resultado = db.query(
         cast(Pedido.fecha_pedido, Date).label("fecha"),
         func.count(Pedido.id_pedido).label("total_pedidos"),
@@ -56,7 +58,7 @@ def estadisticas_semana(
     ).filter(
         Pedido.id_restaurante == usuario.id_restaurante,
         Pedido.estado != "cancelado",
-        Pedido.fecha_pedido >= func.date_sub(func.now(), func.interval(7, "DAY"))
+        Pedido.fecha_pedido >= hace_7_dias
     ).group_by(
         cast(Pedido.fecha_pedido, Date)
     ).order_by(
