@@ -735,7 +735,14 @@ async function guardarPedidoBackend(clientName, clientPhone, clientAddress) {
       if (m.proteins && m.proteins.length) mods.proteinas = m.proteins;
       if (m.sauces)   mods.salsas = Object.keys(m.sauces).filter(function(k){ return m.sauces[k]; });
       if (m.sauces2)  mods.salsas2 = Object.keys(m.sauces2).filter(function(k){ return m.sauces2[k]; });
-      if (m.removed)  mods.sin_ingredientes = Object.keys(m.removed).filter(function(k){ return m.removed[k]; });
+      if (m.removed) {
+        mods.sin_ingredientes = Object.keys(m.removed)
+          .filter(function(k){ return m.removed[k]; })
+          .map(function(k){
+            var ing = (item.ingredients || []).filter(function(i){ return i.id === k; })[0];
+            return ing ? ing.name : k;
+          });
+      }
       if (m.extraIngs && m.extraIngs.length) mods.extras_ingredientes = m.extraIngs;
       if (m.extras)   mods.extras_producto = Object.keys(m.extras).filter(function(k){ return m.extras[k]; });
 
