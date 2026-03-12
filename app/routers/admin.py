@@ -51,7 +51,7 @@ def estadisticas_semana(
     usuario=Depends(requerir_admin)
 ):
     """Ventas agrupadas por día de los últimos 7 días."""
-    hace_7_dias = datetime.utcnow() - timedelta(days=7)
+    hace_7_dias = datetime.now(ZONA) - timedelta(days=7)
 
     resultado = db.query(
         cast(Pedido.fecha_pedido, Date).label("fecha"),
