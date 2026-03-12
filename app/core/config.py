@@ -23,7 +23,7 @@ class Settings(BaseSettings):
 
     # App
     APP_ENV: str = "development"
-    CORS_ORIGINS: str = "http://localhost:3000"
+    CORS_ORIGINS: str = "https://laesquinadelsushi.vercel.app"
 
     def get_cors_origins(self) -> List[str]:
         return [o.strip() for o in self.CORS_ORIGINS.split(",")]
