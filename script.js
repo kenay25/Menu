@@ -301,6 +301,7 @@ function setOrderType(type) {
    ══════════════════════════════════════════════ */
 function init() {
   // Pétalos de sakura
+  cargarSesionGuardada();
   var s = document.getElementById('sakura');
   for (var i = 0; i < 16; i++) {
     var p = document.createElement('div');
@@ -881,6 +882,203 @@ function doSendWhatsApp(clientName, clientPhone, clientAddress) {
 
   window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
 }
+/* ══════════════════════════════════════════════
+   AUTENTICACIÓN — LOGIN / REGISTRO / SESIÓN
+   ══════════════════════════════════════════════ */
 
+var sesionActual = null; // {token, usuario}
+
+function abrirLoginModal() {
+  document.getElementById('login-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  switchTab('login');
+  setTimeout(function(){ document.getElementById('login-email').focus(); }, 150);
+}
+
+function cerrarLoginModal() {
+  document.getElementById('login-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+  document.getElementById('login-error').style.display = 'none';
+  document.getElementById('login-success').style.display = 'none';
+}
+
+function cerrarLoginModalOutside(e) {
+  if (e.target === document.getElementById('login-overlay')) cerrarLoginModal();
+}
+
+function switchTab(tab) {
+  var isLogin = tab === 'login';
+  document.getElementById('tab-login').className    = 'login-tab' + (isLogin  ? ' active' : '');
+  document.getElementById('tab-registro').className = 'login-tab' + (!isLogin ? ' active' : '');
+  document.getElementById('form-login').style.display    = isLogin  ? 'block' : 'none';
+  document.getElementById('form-registro').style.display = !isLogin ? 'block' : 'none';
+  document.getElementById('btn-auth-submit').textContent = isLogin  ? 'Entrar →' : 'Registrarse →';
+  document.getElementById('btn-auth-submit').onclick     = isLogin  ? hacerLogin : hacerRegistro;
+  document.getElementById('login-error').style.display   = 'none';
+  document.getElementById('login-success').style.display = 'none';
+}
+
+async function hacerLogin() {
+  var email    = document.getElementById('login-email').value.trim();
+  var password = document.getElementById('login-password').value.trim();
+  var errEl    = document.getElementById('login-error');
+
+  if (!email || !password) {
+    errEl.textContent = 'Por favor llena todos los campos';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  document.getElementById('btn-auth-submit').textContent = 'Entrando...';
+
+  try {
+    var res = await fetch(API_URL + '/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: password })
+    });
+
+    var data = await res.json();
+
+    if (!res.ok) {
+      errEl.textContent = data.detail || 'Email o contraseña incorrectos';
+      errEl.style.display = 'block';
+      document.getElementById('btn-auth-submit').textContent = 'Entrar →';
+      return;
+    }
+
+    // Guardar sesión
+    sesionActual = { token: data.access_token, usuario: data.usuario };
+    localStorage.setItem('sushi_sesion', JSON.stringify(sesionActual));
+
+    cerrarLoginModal();
+    actualizarHeaderSesion();
+
+    // Si es admin redirigir al panel
+    if (data.usuario.rol === 'admin') {
+      window.location.href = 'admin.html';
+    }
+
+  } catch(e) {
+    errEl.textContent = 'Error de conexión, intenta de nuevo';
+    errEl.style.display = 'block';
+    document.getElementById('btn-auth-submit').textContent = 'Entrar →';
+  }
+}
+
+async function hacerRegistro() {
+  var nombre   = document.getElementById('reg-nombre').value.trim();
+  var email    = document.getElementById('reg-email').value.trim();
+  var password = document.getElementById('reg-password').value.trim();
+  var telefono = document.getElementById('reg-telefono').value.trim();
+  var errEl    = document.getElementById('login-error');
+  var okEl     = document.getElementById('login-success');
+
+  if (!nombre || !email || !password) {
+    errEl.textContent = 'Por favor llena nombre, email y contraseña';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  if (password.length < 6) {
+    errEl.textContent = 'La contraseña debe tener al menos 6 caracteres';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  document.getElementById('btn-auth-submit').textContent = 'Registrando...';
+
+  try {
+    var res = await fetch(API_URL + '/auth/registro', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre: nombre, email: email, password: password, telefono: telefono })
+    });
+
+    var data = await res.json();
+
+    if (!res.ok) {
+      errEl.textContent = data.detail || 'Error al registrarse';
+      errEl.style.display = 'block';
+      document.getElementById('btn-auth-submit').textContent = 'Registrarse →';
+      return;
+    }
+
+    okEl.textContent = '✅ Cuenta creada. Iniciando sesión...';
+    okEl.style.display = 'block';
+
+    // Auto login después de registro
+    setTimeout(function() {
+      document.getElementById('login-email').value    = email;
+      document.getElementById('login-password').value = password;
+      switchTab('login');
+      hacerLogin();
+    }, 1000);
+
+  } catch(e) {
+    errEl.textContent = 'Error de conexión, intenta de nuevo';
+    errEl.style.display = 'block';
+    document.getElementById('btn-auth-submit').textContent = 'Registrarse →';
+  }
+}
+
+function cerrarSesion() {
+  sesionActual = null;
+  localStorage.removeItem('sushi_sesion');
+  actualizarHeaderSesion();
+}
+
+function actualizarHeaderSesion() {
+  var authEl = document.getElementById('header-auth');
+  if (!authEl) return;
+
+  if (sesionActual) {
+    var u = sesionActual.usuario;
+    var html = '<div class="header-user">';
+    html += '<span class="header-user-name">👋 ' + u.nombre + '</span>';
+    if (u.rol === 'admin') {
+      html += '<button class="btn-admin-panel" onclick="window.location.href=\'admin.html\'">⚙️ Panel Admin</button>';
+    }
+    html += '<button class="btn-logout" onclick="cerrarSesion()">Salir</button>';
+    html += '</div>';
+    authEl.innerHTML = html;
+  } else {
+    authEl.innerHTML = '<button class="btn-login-header" onclick="abrirLoginModal()">🔑 Iniciar sesión</button>';
+  }
+}
+
+/* ── Autocompletar cliente por teléfono ─────── */
+async function buscarClientePorTelefono(telefono) {
+  if (telefono.length < 10) return;
+  if (!sesionActual) return;
+
+  try {
+    var res = await fetch(API_URL + '/clientes/buscar/' + telefono, {
+      headers: { 'Authorization': 'Bearer ' + sesionActual.token }
+    });
+
+    if (res.ok) {
+      var cliente = await res.json();
+      var nameEl = document.getElementById('cl-name');
+      var addrEl = document.getElementById('cl-address');
+      if (nameEl && !nameEl.value) nameEl.value = cliente.nombre;
+      if (addrEl && !addrEl.value) addrEl.value = cliente.direccion || '';
+    }
+  } catch(e) {
+  }
+}
+
+/* ── Cargar sesión guardada al iniciar ──────── */
+function cargarSesionGuardada() {
+  try {
+    var guardada = localStorage.getItem('sushi_sesion');
+    if (guardada) {
+      sesionActual = JSON.parse(guardada);
+      actualizarHeaderSesion();
+    }
+  } catch(e) {
+    localStorage.removeItem('sushi_sesion');
+  }
+}
 /* ── Arranque ───────────────────────────────── */
 document.addEventListener('DOMContentLoaded', init);

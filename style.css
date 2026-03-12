@@ -542,3 +542,106 @@ body {
   .header-inner { padding: 14px 16px 12px; }
   .protein-grid { grid-template-columns: repeat(3,1fr); }
 }
+/* ── Header Auth ─────────────────────────────── */
+.header-auth {
+  margin-top: 8px;
+}
+
+.btn-login-header {
+  background: transparent;
+  border: 1px solid rgba(232,84,122,0.4);
+  color: var(--pink-light);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-body);
+}
+
+.btn-login-header:hover {
+  background: var(--pink-deep);
+  border-color: var(--pink-deep);
+  color: white;
+}
+
+.btn-login-header.logged-in {
+  border-color: rgba(100,200,100,0.4);
+  color: #90ee90;
+}
+
+/* ── Login Tabs ──────────────────────────────── */
+.login-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.login-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  padding: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: var(--font-body);
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.login-tab.active {
+  color: var(--pink-light);
+  border-bottom-color: var(--pink-deep);
+}
+
+.login-tab:hover {
+  color: white;
+}
+
+/* ── Usuario logueado en header ──────────────── */
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.header-user-name {
+  font-size: 12px;
+  color: #90ee90;
+}
+
+.btn-logout {
+  background: transparent;
+  border: 1px solid rgba(255,100,100,0.3);
+  color: rgba(255,100,100,0.7);
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all 0.2s;
+}
+
+.btn-logout:hover {
+  background: rgba(255,100,100,0.1);
+  color: #ff6b8a;
+}
+
+.btn-admin-panel {
+  background: var(--pink-deep);
+  border: none;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: all 0.2s;
+}
+
+.btn-admin-panel:hover {
+  background: var(--pink-light);
+}

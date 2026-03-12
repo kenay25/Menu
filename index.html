@@ -25,6 +25,9 @@
       <p>📱 <strong>642-426-7244</strong></p>
       <div class="hours">🕐 5:30 – 11:30 pm · Descansamos los Martes</div>
       <div class="hours">🛵 Servicio a domicilio (sujeto a distancia)</div>
+      <div class="header-auth" id="header-auth">
+        <button class="btn-login-header" onclick="abrirLoginModal()">🔑 Iniciar sesión</button>
+      </div>
     </div>
   </div>
   <div class="header-banner">
@@ -178,8 +181,7 @@
       </div>
       <div class="cf cf-hidden" id="cf-phone-wrap">
         <label>📱 Teléfono <span class="cf-required">*</span></label>
-        <input type="tel" id="cl-phone" placeholder="Ej. 642-123-4567" autocomplete="tel">
-      </div>
+        <input type="tel" id="cl-phone" placeholder="Ej. 642-123-4567" autocomplete="tel" oninput="buscarClientePorTelefono(this.value)">
       <div class="cf cf-hidden" id="cf-address-wrap">
         <label>📍 Dirección de entrega <span class="cf-required">*</span></label>
         <textarea id="cl-address" placeholder="Calle, número, colonia, referencias..."></textarea>
@@ -197,7 +199,65 @@
     </div>
   </div>
 </div>
+<!-- ═══════ MODAL: LOGIN / REGISTRO ══════════════════════════ -->
+<div class="modal-overlay" id="login-overlay" onclick="cerrarLoginModalOutside(event)">
+  <div class="modal" id="login-modal">
+    <div class="modal-head">
+      <h3 id="login-title">🔑 Iniciar sesión</h3>
+      <p id="login-subtitle">Clientes y administradores</p>
+      <button class="modal-close" onclick="cerrarLoginModal()">&#x2715;</button>
+    </div>
+    <div class="modal-body" id="login-body">
 
+      <!-- Tabs login / registro -->
+      <div class="login-tabs">
+        <button class="login-tab active" id="tab-login"    onclick="switchTab('login')">Iniciar sesión</button>
+        <button class="login-tab"        id="tab-registro" onclick="switchTab('registro')">Registrarse</button>
+      </div>
+
+      <!-- Formulario LOGIN -->
+      <div id="form-login">
+        <div class="cf">
+          <label>📧 Email</label>
+          <input type="email" id="login-email" placeholder="tu@email.com">
+        </div>
+        <div class="cf">
+          <label>🔒 Contraseña</label>
+          <input type="password" id="login-password" placeholder="••••••••">
+        </div>
+      </div>
+
+      <!-- Formulario REGISTRO -->
+      <div id="form-registro" style="display:none">
+        <div class="cf">
+          <label>👤 Nombre completo</label>
+          <input type="text" id="reg-nombre" placeholder="Tu nombre">
+        </div>
+        <div class="cf">
+          <label>📧 Email</label>
+          <input type="email" id="reg-email" placeholder="tu@email.com">
+        </div>
+        <div class="cf">
+          <label>🔒 Contraseña</label>
+          <input type="password" id="reg-password" placeholder="Mínimo 6 caracteres">
+        </div>
+        <div class="cf">
+          <label>📱 Teléfono (opcional)</label>
+          <input type="tel" id="reg-telefono" placeholder="642-123-4567">
+        </div>
+      </div>
+
+      <div id="login-error" style="color:#ff6b8a;font-size:13px;display:none;margin-top:8px;text-align:center"></div>
+      <div id="login-success" style="color:#4caf50;font-size:13px;display:none;margin-top:8px;text-align:center"></div>
+
+      <div class="client-actions" style="margin-top:16px">
+        <button class="btn-cc" onclick="cerrarLoginModal()">Cancelar</button>
+        <button class="btn-cs" id="btn-auth-submit" onclick="hacerLogin()">Entrar →</button>
+      </div>
+
+    </div>
+  </div>
+</div>
 <script src="script.js"></script>
 </body>
 </html>
