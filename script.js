@@ -890,12 +890,9 @@ var sesionActual = null;
 
 function abrirLoginModal() {
   document.getElementById('login-overlay').classList.add('open');
-  document.getElementById('login-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
   switchTab('login');
   setTimeout(function(){ document.getElementById('login-email').focus(); }, 150);
-}
-  function abrirLoginModal() {
 }
 
 function cerrarLoginModal() {
