@@ -610,24 +610,100 @@ function abrirHistorial() {
   overlay.classList.add('open');
   document.body.style.overflow = 'hidden';
 
-  // Resetear estado visual
   document.getElementById('historial-contenido').style.display = 'none';
   document.getElementById('historial-buscar').style.display    = 'none';
   document.getElementById('historial-loading').style.display   = 'block';
   document.getElementById('historial-loading').textContent     = 'Cargando...';
-  document.getElementById('historial-error') && (document.getElementById('historial-error').style.display = 'none');
+  var errEl = document.getElementById('historial-error');
+  if (errEl) errEl.style.display = 'none';
 
   if (sesionActual) {
-    // Hay sesión → cargar directo, sin pedir teléfono
     document.getElementById('historial-subtitle').textContent = 'Tus últimos pedidos';
     cargarHistorialSesion();
   } else {
-    // Sin sesión → mostrar buscador por teléfono
     document.getElementById('historial-loading').style.display = 'none';
     document.getElementById('historial-buscar').style.display  = 'block';
     document.getElementById('historial-subtitle').textContent  = 'Busca tus pedidos anteriores';
   }
 }
+
+/* ── Override: sendWhatsApp — pre-llena campos si hay sesión ── */
+var _origSendWhatsApp = sendWhatsApp;
+sendWhatsApp = function() {
+  if (!orderInstances.length) { alert('¡Primero selecciona algo del menú! 🍣'); return; }
+
+  // Pre-llenar campos con datos de sesión
+  if (sesionActual && sesionActual.usuario) {
+    var u = sesionActual.usuario;
+    var nameEl    = document.getElementById('cl-name');
+    var phoneEl   = document.getElementById('cl-phone');
+    var addressEl = document.getElementById('cl-address');
+
+    if (nameEl    && u.nombre)    nameEl.value    = u.nombre;
+    if (phoneEl   && u.telefono)  phoneEl.value   = u.telefono;
+    // dirección: intenta desde buscarClientePorTelefono, o lo que haya guardado
+    if (phoneEl   && u.telefono && addressEl && !addressEl.value) {
+      buscarClientePorTelefono(u.telefono);
+    }
+  }
+
+  document.getElementById('client-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  setOrderType('recoger');
+  setTimeout(function(){ document.getElementById('cl-name').focus(); }, 150);
+};
+
+/* ── Fix zona horaria: normalizar fechas UTC del backend ── */
+/* El backend retorna "2026-03-12 03:05:32" sin 'Z', JS lo interpreta como local.
+   Hay que añadir 'Z' para que sea UTC y luego Hermosillo (UTC-7) lo muestre correcto. */
+var _origCargarHistorialSesion = cargarHistorialSesion;
+cargarHistorialSesion = async function() {
+  try {
+    var res = await fetch(API_URL + '/historial/mi-historial', {
+      headers: { 'Authorization': 'Bearer ' + sesionActual.token }
+    });
+    var data = await res.json();
+    if (!res.ok) { mostrarHistorialError(data.detail || 'No se encontraron pedidos'); return; }
+    // Normalizar fechas: agregar 'Z' para que sean tratadas como UTC
+    (data.pedidos || []).forEach(function(p) {
+      if (p.fecha && !p.fecha.endsWith('Z') && !p.fecha.includes('+')) {
+        p.fecha = p.fecha.replace(' ', 'T') + 'Z';
+      }
+    });
+    mostrarHistorialDatos(data);
+  } catch(e) { mostrarHistorialError('Error de conexión'); }
+};
+
+var _origBuscarHistorialTelefono = buscarHistorialTelefono;
+buscarHistorialTelefono = async function() {
+  var tel = document.getElementById('historial-tel').value.trim();
+  var errEl = document.getElementById('historial-error');
+  if (!tel || tel.length < 10) { errEl.textContent='Ingresa un teléfono válido (10 dígitos)'; errEl.style.display='block'; return; }
+  errEl.style.display = 'none';
+  document.getElementById('historial-loading').style.display = 'block';
+  document.getElementById('historial-loading').textContent = 'Buscando...';
+  document.getElementById('historial-buscar').style.display = 'none';
+  try {
+    var res = await fetch(API_URL + '/historial/telefono/' + encodeURIComponent(tel));
+    var data = await res.json();
+    if (!res.ok) {
+      document.getElementById('historial-loading').style.display = 'none';
+      document.getElementById('historial-buscar').style.display = 'block';
+      errEl.textContent = data.detail || 'No encontramos pedidos con ese teléfono';
+      errEl.style.display = 'block'; return;
+    }
+    (data.pedidos || []).forEach(function(p) {
+      if (p.fecha && !p.fecha.endsWith('Z') && !p.fecha.includes('+')) {
+        p.fecha = p.fecha.replace(' ', 'T') + 'Z';
+      }
+    });
+    mostrarHistorialDatos(data);
+  } catch(e) {
+    document.getElementById('historial-loading').style.display = 'none';
+    document.getElementById('historial-buscar').style.display = 'block';
+    errEl.textContent = 'Error de conexión'; errEl.style.display = 'block';
+  }
+};
 </script>
 </body>
 </html>
