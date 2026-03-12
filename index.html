@@ -44,6 +44,7 @@
   <a class="nav-btn" href="#bebidas">🥤 Bebidas</a>
   <a class="nav-btn" href="#promos">🎁 Promociones</a>
   <a class="nav-btn nav-pedido" href="#pedido">🧾 Mi Pedido</a>
+  <button class="nav-btn nav-historial" id="btn-nav-historial" style="display:none" onclick="abrirHistorial()">📋 Mi Historial</button>
 </nav>
 
 <!-- ═══════ CONTENIDO PRINCIPAL ══════════════════════════════ -->
@@ -259,6 +260,47 @@
     </div>
   </div>
 </div>
+<!-- ═══════ MODAL: HISTORIAL ══════════════════════════════════ -->
+<div class="modal-overlay" id="historial-overlay" onclick="cerrarHistorialOutside(event)">
+  <div class="modal" id="historial-modal" style="max-width:520px;width:95%">
+    <div class="modal-head">
+      <h3>📋 Mi Historial</h3>
+      <p id="historial-subtitle">Tus últimos pedidos</p>
+      <button class="modal-close" onclick="cerrarHistorial()">&#x2715;</button>
+    </div>
+    <div class="modal-body" id="historial-body">
+
+      <!-- Buscar por teléfono (solo si no hay sesión) -->
+      <div id="historial-buscar" style="display:none">
+        <div class="cf">
+          <label>📱 Ingresa tu teléfono</label>
+          <input type="tel" id="historial-tel" placeholder="642-123-4567" maxlength="15">
+        </div>
+        <button class="btn-cs" style="width:100%;margin-top:8px" onclick="buscarHistorialTelefono()">🔍 Buscar mis pedidos</button>
+        <div id="historial-error" style="color:#ff6b8a;font-size:13px;display:none;margin-top:8px;text-align:center"></div>
+      </div>
+
+      <!-- Contenido del historial -->
+      <div id="historial-contenido" style="display:none">
+        <div id="historial-resumen" style="background:#FFF0F4;border-radius:12px;padding:14px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-weight:700;font-size:15px" id="hist-nombre"></div>
+            <div style="font-size:12px;color:#9E7080" id="hist-telefono"></div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-weight:700;font-size:18px;color:#E8547A" id="hist-total-gastado"></div>
+            <div style="font-size:12px;color:#9E7080" id="hist-total-pedidos"></div>
+          </div>
+        </div>
+        <div id="historial-lista"></div>
+      </div>
+
+      <div id="historial-loading" style="text-align:center;padding:32px;color:#9E7080">Cargando...</div>
+
+    </div>
+  </div>
+</div>
+
 <script src="script.js"></script>
 </body>
 </html>

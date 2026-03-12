@@ -1054,6 +1054,8 @@ function actualizarHeaderSesion() {
   var authEl = document.getElementById('header-auth');
   if (!authEl) return;
 
+  var btnHistorial = document.getElementById('btn-nav-historial');
+
   if (sesionActual) {
     var u = sesionActual.usuario;
     var html = '<div class="header-user">';
@@ -1061,12 +1063,157 @@ function actualizarHeaderSesion() {
     if (u.rol === 'admin') {
       html += '<button class="btn-admin-panel" onclick="window.location.href=\'admin.html\'">⚙️ Panel Admin</button>';
     }
+    html += '<button class="btn-historial-header" onclick="abrirHistorial()">📋 Mi historial</button>';
     html += '<button class="btn-logout" onclick="cerrarSesion()">Salir</button>';
     html += '</div>';
     authEl.innerHTML = html;
+    if (btnHistorial) btnHistorial.style.display = 'inline-flex';
   } else {
     authEl.innerHTML = '<button class="btn-login-header" onclick="abrirLoginModal()">🔑 Iniciar sesión</button>';
+    if (btnHistorial) btnHistorial.style.display = 'none';
   }
+}
+
+/* ══ HISTORIAL ══════════════════════════════════════════════ */
+function abrirHistorial() {
+  document.getElementById('historial-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('historial-contenido').style.display = 'none';
+  document.getElementById('historial-buscar').style.display = 'none';
+  document.getElementById('historial-loading').style.display = 'block';
+  document.getElementById('historial-loading').textContent = 'Cargando...';
+
+  if (sesionActual && sesionActual.usuario.telefono) {
+    cargarHistorialSesion();
+  } else if (sesionActual) {
+    // tiene sesión pero sin teléfono registrado, mostrar buscador
+    document.getElementById('historial-loading').style.display = 'none';
+    document.getElementById('historial-buscar').style.display = 'block';
+    document.getElementById('historial-subtitle').textContent = 'Busca por tu teléfono';
+  } else {
+    document.getElementById('historial-loading').style.display = 'none';
+    document.getElementById('historial-buscar').style.display = 'block';
+    document.getElementById('historial-subtitle').textContent = 'Busca tus pedidos anteriores';
+  }
+}
+
+function cerrarHistorial() {
+  document.getElementById('historial-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function cerrarHistorialOutside(e) {
+  if (e.target === document.getElementById('historial-overlay')) cerrarHistorial();
+}
+
+async function cargarHistorialSesion() {
+  try {
+    var res = await fetch(API_URL + '/historial/mi-historial', {
+      headers: { 'Authorization': 'Bearer ' + sesionActual.token }
+    });
+    var data = await res.json();
+    if (!res.ok) {
+      mostrarHistorialError(data.detail || 'No se encontraron pedidos');
+      return;
+    }
+    mostrarHistorialDatos(data);
+  } catch(e) {
+    mostrarHistorialError('Error de conexión');
+  }
+}
+
+async function buscarHistorialTelefono() {
+  var tel = document.getElementById('historial-tel').value.trim();
+  var errEl = document.getElementById('historial-error');
+  if (!tel || tel.length < 10) {
+    errEl.textContent = 'Ingresa un teléfono válido (10 dígitos)';
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+  document.getElementById('historial-loading').style.display = 'block';
+  document.getElementById('historial-loading').textContent = 'Buscando...';
+  document.getElementById('historial-buscar').style.display = 'none';
+
+  try {
+    var res = await fetch(API_URL + '/historial/telefono/' + encodeURIComponent(tel));
+    var data = await res.json();
+    if (!res.ok) {
+      document.getElementById('historial-loading').style.display = 'none';
+      document.getElementById('historial-buscar').style.display = 'block';
+      errEl.textContent = data.detail || 'No encontramos pedidos con ese teléfono';
+      errEl.style.display = 'block';
+      return;
+    }
+    mostrarHistorialDatos(data);
+  } catch(e) {
+    document.getElementById('historial-loading').style.display = 'none';
+    document.getElementById('historial-buscar').style.display = 'block';
+    errEl.textContent = 'Error de conexión';
+    errEl.style.display = 'block';
+  }
+}
+
+function mostrarHistorialDatos(data) {
+  document.getElementById('historial-loading').style.display = 'none';
+  document.getElementById('historial-contenido').style.display = 'block';
+  document.getElementById('hist-nombre').textContent = data.cliente.nombre;
+  document.getElementById('hist-telefono').textContent = '📱 ' + data.cliente.telefono;
+  document.getElementById('hist-total-gastado').textContent = '$' + parseFloat(data.cliente.total_gastado).toLocaleString('es-MX');
+  document.getElementById('hist-total-pedidos').textContent = data.cliente.total_pedidos + ' pedidos en total';
+  document.getElementById('historial-subtitle').textContent = data.pedidos.length + ' pedidos recientes';
+
+  var ESTADO_LABEL = { pendiente:'🟡 Pendiente', preparando:'🔵 Preparando', listo:'🟢 Listo', entregado:'✅ Entregado', cancelado:'❌ Cancelado' };
+
+  var html = data.pedidos.length === 0
+    ? '<div style="text-align:center;padding:24px;color:#9E7080">Aún no tienes pedidos registrados</div>'
+    : data.pedidos.map(function(p) {
+        var fecha = new Date(p.fecha);
+        var fechaStr = fecha.toLocaleDateString('es-MX', { weekday:'short', day:'numeric', month:'short', year:'numeric', timeZone:'America/Hermosillo' });
+        var horaStr  = fecha.toLocaleTimeString('es-MX', { hour:'2-digit', minute:'2-digit', hour12:true, timeZone:'America/Hermosillo' });
+
+        var mods_nombres = { sc1:'BBQ',sc2:'Búfalo',sc3:'Mixto',sc4:'BBQ Chipotle',sc5:'Naranja Chipotle',sc6:'Tamarindo',sc7:'Mango Hot',sc8:'Mango Habanero',sc9:'Piña Hot' };
+
+        var productosHtml = p.productos.map(function(prod) {
+          var modsText = '';
+          if (prod.modificaciones) {
+            try {
+              var m = typeof prod.modificaciones === 'string' ? JSON.parse(prod.modificaciones) : prod.modificaciones;
+              var lines = [];
+              if (m.alga) lines.push(m.alga === 'con' ? '🌿 Con alga' : '🌿 Sin alga');
+              if (m.salsas && m.salsas.length) lines.push('🫙 ' + m.salsas.map(function(s){ return mods_nombres[s]||s; }).join(', '));
+              if (m.sin_ingredientes && m.sin_ingredientes.length) lines.push('🚫 Sin: ' + m.sin_ingredientes.join(', '));
+              if (m.extras_producto && m.extras_producto.length) lines.push('➕ ' + m.extras_producto.join(', '));
+              modsText = lines.length ? '<div style="font-size:11px;color:#2E7D32;margin-top:3px">' + lines.join(' · ') + '</div>' : '';
+            } catch(e){}
+          }
+          return '<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #F9D0DC">'
+            + '<div><span style="font-weight:600">' + prod.nombre + '</span> <span style="color:#9E7080;font-size:12px">x' + prod.cantidad + '</span>' + modsText + '</div>'
+            + '<div style="font-weight:600;color:#E8547A">$' + parseFloat(prod.subtotal).toLocaleString('es-MX') + '</div>'
+            + '</div>';
+        }).join('');
+
+        return '<div style="background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(232,84,122,0.08)">'
+          + '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">'
+          + '<div><div style="font-weight:700;font-size:13px">' + fechaStr + ' · ' + horaStr + '</div>'
+          + '<div style="font-size:12px;color:#9E7080">' + (p.tipo_entrega === 'domicilio' ? '🛵 Domicilio' : '🏪 Sucursal') + '</div></div>'
+          + '<div style="text-align:right"><div style="font-size:13px">' + (ESTADO_LABEL[p.estado] || p.estado) + '</div>'
+          + '<div style="font-weight:700;font-size:16px;color:#E8547A">$' + parseFloat(p.total).toLocaleString('es-MX') + '</div></div>'
+          + '</div>'
+          + productosHtml
+          + (p.notas ? '<div style="font-size:12px;color:#9E7080;margin-top:8px">📝 ' + p.notas + '</div>' : '')
+          + '</div>';
+      }).join('');
+
+  document.getElementById('historial-lista').innerHTML = html;
+}
+
+function mostrarHistorialError(msg) {
+  document.getElementById('historial-loading').style.display = 'none';
+  document.getElementById('historial-buscar').style.display = 'block';
+  var errEl = document.getElementById('historial-error');
+  errEl.textContent = msg;
+  errEl.style.display = 'block';
 }
 
 /* ── Autocompletar cliente por teléfono ─────── */
