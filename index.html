@@ -1237,7 +1237,7 @@ async function cargarHistorialSesion(){
     // ── Fix zona horaria: agregar Z para que JS trate como UTC → Hermosillo UTC-7
     (data.pedidos||[]).forEach(function(p){
       if(p.fecha&&!p.fecha.endsWith('Z')&&!p.fecha.includes('+'))
-        p.fecha=p.fecha.replace(' ','T')+'Z';
+        p.fecha=p.fecha.replace(' ','T')+'-07:00';
     });
     mostrarHistorialDatos(data);
   }catch(e){mostrarHistorialError('Error de conexión');}
