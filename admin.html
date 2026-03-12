@@ -797,8 +797,9 @@ async function cargarPedidos(estado=null) {
   if (!data || !data.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty">Sin pedidos</td></tr>'; return; }
 
   tbody.innerHTML = data.map(p => {
-    const hora = new Date(p.fecha_pedido).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit'});
-    const fecha = new Date(p.fecha_pedido).toLocaleDateString('es-MX', {day:'numeric', month:'short'});
+    const fechaObj = new Date(p.fecha_pedido.replace(' ','T') + '-07:00');
+    const hora = fechaObj.toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
+    const fecha = fechaObj.toLocaleDateString('es-MX', {day:'numeric', month:'short'});
     return `<tr>
       <td><strong>#${p.id_pedido}</strong></td>
       <td>${p.nombre_cliente}<br><small style="color:var(--muted)">${p.telefono_cliente||''}</small></td>
@@ -827,7 +828,7 @@ async function verDetallePedido(id) {
   const data = await api(`/admin/pedidos/${id}/detalle`);
   if (!data) return;
   document.getElementById('modal-pedido-title').textContent = `Pedido #${data.id_pedido}`;
-  const hora = new Date(data.fecha_pedido).toLocaleString('es-MX');
+  const hora = new Date(data.fecha_pedido.replace(' ','T') + '-07:00').toLocaleString('es-MX', {timeZone:'America/Hermosillo'});
   document.getElementById('modal-pedido-body').innerHTML = `
     <div style="margin-bottom:16px">
       <p><strong>Cliente:</strong> ${data.nombre_cliente}</p>
