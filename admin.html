@@ -693,7 +693,6 @@ function mostrarPanel() {
   document.getElementById('admin-avatar').textContent = USUARIO.nombre.charAt(0).toUpperCase();
   cargarDashboard();
   iniciarAutoRefresh();
-  iniciarReloj();
 }
 
 async function api(path, method='GET', body=null) {
@@ -1125,8 +1124,8 @@ window.addEventListener('DOMContentLoaded', () => {
   if (t && u) {
     TOKEN = t; USUARIO = JSON.parse(u);
     mostrarPanel();
-    iniciarAutoRefresh();
   }
+  iniciarReloj();
 });
 </script>
 </body>
