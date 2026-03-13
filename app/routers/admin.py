@@ -110,26 +110,49 @@ def productos_mas_vendidos(
 
 @router.get("/clientes/top")
 def mejores_clientes(
+    periodo: str = "todos",
     db: Session = Depends(get_db),
     usuario=Depends(requerir_admin)
 ):
-    """Top 10 mejores clientes por total gastado."""
-    clientes = db.query(Cliente).filter(
+    """Top 10 mejores clientes por total gastado. periodo: hoy, semana, mes, todos"""
+    
+    query = db.query(
+        Cliente.nombre,
+        Cliente.telefono,
+        func.count(Pedido.id_pedido).label("total_pedidos"),
+        func.sum(Pedido.total).label("total_gastado")
+    ).join(
+        Pedido, Pedido.id_cliente == Cliente.id_cliente
+    ).filter(
         Cliente.id_restaurante == usuario.id_restaurante,
-        Cliente.total_pedidos > 0
+        Pedido.estado != "cancelado"
+    )
+
+    hoy = datetime.now(ZONA)
+    if periodo == "hoy":
+        query = query.filter(cast(Pedido.fecha_pedido, Date) == hoy.date())
+    elif periodo == "semana":
+        query = query.filter(Pedido.fecha_pedido >= hoy - timedelta(days=7))
+    elif periodo == "mes":
+        query = query.filter(
+            func.month(Pedido.fecha_pedido) == hoy.month,
+            func.year(Pedido.fecha_pedido) == hoy.year
+        )
+
+    resultado = query.group_by(
+        Cliente.id_cliente, Cliente.nombre, Cliente.telefono
     ).order_by(
-        Cliente.total_gastado.desc()
+        func.sum(Pedido.total).desc()
     ).limit(10).all()
 
     return [
         {
-            "nombre": c.nombre,
-            "telefono": c.telefono,
-            "total_pedidos": c.total_pedidos,
-            "total_gastado": float(c.total_gastado),
-            "ultima_visita": c.ultima_visita.isoformat() if c.ultima_visita else None
+            "nombre": r.nombre,
+            "telefono": r.telefono,
+            "total_pedidos": r.total_pedidos,
+            "total_gastado": round(float(r.total_gastado), 2),
         }
-        for c in clientes
+        for r in resultado
     ]
 
 
