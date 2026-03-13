@@ -516,6 +516,11 @@ body {
       <p>Selecciona si recoges o enviamos</p>
     </div>
     <div class="client-body">
+      <!-- Tarjeta de datos guardados (solo visible cuando hay datos del cliente) -->
+      <div id="cf-saved-card" style="display:none;background:#E9F7EF;border-radius:12px;padding:12px 14px;margin-bottom:4px;border:1px solid rgba(46,204,113,0.3)">
+        <div style="font-size:11px;font-weight:700;color:#1E8449;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">✅ Datos encontrados</div>
+        <div id="cf-saved-info" style="font-size:13px;color:#1A0A10;line-height:1.7"></div>
+      </div>
       <div class="order-type-toggle">
         <button class="order-type-btn active" id="btn-recoger" onclick="setOrderType('recoger')">🏪 Recoger en sucursal</button>
         <button class="order-type-btn"         id="btn-envio"   onclick="setOrderType('envio')">🛵 Envío a domicilio</button>
@@ -530,7 +535,11 @@ body {
       </div>
       <div class="cf cf-hidden" id="cf-address-wrap">
         <label>📍 Dirección de entrega <span class="cf-required">*</span></label>
-        <textarea id="cl-address" placeholder="Calle, número, colonia, referencias..."></textarea>
+        <textarea id="cl-address" placeholder="Calle, número, colonia, referencias..." oninput="revisarCambioDir()"></textarea>
+        <div id="cf-addr-hint" style="display:none;font-size:11px;color:var(--pink);margin-top:4px">📝 ¿Quieres guardar esta como tu nueva dirección?
+          <button onclick="confirmarCambioDir()" style="margin-left:6px;background:var(--pink);color:white;border:none;border-radius:8px;padding:2px 10px;font-size:11px;cursor:pointer">Sí, actualizar</button>
+          <button onclick="descartarCambioDir()" style="margin-left:4px;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:2px 10px;font-size:11px;cursor:pointer">No</button>
+        </div>
       </div>
       <div class="client-actions">
         <button class="btn-cc" onclick="closeClientModal()">Cancelar</button>
@@ -723,6 +732,14 @@ function setOrderType(type){
   var lbl=document.getElementById('cf-phone-label');
   if(lbl)lbl.innerHTML=(type==='envio'?'📱 Teléfono':'📱 Tu número de celular')+' <span class="cf-required">*</span>';
   document.getElementById('cf-address-wrap').classList.toggle('cf-hidden',type!=='envio');
+  // Si cambia a envío y hay dir guardada, rellenar
+  if(type==='envio'&&_dirGuardada&&!document.getElementById('cl-address').value.trim()){
+    document.getElementById('cl-address').value=_dirGuardada;
+  }
+  // Actualizar card según modo
+  var nombre=document.getElementById('cl-name').value;
+  var tel=document.getElementById('cl-phone').value;
+  if(nombre&&tel)mostrarSavedCard(nombre,tel,_dirGuardada,type);
 }
 
 /* ══ INIT ══ */
@@ -906,11 +923,22 @@ function buildModalBody(item){
     html+='</div></div>';
   }
   if(item.hasSushiChoice){
-    html+='<div class="sushi-choice-section"><div class="sushi-choice-title">🍣 ¿Qué sushi quieres?</div><div class="sushi-choice-grid">';
+    html+='<div class="sushi-choice-section"><div class="sushi-choice-title">🍣 ¿Qué sushi quieres? <span style="font-size:10px;color:var(--muted)">(elige uno)</span></div><div class="sushi-choice-grid">';
     ['Bombazo','California','Sonora'].forEach(function(s){
       html+='<div class="sushi-choice-btn'+(currentMods.sushiChoice===s?' sel':'')+'" onclick="selSushiChoice(\''+s+'\')">'+s+'</div>';
     });
     html+='</div></div>';
+    // Bombazo y California tienen proteína; Sonora no
+    if(currentMods.sushiChoice==='Bombazo'||currentMods.sushiChoice==='California'){
+      html+='<div class="protein-section"><div class="protein-section-title">🥩 Proteína del sushi</div><div class="protein-grid">';
+      PROTEINS.forEach(function(p){
+        var cnt=currentMods.proteins.filter(function(x){return x===p.id;}).length;
+        html+='<div class="protein-btn'+(cnt>0?' sel':'')+'" id="pb-'+p.id+'" onclick="togProt(\''+p.id+'\')">'
+          +'<span class="p-emoji">'+p.emoji+'</span><span class="p-name">'+p.name+'</span>'
+          +(cnt>1?'<span class="p-count">'+cnt+'</span>':'')+'</div>';
+      });
+      html+='</div><div class="protein-note">Primera proteína incluida · Extras +$15 c/u</div></div>';
+    }
   }
   if(item.hasIce){
     html+='<div class="alga-section"><div class="alga-section-title">🧊 ¿Con o sin hielo?</div><div class="alga-grid">';
@@ -1002,7 +1030,15 @@ function togSauce(sid,maxSauces,field,prefix){
 function togIng(ingId){if(currentMods.removed[ingId])delete currentMods.removed[ingId];else currentMods.removed[ingId]=true;var row=document.getElementById('ming-'+ingId),rm=!!currentMods.removed[ingId];row.className='ing-item'+(rm?' removed':'');row.querySelector('.ing-toggle').textContent=rm?'Volver a poner':'Quitar';}
 function togExtra(exId){if(currentMods.extras[exId])delete currentMods.extras[exId];else currentMods.extras[exId]=true;var row=document.getElementById('mex-'+exId),ad=!!currentMods.extras[exId];row.className='ing-item'+(ad?' extra-added':'');row.querySelector('.ing-toggle').textContent=ad?'Quitar':'Agregar';}
 function selStyle(val){currentMods.style=currentMods.style===val?null:val;['natural','empanizado'].forEach(function(v){var b=document.getElementById('style-'+v);if(b)b.className='style-btn'+(currentMods.style===v?' sel':'');});}
-function selSushiChoice(val){currentMods.sushiChoice=currentMods.sushiChoice===val?null:val;document.querySelectorAll('.sushi-choice-btn').forEach(function(b){b.className='sushi-choice-btn'+(b.textContent===currentMods.sushiChoice?' sel':'');});}
+function selSushiChoice(val){
+  currentMods.sushiChoice=currentMods.sushiChoice===val?null:val;
+  // Limpiar proteínas si se cambia de sushi
+  currentMods.proteins=[];
+  // Si el nuevo sushi no tiene proteína, limpiar
+  if(currentMods.sushiChoice==='Sonora')currentMods.proteins=[];
+  // Reconstruir modal para mostrar/ocultar proteína
+  buildModalBody(currentItem);
+}
 function selIce(val){currentMods.ice=currentMods.ice===val?null:val;['con','sin'].forEach(function(v){var b=document.getElementById('ice-'+v);if(b)b.className='alga-btn'+(currentMods.ice===v?' sel':'');});}
 
 function confirmMods(){
@@ -1011,6 +1047,10 @@ function confirmMods(){
   if(inst.item.hasAlga&&!currentMods.alga){alert('🌿 Por favor indica si lo quieres con alga o sin alga');return;}
   if(inst.item.hasStyle&&!currentMods.style){alert('🍳 Por favor indica si lo quieres natural o empanizado');return;}
   if(inst.item.hasSushiChoice&&!currentMods.sushiChoice){alert('🍣 Por favor elige qué sushi quieres (Bombazo, California o Sonora)');return;}
+  // Si el sushi elegido requiere proteína (Bombazo o California) y no la eligió
+  if(inst.item.hasSushiChoice&&(currentMods.sushiChoice==='Bombazo'||currentMods.sushiChoice==='California')&&!currentMods.proteins.length){alert('🥩 Por favor elige la proteína para el '+currentMods.sushiChoice);return;}
+  // Si tiene hasProtein propio (sin sushiChoice) y no eligió
+  if(inst.item.hasProtein&&!inst.item.hasSushiChoice&&!currentMods.proteins.length){alert('🥩 Por favor elige la proteína');return;}
   inst.mods=JSON.parse(JSON.stringify(currentMods));
   refreshCardState(inst.itemId);updateBar();closeModal();
 }
@@ -1025,32 +1065,90 @@ function closeModal(){document.getElementById('modal-overlay').classList.remove(
 function closeModalOutside(e){if(e.target===document.getElementById('modal-overlay'))cancelModal();}
 
 /* ══ MODAL CLIENTE ══ */
+var _dirGuardada='';
+
 function sendWhatsApp(){
   if(!orderInstances.length){alert('¡Primero selecciona algo del menú! 🍣');return;}
+  // Reset modal
+  document.getElementById('cl-name').value='';
+  document.getElementById('cl-phone').value='';
+  document.getElementById('cl-address').value='';
+  document.getElementById('cf-saved-card').style.display='none';
+  document.getElementById('cf-addr-hint').style.display='none';
+  _dirGuardada='';
   document.getElementById('client-overlay').classList.add('open');
   document.body.style.overflow='hidden';
   setOrderType('recoger');
 
-  // Si hay sesión, prellenar datos automáticamente
   if(sesionActual&&sesionActual.usuario){
     var u=sesionActual.usuario;
-    var nameEl=document.getElementById('cl-name');
-    if(nameEl)nameEl.value=u.nombre||'';
-    
+    document.getElementById('cl-name').value=u.nombre||'';
     if(u.telefono){
-      var phoneEl=document.getElementById('cl-phone');
-      if(phoneEl){
-        phoneEl.value=u.telefono;
-        // Buscar dirección guardada
-        buscarClientePorTelefono(u.telefono);
-      }
-      // Cambiar automáticamente a domicilio si tiene teléfono
+      document.getElementById('cl-phone').value=u.telefono;
+      cargarDatosCliente(u.telefono,true);
       setOrderType('envio');
     }
+  } else {
+    setTimeout(function(){document.getElementById('cl-phone').focus();},150);
   }
-
-  setTimeout(function(){document.getElementById('cl-name').focus();},150);
 }
+
+function mostrarSavedCard(nombre,telefono,direccion,tipo){
+  var card=document.getElementById('cf-saved-card');
+  var info=document.getElementById('cf-saved-info');
+  var html='<strong>'+nombre+'</strong><br>📱 '+telefono;
+  if(tipo==='envio'&&direccion)html+='<br>📍 '+direccion;
+  info.innerHTML=html;
+  card.style.display='block';
+}
+
+async function cargarDatosCliente(telefono,esSesion){
+  try{
+    var token=sesionActual?sesionActual.token:await obtenerToken();
+    if(!token)return;
+    var res=await fetch(API_URL+'/clientes/buscar/'+telefono,{headers:{'Authorization':'Bearer '+token}});
+    if(!res.ok)return;
+    var c=await res.json();
+    if(c.nombre)document.getElementById('cl-name').value=c.nombre;
+    if(c.direccion){
+      _dirGuardada=c.direccion;
+      if(orderType==='envio')document.getElementById('cl-address').value=c.direccion;
+    }
+    mostrarSavedCard(
+      document.getElementById('cl-name').value||c.nombre||telefono,
+      telefono, _dirGuardada, orderType
+    );
+  }catch(e){}
+}
+
+async function buscarClientePorTelefono(telefono){
+  if(telefono.length<10){document.getElementById('cf-saved-card').style.display='none';_dirGuardada='';return;}
+  await cargarDatosCliente(telefono,false);
+}
+
+function revisarCambioDir(){
+  var nueva=document.getElementById('cl-address').value.trim();
+  var hint=document.getElementById('cf-addr-hint');
+  if(sesionActual&&_dirGuardada&&nueva&&nueva!==_dirGuardada){hint.style.display='block';}
+  else{hint.style.display='none';}
+}
+
+async function confirmarCambioDir(){
+  if(!sesionActual)return;
+  var nuevaDir=document.getElementById('cl-address').value.trim();
+  try{
+    await fetch(API_URL+'/clientes/actualizar-direccion',{
+      method:'PATCH',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+sesionActual.token},
+      body:JSON.stringify({direccion:nuevaDir})
+    });
+    _dirGuardada=nuevaDir;
+  }catch(e){}
+  document.getElementById('cf-addr-hint').style.display='none';
+}
+
+function descartarCambioDir(){document.getElementById('cf-addr-hint').style.display='none';}
+
 function closeClientModal(){document.getElementById('client-overlay').classList.remove('open');document.body.style.overflow='';}
 
 function submitOrder(){
@@ -1070,16 +1168,24 @@ function submitOrder(){
 }
 
 async function obtenerToken(){
+  // Si tenemos token en memoria lo intentamos usar
   if(API_TOKEN)return API_TOKEN;
+  return await loginMenuToken();
+}
+async function loginMenuToken(){
   try{
     var res=await fetch(API_URL+'/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'menu@laesquinasushi.com',password:'!sushi2026'})});
-    var data=await res.json();API_TOKEN=data.access_token;return API_TOKEN;
-  }catch(e){console.error('No se pudo conectar al backend',e);return null;}
+    if(!res.ok){console.warn('Token menu: login fallido',res.status);return null;}
+    var data=await res.json();
+    API_TOKEN=data.access_token;
+    return API_TOKEN;
+  }catch(e){console.warn('Token menu: sin conexión',e);return null;}
 }
-
 async function guardarPedidoBackend(clientName,clientPhone,clientAddress){
+  // Si no hay conexión el pedido igual se manda por WhatsApp — nunca bloqueamos al usuario
   try{
-    var token=await obtenerToken();if(!token)return null;
+    var token=await obtenerToken();
+    if(!token){console.warn('Sin token, pedido no registrado en DB');return null;}
     var notes=document.getElementById('order-notes').value;
     var total=orderInstances.reduce(function(s,o){return s+(o.item.price+(o.extraCost||0));},0);
     var tipo=orderType==='envio'?'domicilio':'sucursal';
@@ -1102,8 +1208,17 @@ async function guardarPedidoBackend(clientName,clientPhone,clientAddress){
     var payload={nombre_cliente:clientName,telefono_cliente:clientPhone||null,tipo_entrega:tipo,direccion_entrega:clientAddress||null,notas:notes.trim()||null,total:total,productos:productos};
     var res=await fetch(API_URL+'/pedidos/',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(payload)});
     if(res.ok){var data=await res.json();console.log('✅ Pedido guardado #'+data.id_pedido);return data.id_pedido;}
-    else{console.error('Error al guardar pedido',await res.text());return null;}
-  }catch(e){console.error('Error de conexión',e);return null;}
+    // Si el token expiró, lo limpiamos y reintentamos una vez
+    if(res.status===401){
+      API_TOKEN=null;
+      var newToken=await loginMenuToken();
+      if(!newToken)return null;
+      var res2=await fetch(API_URL+'/pedidos/',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+newToken},body:JSON.stringify(payload)});
+      if(res2.ok){var d2=await res2.json();console.log('✅ Pedido guardado (retry) #'+d2.id_pedido);return d2.id_pedido;}
+    }
+    console.warn('Pedido no guardado en DB, status:',res.status);
+    return null;
+  }catch(e){console.warn('Backend no disponible, el pedido se envía por WhatsApp',e);return null;}
 }
 
 /* ══ BARRA Y RESUMEN ══ */
@@ -1381,21 +1496,6 @@ function mostrarHistorialError(msg){
   errEl.textContent=msg;errEl.style.display='block';
 }
 
-async function buscarClientePorTelefono(telefono){
-  if(telefono.length<10)return;
-  try{
-    var token=sesionActual?sesionActual.token:await obtenerToken();
-    if(!token)return;
-    var res=await fetch(API_URL+'/clientes/buscar/'+telefono,{headers:{'Authorization':'Bearer '+token}});
-    if(res.ok){
-      var cliente=await res.json();
-      var nameEl=document.getElementById('cl-name');
-      var addrEl=document.getElementById('cl-address');
-      if(nameEl&&!nameEl.value)nameEl.value=cliente.nombre;
-      if(addrEl&&!addrEl.value)addrEl.value=cliente.direccion||'';
-    }
-  }catch(e){}
-}
 function cargarSesionGuardada(){
   try{
     var guardada=localStorage.getItem('sushi_sesion');

@@ -535,13 +535,13 @@
         </div>
         <div class="form-group">
           <label>Categoría</label>
-          <select id="prod-categoria">
-            <option value="1">Combos y Charolas</option>
-            <option value="2">Sushis</option>
-            <option value="3">Entradas</option>
-            <option value="4">Especiales</option>
-            <option value="5">Bebidas y Extras</option>
-            <option value="6">Promociones</option>
+          <select id="prod-categoria" onchange="mostrarCamposCategoria()">
+            <option value="1">🍱 Combos y Charolas</option>
+            <option value="2">🍣 Sushis</option>
+            <option value="3">🥗 Entradas</option>
+            <option value="4">⭐ Especiales</option>
+            <option value="5">🥤 Bebidas y Extras</option>
+            <option value="6">🎁 Promociones</option>
           </select>
         </div>
         <div class="form-group">
@@ -550,6 +550,21 @@
             <option value="true">✅ Disponible</option>
             <option value="false">🚫 Agotado</option>
           </select>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:16px">
+        <label>Descripción <small style="text-transform:none;letter-spacing:0;color:var(--muted)">(ingredientes, presentación, notas)</small></label>
+        <textarea id="prod-descripcion" placeholder="Ej. Por dentro: philadelphia, pepino, aguacate. Por fuera: tampico y anguila." style="min-height:80px"></textarea>
+      </div>
+      <!-- Campos extra para Combos/Charolas y Promociones -->
+      <div id="prod-campos-combo" style="display:none">
+        <div style="background:#FFF0F4;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:var(--pink-deep)">
+          💡 <strong>Combo / Charola:</strong> Recuerda actualizar las opciones del menú (proteína, alga, estilo, salsas) directamente en el <code>index.html</code> si cambias componentes del combo.
+        </div>
+      </div>
+      <div id="prod-campos-promo" style="display:none">
+        <div style="background:#FFF0F4;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:var(--pink-deep)">
+          🎁 <strong>Promoción:</strong> Para cambiar qué incluye el paquete, actualiza el <code>index.html</code>. El precio aquí se guarda en la base de datos.
         </div>
       </div>
       <input type="hidden" id="prod-id">
@@ -562,9 +577,9 @@
     <div class="table-wrap">
       <table class="data-table">
         <thead>
-          <tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Categoría</th><th>Estado</th><th>Acciones</th></tr>
+          <tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Precio</th><th>Categoría</th><th>Estado</th><th>Acciones</th></tr>
         </thead>
-        <tbody id="tbody-menu"><tr><td colspan="6" class="loading">Cargando...</td></tr></tbody>
+        <tbody id="tbody-menu"><tr><td colspan="7" class="loading">Cargando...</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -972,10 +987,11 @@ function iniciarAutoRefresh() {
 async function cargarMenu() {
   const data = await api('/productos/');
   const tbody = document.getElementById('tbody-menu');
-  if (!data || !data.length) { tbody.innerHTML = '<tr><td colspan="6" class="empty">Sin productos</td></tr>'; return; }
+  if (!data || !data.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty">Sin productos</td></tr>'; return; }
   tbody.innerHTML = data.map(p => `<tr>
     <td>${p.id_producto}</td>
     <td><strong>${p.nombre}</strong></td>
+    <td style="max-width:200px;font-size:12px;color:var(--muted)">${p.descripcion||'—'}</td>
     <td>$${parseFloat(p.precio).toLocaleString()}</td>
     <td>${CATEGORIAS[p.id_categoria] || '—'}</td>
     <td>
@@ -985,36 +1001,48 @@ async function cargarMenu() {
       </div>
     </td>
     <td>
-      <button class="btn-action" onclick="editarProducto(${p.id_producto},'${p.nombre.replace(/'/g,"\\'")}',${p.precio},${p.id_categoria||0},${p.disponible})">✏️ Editar</button>
+      <button class="btn-action" onclick="editarProducto(${p.id_producto},'${p.nombre.replace(/'/g,"\\'")}',${p.precio},${p.id_categoria||0},${p.disponible},'${(p.descripcion||'').replace(/'/g,"\\'").replace(/\n/g,' ')}')">✏️ Editar</button>
       <button class="btn-action danger" onclick="eliminarProducto(${p.id_producto},'${p.nombre.replace(/'/g,"\\'")}')">🗑 Borrar</button>
     </td>
   </tr>`).join('');
 }
 
-function editarProducto(id, nombre, precio, cat, disp) {
+function mostrarCamposCategoria() {
+  const cat = parseInt(document.getElementById('prod-categoria').value);
+  document.getElementById('prod-campos-combo').style.display = (cat === 1) ? 'block' : 'none';
+  document.getElementById('prod-campos-promo').style.display = (cat === 6) ? 'block' : 'none';
+}
+
+function editarProducto(id, nombre, precio, cat, disp, desc) {
   document.getElementById('prod-id').value = id;
   document.getElementById('prod-nombre').value = nombre;
   document.getElementById('prod-precio').value = precio;
   document.getElementById('prod-categoria').value = cat;
   document.getElementById('prod-disponible').value = disp ? 'true' : 'false';
+  document.getElementById('prod-descripcion').value = desc || '';
+  mostrarCamposCategoria();
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
 function limpiarFormProducto() {
-  ['prod-id','prod-nombre','prod-precio','prod-categoria'].forEach(id => document.getElementById(id).value = '');
+  ['prod-id','prod-nombre','prod-precio','prod-descripcion'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('prod-categoria').value = '2';
   document.getElementById('prod-disponible').value = 'true';
+  document.getElementById('prod-campos-combo').style.display = 'none';
+  document.getElementById('prod-campos-promo').style.display = 'none';
 }
 
 async function guardarProducto() {
-  const id       = document.getElementById('prod-id').value;
-  const nombre   = document.getElementById('prod-nombre').value.trim();
-  const precio   = parseFloat(document.getElementById('prod-precio').value);
-  const cat      = parseInt(document.getElementById('prod-categoria').value) || null;
-  const disp     = document.getElementById('prod-disponible').value === 'true';
+  const id    = document.getElementById('prod-id').value;
+  const nombre = document.getElementById('prod-nombre').value.trim();
+  const precio = parseFloat(document.getElementById('prod-precio').value);
+  const cat    = parseInt(document.getElementById('prod-categoria').value) || null;
+  const disp   = document.getElementById('prod-disponible').value === 'true';
+  const desc   = document.getElementById('prod-descripcion').value.trim();
 
   if (!nombre || isNaN(precio)) { alert('Nombre y precio son obligatorios'); return; }
 
-  const body = { nombre, precio, id_categoria: cat, disponible: disp };
+  const body = { nombre, precio, id_categoria: cat, disponible: disp, descripcion: desc || null };
   if (id) {
     await api(`/productos/${id}`, 'PUT', body);
   } else {
