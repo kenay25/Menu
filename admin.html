@@ -367,16 +367,63 @@
 
     /* ── Responsive ── */
     @media (max-width: 768px) {
-      .sidebar { width: 60px; }
-      .sidebar-logo h2, .sidebar-logo small, .nav-item span, .nav-section-label, .admin-chip .admin-name, .admin-chip .admin-role { display: none; }
-      .nav-item { justify-content: center; padding: 12px; }
-      .main-content { margin-left: 60px; }
+      .main-content { margin-left: 0; }
+      .topbar { padding: 12px 14px; }
+      .topbar-sub { display: none; }
+      #reloj { display: none; }
       .form-grid { grid-template-columns: 1fr; }
-      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .metrics-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .page { padding: 14px; }
+      .panel-card { padding: 16px; }
+      .estado-select { font-size: 11px; padding: 4px 6px; max-width: 115px; }
+      .data-table th, .data-table td { padding: 10px 8px; font-size: 12px; }
+      #page-pedidos .data-table thead th:nth-child(3),
+      #page-pedidos .data-table td:nth-child(3) { display: none; }
+    }
+
+    /* ── Hamburger ── */
+    .btn-hamburger {
+      display: none;
+      background: transparent; border: none;
+      font-size: 22px; cursor: pointer; color: var(--dark);
+      padding: 4px 8px; border-radius: 8px; line-height: 1;
+    }
+    .btn-hamburger:hover { background: var(--pink-light); }
+    @media (max-width: 768px) {
+      .btn-hamburger { display: block; }
+    }
+
+    /* ── Overlay para cerrar sidebar ── */
+    .sidebar-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5); z-index: 99;
+    }
+    .sidebar-overlay.open { display: block; }
+
+    /* ── Sidebar deslizable en móvil ── */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+        width: 240px !important;
+      }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar.open .sidebar-logo h2,
+      .sidebar.open .sidebar-logo small,
+      .sidebar.open .nav-item span,
+      .sidebar.open .nav-section-label,
+      .sidebar.open .admin-chip .admin-name,
+      .sidebar.open .admin-chip .admin-role,
+      .sidebar.open .btn-logout-sidebar { display: block !important; }
+      .sidebar.open .admin-chip { justify-content: flex-start; }
+      .sidebar.open .nav-item { justify-content: flex-start; padding: 11px 20px; }
     }
   </style>
 </head>
 <body>
+
+<!-- Overlay sidebar móvil -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
 <!-- ═══ LOGIN ════════════════════════════════════════════════ -->
 <div class="login-full" id="login-full">
@@ -445,9 +492,12 @@
 
   <!-- TOPBAR -->
   <div class="topbar">
-    <div>
-      <div class="topbar-title" id="topbar-title">Dashboard</div>
-      <div class="topbar-sub" id="topbar-sub">Resumen del día</div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="btn-hamburger" onclick="toggleSidebar()">☰</button>
+      <div>
+        <div class="topbar-title" id="topbar-title">Dashboard</div>
+        <div class="topbar-sub" id="topbar-sub">Resumen del día</div>
+      </div>
     </div>
     <div class="topbar-right">
       <div id="reloj" style="font-size:12px;color:var(--muted);font-weight:600;text-align:right"></div>
@@ -571,14 +621,8 @@
 
   <!-- ═══ TOP CLIENTES ═════════════════════════════════════════ -->
   <div class="page" id="page-clientes">
-    <div class="filters">
-      <button class="filter-btn active" onclick="cargarTopClientes('todos', this)">🏆 Todos</button>
-      <button class="filter-btn" onclick="cargarTopClientes('mes', this)">📅 Este mes</button>
-      <button class="filter-btn" onclick="cargarTopClientes('semana', this)">📆 Esta semana</button>
-      <button class="filter-btn" onclick="cargarTopClientes('hoy', this)">📍 Hoy</button>
-    </div>
     <div class="panel-card">
-      <div class="section-title" id="clientes-titulo">🏆 Mejores clientes — Todos los tiempos</div>
+      <div class="section-title">🏆 Mejores clientes</div>
       <div class="top-list" id="top-clientes-list"><div class="loading">Cargando...</div></div>
     </div>
   </div>
@@ -722,6 +766,8 @@ const pageTitles = {
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
   document.getElementById('page-' + name).classList.add('active');
   document.querySelector(`.nav-item[onclick="showPage('${name}')"]`).classList.add('active');
   const [title, sub] = pageTitles[name] || [name, ''];
@@ -1038,22 +1084,9 @@ async function cargarEstadisticas() {
 }
 
 /* ══ TOP CLIENTES ═══════════════════════════════════════════ */
-const CLIENTES_LABELS = {
-  todos: 'Todos los tiempos',
-  mes: 'Este mes',
-  semana: 'Esta semana',
-  hoy: 'Hoy'
-};
-
-async function cargarTopClientes(periodo='todos', btn=null) {
-  if (btn) {
-    document.querySelectorAll('#page-clientes .filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  }
-  document.getElementById('clientes-titulo').textContent = `🏆 Mejores clientes — ${CLIENTES_LABELS[periodo]}`;
-  document.getElementById('top-clientes-list').innerHTML = '<div class="loading">Cargando...</div>';
-  const data = await api(`/admin/clientes/top?periodo=${periodo}`);
-  if (!data || !data.length) { document.getElementById('top-clientes-list').innerHTML = '<div class="empty"><div class="emoji">👥</div><p>Sin clientes en este período</p></div>'; return; }
+async function cargarTopClientes() {
+  const data = await api('/admin/clientes/top');
+  if (!data || !data.length) { document.getElementById('top-clientes-list').innerHTML = '<div class="empty"><div class="emoji">👥</div><p>Sin clientes aún</p></div>'; return; }
   document.getElementById('top-clientes-list').innerHTML = data.map((c,i) => `
     <div class="top-item">
       <div class="top-rank">#${i+1}</div>
@@ -1136,6 +1169,12 @@ async function eliminarUsuario(id, nombre) {
   const res = await api(`/admin/usuarios/${id}`, 'DELETE');
   if (res && res.ok) cargarUsuarios();
   else alert(res?.detail || 'No se pudo eliminar');
+}
+
+/* ══ SIDEBAR MÓVIL ══════════════════════════════════════════ */
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('open');
 }
 
 /* ══ ARRANQUE ═══════════════════════════════════════════════ */
