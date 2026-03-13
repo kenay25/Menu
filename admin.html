@@ -571,8 +571,14 @@
 
   <!-- ═══ TOP CLIENTES ═════════════════════════════════════════ -->
   <div class="page" id="page-clientes">
+    <div class="filters">
+      <button class="filter-btn active" onclick="cargarTopClientes('todos', this)">🏆 Todos</button>
+      <button class="filter-btn" onclick="cargarTopClientes('mes', this)">📅 Este mes</button>
+      <button class="filter-btn" onclick="cargarTopClientes('semana', this)">📆 Esta semana</button>
+      <button class="filter-btn" onclick="cargarTopClientes('hoy', this)">📍 Hoy</button>
+    </div>
     <div class="panel-card">
-      <div class="section-title">🏆 Mejores clientes</div>
+      <div class="section-title" id="clientes-titulo">🏆 Mejores clientes — Todos los tiempos</div>
       <div class="top-list" id="top-clientes-list"><div class="loading">Cargando...</div></div>
     </div>
   </div>
@@ -1032,9 +1038,22 @@ async function cargarEstadisticas() {
 }
 
 /* ══ TOP CLIENTES ═══════════════════════════════════════════ */
-async function cargarTopClientes() {
-  const data = await api('/admin/clientes/top');
-  if (!data || !data.length) { document.getElementById('top-clientes-list').innerHTML = '<div class="empty"><div class="emoji">👥</div><p>Sin clientes aún</p></div>'; return; }
+const CLIENTES_LABELS = {
+  todos: 'Todos los tiempos',
+  mes: 'Este mes',
+  semana: 'Esta semana',
+  hoy: 'Hoy'
+};
+
+async function cargarTopClientes(periodo='todos', btn=null) {
+  if (btn) {
+    document.querySelectorAll('#page-clientes .filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  document.getElementById('clientes-titulo').textContent = `🏆 Mejores clientes — ${CLIENTES_LABELS[periodo]}`;
+  document.getElementById('top-clientes-list').innerHTML = '<div class="loading">Cargando...</div>';
+  const data = await api(`/admin/clientes/top?periodo=${periodo}`);
+  if (!data || !data.length) { document.getElementById('top-clientes-list').innerHTML = '<div class="empty"><div class="emoji">👥</div><p>Sin clientes en este período</p></div>'; return; }
   document.getElementById('top-clientes-list').innerHTML = data.map((c,i) => `
     <div class="top-item">
       <div class="top-rank">#${i+1}</div>
