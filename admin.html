@@ -365,14 +365,55 @@
     /* ── Loading ── */
     .loading { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
 
-    /* ── Responsive ── */
+    /* ── Responsive móvil ── */
     @media (max-width: 768px) {
-      .sidebar { width: 60px; }
-      .sidebar-logo h2, .sidebar-logo small, .nav-item span, .nav-section-label, .admin-chip .admin-name, .admin-chip .admin-role { display: none; }
-      .nav-item { justify-content: center; padding: 12px; }
-      .main-content { margin-left: 60px; }
+      /* Sidebar siempre visible pero compacto */
+      .sidebar { width: 56px; }
+      .sidebar-logo { padding: 14px 10px; text-align: center; }
+      .sidebar-logo .kanji { font-size: 22px; }
+      .sidebar-logo h2,
+      .sidebar-logo small,
+      .nav-item span,
+      .nav-section-label,
+      .admin-chip .admin-name,
+      .admin-chip .admin-role,
+      .btn-logout-sidebar { display: none !important; }
+      .nav-item { justify-content: center; padding: 12px 0; }
+      .nav-item .icon { font-size: 20px; }
+      .admin-chip { justify-content: center; margin-bottom: 8px; }
+      .sidebar-footer { padding: 12px 8px; }
+
+      /* Contenido */
+      .main-content { margin-left: 56px; }
+      .topbar { padding: 12px 14px; }
+      .topbar-sub, #reloj { display: none; }
+      .page { padding: 12px; }
+      .panel-card { padding: 14px; }
       .form-grid { grid-template-columns: 1fr; }
-      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .metrics-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .metric-card { padding: 14px 10px; }
+      .metric-value { font-size: 22px; }
+      .section-title { font-size: 15px; }
+
+      /* Tabla de pedidos más compacta */
+      .data-table th, .data-table td { padding: 8px 6px; font-size: 11px; }
+      #page-pedidos .data-table thead th:nth-child(3),
+      #page-pedidos .data-table td:nth-child(3) { display: none; }
+      .estado-select { font-size: 11px; padding: 4px 4px; max-width: 100px; }
+
+      /* Charts en columna */
+      #page-dashboard > div[style*="grid"],
+      #page-estadisticas > div[style*="grid"] {
+        display: flex !important;
+        flex-direction: column !important;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .sidebar { width: 44px; }
+      .main-content { margin-left: 44px; }
+      .nav-item .icon { font-size: 17px; }
+      .metrics-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -479,44 +520,24 @@
 
   <!-- ═══ PEDIDOS ══════════════════════════════════════════════ -->
   <div class="page" id="page-pedidos">
-
-    <!-- Tabla de HOY -->
-    <div class="panel-card" style="margin-bottom:24px">
-      <div class="section-title" style="margin-bottom:12px">
-        📋 Pedidos de hoy
-        <span id="badge-total-hoy" style="font-size:13px;font-weight:600;color:var(--muted)"></span>
-      </div>
-      <div class="filters" id="filters-hoy">
-        <button class="filter-btn active" onclick="filtrarPedidosHoy(null, this)">Todos</button>
-        <button class="filter-btn" onclick="filtrarPedidosHoy('recibido', this)">🔵 Recibidos</button>
-        <button class="filter-btn" onclick="filtrarPedidosHoy('preparando', this)">🟡 Preparando</button>
-        <button class="filter-btn" onclick="filtrarPedidosHoy('listo', this)">🟢 Listos</button>
-        <button class="filter-btn" onclick="filtrarPedidosHoy('entregado', this)">✅ Entregados</button>
-        <button class="filter-btn" onclick="filtrarPedidosHoy('cancelado', this)">❌ Cancelados</button>
-      </div>
-      <div class="table-wrap" style="margin-bottom:0">
-        <table class="data-table">
-          <thead><tr><th>#</th><th>Cliente</th><th>Tipo</th><th>Total</th><th>Estado</th><th>Hora</th><th>Acciones</th></tr></thead>
-          <tbody id="tbody-pedidos-hoy"><tr><td colspan="7" class="loading">Cargando...</td></tr></tbody>
-        </table>
-      </div>
+    <div class="filters">
+      <button class="filter-btn active" onclick="filtrarPedidos(null, this)">Todos</button>
+      <button class="filter-btn" onclick="filtrarPedidos('recibido', this)">🔵 Recibidos</button>
+      <button class="filter-btn" onclick="filtrarPedidos('preparando', this)">🟡 Preparando</button>
+      <button class="filter-btn" onclick="filtrarPedidos('listo', this)">🟢 Listos</button>
+      <button class="filter-btn" onclick="filtrarPedidos('entregado', this)">✅ Entregados</button>
+      <button class="filter-btn" onclick="filtrarPedidos('cancelado', this)">❌ Cancelados</button>
     </div>
-
-    <!-- Tabla por CALENDARIO -->
-    <div class="panel-card">
-      <div class="section-title" style="margin-bottom:12px">
-        📅 Pedidos por fecha
-        <input type="date" id="fecha-calendario" style="font-family:'DM Sans',sans-serif;font-size:13px;padding:6px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--cream);color:var(--dark);outline:none;cursor:pointer" onchange="cargarPedidosFecha(this.value)">
-      </div>
-      <div id="calendario-subtitulo" style="font-size:13px;color:var(--muted);margin-bottom:12px"></div>
-      <div class="table-wrap" style="margin-bottom:0">
-        <table class="data-table">
-          <thead><tr><th>#</th><th>Cliente</th><th>Tipo</th><th>Total</th><th>Estado</th><th>Hora</th><th>Acciones</th></tr></thead>
-          <tbody id="tbody-pedidos-fecha"><tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">Selecciona una fecha</td></tr></tbody>
-        </table>
-      </div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>#</th><th>Cliente</th><th>Tipo</th><th>Total</th><th>Estado</th><th>Hora</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-pedidos"><tr><td colspan="7" class="loading">Cargando pedidos...</td></tr></tbody>
+      </table>
     </div>
-
   </div>
 
   <!-- ═══ MENÚ ══════════════════════════════════════════════════ -->
@@ -591,17 +612,8 @@
 
   <!-- ═══ TOP CLIENTES ═════════════════════════════════════════ -->
   <div class="page" id="page-clientes">
-    <div class="filters" id="filters-clientes">
-      <button class="filter-btn active" onclick="cargarTopClientes('todos', this)">🏆 Todos</button>
-      <button class="filter-btn" onclick="cargarTopClientes('mes', this)">📅 Este mes</button>
-      <button class="filter-btn" onclick="cargarTopClientes('semana', this)">📆 Esta semana</button>
-      <button class="filter-btn" onclick="cargarTopClientes('hoy', this)">📍 Hoy</button>
-    </div>
     <div class="panel-card">
-      <div class="section-title" style="margin-bottom:12px">
-        <span id="clientes-titulo">🏆 Mejores clientes — Todos los tiempos</span>
-        <input type="date" id="fecha-clientes" style="display:none;font-family:'DM Sans',sans-serif;font-size:13px;padding:6px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--cream);color:var(--dark);outline:none;cursor:pointer" onchange="cargarTopClientesFecha(this.value)">
-      </div>
+      <div class="section-title">🏆 Mejores clientes</div>
       <div class="top-list" id="top-clientes-list"><div class="loading">Cargando...</div></div>
     </div>
   </div>
@@ -818,10 +830,13 @@ async function cargarDashboard() {
 }
 
 /* ══ PEDIDOS ════════════════════════════════════════════════ */
-// Renderiza filas de pedidos en cualquier tbody
-function renderFilasPedidos(data, tbodyId) {
-  const tbody = document.getElementById(tbodyId);
-  if (!data || !data.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">Sin pedidos</td></tr>'; return; }
+async function cargarPedidos(estado=null) {
+  pedidosFiltro = estado;
+  const path = estado ? `/admin/pedidos?estado=${estado}&limite=100` : '/admin/pedidos?limite=100';
+  const data = await api(path);
+  const tbody = document.getElementById('tbody-pedidos');
+  if (!data || !data.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty">Sin pedidos</td></tr>'; return; }
+
   tbody.innerHTML = data.map(p => {
     const fechaObj = new Date(p.fecha_pedido + 'Z');
     const hora = fechaObj.toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true, timeZone:'America/Hermosillo'});
@@ -840,34 +855,10 @@ function renderFilasPedidos(data, tbodyId) {
   }).join('');
 }
 
-// Pedidos de HOY (con filtro de estado)
-let pedidosFiltroHoy = null;
-async function cargarPedidos(estado=null) {
-  pedidosFiltroHoy = estado;
-  const hoy = new Date().toLocaleDateString('en-CA', {timeZone:'America/Hermosillo'}); // YYYY-MM-DD
-  const path = estado
-    ? `/admin/pedidos?estado=${estado}&fecha=${hoy}&limite=200`
-    : `/admin/pedidos?fecha=${hoy}&limite=200`;
-  const data = await api(path);
-  const badge = document.getElementById('badge-total-hoy');
-  if (badge && data) badge.textContent = `(${data.length} pedidos)`;
-  renderFilasPedidos(data, 'tbody-pedidos-hoy');
-}
-
-function filtrarPedidosHoy(estado, btn) {
-  document.querySelectorAll('#filters-hoy .filter-btn').forEach(b => b.classList.remove('active'));
+function filtrarPedidos(estado, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   cargarPedidos(estado);
-}
-
-// Pedidos por CALENDARIO
-async function cargarPedidosFecha(fecha) {
-  if (!fecha) return;
-  document.getElementById('tbody-pedidos-fecha').innerHTML = '<tr><td colspan="7" class="loading">Cargando...</td></tr>';
-  const data = await api(`/admin/pedidos?fecha=${fecha}&limite=200`);
-  const fechaDisplay = new Date(fecha + 'T12:00:00').toLocaleDateString('es-MX', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-  document.getElementById('calendario-subtitulo').textContent = `Mostrando pedidos del ${fechaDisplay} (${data ? data.length : 0} pedidos)`;
-  renderFilasPedidos(data, 'tbody-pedidos-fecha');
 }
 
 async function cambiarEstado(id, estado) {
@@ -1082,41 +1073,9 @@ async function cargarEstadisticas() {
 }
 
 /* ══ TOP CLIENTES ═══════════════════════════════════════════ */
-const CLIENTES_LABELS = { todos:'Todos los tiempos', mes:'Este mes', semana:'Esta semana', hoy:'Hoy' };
-
-async function cargarTopClientes(periodo='todos', btn=null) {
-  if (btn) {
-    document.querySelectorAll('#filters-clientes .filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  }
-  // Mostrar/ocultar input fecha solo en "todos"
-  const inputFecha = document.getElementById('fecha-clientes');
-  if (periodo === 'todos') {
-    inputFecha.style.display = 'inline-block';
-  } else {
-    inputFecha.style.display = 'none';
-    inputFecha.value = '';
-  }
-  document.getElementById('clientes-titulo').textContent = `🏆 Mejores clientes — ${CLIENTES_LABELS[periodo]}`;
-  document.getElementById('top-clientes-list').innerHTML = '<div class="loading">Cargando...</div>';
-  const data = await api(`/admin/clientes/top?periodo=${periodo}`);
-  renderTopClientes(data);
-}
-
-async function cargarTopClientesFecha(fecha) {
-  if (!fecha) return;
-  document.getElementById('top-clientes-list').innerHTML = '<div class="loading">Cargando...</div>';
-  const fechaDisplay = new Date(fecha + 'T12:00:00').toLocaleDateString('es-MX', {day:'numeric', month:'long', year:'numeric'});
-  document.getElementById('clientes-titulo').textContent = `🏆 Mejores clientes — ${fechaDisplay}`;
-  const data = await api(`/admin/clientes/top?periodo=fecha&fecha=${fecha}`);
-  renderTopClientes(data);
-}
-
-function renderTopClientes(data) {
-  if (!data || !data.length) {
-    document.getElementById('top-clientes-list').innerHTML = '<div class="empty"><div class="emoji">👥</div><p>Sin clientes en este período</p></div>';
-    return;
-  }
+async function cargarTopClientes() {
+  const data = await api('/admin/clientes/top');
+  if (!data || !data.length) { document.getElementById('top-clientes-list').innerHTML = '<div class="empty"><div class="emoji">👥</div><p>Sin clientes aún</p></div>'; return; }
   document.getElementById('top-clientes-list').innerHTML = data.map((c,i) => `
     <div class="top-item">
       <div class="top-rank">#${i+1}</div>
