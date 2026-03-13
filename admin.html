@@ -1126,7 +1126,7 @@ function iniciarReloj() {
     if (el) el.textContent = ahora.toLocaleString('es-MX', opts);
   }
   actualizar();
-  setInterval(actualizar, 1000);
+  setInterval(actualizar, 30000);
 }
 window.addEventListener('DOMContentLoaded', () => {
   const t = localStorage.getItem('admin_token');

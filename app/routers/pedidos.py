@@ -6,6 +6,7 @@ from app.models.pedido import Pedido, DetallePedido
 from app.models.cliente import Cliente
 from app.schemas.pedido import PedidoEntrada, PedidoRespuesta, PedidoEstado
 from app.routers.deps import get_usuario_actual
+from decimal import Decimal
 
 router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
 
@@ -40,7 +41,7 @@ def crear_pedido(
         if cliente:
             # Cliente existe — actualizar sus estadísticas
             cliente.total_pedidos += 1
-            cliente.total_gastado += datos.total
+            cliente.total_gastado += Decimal(str(datos.total))
             cliente.ultima_visita = datetime.utcnow()
             nuevo_pedido.id_cliente = cliente.id_cliente
         else:
@@ -51,7 +52,7 @@ def crear_pedido(
                 telefono=datos.telefono_cliente,
                 direccion=datos.direccion_entrega,
                 total_pedidos=1,
-                total_gastado=datos.total,
+                total_gastado=Decimal(str(datos.total)),
                 ultima_visita=datetime.utcnow()
             )
             db.add(nuevo_cliente)
