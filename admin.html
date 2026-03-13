@@ -479,13 +479,9 @@
 
   <!-- ═══ PEDIDOS ══════════════════════════════════════════════ -->
   <div class="page" id="page-pedidos">
-
-    <!-- Tabla de HOY -->
-    <div class="panel-card" style="margin-bottom:24px">
-      <div class="section-title" style="margin-bottom:12px">
-        📋 Pedidos de hoy
-        <span id="badge-total-hoy" style="font-size:13px;font-weight:600;color:var(--muted)"></span>
-      </div>
+    <!-- Tabla HOY -->
+    <div class="panel-card">
+      <div class="section-title">📋 Pedidos de hoy</div>
       <div class="filters" id="filters-hoy">
         <button class="filter-btn active" onclick="filtrarPedidosHoy(null, this)">Todos</button>
         <button class="filter-btn" onclick="filtrarPedidosHoy('recibido', this)">🔵 Recibidos</button>
@@ -496,27 +492,29 @@
       </div>
       <div class="table-wrap" style="margin-bottom:0">
         <table class="data-table">
-          <thead><tr><th>#</th><th>Cliente</th><th>Tipo</th><th>Total</th><th>Estado</th><th>Hora</th><th>Acciones</th></tr></thead>
+          <thead>
+            <tr><th>#</th><th>Cliente</th><th>Tipo</th><th>Total</th><th>Estado</th><th>Hora</th><th>Acciones</th></tr>
+          </thead>
           <tbody id="tbody-pedidos-hoy"><tr><td colspan="7" class="loading">Cargando...</td></tr></tbody>
         </table>
       </div>
     </div>
-
-    <!-- Tabla por CALENDARIO -->
+    <!-- Tabla BUSCAR POR FECHA -->
     <div class="panel-card">
-      <div class="section-title" style="margin-bottom:12px">
-        📅 Pedidos por fecha
-        <input type="date" id="fecha-calendario" style="font-family:'DM Sans',sans-serif;font-size:13px;padding:6px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--cream);color:var(--dark);outline:none;cursor:pointer" onchange="cargarPedidosFecha(this.value)">
+      <div class="section-title">🗓 Buscar por fecha</div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+        <input type="date" id="input-fecha-pedidos" style="background:#FFF8F9;border:1.5px solid var(--border);border-radius:10px;padding:8px 14px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--dark);outline:none;cursor:pointer" onchange="cargarPedidosFecha(this.value)">
+        <span style="font-size:12px;color:var(--muted)">Selecciona una fecha para ver sus pedidos</span>
       </div>
-      <div id="calendario-subtitulo" style="font-size:13px;color:var(--muted);margin-bottom:12px"></div>
       <div class="table-wrap" style="margin-bottom:0">
         <table class="data-table">
-          <thead><tr><th>#</th><th>Cliente</th><th>Tipo</th><th>Total</th><th>Estado</th><th>Hora</th><th>Acciones</th></tr></thead>
-          <tbody id="tbody-pedidos-fecha"><tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">Selecciona una fecha</td></tr></tbody>
+          <thead>
+            <tr><th>#</th><th>Cliente</th><th>Tipo</th><th>Total</th><th>Estado</th><th>Hora</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="tbody-pedidos-fecha"><tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">Elige una fecha arriba 👆</td></tr></tbody>
         </table>
       </div>
     </div>
-
   </div>
 
   <!-- ═══ MENÚ ══════════════════════════════════════════════════ -->
@@ -591,16 +589,14 @@
 
   <!-- ═══ TOP CLIENTES ═════════════════════════════════════════ -->
   <div class="page" id="page-clientes">
-    <div class="filters" id="filters-clientes">
-      <button class="filter-btn active" onclick="cargarTopClientes('todos', this)">🏆 Todos</button>
-      <button class="filter-btn" onclick="cargarTopClientes('mes', this)">📅 Este mes</button>
-      <button class="filter-btn" onclick="cargarTopClientes('semana', this)">📆 Esta semana</button>
-      <button class="filter-btn" onclick="cargarTopClientes('hoy', this)">📍 Hoy</button>
-    </div>
     <div class="panel-card">
-      <div class="section-title" style="margin-bottom:12px">
-        <span id="clientes-titulo">🏆 Mejores clientes — Todos los tiempos</span>
-        <input type="date" id="fecha-clientes" style="display:none;font-family:'DM Sans',sans-serif;font-size:13px;padding:6px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--cream);color:var(--dark);outline:none;cursor:pointer" onchange="cargarTopClientesFecha(this.value)">
+      <div class="section-title">🏆 Mejores clientes</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center">
+        <button class="filter-btn active" id="cl-btn-todos"   onclick="filtrarClientes('todos',this)">📊 Todos</button>
+        <button class="filter-btn"        id="cl-btn-mes"     onclick="filtrarClientes('mes',this)">📅 Este mes</button>
+        <button class="filter-btn"        id="cl-btn-semana"  onclick="filtrarClientes('semana',this)">📆 Esta semana</button>
+        <button class="filter-btn"        id="cl-btn-hoy"     onclick="filtrarClientes('hoy',this)">☀️ Hoy</button>
+        <input type="date" id="cl-input-fecha" style="background:#FFF8F9;border:1.5px solid var(--border);border-radius:20px;padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--dark);outline:none;cursor:pointer" onchange="filtrarClientesFecha(this.value)" title="Filtrar por fecha específica">
       </div>
       <div class="top-list" id="top-clientes-list"><div class="loading">Cargando...</div></div>
     </div>
@@ -680,7 +676,7 @@
 const API = 'https://web-production-97d4.up.railway.app';
 let TOKEN = null;
 let USUARIO = null;
-let pedidosFiltro = null;
+let pedidosHoyFiltro = null;
 
 /* ══ LOGIN ══════════════════════════════════════════════════ */
 async function adminLogin() {
@@ -751,7 +747,7 @@ function showPage(name) {
   document.getElementById('topbar-title').textContent = title;
   document.getElementById('topbar-sub').textContent = sub;
 
-  const loaders = { pedidos: cargarPedidos, menu: cargarMenu, estadisticas: cargarEstadisticas, clientes: cargarTopClientes, usuarios: cargarUsuarios };
+  const loaders = { pedidos: () => cargarPedidosHoy(pedidosHoyFiltro), menu: cargarMenu, estadisticas: cargarEstadisticas, clientes: () => cargarTopClientes(clientesPeriodo), usuarios: cargarUsuarios };
   if (loaders[name]) loaders[name]();
 }
 
@@ -818,57 +814,61 @@ async function cargarDashboard() {
 }
 
 /* ══ PEDIDOS ════════════════════════════════════════════════ */
-// Renderiza filas de pedidos en cualquier tbody
-function renderFilasPedidos(data, tbodyId) {
+function renderTablaPedidos(data, tbodyId) {
   const tbody = document.getElementById(tbodyId);
-  if (!data || !data.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">Sin pedidos</td></tr>'; return; }
+  if (!tbody) return;
+  if (!data || !data.length) {
+    tbody.innerHTML = `<tr><td colspan="7" class="empty" style="padding:30px"><div class="emoji">🍣</div><p>Sin pedidos</p></td></tr>`;
+    return;
+  }
   tbody.innerHTML = data.map(p => {
     const fechaObj = new Date(p.fecha_pedido + 'Z');
-    const hora = fechaObj.toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true, timeZone:'America/Hermosillo'});
+    const hora  = fechaObj.toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true, timeZone:'America/Hermosillo'});
     const fecha = fechaObj.toLocaleDateString('es-MX', {day:'numeric', month:'short', timeZone:'America/Hermosillo'});
     return `<tr>
       <td><strong>#${p.id_pedido}</strong></td>
       <td>${p.nombre_cliente}<br><small style="color:var(--muted)">${p.telefono_cliente||''}</small></td>
-      <td>${p.tipo_entrega === 'domicilio' ? '🛵 Domicilio' : '🏪 Sucursal'}</td>
+      <td>${p.tipo_entrega === 'domicilio' ? '🛵' : '🏪'} ${p.tipo_entrega}</td>
       <td><strong>$${parseFloat(p.total).toLocaleString()}</strong></td>
-      <td><select class="estado-select" onmousedown="userInteracting=true" onblur="userInteracting=false" onchange="cambiarEstado(${p.id_pedido}, this.value); userInteracting=false;">
-        ${['recibido','preparando','listo','entregado','cancelado'].map(e => `<option value="${e}" ${p.estado===e?'selected':''}>${e.charAt(0).toUpperCase()+e.slice(1)}</option>`).join('')}
-      </select></td>
+      <td>
+        <select class="estado-select"
+          onmousedown="userInteracting=true"
+          onblur="userInteracting=false"
+          onchange="cambiarEstado(${p.id_pedido}, this.value); userInteracting=false;">
+          ${['recibido','preparando','listo','entregado','cancelado'].map(e =>
+            `<option value="${e}" ${p.estado===e?'selected':''}>${e.charAt(0).toUpperCase()+e.slice(1)}</option>`
+          ).join('')}
+        </select>
+      </td>
       <td>${hora}<br><small style="color:var(--muted)">${fecha}</small></td>
       <td><button class="btn-action" onclick="verDetallePedido(${p.id_pedido})">👁 Ver</button></td>
     </tr>`;
   }).join('');
 }
 
-// Pedidos de HOY (con filtro de estado)
-let pedidosFiltroHoy = null;
-async function cargarPedidos(estado=null) {
-  pedidosFiltroHoy = estado;
-  const hoy = new Date().toLocaleDateString('en-CA', {timeZone:'America/Hermosillo'}); // YYYY-MM-DD
-  const path = estado
-    ? `/admin/pedidos?estado=${estado}&fecha=${hoy}&limite=200`
-    : `/admin/pedidos?fecha=${hoy}&limite=200`;
+async function cargarPedidosHoy(estado=null) {
+  pedidosHoyFiltro = estado;
+  const hoy = new Date().toLocaleDateString('en-CA', {timeZone:'America/Hermosillo'});
+  let path = `/admin/pedidos?fecha=${hoy}&limite=200`;
+  if (estado) path += `&estado=${estado}`;
   const data = await api(path);
-  const badge = document.getElementById('badge-total-hoy');
-  if (badge && data) badge.textContent = `(${data.length} pedidos)`;
-  renderFilasPedidos(data, 'tbody-pedidos-hoy');
+  renderTablaPedidos(data, 'tbody-pedidos-hoy');
+}
+
+async function cargarPedidosFecha(fecha) {
+  if (!fecha) return;
+  const data = await api(`/admin/pedidos?fecha=${fecha}&limite=200`);
+  renderTablaPedidos(data, 'tbody-pedidos-fecha');
 }
 
 function filtrarPedidosHoy(estado, btn) {
   document.querySelectorAll('#filters-hoy .filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  cargarPedidos(estado);
+  cargarPedidosHoy(estado);
 }
 
-// Pedidos por CALENDARIO
-async function cargarPedidosFecha(fecha) {
-  if (!fecha) return;
-  document.getElementById('tbody-pedidos-fecha').innerHTML = '<tr><td colspan="7" class="loading">Cargando...</td></tr>';
-  const data = await api(`/admin/pedidos?fecha=${fecha}&limite=200`);
-  const fechaDisplay = new Date(fecha + 'T12:00:00').toLocaleDateString('es-MX', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
-  document.getElementById('calendario-subtitulo').textContent = `Mostrando pedidos del ${fechaDisplay} (${data ? data.length : 0} pedidos)`;
-  renderFilasPedidos(data, 'tbody-pedidos-fecha');
-}
+// alias para compatibilidad con autoRefresh
+function cargarPedidos(estado=null) { cargarPedidosHoy(estado); }
 
 async function cambiarEstado(id, estado) {
   await api(`/admin/pedidos/${id}/estado`, 'PATCH', {estado});
@@ -878,7 +878,8 @@ async function verDetallePedido(id) {
   const data = await api(`/admin/pedidos/${id}/detalle`);
   if (!data) return;
   document.getElementById('modal-pedido-title').textContent = `Pedido #${data.id_pedido}`;
-  const hora = new Date(data.fecha_pedido + 'Z').toLocaleString('es-MX', {timeZone:'America/Hermosillo'});  document.getElementById('modal-pedido-body').innerHTML = `
+  const hora = new Date(data.fecha_pedido + 'Z').toLocaleString('es-MX', {timeZone:'America/Hermosillo'});
+  document.getElementById('modal-pedido-body').innerHTML = `
     <div style="margin-bottom:16px">
       <p><strong>Cliente:</strong> ${data.nombre_cliente}</p>
       ${data.telefono_cliente ? `<p><strong>Teléfono:</strong> ${data.telefono_cliente}</p>` : ''}
@@ -925,31 +926,27 @@ function formatearMods(mods) {
   let m = typeof mods === 'string' ? JSON.parse(mods) : mods;
   let lines = [];
 
-  if (m.alga) lines.push('🌿 Alga: ' + (m.alga === 'con' ? 'Con alga' : 'Sin alga'));
+  if (m.alga)          lines.push('🌿 Alga: '   + (m.alga === 'con' ? 'Con alga' : 'Sin alga'));
+  if (m.estilo)        lines.push('🍳 Estilo: '  + (m.estilo === 'natural' ? 'Natural' : 'Empanizado'));
+  if (m.sushi_elegido) lines.push('🍣 Sushi: '   + m.sushi_elegido);
+  if (m.hielo)         lines.push('🧊 Hielo: '   + (m.hielo === 'con' ? 'Con hielo' : 'Sin hielo'));
 
-  if (m.proteinas && m.proteinas.length) {
-    const nombres = m.proteinas.map(p => PROTEINAS_NOMBRES[p] || p);
-    lines.push('🥩 Proteína: ' + nombres.join(', '));
-  }
+  if (m.proteinas && m.proteinas.length)
+    lines.push('🥩 Proteína: ' + m.proteinas.map(p => PROTEINAS_NOMBRES[p] || p).join(', '));
 
-  if (m.salsas && m.salsas.length) {
-    const nombres = m.salsas.map(s => SALSAS_NOMBRES[s] || s);
-    lines.push('🫙 Salsa: ' + nombres.join(', '));
-  }
-
-  if (m.salsas2 && m.salsas2.length) {
-    const nombres = m.salsas2.map(s => SALSAS_NOMBRES[s] || s);
-    lines.push('🫙 Salsa 2ª orden: ' + nombres.join(', '));
-  }
+  if (m.salsas && m.salsas.length)
+    lines.push('🫙 Salsa boneles: ' + m.salsas.map(s => SALSAS_NOMBRES[s] || s).join(', '));
+  if (m.salsas2 && m.salsas2.length)
+    lines.push('🫙 Salsa 2ª orden: ' + m.salsas2.map(s => SALSAS_NOMBRES[s] || s).join(', '));
+  if (m.salsas_alitas && m.salsas_alitas.length)
+    lines.push('🫙 Salsa alitas: ' + m.salsas_alitas.map(s => SALSAS_NOMBRES[s] || s).join(', '));
 
   if (m.sin_ingredientes && m.sin_ingredientes.length)
     lines.push('🚫 Sin: ' + m.sin_ingredientes.join(', '));
-
   if (m.extras_ingredientes && m.extras_ingredientes.length)
     lines.push('➕ Extra ingrediente: ' + m.extras_ingredientes.join(', '));
-
   if (m.extras_producto && m.extras_producto.length)
-    lines.push('✅ Extra: ' + m.extras_producto.join(', '));
+    lines.push('✅ Extra producto: ' + m.extras_producto.join(', '));
 
   return lines.length ? lines.join(' · ') : '';
 }
@@ -966,7 +963,7 @@ function iniciarAutoRefresh() {
     if (!active) return;
     const name = active.id.replace('page-', '');
     if (name === 'dashboard') cargarDashboard();
-    else if (name === 'pedidos') cargarPedidos(pedidosFiltro);
+    else if (name === 'pedidos') cargarPedidosHoy(pedidosHoyFiltro);
     else if (name === 'menu') cargarMenu();
   }, 30000);
 }
@@ -1082,37 +1079,14 @@ async function cargarEstadisticas() {
 }
 
 /* ══ TOP CLIENTES ═══════════════════════════════════════════ */
-const CLIENTES_LABELS = { todos:'Todos los tiempos', mes:'Este mes', semana:'Esta semana', hoy:'Hoy' };
+let clientesPeriodo = 'todos';
 
-async function cargarTopClientes(periodo='todos', btn=null) {
-  if (btn) {
-    document.querySelectorAll('#filters-clientes .filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  }
-  // Mostrar/ocultar input fecha solo en "todos"
-  const inputFecha = document.getElementById('fecha-clientes');
-  if (periodo === 'todos') {
-    inputFecha.style.display = 'inline-block';
-  } else {
-    inputFecha.style.display = 'none';
-    inputFecha.value = '';
-  }
-  document.getElementById('clientes-titulo').textContent = `🏆 Mejores clientes — ${CLIENTES_LABELS[periodo]}`;
+async function cargarTopClientes(periodo='todos', fecha=null) {
+  clientesPeriodo = periodo;
   document.getElementById('top-clientes-list').innerHTML = '<div class="loading">Cargando...</div>';
-  const data = await api(`/admin/clientes/top?periodo=${periodo}`);
-  renderTopClientes(data);
-}
-
-async function cargarTopClientesFecha(fecha) {
-  if (!fecha) return;
-  document.getElementById('top-clientes-list').innerHTML = '<div class="loading">Cargando...</div>';
-  const fechaDisplay = new Date(fecha + 'T12:00:00').toLocaleDateString('es-MX', {day:'numeric', month:'long', year:'numeric'});
-  document.getElementById('clientes-titulo').textContent = `🏆 Mejores clientes — ${fechaDisplay}`;
-  const data = await api(`/admin/clientes/top?periodo=fecha&fecha=${fecha}`);
-  renderTopClientes(data);
-}
-
-function renderTopClientes(data) {
+  let path = `/admin/clientes/top?periodo=${periodo}`;
+  if (fecha) path += `&fecha=${fecha}`;
+  const data = await api(path);
   if (!data || !data.length) {
     document.getElementById('top-clientes-list').innerHTML = '<div class="empty"><div class="emoji">👥</div><p>Sin clientes en este período</p></div>';
     return;
@@ -1122,11 +1096,24 @@ function renderTopClientes(data) {
       <div class="top-rank">#${i+1}</div>
       <div>
         <div class="top-name">${c.nombre}</div>
-        <div class="top-sub">📱 ${c.telefono} · ${c.total_pedidos} pedidos</div>
+        <div class="top-sub">📱 ${c.telefono} · ${c.total_pedidos} pedido${c.total_pedidos!==1?'s':''}</div>
       </div>
       <div class="top-val">$${c.total_gastado.toLocaleString()}</div>
     </div>
   `).join('');
+}
+
+function filtrarClientes(periodo, btn) {
+  document.querySelectorAll('#page-clientes .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('cl-input-fecha').value = '';
+  cargarTopClientes(periodo);
+}
+
+function filtrarClientesFecha(fecha) {
+  if (!fecha) return;
+  document.querySelectorAll('#page-clientes .filter-btn').forEach(b => b.classList.remove('active'));
+  cargarTopClientes('fecha', fecha);
 }
 
 /* ══ USUARIOS ═══════════════════════════════════════════════ */
