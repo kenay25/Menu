@@ -367,12 +367,41 @@
 
     /* ── Responsive ── */
     @media (max-width: 768px) {
-      .sidebar { width: 60px; }
-      .sidebar-logo h2, .sidebar-logo small, .nav-item span, .nav-section-label, .admin-chip .admin-name, .admin-chip .admin-role { display: none; }
-      .nav-item { justify-content: center; padding: 12px; }
-      .main-content { margin-left: 60px; }
+      .sidebar { width: 56px; }
+      .sidebar-logo { padding: 16px 12px; }
+      .sidebar-logo .kanji { font-size: 24px; }
+      .sidebar-logo h2, .sidebar-logo small, .nav-item span,
+      .nav-section-label, .admin-chip .admin-name, .admin-chip .admin-role,
+      .btn-logout-sidebar { display: none; }
+      .nav-item { justify-content: center; padding: 12px 0; }
+      .admin-chip { justify-content: center; }
+      .main-content { margin-left: 56px; }
+      .topbar { padding: 12px 14px; }
+      .topbar-title { font-size: 16px; }
+      .topbar-sub { display: none; }
+      #reloj { display: none; }
       .form-grid { grid-template-columns: 1fr; }
-      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .metrics-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .page { padding: 14px; }
+      .panel-card { padding: 16px; }
+      /* Tablas en móvil: ocultar columnas menos importantes */
+      #tbody-pedidos tr td:nth-child(3) { display: none; }
+      #page-pedidos .data-table thead th:nth-child(3) { display: none; }
+      .estado-select { font-size: 11px; padding: 4px 6px; max-width: 115px; }
+      .data-table th, .data-table td { padding: 10px 8px; font-size: 12px; }
+      /* Charts en columna */
+      #page-dashboard > div[style], #page-estadisticas > div[style] {
+        grid-template-columns: 1fr !important;
+      }
+    }
+    @media (max-width: 480px) {
+      .sidebar { width: 0px; overflow: hidden; }
+      .main-content { margin-left: 0; }
+      .topbar { padding: 10px 12px; }
+      .metrics-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .metric-card { padding: 14px 10px; }
+      .metric-value { font-size: 20px; }
+      .section-title { font-size: 15px; }
     }
   </style>
 </head>
@@ -916,7 +945,7 @@ function iniciarAutoRefresh() {
     if (name === 'dashboard') cargarDashboard();
     else if (name === 'pedidos') cargarPedidos(pedidosFiltro);
     else if (name === 'menu') cargarMenu();
-  }, 1000);
+  }, 30000);
 }
 
 /* ══ MENÚ ═══════════════════════════════════════════════════ */
