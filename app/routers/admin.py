@@ -111,6 +111,7 @@ def productos_mas_vendidos(
 @router.get("/clientes/top")
 def mejores_clientes(
     periodo: str = "todos",
+    fecha: str = None,
     db: Session = Depends(get_db),
     usuario=Depends(requerir_admin)
 ):
@@ -138,6 +139,8 @@ def mejores_clientes(
             func.month(Pedido.fecha_pedido) == hoy.month,
             func.year(Pedido.fecha_pedido) == hoy.year
         )
+    elif periodo == "fecha" and fecha:
+        query = query.filter(cast(Pedido.fecha_pedido, Date) == fecha)
 
     resultado = query.group_by(
         Cliente.id_cliente, Cliente.nombre, Cliente.telefono
@@ -185,6 +188,7 @@ def listar_usuarios(
 def listar_pedidos_admin(
     estado: str = None,
     limite: int = 50,
+    fecha: str = None,
     db: Session = Depends(get_db),
     usuario=Depends(requerir_admin)
 ):
@@ -194,6 +198,8 @@ def listar_pedidos_admin(
     )
     if estado:
         query = query.filter(Pedido.estado == estado)
+    if fecha:
+        query = query.filter(cast(Pedido.fecha_pedido, Date) == fecha)
     pedidos = query.order_by(Pedido.fecha_pedido.desc()).limit(limite).all()
 
     return [
