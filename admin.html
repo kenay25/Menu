@@ -365,6 +365,53 @@
     /* ── Loading ── */
     .loading { text-align: center; padding: 40px; color: var(--muted); font-size: 14px; }
 
+    /* ── Opciones checkbox ── */
+    .opt-check {
+      display: flex; align-items: center; gap: 7px;
+      background: #FFF8F9; border: 1.5px solid var(--border);
+      border-radius: 10px; padding: 8px 14px;
+      font-size: 13px; cursor: pointer;
+      transition: all 0.15s; -webkit-user-select: none; user-select: none;
+    }
+    .opt-check input { accent-color: var(--pink); width: 15px; height: 15px; cursor: pointer; }
+    .opt-check:has(input:checked) { border-color: var(--pink); background: #FFF0F4; }
+
+    /* ── Editor de ingredientes/extras ── */
+    .ing-edit-row {
+      display: grid; grid-template-columns: 44px 1fr 1fr 80px auto;
+      gap: 6px; align-items: center;
+      background: #FFF8F9; border-radius: 9px; padding: 7px 10px;
+      border: 1px solid var(--border);
+    }
+    .ing-edit-row input, .ing-edit-row select {
+      background: white; border: 1px solid rgba(232,84,122,0.2);
+      border-radius: 7px; padding: 5px 8px;
+      font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--dark);
+      outline: none;
+    }
+    .ing-edit-row input:focus, .ing-edit-row select:focus { border-color: var(--pink); }
+    .btn-del-ing {
+      background: #FDEDEC; border: none; color: #C0392B;
+      border-radius: 7px; width: 28px; height: 28px;
+      font-size: 14px; cursor: pointer; display: flex;
+      align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .btn-del-ing:hover { background: #C0392B; color: white; }
+    .extra-edit-row {
+      display: grid; grid-template-columns: 44px 1fr 1fr 80px 70px auto;
+      gap: 6px; align-items: center;
+      background: #FFF8F9; border-radius: 9px; padding: 7px 10px;
+      border: 1px solid var(--border);
+    }
+    .extra-edit-row input {
+      background: white; border: 1px solid rgba(232,84,122,0.2);
+      border-radius: 7px; padding: 5px 8px;
+      font-family: 'DM Sans', sans-serif; font-size: 12px; color: var(--dark);
+      outline: none;
+    }
+    .extra-edit-row input:focus { border-color: var(--pink); }
+
     /* ── Responsive ── */
     @media (max-width: 768px) {
       .sidebar { width: 60px; }
@@ -524,10 +571,16 @@
         ➕ Agregar / Editar Platillo
         <button class="btn-primary" onclick="limpiarFormProducto()" style="font-size:12px;padding:6px 14px;">+ Nuevo</button>
       </div>
-      <div class="form-grid">
+
+      <!-- Fila 1: básicos -->
+      <div class="form-grid" style="grid-template-columns:2fr 1fr 1fr 1fr 1fr">
         <div class="form-group">
           <label>Nombre del platillo</label>
           <input type="text" id="prod-nombre" placeholder="Ej. California">
+        </div>
+        <div class="form-group">
+          <label>Emoji</label>
+          <input type="text" id="prod-emoji" placeholder="🍣" maxlength="4" style="font-size:22px;text-align:center">
         </div>
         <div class="form-group">
           <label>Precio ($)</label>
@@ -535,7 +588,7 @@
         </div>
         <div class="form-group">
           <label>Categoría</label>
-          <select id="prod-categoria" onchange="mostrarCamposCategoria()">
+          <select id="prod-categoria">
             <option value="1">🍱 Combos y Charolas</option>
             <option value="2">🍣 Sushis</option>
             <option value="3">🥗 Entradas</option>
@@ -545,41 +598,80 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Disponible</label>
+          <label>Tag / Etiqueta</label>
+          <select id="prod-tag">
+            <option value="">— Ninguno —</option>
+            <option value="popular">⭐ Popular</option>
+            <option value="hot">🌶️ Hot</option>
+            <option value="new">✨ Nuevo</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Disponible + descripción -->
+      <div class="form-grid" style="grid-template-columns:160px 1fr;margin-bottom:0">
+        <div class="form-group">
+          <label>Estado</label>
           <select id="prod-disponible">
             <option value="true">✅ Disponible</option>
             <option value="false">🚫 Agotado</option>
           </select>
         </div>
-      </div>
-      <div class="form-group" style="margin-bottom:16px">
-        <label>Descripción <small style="text-transform:none;letter-spacing:0;color:var(--muted)">(ingredientes, presentación, notas)</small></label>
-        <textarea id="prod-descripcion" placeholder="Ej. Por dentro: philadelphia, pepino, aguacate. Por fuera: tampico y anguila." style="min-height:80px"></textarea>
-      </div>
-      <!-- Campos extra para Combos/Charolas y Promociones -->
-      <div id="prod-campos-combo" style="display:none">
-        <div style="background:#FFF0F4;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:var(--pink-deep)">
-          💡 <strong>Combo / Charola:</strong> Recuerda actualizar las opciones del menú (proteína, alga, estilo, salsas) directamente en el <code>index.html</code> si cambias componentes del combo.
+        <div class="form-group">
+          <label>Descripción</label>
+          <textarea id="prod-descripcion" placeholder="Ej. Por dentro: philadelphia, pepino, aguacate. Por fuera: tampico y anguila." style="min-height:60px;resize:vertical"></textarea>
         </div>
       </div>
-      <div id="prod-campos-promo" style="display:none">
-        <div style="background:#FFF0F4;border-radius:10px;padding:12px 14px;margin-bottom:14px;font-size:12px;color:var(--pink-deep)">
-          🎁 <strong>Promoción:</strong> Para cambiar qué incluye el paquete, actualiza el <code>index.html</code>. El precio aquí se guarda en la base de datos.
-        </div>
+
+      <!-- Opciones del modal de personalización -->
+      <div style="margin:18px 0 10px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600">
+        ⚙️ Opciones de personalización (lo que el cliente puede elegir)
       </div>
+      <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px" id="prod-opciones">
+        <label class="opt-check"><input type="checkbox" id="opt-alga">🌿 Con/sin alga</label>
+        <label class="opt-check"><input type="checkbox" id="opt-style">🍳 Natural/empanizado</label>
+        <label class="opt-check"><input type="checkbox" id="opt-protein">🥩 Elige proteína</label>
+        <label class="opt-check"><input type="checkbox" id="opt-sauce">🫙 Salsa boneles</label>
+        <label class="opt-check"><input type="checkbox" id="opt-sauce-1only">🫙 Solo 1 salsa boneles</label>
+        <label class="opt-check"><input type="checkbox" id="opt-sauce-2">🫙 Salsa 2ª orden boneles</label>
+        <label class="opt-check"><input type="checkbox" id="opt-sauce-alitas">🫙 Salsa alitas</label>
+        <label class="opt-check"><input type="checkbox" id="opt-sushi-choice">🍣 Elige sushi (Bombazo/Cal/Sonora)</label>
+        <label class="opt-check"><input type="checkbox" id="opt-ice">🧊 Con/sin hielo</label>
+        <label class="opt-check"><input type="checkbox" id="opt-extra-ing">➕ Ingrediente extra ($15)</label>
+      </div>
+
+      <!-- Editor de ingredientes -->
+      <div style="margin-bottom:18px">
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:10px">
+          🥗 Ingredientes del platillo
+        </div>
+        <div id="prod-ings-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px"></div>
+        <button onclick="agregarIngrediente()" style="background:transparent;border:1.5px dashed rgba(232,84,122,0.4);color:var(--pink);border-radius:9px;padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;width:100%">+ Agregar ingrediente</button>
+      </div>
+
+      <!-- Editor de extras -->
+      <div style="margin-bottom:18px">
+        <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:10px">
+          ➕ Extras opcionales (el cliente puede agregar)
+        </div>
+        <div id="prod-extras-list" style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px"></div>
+        <button onclick="agregarExtra()" style="background:transparent;border:1.5px dashed rgba(232,84,122,0.4);color:var(--pink);border-radius:9px;padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;width:100%">+ Agregar extra</button>
+      </div>
+
       <input type="hidden" id="prod-id">
       <div class="form-actions">
-        <button class="btn-primary" onclick="guardarProducto()">💾 Guardar</button>
+        <button class="btn-primary" onclick="guardarProducto()">💾 Guardar platillo</button>
         <button class="btn-secondary" onclick="limpiarFormProducto()">Cancelar</button>
       </div>
     </div>
+
     <div class="section-title">📋 Todos los platillos</div>
     <div class="table-wrap">
       <table class="data-table">
         <thead>
-          <tr><th>ID</th><th>Nombre</th><th>Descripción</th><th>Precio</th><th>Categoría</th><th>Estado</th><th>Acciones</th></tr>
+          <tr><th>ID</th><th>Emoji</th><th>Nombre</th><th>Descripción</th><th>Precio</th><th>Cat.</th><th>Opciones</th><th>Estado</th><th>Acciones</th></tr>
         </thead>
-        <tbody id="tbody-menu"><tr><td colspan="7" class="loading">Cargando...</td></tr></tbody>
+        <tbody id="tbody-menu"><tr><td colspan="9" class="loading">Cargando...</td></tr></tbody>
       </table>
     </div>
   </div>
@@ -984,65 +1076,169 @@ function iniciarAutoRefresh() {
 }
 
 /* ══ MENÚ ═══════════════════════════════════════════════════ */
+const CATS = {1:'Combos',2:'Sushis',3:'Entradas',4:'Especiales',5:'Bebidas/Extras',6:'Promos'};
+const OPTS_MAP = {
+  has_alga:'opt-alga', has_style:'opt-style', has_protein:'opt-protein',
+  has_sauce:'opt-sauce', has_sauce_1only:'opt-sauce-1only', has_sauce_2:'opt-sauce-2',
+  has_sauce_alitas:'opt-sauce-alitas', has_sushi_choice:'opt-sushi-choice',
+  has_ice:'opt-ice', is_extra_ing:'opt-extra-ing'
+};
+
 async function cargarMenu() {
   const data = await api('/productos/');
   const tbody = document.getElementById('tbody-menu');
-  if (!data || !data.length) { tbody.innerHTML = '<tr><td colspan="7" class="empty">Sin productos</td></tr>'; return; }
-  tbody.innerHTML = data.map(p => `<tr>
-    <td>${p.id_producto}</td>
-    <td><strong>${p.nombre}</strong></td>
-    <td style="max-width:200px;font-size:12px;color:var(--muted)">${p.descripcion||'—'}</td>
-    <td>$${parseFloat(p.precio).toLocaleString()}</td>
-    <td>${CATEGORIAS[p.id_categoria] || '—'}</td>
-    <td>
-      <div class="toggle-wrap">
-        <div class="toggle ${p.disponible ? 'on' : ''}" onclick="toggleDisponible(${p.id_producto}, ${!p.disponible}, this)"></div>
-        <span style="font-size:12px">${p.disponible ? 'Disponible' : 'Agotado'}</span>
-      </div>
-    </td>
-    <td>
-      <button class="btn-action" onclick="editarProducto(${p.id_producto},'${p.nombre.replace(/'/g,"\\'")}',${p.precio},${p.id_categoria||0},${p.disponible},'${(p.descripcion||'').replace(/'/g,"\\'").replace(/\n/g,' ')}')">✏️ Editar</button>
-      <button class="btn-action danger" onclick="eliminarProducto(${p.id_producto},'${p.nombre.replace(/'/g,"\\'")}')">🗑 Borrar</button>
-    </td>
-  </tr>`).join('');
+  if (!data || !data.length) { tbody.innerHTML = '<tr><td colspan="9" class="empty">Sin productos</td></tr>'; return; }
+  tbody.innerHTML = data.map(p => {
+    const opts = [];
+    if (p.has_alga)         opts.push('🌿Alga');
+    if (p.has_style)        opts.push('🍳Estilo');
+    if (p.has_protein)      opts.push('🥩Prot.');
+    if (p.has_sauce)        opts.push('🫙Salsa');
+    if (p.has_sauce_alitas) opts.push('🫙Alitas');
+    if (p.has_sushi_choice) opts.push('🍣Sushi');
+    if (p.has_ice)          opts.push('🧊Hielo');
+    if (p.is_extra_ing)     opts.push('➕Extra');
+    return `<tr>
+      <td>${p.id_producto}</td>
+      <td style="font-size:22px;text-align:center">${p.emoji||'🍣'}</td>
+      <td><strong>${p.nombre}</strong>${p.tag?` <span class="badge" style="background:#FDE8EF;color:var(--pink-deep);font-size:10px">${p.tag}</span>`:''}</td>
+      <td style="max-width:180px;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.descripcion||'—'}</td>
+      <td><strong>$${parseFloat(p.precio).toLocaleString()}</strong></td>
+      <td style="font-size:12px">${CATS[p.id_categoria]||'—'}</td>
+      <td style="font-size:11px">${opts.join(' ')}</td>
+      <td>
+        <div class="toggle-wrap">
+          <div class="toggle ${p.disponible?'on':''}" onclick="toggleDisponible(${p.id_producto},${!p.disponible},this)"></div>
+          <span style="font-size:12px">${p.disponible?'Disponible':'Agotado'}</span>
+        </div>
+      </td>
+      <td>
+        <button class="btn-action" onclick="editarProducto(${p.id_producto})">✏️ Editar</button>
+        <button class="btn-action danger" onclick="eliminarProducto(${p.id_producto},'${p.nombre.replace(/'/g,"\\'")}')">🗑</button>
+      </td>
+    </tr>`;
+  }).join('');
 }
 
-function mostrarCamposCategoria() {
-  const cat = parseInt(document.getElementById('prod-categoria').value);
-  document.getElementById('prod-campos-combo').style.display = (cat === 1) ? 'block' : 'none';
-  document.getElementById('prod-campos-promo').style.display = (cat === 6) ? 'block' : 'none';
+// Estado temporal de ingredientes/extras en el form
+let _prodIngs = [];
+let _prodExtras = [];
+
+function renderIngsList() {
+  document.getElementById('prod-ings-list').innerHTML = _prodIngs.map((ing, i) => `
+    <div class="ing-edit-row">
+      <input type="text" value="${ing.emoji||''}" placeholder="🧀" maxlength="4"
+        style="font-size:18px;text-align:center"
+        oninput="_prodIngs[${i}].emoji=this.value">
+      <input type="text" value="${ing.name||''}" placeholder="Nombre del ingrediente"
+        oninput="_prodIngs[${i}].name=this.value">
+      <input type="text" value="${ing.note||''}" placeholder="Nota (ej: Base, Relleno)"
+        oninput="_prodIngs[${i}].note=this.value">
+      <select oninput="_prodIngs[${i}].removable=(this.value==='true')">
+        <option value="true" ${ing.removable?'selected':''}>Quitable</option>
+        <option value="false" ${!ing.removable?'selected':''}>Fijo</option>
+      </select>
+      <button class="btn-del-ing" onclick="_prodIngs.splice(${i},1);renderIngsList()">✕</button>
+    </div>
+  `).join('');
 }
 
-function editarProducto(id, nombre, precio, cat, disp, desc) {
+function renderExtrasList() {
+  document.getElementById('prod-extras-list').innerHTML = _prodExtras.map((ex, i) => `
+    <div class="extra-edit-row">
+      <input type="text" value="${ex.emoji||''}" placeholder="🧀" maxlength="4"
+        style="font-size:18px;text-align:center"
+        oninput="_prodExtras[${i}].emoji=this.value">
+      <input type="text" value="${ex.name||''}" placeholder="Nombre del extra"
+        oninput="_prodExtras[${i}].name=this.value">
+      <input type="text" value="${ex.note||''}" placeholder="Nota (ej: +$25)"
+        oninput="_prodExtras[${i}].note=this.value">
+      <input type="number" value="${ex.price||0}" placeholder="Precio" min="0" step="5"
+        oninput="_prodExtras[${i}].price=parseFloat(this.value)||0">
+      <button class="btn-del-ing" onclick="_prodExtras.splice(${i},1);renderExtrasList()">✕</button>
+    </div>
+  `).join('');
+}
+
+function agregarIngrediente() {
+  _prodIngs.push({id:'b'+(Date.now()),emoji:'',name:'',note:'',removable:true});
+  renderIngsList();
+}
+function agregarExtra() {
+  _prodExtras.push({id:'x'+(Date.now()),emoji:'',name:'',note:'',price:0});
+  renderExtrasList();
+}
+
+async function editarProducto(id) {
+  const p = await api('/productos/'+id);
+  if (!p) return;
   document.getElementById('prod-id').value = id;
-  document.getElementById('prod-nombre').value = nombre;
-  document.getElementById('prod-precio').value = precio;
-  document.getElementById('prod-categoria').value = cat;
-  document.getElementById('prod-disponible').value = disp ? 'true' : 'false';
-  document.getElementById('prod-descripcion').value = desc || '';
-  mostrarCamposCategoria();
+  document.getElementById('prod-nombre').value = p.nombre;
+  document.getElementById('prod-emoji').value = p.emoji||'🍣';
+  document.getElementById('prod-precio').value = p.precio;
+  document.getElementById('prod-categoria').value = p.id_categoria||2;
+  document.getElementById('prod-tag').value = p.tag||'';
+  document.getElementById('prod-disponible').value = p.disponible?'true':'false';
+  document.getElementById('prod-descripcion').value = p.descripcion||'';
+  // Checkboxes
+  Object.entries(OPTS_MAP).forEach(([key, elId]) => {
+    const el = document.getElementById(elId);
+    if (el) el.checked = !!p[key];
+  });
+  // Ingredientes y extras
+  _prodIngs   = JSON.parse(JSON.stringify(p.ingredientes||[]));
+  _prodExtras = JSON.parse(JSON.stringify(p.extras_producto||[]));
+  renderIngsList();
+  renderExtrasList();
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
 function limpiarFormProducto() {
-  ['prod-id','prod-nombre','prod-precio','prod-descripcion'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('prod-id').value = '';
+  document.getElementById('prod-nombre').value = '';
+  document.getElementById('prod-emoji').value = '🍣';
+  document.getElementById('prod-precio').value = '';
   document.getElementById('prod-categoria').value = '2';
+  document.getElementById('prod-tag').value = '';
   document.getElementById('prod-disponible').value = 'true';
-  document.getElementById('prod-campos-combo').style.display = 'none';
-  document.getElementById('prod-campos-promo').style.display = 'none';
+  document.getElementById('prod-descripcion').value = '';
+  Object.values(OPTS_MAP).forEach(elId => {
+    const el = document.getElementById(elId);
+    if (el) el.checked = false;
+  });
+  _prodIngs = [];
+  _prodExtras = [];
+  renderIngsList();
+  renderExtrasList();
 }
 
 async function guardarProducto() {
-  const id    = document.getElementById('prod-id').value;
+  const id     = document.getElementById('prod-id').value;
   const nombre = document.getElementById('prod-nombre').value.trim();
   const precio = parseFloat(document.getElementById('prod-precio').value);
-  const cat    = parseInt(document.getElementById('prod-categoria').value) || null;
-  const disp   = document.getElementById('prod-disponible').value === 'true';
-  const desc   = document.getElementById('prod-descripcion').value.trim();
-
   if (!nombre || isNaN(precio)) { alert('Nombre y precio son obligatorios'); return; }
 
-  const body = { nombre, precio, id_categoria: cat, disponible: disp, descripcion: desc || null };
+  // Validar ingredientes: deben tener nombre
+  const ingsValidos = _prodIngs.filter(i => i.name.trim());
+  const extrasValidos = _prodExtras.filter(e => e.name.trim());
+
+  const body = {
+    nombre,
+    precio,
+    id_categoria:    parseInt(document.getElementById('prod-categoria').value)||null,
+    disponible:      document.getElementById('prod-disponible').value === 'true',
+    descripcion:     document.getElementById('prod-descripcion').value.trim()||null,
+    emoji:           document.getElementById('prod-emoji').value.trim()||'🍣',
+    tag:             document.getElementById('prod-tag').value||null,
+    ingredientes:    ingsValidos,
+    extras_producto: extrasValidos,
+  };
+  // Checkboxes
+  Object.entries(OPTS_MAP).forEach(([key, elId]) => {
+    const el = document.getElementById(elId);
+    body[key] = el ? el.checked : false;
+  });
+
   if (id) {
     await api(`/productos/${id}`, 'PUT', body);
   } else {
