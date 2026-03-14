@@ -2456,17 +2456,25 @@
           if (m.sushiChoice) mods.sushi_elegido = m.sushiChoice;
           if (m.ice) mods.hielo = m.ice;
           if (m.proteins && m.proteins.length) mods.proteinas = m.proteins;
-          if (m.sauces) mods.salsas = Object.keys(m.sauces).filter(function (k) { return m.sauces[k]; });
-          if (m.sauces2) mods.salsas2 = Object.keys(m.sauces2).filter(function (k) { return m.sauces2[k]; });
-          if (m.saucesAlitas) mods.salsas_alitas = Object.keys(m.saucesAlitas).filter(function (k) { return m.saucesAlitas[k]; });
-          if (m.removed) { mods.sin_ingredientes = Object.keys(m.removed).filter(function (k) { return m.removed[k]; }).map(function (k) { var ing = (item.ingredients || []).filter(function (i) { return i.id === k; })[0]; return ing ? ing.name : k; }); }
+          // Solo incluir si tienen contenido — {} es truthy en JS y mandar [] causa 422 en el backend
+          var salsas = Object.keys(m.sauces || {}).filter(function (k) { return m.sauces[k]; });
+          if (salsas.length) mods.salsas = salsas;
+          var salsas2 = Object.keys(m.sauces2 || {}).filter(function (k) { return m.sauces2[k]; });
+          if (salsas2.length) mods.salsas2 = salsas2;
+          var salsasAl = Object.keys(m.saucesAlitas || {}).filter(function (k) { return m.saucesAlitas[k]; });
+          if (salsasAl.length) mods.salsas_alitas = salsasAl;
+          var sinIng = Object.keys(m.removed || {}).filter(function (k) { return m.removed[k]; }).map(function (k) { var ing = (item.ingredients || []).filter(function (i) { return i.id === k; })[0]; return ing ? ing.name : k; });
+          if (sinIng.length) mods.sin_ingredientes = sinIng;
           if (m.extraIngs && m.extraIngs.length) mods.extras_ingredientes = m.extraIngs;
-          if (m.extras) mods.extras_producto = Object.keys(m.extras).filter(function (k) { return m.extras[k]; });
-          return { id_producto: item.dbId || 0, nombre_producto: item.name, precio_unitario: item.price, cantidad: 1, modificaciones: mods, costo_extra: ec, subtotal: item.price + ec };
+          var extProd = Object.keys(m.extras || {}).filter(function (k) { return m.extras[k]; });
+          if (extProd.length) mods.extras_producto = extProd;
+          return { id_producto: item.dbId || null, nombre_producto: item.name, precio_unitario: item.price, cantidad: 1, modificaciones: Object.keys(mods).length ? mods : null, costo_extra: ec, subtotal: item.price + ec };
         });
         var payload = { nombre_cliente: clientName, telefono_cliente: clientPhone || null, tipo_entrega: tipo, direccion_entrega: clientAddress || null, notas: notes.trim() || null, total: total, productos: productos };
         var res = await fetch(API_URL + '/pedidos/', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify(payload) });
         if (res.ok) { var data = await res.json(); console.log('✅ Pedido guardado #' + data.id_pedido); return data.id_pedido; }
+        // Loguear detalle del error para diagnóstico
+        try { var errBody = await res.clone().json(); console.warn('Error ' + res.status + ' detalle:', JSON.stringify(errBody)); } catch(e2) {}
         // Si el token expiró, lo limpiamos y reintentamos una vez
         if (res.status === 401) {
           API_TOKEN = null;
