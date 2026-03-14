@@ -20,8 +20,9 @@ def estadisticas_hoy(
     db: Session = Depends(get_db),
     usuario=Depends(requerir_admin)
 ):
-    """Estadísticas del día actual."""
-    hoy = date.today()
+    """Estadísticas del día actual en zona Hermosillo."""
+    # FIX: usar fecha de Hermosillo, no UTC del servidor
+    hoy = datetime.now(ZONA).date()
 
     pedidos_hoy = db.query(Pedido).filter(
         Pedido.id_restaurante == usuario.id_restaurante,
@@ -115,8 +116,7 @@ def mejores_clientes(
     db: Session = Depends(get_db),
     usuario=Depends(requerir_admin)
 ):
-    """Top 10 mejores clientes por total gastado. periodo: hoy, semana, mes, todos"""
-    
+    """Top 10 mejores clientes por total gastado."""
     query = db.query(
         Cliente.nombre,
         Cliente.telefono,
@@ -131,6 +131,7 @@ def mejores_clientes(
 
     hoy = datetime.now(ZONA)
     if periodo == "hoy":
+        # FIX: fecha Hermosillo
         query = query.filter(cast(Pedido.fecha_pedido, Date) == hoy.date())
     elif periodo == "semana":
         query = query.filter(Pedido.fecha_pedido >= hoy - timedelta(days=7))
@@ -182,6 +183,7 @@ def listar_usuarios(
         for u in usuarios
     ]
 
+
 # ── Pedidos ──────────────────────────────────────────────────
 
 @router.get("/pedidos")
@@ -192,14 +194,22 @@ def listar_pedidos_admin(
     db: Session = Depends(get_db),
     usuario=Depends(requerir_admin)
 ):
-    """Lista pedidos con filtro opcional por estado."""
+    """Lista pedidos con filtro opcional por estado y fecha."""
     query = db.query(Pedido).filter(
         Pedido.id_restaurante == usuario.id_restaurante
     )
     if estado:
         query = query.filter(Pedido.estado == estado)
     if fecha:
-        query = query.filter(cast(Pedido.fecha_pedido, Date) == fecha)
+        # La BD guarda en UTC. Hermosillo es UTC-7.
+        # Un día Hermosillo (00:00–23:59) = 07:00 UTC ese día → 06:59 UTC día siguiente
+        from datetime import datetime as dt, timedelta as td
+        fecha_ini_utc = dt.strptime(fecha, "%Y-%m-%d").replace(hour=7, minute=0, second=0)
+        fecha_fin_utc = fecha_ini_utc + td(hours=24)
+        query = query.filter(
+            Pedido.fecha_pedido >= fecha_ini_utc,
+            Pedido.fecha_pedido <  fecha_fin_utc
+        )
     pedidos = query.order_by(Pedido.fecha_pedido.desc()).limit(limite).all()
 
     return [
@@ -292,16 +302,17 @@ def horas_pico(
     db: Session = Depends(get_db),
     usuario=Depends(requerir_admin)
 ):
-    """Pedidos agrupados por hora del día."""
+    """Pedidos agrupados por hora del día (ajustado a Hermosillo UTC-7)."""
+    # func.hour devuelve hora UTC; restamos 7 para Hermosillo
     resultado = db.query(
-        func.hour(Pedido.fecha_pedido).label("hora"),
+        ((func.hour(Pedido.fecha_pedido) - 7 + 24) % 24).label("hora"),
         func.count(Pedido.id_pedido).label("total_pedidos"),
         func.sum(Pedido.total).label("total_ventas")
     ).filter(
         Pedido.id_restaurante == usuario.id_restaurante,
         Pedido.estado != "cancelado"
     ).group_by(
-        func.hour(Pedido.fecha_pedido)
+        ((func.hour(Pedido.fecha_pedido) - 7 + 24) % 24)
     ).order_by(
         func.count(Pedido.id_pedido).desc()
     ).all()
@@ -322,7 +333,9 @@ def estadisticas_mes(
     db: Session = Depends(get_db),
     usuario=Depends(requerir_admin)
 ):
-    """Ventas agrupadas por día del mes actual."""
+    """Ventas agrupadas por día del mes actual (zona Hermosillo)."""
+    # FIX: mes/año en Hermosillo
+    hoy_hermosillo = datetime.now(ZONA)
     resultado = db.query(
         cast(Pedido.fecha_pedido, Date).label("fecha"),
         func.count(Pedido.id_pedido).label("total_pedidos"),
@@ -330,8 +343,8 @@ def estadisticas_mes(
     ).filter(
         Pedido.id_restaurante == usuario.id_restaurante,
         Pedido.estado != "cancelado",
-        func.month(Pedido.fecha_pedido) == func.month(func.now()),
-        func.year(Pedido.fecha_pedido) == func.year(func.now())
+        func.month(Pedido.fecha_pedido) == hoy_hermosillo.month,
+        func.year(Pedido.fecha_pedido)  == hoy_hermosillo.year
     ).group_by(
         cast(Pedido.fecha_pedido, Date)
     ).order_by(
@@ -400,9 +413,9 @@ def editar_usuario(
     if not u:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
 
-    if "nombre"   in body: u.nombre  = body["nombre"]
-    if "rol"      in body: u.rol     = body["rol"]
-    if "activo"   in body: u.activo  = body["activo"]
+    if "nombre"   in body: u.nombre   = body["nombre"]
+    if "rol"      in body: u.rol      = body["rol"]
+    if "activo"   in body: u.activo   = body["activo"]
     if "telefono" in body: u.telefono = body["telefono"]
     if "password" in body and body["password"]:
         u.password_hash = hashear_password(body["password"])
