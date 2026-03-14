@@ -64,3 +64,10 @@ def raiz():
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.get("/config/pedidos-habilitados")
+def estado_pedidos_publico():
+    """Endpoint público para que el menú consulte si se aceptan pedidos."""
+    from app.routers.admin import pedidos_habilitados
+    return {"pedidos_habilitados": pedidos_habilitados}

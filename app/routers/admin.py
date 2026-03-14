@@ -14,6 +14,23 @@ from zoneinfo import ZoneInfo
 ZONA = ZoneInfo("America/Hermosillo")
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
+# ── Estado global de pedidos (en memoria) ────────────────────
+pedidos_habilitados = True
+
+
+@router.get("/config/pedidos-habilitados")
+def obtener_estado_pedidos(usuario=Depends(requerir_admin)):
+    """Consulta si los pedidos están habilitados."""
+    return {"pedidos_habilitados": pedidos_habilitados}
+
+
+@router.patch("/config/pedidos-habilitados")
+def cambiar_estado_pedidos(body: dict, usuario=Depends(requerir_admin)):
+    """Habilita o deshabilita la recepción de pedidos."""
+    global pedidos_habilitados
+    pedidos_habilitados = bool(body.get("habilitados", True))
+    return {"pedidos_habilitados": pedidos_habilitados}
+
 
 @router.get("/estadisticas/hoy")
 def estadisticas_hoy(

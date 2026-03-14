@@ -18,6 +18,13 @@ def crear_pedido(
     usuario=Depends(get_usuario_actual)
 ):
     """Crea un nuevo pedido con todos sus productos."""
+    # Verificar si los pedidos están habilitados
+    from app.routers.admin import pedidos_habilitados
+    if not pedidos_habilitados:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Los pedidos están temporalmente deshabilitados. Intenta más tarde."
+        )
 
     # Crear el pedido
     nuevo_pedido = Pedido(
