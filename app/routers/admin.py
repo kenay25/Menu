@@ -38,12 +38,13 @@ def estadisticas_hoy(
     usuario=Depends(requerir_admin)
 ):
     """Estadísticas del día actual en zona Hermosillo."""
-    # FIX: usar fecha de Hermosillo, no UTC del servidor
+    # fecha_pedido se guarda en UTC en MySQL.
+    # Restamos 7h antes de castear a Date para obtener la fecha local real.
     hoy = datetime.now(ZONA).date()
 
     pedidos_hoy = db.query(Pedido).filter(
         Pedido.id_restaurante == usuario.id_restaurante,
-        cast(Pedido.fecha_pedido, Date) == hoy,
+        cast(Pedido.fecha_pedido - timedelta(hours=7), Date) == hoy,
         Pedido.estado != "cancelado"
     ).all()
 
@@ -68,11 +69,13 @@ def estadisticas_semana(
     db: Session = Depends(get_db),
     usuario=Depends(requerir_admin)
 ):
-    """Ventas agrupadas por día de los últimos 7 días."""
+    """Ventas agrupadas por día de los últimos 7 días (zona Hermosillo)."""
     hace_7_dias = datetime.now(ZONA) - timedelta(days=7)
+    # Ajustar UTC → Hermosillo restando 7h antes de castear a Date
+    fecha_local = cast(Pedido.fecha_pedido - timedelta(hours=7), Date)
 
     resultado = db.query(
-        cast(Pedido.fecha_pedido, Date).label("fecha"),
+        fecha_local.label("fecha"),
         func.count(Pedido.id_pedido).label("total_pedidos"),
         func.sum(Pedido.total).label("total_ventas")
     ).filter(
@@ -80,9 +83,9 @@ def estadisticas_semana(
         Pedido.estado != "cancelado",
         Pedido.fecha_pedido >= hace_7_dias
     ).group_by(
-        cast(Pedido.fecha_pedido, Date)
+        fecha_local
     ).order_by(
-        cast(Pedido.fecha_pedido, Date).desc()
+        fecha_local.desc()
     ).all()
 
     return [
@@ -177,6 +180,31 @@ def mejores_clientes(
     ]
 
 
+@router.get("/usuarios/{id_usuario}")
+def obtener_usuario(
+    id_usuario: int,
+    db: Session = Depends(get_db),
+    usuario=Depends(requerir_admin)
+):
+    """Obtiene un usuario por ID (incluye password para el panel admin)."""
+    u = db.query(Usuario).filter(
+        Usuario.id_usuario == id_usuario,
+        Usuario.id_restaurante == usuario.id_restaurante
+    ).first()
+    if not u:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    return {
+        "id_usuario": u.id_usuario,
+        "nombre": u.nombre,
+        "email": u.email,
+        "telefono": u.telefono,
+        "rol": u.rol,
+        "activo": u.activo,
+        "ultimo_acceso": u.ultimo_acceso.isoformat() if u.ultimo_acceso else None,
+        "password_plain": u.password_hash
+    }
+
+
 @router.get("/usuarios")
 def listar_usuarios(
     db: Session = Depends(get_db),
@@ -195,7 +223,8 @@ def listar_usuarios(
             "telefono": u.telefono,
             "rol": u.rol,
             "activo": u.activo,
-            "ultimo_acceso": u.ultimo_acceso.isoformat() if u.ultimo_acceso else None
+            "ultimo_acceso": u.ultimo_acceso.isoformat() if u.ultimo_acceso else None,
+            "password_plain": u.password_hash  # solo admins ven esto; si usas bcrypt será el hash
         }
         for u in usuarios
     ]
@@ -351,21 +380,23 @@ def estadisticas_mes(
     usuario=Depends(requerir_admin)
 ):
     """Ventas agrupadas por día del mes actual (zona Hermosillo)."""
-    # FIX: mes/año en Hermosillo
     hoy_hermosillo = datetime.now(ZONA)
+    # Ajustar UTC → Hermosillo restando 7h antes de castear/agrupar
+    fecha_local = cast(Pedido.fecha_pedido - timedelta(hours=7), Date)
+
     resultado = db.query(
-        cast(Pedido.fecha_pedido, Date).label("fecha"),
+        fecha_local.label("fecha"),
         func.count(Pedido.id_pedido).label("total_pedidos"),
         func.sum(Pedido.total).label("total_ventas")
     ).filter(
         Pedido.id_restaurante == usuario.id_restaurante,
         Pedido.estado != "cancelado",
-        func.month(Pedido.fecha_pedido) == hoy_hermosillo.month,
-        func.year(Pedido.fecha_pedido)  == hoy_hermosillo.year
+        func.month(Pedido.fecha_pedido - timedelta(hours=7)) == hoy_hermosillo.month,
+        func.year(Pedido.fecha_pedido  - timedelta(hours=7)) == hoy_hermosillo.year
     ).group_by(
-        cast(Pedido.fecha_pedido, Date)
+        fecha_local
     ).order_by(
-        cast(Pedido.fecha_pedido, Date).asc()
+        fecha_local.asc()
     ).all()
 
     return [

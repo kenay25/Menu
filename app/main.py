@@ -5,6 +5,9 @@ from app.database import engine, Base, SessionLocal
 from app.core.security import hashear_password
 from app.models.usuario import Usuario
 from app.routers import auth, clientes, pedidos, admin, productos, historial
+import os
+
+os.environ['TZ'] = 'America/Hermosillo'
 
 Base.metadata.create_all(bind=engine)
 

@@ -30,6 +30,7 @@ def _serializar(p: Producto) -> dict:
         "is_extra_ing":     bool(p.is_extra_ing),
         "ingredientes":     p.ingredientes or [],
         "extras_producto":  p.extras_producto or [],
+        "imagen_url":       p.imagen_url or None,
     }
 
 
@@ -89,6 +90,7 @@ def crear_producto(
         is_extra_ing    = bool(body.get("is_extra_ing", False)),
         ingredientes    = body.get("ingredientes", []),
         extras_producto = body.get("extras_producto", []),
+        imagen_url      = body.get("imagen_url") or None,
     )
     db.add(nuevo)
     db.commit()
@@ -113,7 +115,7 @@ def editar_producto(
 
     campos = [
         "nombre", "precio", "id_categoria", "disponible",
-        "descripcion", "emoji", "tag",
+        "descripcion", "emoji", "tag", "imagen_url",
         "has_alga", "has_style", "has_protein",
         "has_sauce", "has_sauce_1only", "has_sauce_2", "has_sauce_alitas",
         "has_sushi_choice", "has_ice", "is_extra_ing",

@@ -34,3 +34,6 @@ class Producto(Base):
     # extras_producto: [{"id","emoji","name","note","price"}]
     ingredientes    = Column(JSON,          nullable=True)
     extras_producto = Column(JSON,          nullable=True)
+
+    # Imagen del platillo (URL de Cloudinary o ruta local /img/nombre.jpg)
+    imagen_url      = Column(String(500),   nullable=True)

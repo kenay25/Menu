@@ -971,6 +971,16 @@
     }
     .tabla-emoji-cell { font-size: 22px; text-align: center; }
 
+    /* ── Password eye ── */
+    .pwd-wrap { position: relative; }
+    .pwd-wrap input { padding-right: 42px !important; width: 100%; }
+    .btn-eye-pwd {
+      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; font-size: 16px;
+      color: var(--muted); padding: 4px; line-height: 1; transition: color 0.2s;
+    }
+    .btn-eye-pwd:hover { color: var(--pink); }
+
     /* ── Toggle disponible ── */
     .toggle-wrap {
       display: flex;
@@ -2149,11 +2159,10 @@
           <div class="form-group" id="usr-password-wrap">
             <label>Contraseña <small style="text-transform:none;letter-spacing:0" id="usr-password-hint">(obligatoria
                 para nuevo usuario)</small></label>
-            <div style="position:relative">
-              <input type="password" id="usr-password" placeholder="••••••••" style="padding-right:40px;width:100%">
-              <button type="button" id="btn-pwd-eye" onclick="togglePwdEye()"
-                style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);padding:4px;line-height:1"
-                title="Mostrar/ocultar contraseña">👁</button>
+            <div class="pwd-wrap">
+              <input type="password" id="usr-password" placeholder="••••••••">
+              <button type="button" class="btn-eye-pwd" id="btn-eye-pwd"
+                onclick="togglePwdEye()" title="Mostrar contraseña">👁</button>
             </div>
           </div>
         </div>
@@ -2291,11 +2300,10 @@
 
     /* ══ DASHBOARD ══════════════════════════════════════════════ */
     async function cargarDashboard() {
-      const _hf = _hoyHermosillo();
       const [hoy, semana, horas, topProds] = await Promise.all([
-        api('/admin/estadisticas/hoy?fecha=' + _hf),
-        api('/admin/estadisticas/semana?fecha=' + _hf),
-        api('/admin/estadisticas/horas-pico?fecha=' + _hf),
+        api('/admin/estadisticas/hoy?fecha=' + _hoyHermosillo()),
+        api('/admin/estadisticas/semana?fecha=' + _hoyHermosillo()),
+        api('/admin/estadisticas/horas-pico?fecha=' + _hoyHermosillo()),
         api('/admin/productos/mas-vendidos')
       ]);
 
@@ -2523,7 +2531,7 @@
         if (p.is_extra_ing) opts.push('➕Extra');
         return `<tr>
       <td>${p.id_producto}</td>
-      <td>${(p.imagen_url || _imgGet(p.id_producto)) ? `<img class='tabla-img' src='${p.imagen_url || _imgGet(p.id_producto)}' alt='${p.nombre}' onerror="this.style.display='none';this.nextSibling.style.display='inline'"><span class='tabla-emoji-cell' style='display:none'>${p.emoji||'🍣'}</span>` : `<span class='tabla-emoji-cell'>${p.emoji || '🍣'}</span>`}</td>
+      <td>${(p.imagen_url || _imgGet(p.id_producto)) ? `<img class='tabla-img' src='${p.imagen_url || _imgGet(p.id_producto)}' alt='${p.nombre}' onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"><span class='tabla-emoji-cell' style='display:none'>${p.emoji||'🍣'}</span>` : `<span class='tabla-emoji-cell'>${p.emoji || '🍣'}</span>`}</td>
       <td><strong>${p.nombre}</strong>${p.tag ? ` <span class="badge" style="background:#FDE8EF;color:var(--pink-deep);font-size:10px">${p.tag}</span>` : ''}</td>
       <td style="max-width:180px;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.descripcion || '—'}</td>
       <td><strong>$${parseFloat(p.precio).toLocaleString()}</strong></td>
@@ -2599,7 +2607,7 @@
       document.getElementById('prod-nombre').value = p.nombre;
       document.getElementById('prod-emoji').value = p.emoji || '🍣';
       syncEmojiSel(p.emoji || '🍣');
-      // Cargar imagen: backend primero, localStorage como respaldo
+      // Imagen: backend primero, localStorage como respaldo
       const _imgSrc = p.imagen_url || _imgGet(p.id_producto);
       if (_imgSrc) {
         document.getElementById('prod-imagen-url').value = _imgSrc;
@@ -2680,10 +2688,10 @@
       if (id) {
         await api(`/productos/${id}`, 'PUT', body);
       } else {
-        const _res = await api('/productos/', 'POST', body);
-        if (_res && _res.id_producto) _savedId = String(_res.id_producto);
+        const _resp = await api('/productos/', 'POST', body);
+        if (_resp && _resp.id_producto) _savedId = String(_resp.id_producto);
       }
-      // Persistir imagen en localStorage (mientras el backend no soporte imagen_url)
+      // Guardar imagen en localStorage mientras la DB no tenga imagen_url
       const _imgVal = document.getElementById('prod-imagen-url').value.trim();
       if (_savedId && _imgVal) _imgSet(_savedId, _imgVal);
       else if (_savedId && !_imgVal) _imgDel(_savedId);
@@ -2705,11 +2713,10 @@
 
     /* ══ ESTADÍSTICAS ═══════════════════════════════════════════ */
     async function cargarEstadisticas() {
-      const _hf = _hoyHermosillo();
       const [mes, topProds, horas] = await Promise.all([
-        api('/admin/estadisticas/mes?fecha=' + _hf),
+        api('/admin/estadisticas/mes?fecha=' + _hoyHermosillo()),
         api('/admin/productos/mas-vendidos'),
-        api('/admin/estadisticas/horas-pico?fecha=' + _hf)
+        api('/admin/estadisticas/horas-pico?fecha=' + _hoyHermosillo())
       ]);
 
       if (mes && mes.length) {
@@ -2813,20 +2820,18 @@
       document.getElementById('usr-rol').value = rol;
       document.getElementById('usr-activo').value = activo ? 'true' : 'false';
       document.getElementById('usr-telefono').value = telefono || '';
-      // Intentar cargar contraseña del usuario (solo admins pueden verla)
       document.getElementById('usr-password').value = '';
-      document.getElementById('usr-password').type = 'password';
-      const eyeBtn = document.getElementById('btn-pwd-eye');
-      if (eyeBtn) eyeBtn.textContent = '👁';
-      const hintEl = document.getElementById('usr-password-hint');
-      if (hintEl) hintEl.textContent = '(dejar vacío para no cambiar)';
-      try {
-        const uData = await api('/admin/usuarios/' + id);
-        if (uData && uData.password_plain) {
-          document.getElementById('usr-password').value = uData.password_plain;
-        }
-      } catch(e) { /* sin contraseña visible */ }
       document.getElementById('usr-password-hint').textContent = '(dejar vacío para no cambiar)';
+      // Reset eye button al estado inicial
+      const _eyeBtn = document.getElementById('btn-eye-pwd');
+      const _pwdIn  = document.getElementById('usr-password');
+      if (_eyeBtn) { _eyeBtn.textContent = '👁'; _eyeBtn.title = 'Mostrar contraseña'; }
+      if (_pwdIn)  _pwdIn.type = 'password';
+      // Intentar traer la contraseña del backend
+      try {
+        const _u = await api('/admin/usuarios/' + id);
+        if (_u && _u.password_plain) _pwdIn.value = _u.password_plain;
+      } catch(e) {}
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -3070,43 +3075,40 @@
     }
 
 
-    /* ══ IMAGEN — localStorage helper ══════════════════════════════
-       Guarda imagen_url por id de producto mientras el backend
-       no tenga la columna imagen_url en la DB.
-    ═══════════════════════════════════════════════════════════════ */
-    const _IMG_NS = 'sushi_img_';
-    function _imgGet(id) { return id ? (localStorage.getItem(_IMG_NS + id) || null) : null; }
-    function _imgSet(id, url) { if (id && url) localStorage.setItem(_IMG_NS + id, url); }
-    function _imgDel(id) { if (id) localStorage.removeItem(_IMG_NS + id); }
+    /* ════════════════════════════════════════════════════════════
+       HELPERS
+    ════════════════════════════════════════════════════════════ */
 
-    /* ══ FECHA HERMOSILLO ═══════════════════════════════════════════
+    /* ── Imagen en localStorage ──────────────────────────────────
+       Puente mientras imagen_url no está en la DB.
+       Una vez que ejecutes la migración SQL y el backend devuelva
+       imagen_url, estas funciones simplemente no se usan más.     */
+    const _IMGNS = 'sushi_img_';
+    function _imgGet(id) { return id ? localStorage.getItem(_IMGNS + String(id)) : null; }
+    function _imgSet(id, url) { if (id && url) localStorage.setItem(_IMGNS + String(id), url); }
+    function _imgDel(id) { if (id) localStorage.removeItem(_IMGNS + String(id)); }
+
+    /* ── Fecha Hermosillo ─────────────────────────────────────────
        Devuelve 'YYYY-MM-DD' en hora local de Hermosillo (UTC-7).
-       Se pasa al backend para que calcule "hoy" correctamente
-       y no use su reloj UTC que suma un día.
-    ═══════════════════════════════════════════════════════════════ */
+       El backend en Railway corre en UTC, por lo que a las 11pm
+       del día 14 ya cree que es el día 15. Pasando la fecha local
+       como parámetro se fuerza el cálculo correcto.              */
     function _hoyHermosillo() {
-      const now = new Date();
-      const local = new Date(now.toLocaleString('en-US', { timeZone: 'America/Hermosillo' }));
-      const y = local.getFullYear();
-      const m = String(local.getMonth() + 1).padStart(2, '0');
-      const d = String(local.getDate()).padStart(2, '0');
-      return `${y}-${m}-${d}`;
+      const d = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Hermosillo' }));
+      return d.getFullYear() + '-' +
+             String(d.getMonth() + 1).padStart(2, '0') + '-' +
+             String(d.getDate()).padStart(2, '0');
     }
 
-    /* ══ OJO CONTRASEÑA ═════════════════════════════════════════════ */
+    /* ── Toggle ojo contraseña ────────────────────────────────── */
     function togglePwdEye() {
       const input = document.getElementById('usr-password');
-      const btn   = document.getElementById('btn-pwd-eye');
+      const btn   = document.getElementById('btn-eye-pwd');
       if (!input || !btn) return;
-      if (input.type === 'password') {
-        input.type = 'text';
-        btn.textContent = '🙈';
-        btn.title = 'Ocultar contraseña';
-      } else {
-        input.type = 'password';
-        btn.textContent = '👁';
-        btn.title = 'Mostrar contraseña';
-      }
+      const show  = input.type === 'password';
+      input.type      = show ? 'text'    : 'password';
+      btn.textContent = show ? '🙈'      : '👁';
+      btn.title       = show ? 'Ocultar' : 'Mostrar';
     }
 
   </script>
