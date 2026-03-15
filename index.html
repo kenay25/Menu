@@ -2009,7 +2009,6 @@
       renderOrderSummary();
       updateBar();
       initScrollSpy();
-      // Cargar imágenes del backend y actualizar las tarjetas
       sincronizarImagenesMenu();
       checkPedidosHabilitados();
       setInterval(checkPedidosHabilitados, 60000);
@@ -2720,11 +2719,11 @@
       var html = data.pedidos.length === 0
         ? '<div style="text-align:center;padding:24px;color:#9E7080">Aún no tienes pedidos registrados</div>'
         : data.pedidos.map(function (p) {
-          // Normalizar fecha de MySQL ('2026-03-14 22:30:00') a ISO válido
-          var _f = p.fecha || '';
-          if (_f && !_f.endsWith('Z') && !_f.includes('+') && !_f.includes('-', 10))
-            _f = _f.replace(' ', 'T') + '-07:00';
-          var fecha = _f ? new Date(_f) : new Date(0);
+          // Normalizar formato MySQL '2026-03-14 22:30:00' → ISO con timezone
+          var _rawF = p.fecha || '';
+          if (_rawF && !_rawF.endsWith('Z') && !_rawF.includes('+') && !_rawF.match(/-\d{2}:\d{2}$/))
+            _rawF = _rawF.replace(' ', 'T') + '-07:00';
+          var fecha = _rawF ? new Date(_rawF) : new Date(0);
           var fechaStr = fecha.toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', timeZone: 'America/Hermosillo' });
           var horaStr = fecha.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'America/Hermosillo' });
           var mods_nombres = { sc1: 'BBQ', sc2: 'Búfalo', sc3: 'Mixto', sc4: 'BBQ Chipotle', sc5: 'Naranja Chipotle', sc6: 'Tamarindo', sc7: 'Mango Hot', sc8: 'Mango Habanero', sc9: 'Piña Hot' };
@@ -2774,67 +2773,66 @@
     }
 
 
-    /* ══ SINCRONIZAR IMÁGENES DEL BACKEND ════════════════════════
-       Consulta /productos/ y actualiza las tarjetas del menú
-       con imagen_url si el backend ya la tiene en DB.
-       También lee del localStorage (guardado por el admin panel).
-    ════════════════════════════════════════════════════════════ */
-    var _localImgNS = 'sushi_img_';
-
-    function _getLocalImg(dbId) {
-      return dbId ? localStorage.getItem(_localImgNS + String(dbId)) : null;
-    }
-
+    /* ══ SINCRONIZAR IMÁGENES DEL BACKEND EN EL MENÚ ════════════
+       Llama a /productos/ con el token del menú y actualiza img
+       en cada tarjeta que tenga imagen_url en la DB.
+    ═══════════════════════════════════════════════════════════ */
     async function sincronizarImagenesMenu() {
       try {
-        var res = await fetch(API_URL + '/productos/');
+        // Obtener token (mismo que usa el sistema de pedidos)
+        var token = API_TOKEN || await loginMenuToken();
+        if (!token) return;
+
+        var res = await fetch(API_URL + '/productos/', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
         if (!res.ok) return;
         var productos = await res.json();
 
-        // Mapear dbId → imagen_url (backend o localStorage)
+        // Mapear id_producto → imagen_url
         var imgMap = {};
         productos.forEach(function(p) {
-          var url = p.imagen_url || _getLocalImg(p.id_producto);
-          if (url) imgMap[p.id_producto] = url;
+          if (p.imagen_url) imgMap[p.id_producto] = p.imagen_url;
         });
-
         if (Object.keys(imgMap).length === 0) return;
 
-        // Actualizar cada item en MENU y PROMOS que tenga dbId con imagen
-        var allSections = ['combos','sushis','entradas','especiales','bebidas'];
-        allSections.forEach(function(sec) {
+        // Actualizar MENU estático y re-renderizar secciones con cambios
+        var secGridMap = {
+          combos:    'grid-combos',
+          sushis:    'grid-sushis',
+          entradas:  'grid-entradas',
+          especiales:'grid-especiales',
+          bebidas:   'grid-bebidas'
+        };
+        Object.keys(secGridMap).forEach(function(sec) {
           if (!MENU[sec]) return;
           var updated = false;
           MENU[sec].forEach(function(item) {
-            if (item.dbId && imgMap[item.dbId]) {
+            if (item.dbId && imgMap[item.dbId] && item.img !== imgMap[item.dbId]) {
               item.img = imgMap[item.dbId];
               updated = true;
             }
           });
           if (updated) {
-            // Re-renderizar solo esta sección
-            var gridId = {
-              combos:'grid-combos', sushis:'grid-sushis',
-              entradas:'grid-entradas', especiales:'grid-especiales',
-              bebidas:'grid-bebidas'
-            }[sec];
-            if (gridId) {
-              var g = document.getElementById(gridId);
-              if (g) g.innerHTML = MENU[sec].map(cardHTML).join('');
-            }
+            var g = document.getElementById(secGridMap[sec]);
+            if (g) g.innerHTML = MENU[sec].map(cardHTML).join('');
           }
         });
 
         // Promos también
         if (typeof PROMOS !== 'undefined') {
+          var promoUpdated = false;
           PROMOS.forEach(function(item) {
-            if (item.dbId && imgMap[item.dbId]) item.img = imgMap[item.dbId];
+            if (item.dbId && imgMap[item.dbId] && item.img !== imgMap[item.dbId]) {
+              item.img = imgMap[item.dbId];
+              promoUpdated = true;
+            }
           });
-          renderPromos();
+          if (promoUpdated) renderPromos();
         }
 
       } catch(e) {
-        // Sin conexión o error — el menú estático ya está renderizado, no pasa nada
+        // Sin conexión — el menú estático ya está visible, no pasa nada
       }
     }
 
