@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from sqlalchemy import func, cast, Date
+from sqlalchemy import func, cast, Date, text
 from datetime import datetime, date, timedelta
 from app.database import get_db
 from app.models.pedido import Pedido, DetallePedido
@@ -44,7 +44,7 @@ def estadisticas_hoy(
 
     pedidos_hoy = db.query(Pedido).filter(
         Pedido.id_restaurante == usuario.id_restaurante,
-        cast(Pedido.fecha_pedido - timedelta(hours=7), Date) == hoy,
+        cast(func.date_sub(Pedido.fecha_pedido, text("INTERVAL 7 HOUR")), Date) == hoy,
         Pedido.estado != "cancelado"
     ).all()
 
@@ -72,7 +72,7 @@ def estadisticas_semana(
     """Ventas agrupadas por día de los últimos 7 días (zona Hermosillo)."""
     hace_7_dias = datetime.now(ZONA) - timedelta(days=7)
     # Ajustar UTC → Hermosillo restando 7h antes de castear a Date
-    fecha_local = cast(Pedido.fecha_pedido - timedelta(hours=7), Date)
+    fecha_local = cast(func.date_sub(Pedido.fecha_pedido, text("INTERVAL 7 HOUR")), Date)
 
     resultado = db.query(
         fecha_local.label("fecha"),
@@ -382,7 +382,7 @@ def estadisticas_mes(
     """Ventas agrupadas por día del mes actual (zona Hermosillo)."""
     hoy_hermosillo = datetime.now(ZONA)
     # Ajustar UTC → Hermosillo restando 7h antes de castear/agrupar
-    fecha_local = cast(Pedido.fecha_pedido - timedelta(hours=7), Date)
+    fecha_local = cast(func.date_sub(Pedido.fecha_pedido, text("INTERVAL 7 HOUR")), Date)
 
     resultado = db.query(
         fecha_local.label("fecha"),
@@ -391,8 +391,8 @@ def estadisticas_mes(
     ).filter(
         Pedido.id_restaurante == usuario.id_restaurante,
         Pedido.estado != "cancelado",
-        func.month(Pedido.fecha_pedido - timedelta(hours=7)) == hoy_hermosillo.month,
-        func.year(Pedido.fecha_pedido  - timedelta(hours=7)) == hoy_hermosillo.year
+        func.month(func.date_sub(Pedido.fecha_pedido, text("INTERVAL 7 HOUR"))) == hoy_hermosillo.month,
+        func.year(func.date_sub(Pedido.fecha_pedido, text("INTERVAL 7 HOUR"))) == hoy_hermosillo.year
     ).group_by(
         fecha_local
     ).order_by(
