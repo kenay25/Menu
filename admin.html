@@ -971,27 +971,6 @@
     }
     .tabla-emoji-cell { font-size: 22px; text-align: center; }
 
-    /* ── Password eye toggle ── */
-    .password-wrap { position: relative; }
-    .password-wrap input { padding-right: 40px; width: 100%; }
-    .btn-eye {
-      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-      background: none; border: none; cursor: pointer; font-size: 16px;
-      color: var(--muted); padding: 4px; line-height: 1;
-      transition: color 0.2s;
-    }
-    .btn-eye:hover { color: var(--pink); }
-
-    /* ── Category-based options ── */
-    .opts-group {
-      border: 1px solid var(--border); border-radius: 10px;
-      padding: 10px 12px; margin-bottom: 6px;
-    }
-    .opts-group-title {
-      font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
-      color: var(--muted); font-weight: 700; margin-bottom: 8px;
-    }
-
     /* ── Toggle disponible ── */
     .toggle-wrap {
       display: flex;
@@ -1965,7 +1944,7 @@
           </div>
           <div class="form-group">
             <label>Categoría</label>
-            <select id="prod-categoria" onchange="renderOpciones(this.value, _getCheckedValues())">
+            <select id="prod-categoria">
               <option value="1">🍱 Combos y Charolas</option>
               <option value="2">🍣 Sushis</option>
               <option value="3">🥗 Entradas</option>
@@ -2012,12 +1991,23 @@
           </div>
         </div>
 
-        <!-- Opciones de personalización (dinámicas por categoría) -->
-        <div style="margin:18px 0 10px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600">
-          ⚙️ Opciones de personalización — <span id="opts-cat-label" style="color:var(--pink);font-size:11px;text-transform:none;letter-spacing:0;font-weight:600">cambia según categoría</span>
+        <!-- Opciones del modal de personalización -->
+        <div
+          style="margin:18px 0 10px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600">
+          ⚙️ Opciones de personalización (lo que el cliente puede elegir)
         </div>
-        <div id="prod-opciones" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px">
-          <!-- renderizado por renderOpciones() -->
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px" id="prod-opciones">
+          <label class="opt-check"><input type="checkbox" id="opt-alga">🌿 Con/sin alga</label>
+          <label class="opt-check"><input type="checkbox" id="opt-style">🍳 Natural/empanizado</label>
+          <label class="opt-check"><input type="checkbox" id="opt-protein">🥩 Elige proteína</label>
+          <label class="opt-check"><input type="checkbox" id="opt-sauce">🫙 Salsa boneles</label>
+          <label class="opt-check"><input type="checkbox" id="opt-sauce-1only">🫙 Solo 1 salsa boneles</label>
+          <label class="opt-check"><input type="checkbox" id="opt-sauce-2">🫙 Salsa 2ª orden boneles</label>
+          <label class="opt-check"><input type="checkbox" id="opt-sauce-alitas">🫙 Salsa alitas</label>
+          <label class="opt-check"><input type="checkbox" id="opt-sushi-choice">🍣 Elige sushi
+            (Bombazo/Cal/Sonora)</label>
+          <label class="opt-check"><input type="checkbox" id="opt-ice">🧊 Con/sin hielo</label>
+          <label class="opt-check"><input type="checkbox" id="opt-extra-ing">➕ Ingrediente extra ($15)</label>
         </div>
 
         <!-- Editor de ingredientes -->
@@ -2159,9 +2149,11 @@
           <div class="form-group" id="usr-password-wrap">
             <label>Contraseña <small style="text-transform:none;letter-spacing:0" id="usr-password-hint">(obligatoria
                 para nuevo usuario)</small></label>
-            <div class="password-wrap">
-              <input type="password" id="usr-password" placeholder="••••••••">
-              <button type="button" class="btn-eye" onclick="togglePasswordEye()" title="Mostrar/ocultar contraseña">👁</button>
+            <div style="position:relative">
+              <input type="password" id="usr-password" placeholder="••••••••" style="padding-right:40px;width:100%">
+              <button type="button" id="btn-pwd-eye" onclick="togglePwdEye()"
+                style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);padding:4px;line-height:1"
+                title="Mostrar/ocultar contraseña">👁</button>
             </div>
           </div>
         </div>
@@ -2252,7 +2244,6 @@
       document.getElementById('main-content').style.display = 'flex';
       document.getElementById('admin-name').textContent = USUARIO.nombre;
       document.getElementById('admin-avatar').textContent = USUARIO.nombre.charAt(0).toUpperCase();
-      renderOpciones(2, {});
       cargarDashboard();
       cargarEstadoPedidos();
       iniciarAutoRefresh();
@@ -2299,22 +2290,12 @@
     }
 
     /* ══ DASHBOARD ══════════════════════════════════════════════ */
-    function fechaHermosillo() {
-      // Retorna la fecha actual en Hermosillo (UTC-7) como 'YYYY-MM-DD'
-      const now = new Date();
-      const herm = new Date(now.toLocaleString('en-US', { timeZone: 'America/Hermosillo' }));
-      const y = herm.getFullYear();
-      const m = String(herm.getMonth() + 1).padStart(2, '0');
-      const d = String(herm.getDate()).padStart(2, '0');
-      return `${y}-${m}-${d}`;
-    }
-
     async function cargarDashboard() {
-      const hoy_fecha = fechaHermosillo();
+      const _hf = _hoyHermosillo();
       const [hoy, semana, horas, topProds] = await Promise.all([
-        api('/admin/estadisticas/hoy?fecha=' + hoy_fecha),
-        api('/admin/estadisticas/semana?fecha=' + hoy_fecha),
-        api('/admin/estadisticas/horas-pico?fecha=' + hoy_fecha),
+        api('/admin/estadisticas/hoy?fecha=' + _hf),
+        api('/admin/estadisticas/semana?fecha=' + _hf),
+        api('/admin/estadisticas/horas-pico?fecha=' + _hf),
         api('/admin/productos/mas-vendidos')
       ]);
 
@@ -2542,7 +2523,7 @@
         if (p.is_extra_ing) opts.push('➕Extra');
         return `<tr>
       <td>${p.id_producto}</td>
-      <td>${(p.imagen_url || getImgLocal(p.id_producto)) ? `<img class='tabla-img' src='${p.imagen_url || getImgLocal(p.id_producto)}' alt='${p.nombre}'>` : `<span class='tabla-emoji-cell'>${p.emoji || '🍣'}</span>`}</td>
+      <td>${(p.imagen_url || _imgGet(p.id_producto)) ? `<img class='tabla-img' src='${p.imagen_url || _imgGet(p.id_producto)}' alt='${p.nombre}' onerror="this.style.display='none';this.nextSibling.style.display='inline'"><span class='tabla-emoji-cell' style='display:none'>${p.emoji||'🍣'}</span>` : `<span class='tabla-emoji-cell'>${p.emoji || '🍣'}</span>`}</td>
       <td><strong>${p.nombre}</strong>${p.tag ? ` <span class="badge" style="background:#FDE8EF;color:var(--pink-deep);font-size:10px">${p.tag}</span>` : ''}</td>
       <td style="max-width:180px;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.descripcion || '—'}</td>
       <td><strong>$${parseFloat(p.precio).toLocaleString()}</strong></td>
@@ -2618,11 +2599,11 @@
       document.getElementById('prod-nombre').value = p.nombre;
       document.getElementById('prod-emoji').value = p.emoji || '🍣';
       syncEmojiSel(p.emoji || '🍣');
-      // Cargar imagen: primero del backend, si no del localStorage
-      const imgSrc = p.imagen_url || getImgLocal(p.id_producto);
-      if (imgSrc) {
-        document.getElementById('prod-imagen-url').value = imgSrc;
-        document.getElementById('prod-imagen-preview').src = imgSrc;
+      // Cargar imagen: backend primero, localStorage como respaldo
+      const _imgSrc = p.imagen_url || _imgGet(p.id_producto);
+      if (_imgSrc) {
+        document.getElementById('prod-imagen-url').value = _imgSrc;
+        document.getElementById('prod-imagen-preview').src = _imgSrc;
         document.getElementById('prod-imagen-preview').style.display = 'block';
         document.getElementById('img-upload-label').style.display = 'none';
         document.getElementById('btn-img-clear').style.display = 'inline-block';
@@ -2631,15 +2612,14 @@
       }
       document.getElementById('prod-precio').value = p.precio;
       document.getElementById('prod-categoria').value = p.id_categoria || 2;
-      renderOpciones(p.id_categoria || 2, {});
       document.getElementById('prod-tag').value = p.tag || '';
       document.getElementById('prod-disponible').value = p.disponible ? 'true' : 'false';
       document.getElementById('prod-descripcion').value = p.descripcion || '';
-      // Checkboxes: esperar a que renderOpciones termine de renderizar el DOM
-      // Pasamos los valores del producto para que los checkboxes queden marcados
-      const optsVals = {};
-      Object.entries(OPTS_MAP).forEach(([key, elId]) => { optsVals[elId] = !!p[key]; });
-      renderOpciones(p.id_categoria || 2, optsVals);
+      // Checkboxes
+      Object.entries(OPTS_MAP).forEach(([key, elId]) => {
+        const el = document.getElementById(elId);
+        if (el) el.checked = !!p[key];
+      });
       // Ingredientes y extras
       _prodIngs = JSON.parse(JSON.stringify(p.ingredientes || []));
       _prodExtras = JSON.parse(JSON.stringify(p.extras_producto || []));
@@ -2655,7 +2635,6 @@
       clearImage();
       document.getElementById('prod-precio').value = '';
       document.getElementById('prod-categoria').value = '2';
-      renderOpciones(2, {});
       document.getElementById('prod-tag').value = '';
       document.getElementById('prod-disponible').value = 'true';
       document.getElementById('prod-descripcion').value = '';
@@ -2691,23 +2670,23 @@
         ingredientes: ingsValidos,
         extras_producto: extrasValidos,
       };
-      // Checkboxes (renderizados dinámicamente por renderOpciones)
+      // Checkboxes
       Object.entries(OPTS_MAP).forEach(([key, elId]) => {
         const el = document.getElementById(elId);
-        body[key] = (el && el.type === 'checkbox') ? el.checked : false;
+        body[key] = el ? el.checked : false;
       });
 
-      let savedId = id;
+      let _savedId = id;
       if (id) {
         await api(`/productos/${id}`, 'PUT', body);
       } else {
-        const res = await api('/productos/', 'POST', body);
-        if (res && res.id_producto) savedId = res.id_producto;
+        const _res = await api('/productos/', 'POST', body);
+        if (_res && _res.id_producto) _savedId = String(_res.id_producto);
       }
-      // Guardar imagen en localStorage para que se muestre aunque el backend no la devuelva aún
-      const imgUrl = document.getElementById('prod-imagen-url').value.trim();
-      if (savedId && imgUrl) saveImgLocal(savedId, imgUrl);
-      else if (savedId && !imgUrl) removeImgLocal(savedId);
+      // Persistir imagen en localStorage (mientras el backend no soporte imagen_url)
+      const _imgVal = document.getElementById('prod-imagen-url').value.trim();
+      if (_savedId && _imgVal) _imgSet(_savedId, _imgVal);
+      else if (_savedId && !_imgVal) _imgDel(_savedId);
       limpiarFormProducto();
       cargarMenu();
     }
@@ -2726,11 +2705,11 @@
 
     /* ══ ESTADÍSTICAS ═══════════════════════════════════════════ */
     async function cargarEstadisticas() {
-      const hoy_fecha = fechaHermosillo();
+      const _hf = _hoyHermosillo();
       const [mes, topProds, horas] = await Promise.all([
-        api('/admin/estadisticas/mes?fecha=' + hoy_fecha),
+        api('/admin/estadisticas/mes?fecha=' + _hf),
         api('/admin/productos/mas-vendidos'),
-        api('/admin/estadisticas/horas-pico?fecha=' + hoy_fecha)
+        api('/admin/estadisticas/horas-pico?fecha=' + _hf)
       ]);
 
       if (mes && mes.length) {
@@ -2827,14 +2806,26 @@
       }).join('');
     }
 
-    function editarUsuario(id, nombre, email, rol, activo, telefono) {
+    async function editarUsuario(id, nombre, email, rol, activo, telefono) {
       document.getElementById('usr-id').value = id;
       document.getElementById('usr-nombre').value = nombre;
       document.getElementById('usr-email').value = email;
       document.getElementById('usr-rol').value = rol;
       document.getElementById('usr-activo').value = activo ? 'true' : 'false';
       document.getElementById('usr-telefono').value = telefono || '';
+      // Intentar cargar contraseña del usuario (solo admins pueden verla)
       document.getElementById('usr-password').value = '';
+      document.getElementById('usr-password').type = 'password';
+      const eyeBtn = document.getElementById('btn-pwd-eye');
+      if (eyeBtn) eyeBtn.textContent = '👁';
+      const hintEl = document.getElementById('usr-password-hint');
+      if (hintEl) hintEl.textContent = '(dejar vacío para no cambiar)';
+      try {
+        const uData = await api('/admin/usuarios/' + id);
+        if (uData && uData.password_plain) {
+          document.getElementById('usr-password').value = uData.password_plain;
+        }
+      } catch(e) { /* sin contraseña visible */ }
       document.getElementById('usr-password-hint').textContent = '(dejar vacío para no cambiar)';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -3079,113 +3070,34 @@
     }
 
 
-    /* ══ OPCIONES POR CATEGORÍA ════════════════════════════════════ */
-    // Definición de todas las opciones disponibles
-    const ALL_OPTS = [
-      { id:'opt-alga',        key:'has_alga',        label:'🌿 Con/sin alga',               cats:[1,2,4] },
-      { id:'opt-style',       key:'has_style',        label:'🍳 Natural/empanizado',          cats:[1,2,3,4] },
-      { id:'opt-protein',     key:'has_protein',      label:'🥩 Elige proteína',              cats:[1,2,4,6] },
-      { id:'opt-sauce',       key:'has_sauce',        label:'🫙 Salsa boneles',               cats:[1,3,4,6] },
-      { id:'opt-sauce-1only', key:'has_sauce_1only',  label:'🫙 Solo 1 salsa boneles',        cats:[1,2,3,4,6] },
-      { id:'opt-sauce-2',     key:'has_sauce_2',      label:'🫙 Salsa 2ª orden boneles',      cats:[1,6] },
-      { id:'opt-sauce-alitas',key:'has_sauce_alitas', label:'🫙 Salsa alitas',                cats:[1,4,6] },
-      { id:'opt-sushi-choice',key:'has_sushi_choice', label:'🍣 Elige sushi',                 cats:[1,2,4,6] },
-      { id:'opt-ice',         key:'has_ice',          label:'🧊 Con/sin hielo',               cats:[5] },
-      { id:'opt-extra-ing',   key:'is_extra_ing',     label:'➕ Ingrediente extra ($15)',     cats:[1,2,3,4,5,6] },
-    ];
+    /* ══ IMAGEN — localStorage helper ══════════════════════════════
+       Guarda imagen_url por id de producto mientras el backend
+       no tenga la columna imagen_url en la DB.
+    ═══════════════════════════════════════════════════════════════ */
+    const _IMG_NS = 'sushi_img_';
+    function _imgGet(id) { return id ? (localStorage.getItem(_IMG_NS + id) || null) : null; }
+    function _imgSet(id, url) { if (id && url) localStorage.setItem(_IMG_NS + id, url); }
+    function _imgDel(id) { if (id) localStorage.removeItem(_IMG_NS + id); }
 
-    const CATS_NAMES = {
-      1:'🍱 Combos y Charolas', 2:'🍣 Sushis', 3:'🥗 Entradas',
-      4:'⭐ Especiales',        5:'🥤 Bebidas y Extras', 6:'🎁 Promociones'
-    };
-
-    // Guarda los valores antes de re-renderizar para preservarlos
-    function _getCheckedValues() {
-      const vals = {};
-      ALL_OPTS.forEach(o => {
-        const el = document.getElementById(o.id);
-        if (el && el.type === 'checkbox') vals[o.id] = el.checked;
-      });
-      return vals;
+    /* ══ FECHA HERMOSILLO ═══════════════════════════════════════════
+       Devuelve 'YYYY-MM-DD' en hora local de Hermosillo (UTC-7).
+       Se pasa al backend para que calcule "hoy" correctamente
+       y no use su reloj UTC que suma un día.
+    ═══════════════════════════════════════════════════════════════ */
+    function _hoyHermosillo() {
+      const now = new Date();
+      const local = new Date(now.toLocaleString('en-US', { timeZone: 'America/Hermosillo' }));
+      const y = local.getFullYear();
+      const m = String(local.getMonth() + 1).padStart(2, '0');
+      const d = String(local.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
     }
 
-    function renderOpciones(catId, preservedVals) {
-      const cat = parseInt(catId) || 2;
-      const container = document.getElementById('prod-opciones');
-      const lbl = document.getElementById('opts-cat-label');
-      if (lbl) lbl.textContent = CATS_NAMES[cat] || '';
-
-      // Opciones relevantes para esta categoría
-      const relevant = ALL_OPTS.filter(o => o.cats.includes(cat));
-      // Resto (menos relevantes, mostrar como "avanzadas")
-      const extra = ALL_OPTS.filter(o => !o.cats.includes(cat));
-
-      let html = '';
-      if (relevant.length) {
-        html += relevant.map(o => {
-          const checked = preservedVals ? (preservedVals[o.id] || false) : false;
-          return `<label class="opt-check">
-            <input type="checkbox" id="${o.id}"${checked ? ' checked' : ''}>${o.label}
-          </label>`;
-        }).join('');
-      }
-      if (extra.length) {
-        html += `<details style="width:100%;margin-top:6px">
-          <summary style="font-size:10px;color:var(--muted);cursor:pointer;letter-spacing:1px;text-transform:uppercase;font-weight:600;padding:4px 0">
-            ▸ Más opciones
-          </summary>
-          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">
-            ${extra.map(o => {
-              const checked = preservedVals ? (preservedVals[o.id] || false) : false;
-              return `<label class="opt-check" style="opacity:0.7">
-                <input type="checkbox" id="${o.id}"${checked ? ' checked' : ''}>${o.label}
-              </label>`;
-            }).join('')}
-          </div>
-        </details>`;
-      }
-      container.innerHTML = html;
-
-      // Sushi choice: mostrar/ocultar campo de opciones de sushi
-      const sushiCk = document.getElementById('opt-sushi-choice');
-      if (sushiCk) {
-        sushiCk.addEventListener('change', () => toggleSushiOptions(sushiCk.checked));
-        toggleSushiOptions(sushiCk.checked);
-      }
-    }
-
-    // Campo extra: qué sushis se pueden elegir
-    function toggleSushiOptions(show) {
-      let wrap = document.getElementById('sushi-options-wrap');
-      if (!wrap) {
-        wrap = document.createElement('div');
-        wrap.id = 'sushi-options-wrap';
-        wrap.style.cssText = 'margin-top:10px;padding:10px 14px;background:#FFF8F9;border-radius:10px;border:1.5px solid var(--border)';
-        wrap.innerHTML = `
-          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:8px">🍣 Sushis disponibles para elegir</div>
-          <div style="display:flex;flex-wrap:wrap;gap:8px">
-            <label class="opt-check"><input type="checkbox" id="sushi-opt-bombazo" checked>🍣 Bombazo</label>
-            <label class="opt-check"><input type="checkbox" id="sushi-opt-california" checked>🍣 California</label>
-            <label class="opt-check"><input type="checkbox" id="sushi-opt-sonora" checked>🍣 Sonora</label>
-            <div style="width:100%;margin-top:6px">
-              <label style="font-size:11px;color:var(--muted)">Otros (separados por coma):</label>
-              <input type="text" id="sushi-opt-custom" placeholder="Ej. Misil, Fernanda" style="width:100%;margin-top:4px;background:white;border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;font-family:'DM Sans',sans-serif;font-size:12px;outline:none">
-            </div>
-          </div>`;
-        const sushiCk = document.getElementById('opt-sushi-choice');
-        if (sushiCk && sushiCk.closest('label')) {
-          sushiCk.closest('label').after(wrap);
-        } else {
-          document.getElementById('prod-opciones').appendChild(wrap);
-        }
-      }
-      wrap.style.display = show ? 'block' : 'none';
-    }
-
-    /* ══ PASSWORD EYE ═══════════════════════════════════════════════ */
-    function togglePasswordEye() {
+    /* ══ OJO CONTRASEÑA ═════════════════════════════════════════════ */
+    function togglePwdEye() {
       const input = document.getElementById('usr-password');
-      const btn = input.nextElementSibling;
+      const btn   = document.getElementById('btn-pwd-eye');
+      if (!input || !btn) return;
       if (input.type === 'password') {
         input.type = 'text';
         btn.textContent = '🙈';
@@ -3195,26 +3107,6 @@
         btn.textContent = '👁';
         btn.title = 'Mostrar contraseña';
       }
-    }
-
-    /* ══ IMAGEN LOCAL (localStorage fallback) ═══════════════════════
-       Mientras el backend no soporte imagen_url en la DB,
-       guardamos la URL por id_producto en localStorage.
-       Cuando el backend sí la devuelva, se usa la del backend.
-    ══════════════════════════════════════════════════════════════ */
-    const IMG_KEY = 'sushi_img_';
-
-    function saveImgLocal(id, url) {
-      if (!id || !url) return;
-      localStorage.setItem(IMG_KEY + id, url);
-    }
-
-    function getImgLocal(id) {
-      return localStorage.getItem(IMG_KEY + id) || null;
-    }
-
-    function removeImgLocal(id) {
-      localStorage.removeItem(IMG_KEY + id);
     }
 
   </script>
