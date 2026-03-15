@@ -905,6 +905,72 @@
       background: var(--pink-deep);
     }
 
+    /* ── Emoji picker ── */
+    .emoji-field-wrap { position: relative; }
+    .emoji-preview-input {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .emoji-preview-input input {
+      flex: 1;
+    }
+    .btn-emoji-pick {
+      background: #FFF8F9; border: 1.5px solid var(--border);
+      border-radius: 10px; padding: 8px 12px; font-size: 13px;
+      cursor: pointer; white-space: nowrap; color: var(--dark);
+      font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .btn-emoji-pick:hover { border-color: var(--pink); background: #FFF0F4; }
+    .emoji-panel {
+      display: none; position: absolute; top: calc(100% + 6px); left: 0;
+      background: var(--white); border: 1.5px solid var(--border);
+      border-radius: 14px; padding: 12px;
+      box-shadow: 0 8px 32px rgba(194,48,96,0.15);
+      z-index: 300; width: 320px; max-height: 260px; overflow-y: auto;
+    }
+    .emoji-panel.open { display: block; }
+    .emoji-panel-title {
+      font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted); font-weight: 700; margin-bottom: 8px; margin-top: 4px;
+    }
+    .emoji-panel-grid { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+    .emoji-opt {
+      font-size: 22px; padding: 5px 7px; border-radius: 8px; cursor: pointer;
+      transition: background 0.15s; line-height: 1;
+    }
+    .emoji-opt:hover { background: #FFF0F4; }
+    .emoji-opt.sel { background: var(--pink-light); outline: 2px solid var(--pink); }
+
+    /* ── Image uploader ── */
+    .img-upload-wrap {
+      border: 2px dashed var(--border); border-radius: 12px;
+      padding: 14px; text-align: center; cursor: pointer;
+      transition: all 0.2s; background: #FFF8F9; position: relative;
+    }
+    .img-upload-wrap:hover { border-color: var(--pink); background: #FFF0F4; }
+    .img-upload-wrap input[type=file] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .img-upload-preview {
+      width: 100%; max-height: 140px; object-fit: cover;
+      border-radius: 8px; margin-bottom: 8px; display: block;
+    }
+    .img-upload-label { font-size: 12px; color: var(--muted); }
+    .img-upload-label span { color: var(--pink); font-weight: 600; }
+    .btn-img-clear {
+      background: #FDEDEC; border: none; color: #C0392B;
+      border-radius: 7px; padding: 4px 10px; font-size: 11px;
+      cursor: pointer; margin-top: 6px; font-family: 'DM Sans', sans-serif;
+    }
+    .btn-img-clear:hover { background: #C0392B; color: white; }
+
+    /* ── Imagen en tabla ── */
+    .tabla-img {
+      width: 52px; height: 40px; object-fit: cover;
+      border-radius: 7px; display: block;
+    }
+    .tabla-emoji-cell { font-size: 22px; text-align: center; }
+
     /* ── Toggle disponible ── */
     .toggle-wrap {
       display: flex;
@@ -1864,7 +1930,13 @@
           </div>
           <div class="form-group">
             <label>Emoji</label>
-            <input type="text" id="prod-emoji" placeholder="🍣" maxlength="4" style="font-size:22px;text-align:center">
+            <div class="emoji-field-wrap">
+              <div class="emoji-preview-input">
+                <input type="text" id="prod-emoji" placeholder="🍣" maxlength="4" style="font-size:22px;text-align:center" oninput="syncEmojiSel(this.value)">
+                <button type="button" class="btn-emoji-pick" onclick="toggleEmojiPanel()">☺ Elegir</button>
+              </div>
+              <div class="emoji-panel" id="emoji-panel"></div>
+            </div>
           </div>
           <div class="form-group">
             <label>Precio ($)</label>
@@ -1892,8 +1964,8 @@
           </div>
         </div>
 
-        <!-- Disponible + descripción -->
-        <div class="form-grid" style="grid-template-columns:160px 1fr;margin-bottom:0">
+        <!-- Disponible + descripción + imagen -->
+        <div class="form-grid" style="grid-template-columns:160px 1fr 180px;margin-bottom:0">
           <div class="form-group">
             <label>Estado</label>
             <select id="prod-disponible">
@@ -1906,6 +1978,16 @@
             <textarea id="prod-descripcion"
               placeholder="Ej. Por dentro: philadelphia, pepino, aguacate. Por fuera: tampico y anguila."
               style="min-height:60px;resize:vertical"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Imagen del platillo</label>
+            <div class="img-upload-wrap" id="img-drop-zone" onclick="document.getElementById('prod-imagen-file').click()">
+              <input type="file" id="prod-imagen-file" accept="image/*" style="display:none" onchange="onImageSelected(this)">
+              <img id="prod-imagen-preview" class="img-upload-preview" style="display:none" src="" alt="preview">
+              <div class="img-upload-label" id="img-upload-label">🖼 <span>Elige una imagen</span><br>JPG, PNG, WEBP</div>
+              <button type="button" class="btn-img-clear" id="btn-img-clear" style="display:none" onclick="event.stopPropagation();clearImage()">✕ Quitar</button>
+            </div>
+            <input type="hidden" id="prod-imagen-url" value="">
           </div>
         </div>
 
@@ -1965,7 +2047,7 @@
           <thead>
             <tr>
               <th>ID</th>
-              <th>Emoji</th>
+              <th>Img</th>
               <th>Nombre</th>
               <th>Descripción</th>
               <th>Precio</th>
@@ -2435,7 +2517,7 @@
         if (p.is_extra_ing) opts.push('➕Extra');
         return `<tr>
       <td>${p.id_producto}</td>
-      <td style="font-size:22px;text-align:center">${p.emoji || '🍣'}</td>
+      <td>${p.imagen_url ? `<img class='tabla-img' src='${p.imagen_url}' alt='${p.nombre}'>` : `<span class='tabla-emoji-cell'>${p.emoji || '🍣'}</span>`}</td>
       <td><strong>${p.nombre}</strong>${p.tag ? ` <span class="badge" style="background:#FDE8EF;color:var(--pink-deep);font-size:10px">${p.tag}</span>` : ''}</td>
       <td style="max-width:180px;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.descripcion || '—'}</td>
       <td><strong>$${parseFloat(p.precio).toLocaleString()}</strong></td>
@@ -2510,6 +2592,17 @@
       document.getElementById('prod-id').value = id;
       document.getElementById('prod-nombre').value = p.nombre;
       document.getElementById('prod-emoji').value = p.emoji || '🍣';
+      syncEmojiSel(p.emoji || '🍣');
+      // Cargar imagen si existe
+      if (p.imagen_url) {
+        document.getElementById('prod-imagen-url').value = p.imagen_url;
+        document.getElementById('prod-imagen-preview').src = p.imagen_url;
+        document.getElementById('prod-imagen-preview').style.display = 'block';
+        document.getElementById('img-upload-label').style.display = 'none';
+        document.getElementById('btn-img-clear').style.display = 'inline-block';
+      } else {
+        clearImage();
+      }
       document.getElementById('prod-precio').value = p.precio;
       document.getElementById('prod-categoria').value = p.id_categoria || 2;
       document.getElementById('prod-tag').value = p.tag || '';
@@ -2532,6 +2625,7 @@
       document.getElementById('prod-id').value = '';
       document.getElementById('prod-nombre').value = '';
       document.getElementById('prod-emoji').value = '🍣';
+      clearImage();
       document.getElementById('prod-precio').value = '';
       document.getElementById('prod-categoria').value = '2';
       document.getElementById('prod-tag').value = '';
@@ -2565,6 +2659,7 @@
         descripcion: document.getElementById('prod-descripcion').value.trim() || null,
         emoji: document.getElementById('prod-emoji').value.trim() || '🍣',
         tag: document.getElementById('prod-tag').value || null,
+        imagen_url: document.getElementById('prod-imagen-url').value.trim() || null,
         ingredientes: ingsValidos,
         extras_producto: extrasValidos,
       };
@@ -2837,6 +2932,117 @@
       }
       iniciarReloj();
     });
+
+    /* ══ EMOJI PICKER ══════════════════════════════════════════════ */
+    const EMOJI_GROUPS = {
+      'Sushi & Japonesa': ['🍣','🍱','🍜','🍙','🍘','🍥','🥟','🦐','🦑','🦀','🐟','🐡'],
+      'Pollo & Carnes':   ['🍗','🍖','🥩','🍔','🌮','🌯','🥪','🥚','🍳','🥓'],
+      'Vegetales':        ['🥦','🥕','🧅','🧄','🌽','🫑','🥑','🥒','🍅','🌿','🥬'],
+      'Bebidas':          ['🥤','🧃','☕','🍵','🧋','🍶'],
+      'Snacks & Otros':   ['🍟','🧀','🫙','🍞','🧆','🥙','🌶️','⭐','✨','🔥','🎁'],
+    };
+
+    function buildEmojiPanel() {
+      const panel = document.getElementById('emoji-panel');
+      if (!panel || panel.dataset.built) return;
+      let html = '';
+      for (const [group, emojis] of Object.entries(EMOJI_GROUPS)) {
+        html += `<div class="emoji-panel-title">${group}</div><div class="emoji-panel-grid">`;
+        emojis.forEach(e => { html += `<span class="emoji-opt" onclick="selectEmoji('${e}')">${e}</span>`; });
+        html += '</div>';
+      }
+      panel.innerHTML = html;
+      panel.dataset.built = '1';
+    }
+
+    function toggleEmojiPanel() {
+      buildEmojiPanel();
+      document.getElementById('emoji-panel').classList.toggle('open');
+    }
+
+    function selectEmoji(e) {
+      document.getElementById('prod-emoji').value = e;
+      syncEmojiSel(e);
+      document.getElementById('emoji-panel').classList.remove('open');
+    }
+
+    function syncEmojiSel(val) {
+      document.querySelectorAll('.emoji-opt').forEach(el => {
+        el.classList.toggle('sel', el.textContent.trim() === val);
+      });
+    }
+
+    document.addEventListener('click', function(e) {
+      const panel = document.getElementById('emoji-panel');
+      if (!panel) return;
+      if (!panel.contains(e.target) && !e.target.closest('.btn-emoji-pick')) {
+        panel.classList.remove('open');
+      }
+    });
+
+    /* ══ IMAGE UPLOAD ═══════════════════════════════════════════════
+       Modo 1 (recomendado): configura Cloudinary para subir imágenes online.
+       Modo 2 (local):       sin config, guarda la ruta img/nombre.jpg
+       para que funcione con la carpeta /img/ de tu repositorio.
+    ══════════════════════════════════════════════════════════════ */
+    const CLOUDINARY_CLOUD  = 'TU_CLOUD_NAME';    // ← pon tu cloud name de Cloudinary
+    const CLOUDINARY_PRESET = 'TU_UPLOAD_PRESET'; // ← pon tu unsigned upload preset
+
+    async function onImageSelected(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      // Preview local inmediato
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const prev = document.getElementById('prod-imagen-preview');
+        prev.src = ev.target.result;
+        prev.style.display = 'block';
+        document.getElementById('img-upload-label').style.display = 'none';
+        document.getElementById('btn-img-clear').style.display = 'inline-block';
+      };
+      reader.readAsDataURL(file);
+
+      if (CLOUDINARY_CLOUD !== 'TU_CLOUD_NAME') {
+        // Subir a Cloudinary
+        try {
+          document.getElementById('img-upload-label').style.display = 'block';
+          document.getElementById('img-upload-label').innerHTML = '⏳ Subiendo...';
+          const fd = new FormData();
+          fd.append('file', file);
+          fd.append('upload_preset', CLOUDINARY_PRESET);
+          fd.append('folder', 'sushi_menu');
+          const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method: 'POST', body: fd });
+          const data = await res.json();
+          if (data.secure_url) {
+            document.getElementById('prod-imagen-url').value = data.secure_url;
+            document.getElementById('prod-imagen-preview').src = data.secure_url;
+            document.getElementById('img-upload-label').style.display = 'none';
+          } else throw new Error();
+        } catch(e) {
+          document.getElementById('img-upload-label').style.display = 'block';
+          document.getElementById('img-upload-label').innerHTML = '⚠️ Error al subir. Se guardará ruta local.';
+          document.getElementById('prod-imagen-url').value = 'img/' + file.name;
+        }
+      } else {
+        // Modo local: guarda ruta relativa (la imagen debe estar en /img/)
+        document.getElementById('prod-imagen-url').value = 'img/' + file.name;
+        document.getElementById('img-upload-label').style.display = 'none';
+      }
+    }
+
+    function clearImage() {
+      document.getElementById('prod-imagen-url').value = '';
+      const prev = document.getElementById('prod-imagen-preview');
+      if (prev) { prev.src = ''; prev.style.display = 'none'; }
+      const lbl = document.getElementById('img-upload-label');
+      if (lbl) { lbl.style.display = 'block'; lbl.innerHTML = '🖼 <span>Elige una imagen</span><br>JPG, PNG, WEBP'; }
+      const clr = document.getElementById('btn-img-clear');
+      if (clr) clr.style.display = 'none';
+      const fi = document.getElementById('prod-imagen-file');
+      if (fi) fi.value = '';
+    }
+
   </script>
 </body>
 
