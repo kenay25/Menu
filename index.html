@@ -2009,6 +2009,8 @@
       renderOrderSummary();
       updateBar();
       initScrollSpy();
+      // Cargar imágenes del backend y actualizar las tarjetas
+      sincronizarImagenesMenu();
       checkPedidosHabilitados();
       setInterval(checkPedidosHabilitados, 60000);
     }
@@ -2718,7 +2720,11 @@
       var html = data.pedidos.length === 0
         ? '<div style="text-align:center;padding:24px;color:#9E7080">Aún no tienes pedidos registrados</div>'
         : data.pedidos.map(function (p) {
-          var fecha = new Date(p.fecha);
+          // Normalizar fecha de MySQL ('2026-03-14 22:30:00') a ISO válido
+          var _f = p.fecha || '';
+          if (_f && !_f.endsWith('Z') && !_f.includes('+') && !_f.includes('-', 10))
+            _f = _f.replace(' ', 'T') + '-07:00';
+          var fecha = _f ? new Date(_f) : new Date(0);
           var fechaStr = fecha.toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', timeZone: 'America/Hermosillo' });
           var horaStr = fecha.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'America/Hermosillo' });
           var mods_nombres = { sc1: 'BBQ', sc2: 'Búfalo', sc3: 'Mixto', sc4: 'BBQ Chipotle', sc5: 'Naranja Chipotle', sc6: 'Tamarindo', sc7: 'Mango Hot', sc8: 'Mango Habanero', sc9: 'Piña Hot' };
@@ -2765,6 +2771,71 @@
         var guardada = localStorage.getItem('sushi_sesion');
         if (guardada) { sesionActual = JSON.parse(guardada); actualizarHeaderSesion(); }
       } catch (e) { localStorage.removeItem('sushi_sesion'); }
+    }
+
+
+    /* ══ SINCRONIZAR IMÁGENES DEL BACKEND ════════════════════════
+       Consulta /productos/ y actualiza las tarjetas del menú
+       con imagen_url si el backend ya la tiene en DB.
+       También lee del localStorage (guardado por el admin panel).
+    ════════════════════════════════════════════════════════════ */
+    var _localImgNS = 'sushi_img_';
+
+    function _getLocalImg(dbId) {
+      return dbId ? localStorage.getItem(_localImgNS + String(dbId)) : null;
+    }
+
+    async function sincronizarImagenesMenu() {
+      try {
+        var res = await fetch(API_URL + '/productos/');
+        if (!res.ok) return;
+        var productos = await res.json();
+
+        // Mapear dbId → imagen_url (backend o localStorage)
+        var imgMap = {};
+        productos.forEach(function(p) {
+          var url = p.imagen_url || _getLocalImg(p.id_producto);
+          if (url) imgMap[p.id_producto] = url;
+        });
+
+        if (Object.keys(imgMap).length === 0) return;
+
+        // Actualizar cada item en MENU y PROMOS que tenga dbId con imagen
+        var allSections = ['combos','sushis','entradas','especiales','bebidas'];
+        allSections.forEach(function(sec) {
+          if (!MENU[sec]) return;
+          var updated = false;
+          MENU[sec].forEach(function(item) {
+            if (item.dbId && imgMap[item.dbId]) {
+              item.img = imgMap[item.dbId];
+              updated = true;
+            }
+          });
+          if (updated) {
+            // Re-renderizar solo esta sección
+            var gridId = {
+              combos:'grid-combos', sushis:'grid-sushis',
+              entradas:'grid-entradas', especiales:'grid-especiales',
+              bebidas:'grid-bebidas'
+            }[sec];
+            if (gridId) {
+              var g = document.getElementById(gridId);
+              if (g) g.innerHTML = MENU[sec].map(cardHTML).join('');
+            }
+          }
+        });
+
+        // Promos también
+        if (typeof PROMOS !== 'undefined') {
+          PROMOS.forEach(function(item) {
+            if (item.dbId && imgMap[item.dbId]) item.img = imgMap[item.dbId];
+          });
+          renderPromos();
+        }
+
+      } catch(e) {
+        // Sin conexión o error — el menú estático ya está renderizado, no pasa nada
+      }
     }
 
     document.addEventListener('DOMContentLoaded', init);
