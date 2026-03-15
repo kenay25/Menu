@@ -1954,7 +1954,7 @@
           </div>
           <div class="form-group">
             <label>Categoría</label>
-            <select id="prod-categoria">
+            <select id="prod-categoria" onchange="actualizarHintCategoria(parseInt(this.value))">
               <option value="1">🍱 Combos y Charolas</option>
               <option value="2">🍣 Sushis</option>
               <option value="3">🥗 Entradas</option>
@@ -2001,23 +2001,65 @@
           </div>
         </div>
 
-        <!-- Opciones del modal de personalización -->
-        <div
-          style="margin:18px 0 10px;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600">
-          ⚙️ Opciones de personalización (lo que el cliente puede elegir)
-        </div>
-        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px" id="prod-opciones">
-          <label class="opt-check"><input type="checkbox" id="opt-alga">🌿 Con/sin alga</label>
-          <label class="opt-check"><input type="checkbox" id="opt-style">🍳 Natural/empanizado</label>
-          <label class="opt-check"><input type="checkbox" id="opt-protein">🥩 Elige proteína</label>
-          <label class="opt-check"><input type="checkbox" id="opt-sauce">🫙 Salsa boneles</label>
-          <label class="opt-check"><input type="checkbox" id="opt-sauce-1only">🫙 Solo 1 salsa boneles</label>
-          <label class="opt-check"><input type="checkbox" id="opt-sauce-2">🫙 Salsa 2ª orden boneles</label>
-          <label class="opt-check"><input type="checkbox" id="opt-sauce-alitas">🫙 Salsa alitas</label>
-          <label class="opt-check"><input type="checkbox" id="opt-sushi-choice">🍣 Elige sushi
-            (Bombazo/Cal/Sonora)</label>
-          <label class="opt-check"><input type="checkbox" id="opt-ice">🧊 Con/sin hielo</label>
-          <label class="opt-check"><input type="checkbox" id="opt-extra-ing">➕ Ingrediente extra ($15)</label>
+        <!-- Opciones de personalización — dinámicas por categoría -->
+        <div style="margin:18px 0 8px">
+          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:10px">
+            ⚙️ Opciones de personalización
+            <span id="opts-cat-hint" style="font-size:10px;color:var(--pink);text-transform:none;letter-spacing:0;margin-left:8px;font-weight:500"></span>
+          </div>
+
+          <!-- Grupo: Presentación -->
+          <div style="margin-bottom:10px">
+            <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px">Presentación</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <label class="opt-check"><input type="checkbox" id="opt-alga">🌿 Con/sin alga</label>
+              <label class="opt-check"><input type="checkbox" id="opt-style">🍳 Natural/empanizado</label>
+              <label class="opt-check"><input type="checkbox" id="opt-ice">🧊 Con/sin hielo</label>
+            </div>
+          </div>
+
+          <!-- Grupo: Proteína -->
+          <div style="margin-bottom:10px">
+            <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px">Proteína</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <label class="opt-check"><input type="checkbox" id="opt-protein">🥩 Elige proteína</label>
+            </div>
+          </div>
+
+          <!-- Grupo: Salsas -->
+          <div style="margin-bottom:10px">
+            <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px">Salsas</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px">
+              <label class="opt-check"><input type="checkbox" id="opt-sauce">🫙 Salsa boneles (hasta 2)</label>
+              <label class="opt-check"><input type="checkbox" id="opt-sauce-1only">🫙 Solo 1 salsa boneles</label>
+              <label class="opt-check"><input type="checkbox" id="opt-sauce-2">🫙 Salsa 2ª orden boneles</label>
+              <label class="opt-check"><input type="checkbox" id="opt-sauce-alitas">🫙 Salsa alitas</label>
+            </div>
+          </div>
+
+          <!-- Grupo: Elecciones especiales -->
+          <div style="margin-bottom:10px">
+            <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px">Elecciones especiales</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
+              <label class="opt-check"><input type="checkbox" id="opt-sushi-choice" onchange="toggleSushiOpts(this.checked)">🍣 Elige sushi</label>
+              <label class="opt-check"><input type="checkbox" id="opt-extra-ing">➕ Ingrediente extra ($15)</label>
+            </div>
+            <!-- Campo editable: qué sushis se pueden elegir -->
+            <div id="sushi-opts-wrap" style="display:none;margin-top:8px;padding:10px 12px;background:#FFF8F9;border-radius:10px;border:1.5px solid var(--border)">
+              <div style="font-size:10px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Sushis disponibles a elegir</div>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px" id="sushi-opts-checks">
+                <label class="opt-check"><input type="checkbox" id="sushi-opt-bombazo" checked>🍣 Bombazo</label>
+                <label class="opt-check"><input type="checkbox" id="sushi-opt-california" checked>🍣 California</label>
+                <label class="opt-check"><input type="checkbox" id="sushi-opt-sonora" checked>🍣 Sonora</label>
+                <label class="opt-check"><input type="checkbox" id="sushi-opt-misil">🍣 Misil</label>
+                <label class="opt-check"><input type="checkbox" id="sushi-opt-especial">🍣 Especial</label>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span style="font-size:11px;color:var(--muted)">Otros:</span>
+                <input type="text" id="sushi-opts-custom" placeholder="Fernanda, Hot, ..." style="flex:1;background:white;border:1.5px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none">
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Editor de ingredientes -->
@@ -2321,7 +2363,9 @@
         const max = Math.max(...semana.map(r => r.total_ventas));
         document.getElementById('chart-semana').innerHTML = semana.slice(0, 7).reverse().map(r => {
           const pct = max > 0 ? (r.total_ventas / max * 100).toFixed(0) : 0;
-          const fecha = new Date(r.fecha + 'T12:00:00-07:00').toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric' });
+          // r.fecha es fecha UTC del backend; convertir a fecha Hermosillo
+          const _fdUTC = new Date(r.fecha + 'T07:00:00Z'); // mediodia Hermosillo = 7am UTC
+          const fecha = _fdUTC.toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', timeZone: 'America/Hermosillo' });
           return `<div class="bar-row"><div class="bar-label">${fecha}</div><div class="bar-track"><div class="bar-fill" style="width:${pct}%"><span class="bar-val">${pct}%</span></div></div><div class="bar-val-right">$${r.total_ventas.toLocaleString()}</div></div>`;
         }).join('');
       } else {
@@ -2557,38 +2601,48 @@
 
     function renderIngsList() {
       document.getElementById('prod-ings-list').innerHTML = _prodIngs.map((ing, i) => `
-    <div class="ing-edit-row">
+    <div class="ing-edit-row" style="grid-template-columns:44px 34px 1fr 1fr 80px auto">
       <input type="text" value="${ing.emoji || ''}" placeholder="🧀" maxlength="4"
-        style="font-size:18px;text-align:center"
-        oninput="_prodIngs[${i}].emoji=this.value">
+        id="ing-emoji-${i}"
+        style="font-size:18px;text-align:center;cursor:pointer"
+        oninput="_prodIngs[${i}].emoji=this.value"
+        onclick="abrirEmojiIngrediente('ing',${i})">
+      <button type="button" style="background:#FFF8F9;border:1.5px solid var(--border);border-radius:7px;font-size:13px;cursor:pointer;padding:2px 4px" onclick="abrirEmojiIngrediente('ing',${i})" title="Elegir emoji">☺</button>
       <input type="text" value="${ing.name || ''}" placeholder="Nombre del ingrediente"
         oninput="_prodIngs[${i}].name=this.value">
       <input type="text" value="${ing.note || ''}" placeholder="Nota (ej: Base, Relleno)"
         oninput="_prodIngs[${i}].note=this.value">
-      <select oninput="_prodIngs[${i}].removable=(this.value==='true')">
+      <select onchange="_prodIngs[${i}].removable=(this.value==='true')">
         <option value="true" ${ing.removable ? 'selected' : ''}>Quitable</option>
         <option value="false" ${!ing.removable ? 'selected' : ''}>Fijo</option>
       </select>
       <button class="btn-del-ing" onclick="_prodIngs.splice(${i},1);renderIngsList()">✕</button>
     </div>
-  `).join('');
+  `).join('') + '<div id="emoji-ing-popup" style="display:none;position:relative;z-index:400"></div>';
     }
 
     function renderExtrasList() {
       document.getElementById('prod-extras-list').innerHTML = _prodExtras.map((ex, i) => `
-    <div class="extra-edit-row">
+    <div class="extra-edit-row" style="grid-template-columns:44px 34px 1fr 1fr 80px 70px auto">
       <input type="text" value="${ex.emoji || ''}" placeholder="🧀" maxlength="4"
-        style="font-size:18px;text-align:center"
-        oninput="_prodExtras[${i}].emoji=this.value">
+        id="ext-emoji-${i}"
+        style="font-size:18px;text-align:center;cursor:pointer"
+        oninput="_prodExtras[${i}].emoji=this.value"
+        onclick="abrirEmojiIngrediente('ext',${i})">
+      <button type="button" style="background:#FFF8F9;border:1.5px solid var(--border);border-radius:7px;font-size:13px;cursor:pointer;padding:2px 4px" onclick="abrirEmojiIngrediente('ext',${i})" title="Elegir emoji">☺</button>
       <input type="text" value="${ex.name || ''}" placeholder="Nombre del extra"
         oninput="_prodExtras[${i}].name=this.value">
       <input type="text" value="${ex.note || ''}" placeholder="Nota (ej: +$25)"
         oninput="_prodExtras[${i}].note=this.value">
       <input type="number" value="${ex.price || 0}" placeholder="Precio" min="0" step="5"
         oninput="_prodExtras[${i}].price=parseFloat(this.value)||0">
+      <select onchange="_prodExtras[${i}].gratis=(this.value==='true');if(_prodExtras[${i}].gratis)_prodExtras[${i}].price=0;renderExtrasList()">
+        <option value="false" ${!ex.gratis ? 'selected' : ''}>Con costo</option>
+        <option value="true" ${ex.gratis ? 'selected' : ''}>Gratis</option>
+      </select>
       <button class="btn-del-ing" onclick="_prodExtras.splice(${i},1);renderExtrasList()">✕</button>
     </div>
-  `).join('');
+  `).join('') + '<div id="emoji-ext-popup" style="display:none;position:relative;z-index:400"></div>';
     }
 
     function agregarIngrediente() {
@@ -2628,6 +2682,10 @@
         const el = document.getElementById(elId);
         if (el) el.checked = !!p[key];
       });
+      // Mostrar/ocultar opciones de sushi según estado del checkbox
+      toggleSushiOpts(!!p.has_sushi_choice);
+      // Actualizar hint de categoría
+      actualizarHintCategoria(p.id_categoria || 2);
       // Ingredientes y extras
       _prodIngs = JSON.parse(JSON.stringify(p.ingredientes || []));
       _prodExtras = JSON.parse(JSON.stringify(p.extras_producto || []));
@@ -2643,6 +2701,8 @@
       clearImage();
       document.getElementById('prod-precio').value = '';
       document.getElementById('prod-categoria').value = '2';
+      toggleSushiOpts(false);
+      actualizarHintCategoria(2);
       document.getElementById('prod-tag').value = '';
       document.getElementById('prod-disponible').value = 'true';
       document.getElementById('prod-descripcion').value = '';
@@ -2723,7 +2783,9 @@
         const max = Math.max(...mes.map(r => r.total_ventas));
         document.getElementById('chart-mes').innerHTML = mes.map(r => {
           const pct = max > 0 ? (r.total_ventas / max * 100).toFixed(0) : 0;
-          const d = new Date(r.fecha + 'T12:00:00-07:00').getDate();
+          // r.fecha es fecha UTC; T07:00:00Z = mediodía Hermosillo
+          const _fdM = new Date(r.fecha + 'T07:00:00Z');
+          const d = _fdM.toLocaleDateString('es-MX', { day: 'numeric', timeZone: 'America/Hermosillo' });
           return `<div class="bar-row"><div class="bar-label">Día ${d}</div><div class="bar-track"><div class="bar-fill" style="width:${pct}%"><span class="bar-val">${pct}%</span></div></div><div class="bar-val-right">$${r.total_ventas.toLocaleString()}</div></div>`;
         }).join('');
       } else {
@@ -3109,6 +3171,86 @@
       input.type      = show ? 'text'    : 'password';
       btn.textContent = show ? '🙈'      : '👁';
       btn.title       = show ? 'Ocultar' : 'Mostrar';
+    }
+
+
+    /* ══ EMOJI PARA INGREDIENTES / EXTRAS ══════════════════════ */
+    var _emojiIngTarget = null; // {tipo:'ing'|'ext', idx:number}
+
+    function abrirEmojiIngrediente(tipo, idx) {
+      _emojiIngTarget = {tipo, idx};
+      // Reuse the emoji groups from EMOJI_GROUPS
+      buildEmojiPanel();
+      // Create a floating picker near the field
+      var containerId = tipo === 'ing' ? 'emoji-ing-popup' : 'emoji-ext-popup';
+      var container = document.getElementById(containerId);
+      if (!container) return;
+
+      // Clone emoji panel content into a floating div
+      var panel = document.getElementById('emoji-panel');
+      if (!panel) return;
+
+      container.innerHTML = '<div style="position:absolute;top:4px;left:0;background:white;border:1.5px solid var(--border);border-radius:14px;padding:12px;box-shadow:0 8px 32px rgba(194,48,96,0.15);z-index:500;width:300px;max-height:220px;overflow-y:auto">'
+        + panel.innerHTML.replace(/onclick="selectEmoji\('([^']+)'\)"/g,
+            `onclick="selectEmojiIngrediente('$1')"`)
+        + '<button onclick="cerrarEmojiIngrediente()" style="position:absolute;top:8px;right:8px;background:none;border:none;font-size:14px;cursor:pointer;color:var(--muted)">✕</button>'
+        + '</div>';
+      container.style.display = 'block';
+
+      // Close on outside click
+      setTimeout(function() {
+        document.addEventListener('click', _closeEmojiIngHandler);
+      }, 100);
+    }
+
+    function _closeEmojiIngHandler(e) {
+      var ingPop = document.getElementById('emoji-ing-popup');
+      var extPop = document.getElementById('emoji-ext-popup');
+      if ((ingPop && ingPop.contains(e.target)) || (extPop && extPop.contains(e.target))) return;
+      cerrarEmojiIngrediente();
+    }
+
+    function selectEmojiIngrediente(emoji) {
+      if (!_emojiIngTarget) return;
+      var {tipo, idx} = _emojiIngTarget;
+      if (tipo === 'ing') {
+        _prodIngs[idx].emoji = emoji;
+        renderIngsList();
+      } else {
+        _prodExtras[idx].emoji = emoji;
+        renderExtrasList();
+      }
+      cerrarEmojiIngrediente();
+    }
+
+    function cerrarEmojiIngrediente() {
+      document.removeEventListener('click', _closeEmojiIngHandler);
+      var ingPop = document.getElementById('emoji-ing-popup');
+      var extPop = document.getElementById('emoji-ext-popup');
+      if (ingPop) ingPop.style.display = 'none';
+      if (extPop) extPop.style.display = 'none';
+      _emojiIngTarget = null;
+    }
+
+    /* ══ SUSHI CHOICE TOGGLE ════════════════════════════════════ */
+    function toggleSushiOpts(checked) {
+      var wrap = document.getElementById('sushi-opts-wrap');
+      if (wrap) wrap.style.display = checked ? 'block' : 'none';
+    }
+
+    /* ══ CATEGORÍA HINT EN OPCIONES ════════════════════════════ */
+    const _CAT_HINTS = {
+      1: '🍱 Combos — suelen llevar salsas, proteína, alga, estilo',
+      2: '🍣 Sushis — llevan alga, estilo, proteína, ingrediente extra',
+      3: '🥗 Entradas — salsas si llevan boneles',
+      4: '⭐ Especiales — salsas para alitas/boneles, proteína para bolas',
+      5: '🥤 Bebidas — solo hielo',
+      6: '🎁 Promos — combina opciones según lo que incluyan',
+    };
+
+    function actualizarHintCategoria(catId) {
+      var hint = document.getElementById('opts-cat-hint');
+      if (hint) hint.textContent = _CAT_HINTS[catId] || '';
     }
 
   </script>
