@@ -1991,14 +1991,14 @@
       {
         id: 'promo3', dbId: 53, emoji: '&#x1F363;', num: 'Paquete 3',
         title: '3 Bolas', price: 200, tag: null,
-        hasProtein: true, hasPromo: true, hasAlga: true, hasStyle: true,
+        hasProtein: true, hasPromo: true,
         desc: '3 Bolas con ingrediente a elegir (pollo, res, tocino o surimi).',
         ingredients: [ing('b1', '&#x1F363;', '3 Bolas', 'Prot. a elegir', false), ing('b2', '&#x1F951;', 'Aguacate, pepino, philadelphia', 'Por fuera', true), ing('b3', '&#x1F41F;', 'Tampico, anguila, ajonjolí', 'Por fuera', true)],
         extras: [{ id: 'x_camaron', emoji: '&#x1F990;', name: 'Camarón', note: '+$15 extra', price: 15 }],
         promoSlots: [
-          { label: 'Bola 1', hasProtein: true, hasAlga: true, hasStyle: true },
-          { label: 'Bola 2', hasProtein: true, hasAlga: true, hasStyle: true },
-          { label: 'Bola 3', hasProtein: true, hasAlga: true, hasStyle: true }
+          { label: 'Bola 1', hasProtein: true },
+          { label: 'Bola 2', hasProtein: true },
+          { label: 'Bola 3', hasProtein: true }
         ]
       },
       {
@@ -2344,13 +2344,12 @@
               + '<span class="p-emoji">'+p.emoji+'</span><span class="p-name">'+p.name+'</span>'
               + (cnt>1?'<span class="p-count">'+cnt+'</span>':'') + '</div>';
           });
-          // Camarón con +$15
+          // Camarón igual que otras proteínas en items normales
           var cntCam = currentMods.proteins.filter(function(x){return x==='p_camaron';}).length;
           html += '<div class="protein-btn'+(cntCam>0?' sel':'')+'" id="pb-p_camaron" onclick="togProt(\'p_camaron\')">'
-            + '<span class="p-emoji">🦐</span>'
-            + '<span class="p-name">Camarón<br><small style="font-size:10px;color:var(--pink)">+$15</small></span>'
+            + '<span class="p-emoji">🦐</span><span class="p-name">Camarón</span>'
             + (cntCam>1?'<span class="p-count">'+cntCam+'</span>':'') + '</div>';
-          html += '</div><div class="protein-note">Primera proteína incluida · Camarón y extras +$15 c/u</div></div>';
+          html += '</div><div class="protein-note">Primera proteína incluida · Extras +$15 c/u</div></div>';
         }
         if (item.hasSauceAlitas) {
           html += '<div class="sauce-section"><div class="sauce-section-title">🫙 Salsa para las alitas (hasta 2)</div><div class="sauce-grid">';

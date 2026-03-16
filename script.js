@@ -762,9 +762,8 @@ function togProt(pid) {
   } else {
     currentMods.proteins.push(pid);
   }
-  // Camarón siempre +$15, independientemente del orden
-  var camCount = currentMods.proteins.filter(function(x){ return x === 'p_camaron'; }).length;
-  currentMods._camaronCost = camCount * 15;
+  // Solo en promos el camarón tiene costo extra (manejado en confirmMods via slotMods)
+  currentMods._camaronCost = 0;
   PROTEINS.forEach(function (p) {
     var cnt = currentMods.proteins.filter(function (x) { return x === p.id; }).length;
     var b = document.getElementById('pb-' + p.id);
@@ -814,17 +813,29 @@ function confirmMods() {
   var inst = orderInstances.filter(function (o) { return o.instanceId === currentInstanceId; })[0];
   if (!inst) return;
 
-  if (inst.item.hasAlga && !currentMods.alga) {
-    alert('🌿 Por favor indica si lo quieres con alga o sin alga');
-    return;
+  // Validar alga: para promos validar en cada slot, para items normales en currentMods.alga
+  if (inst.item.hasAlga) {
+    if (inst.item.promoSlots && inst.item.promoSlots.length) {
+      // Verificar que cada slot con hasAlga tenga alga elegida
+      var slotsConAlga = inst.item.promoSlots.filter(function(s){ return s.hasAlga; });
+      var slotSinAlga = slotsConAlga.some(function(s, si) {
+        return !currentMods.slotMods || !currentMods.slotMods[si] || !currentMods.slotMods[si].alga;
+      });
+      if (slotSinAlga) {
+        alert('🌿 Por favor indica en cada sushi si lo quieres con alga o sin alga');
+        return;
+      }
+    } else if (!currentMods.alga) {
+      alert('🌿 Por favor indica si lo quieres con alga o sin alga');
+      return;
+    }
   }
 
-  // Calcular costos extra: camarón en proteínas + camarón en slots de promos
+  // Costo extra: solo camarón en promos (vía slotMods)
   var camaronCost = 0;
-  if (currentMods._camaronCost) camaronCost += currentMods._camaronCost;
   if (currentMods.slotMods && currentMods.slotMods.length) {
     currentMods.slotMods.forEach(function(sm) {
-      if (sm.protein === 'p_camaron') camaronCost += 15;
+      if (sm && sm.protein === 'p_camaron') camaronCost += 15;
     });
   }
   inst.extraCost = camaronCost;
