@@ -1968,8 +1968,16 @@
         }
         ],
         ingredients: [ing('b1', '&#x1F363;', '1/2 California', 'Sushi', false), ing('b2', '&#x1F357;', 'Boneless', 'Mitad', false), ing('b3', '&#x1F35F;', 'Papas sazonadas', 'Mitad', false), ing('b4', '&#x1F9C0;', 'Dedos de queso', 'Incluidos', true), ing('b5', '&#x1F41F;', 'Tampico', 'Incluido', true), ing('b6', '&#x1F359;', 'Philadelphia', 'En sushi', true), ing('b7', '&#x1F952;', 'Pepino', 'En sushi', true), ing('b8', '&#x1F951;', 'Aguacate', 'En sushi', true)], extras: [] },
-        { id: 'c3', dbId: 6, img: 'img/paquetellenes.jpg', emoji: '&#x1F371;', name: 'Paquetellenes', price: 150, tag: null, hasSauce: true, hasSauce1Only: true, hasSushiChoice: true, hasAlga: true, hasStyle: true, desc: '1/2 sushi (bombazo, sonora o california), 1/2 boneless, 1/2 papas sazonadas.', ingredients: [ing('b1', '&#x1F363;', '1/2 sushi a elegir', 'Bombazo/Sonora/California', false), ing('b2', '&#x1F357;', 'Boneless', 'Mitad', false), ing('b3', '&#x1F35F;', 'Papas sazonadas', 'Mitad porción', false), ing('b4', '&#x1F359;', 'Philadelphia', 'En sushi', true), ing('b5', '&#x1F952;', 'Pepino', 'En sushi', true), ing('b6', '&#x1F951;', 'Aguacate', 'En sushi', true)], extras: [] },
-        { id: 'c2', dbId: 7, emoji: '&#x1F371;', name: 'Botix', price: 120, tag: null, hasSauce: true, hasSauce1Only: true, hasSushiChoice: true, hasAlga: true, hasStyle: true, desc: 'Mitad sushi (bombazo, sonora o california) mitad boneless. Salsa a elegir.', ingredients: [ing('b1', '&#x1F363;', '1/2 sushi a elegir', 'Bombazo/Sonora/California', false), ing('b2', '&#x1F357;', 'Boneless', 'Mitad', false), ing('b3', '&#x1F359;', 'Philadelphia', 'En sushi', true), ing('b4', '&#x1F952;', 'Pepino', 'En sushi', true), ing('b5', '&#x1F951;', 'Aguacate', 'En sushi', true)], extras: [] }
+        { id: 'c3', dbId: 6, img: 'img/paquetellenes.jpg', emoji: '&#x1F371;', name: 'Paquetellenes', price: 150, tag: null, hasSauce: true, hasSauce1Only: true, hasSushiChoice: true, hasAlga: true, hasStyle: true, desc: '1/2 sushi (bombazo, sonora o california), 1/2 boneless, 1/2 papas sazonadas.', ingredients: [ing('b1', '&#x1F363;', '1/2 sushi a elegir', 'Bombazo/Sonora/California', false), ing('b2', '&#x1F357;', 'Boneless', 'Mitad', false), ing('b3', '&#x1F35F;', 'Papas sazonadas', 'Mitad porción', false), ing('b4', '&#x1F359;', 'Philadelphia', 'En sushi', true), ing('b5', '&#x1F952;', 'Pepino', 'En sushi', true), ing('b6', '&#x1F951;', 'Aguacate', 'En sushi', true)], extras: [], removable: [
+            { id: 'pq_philly',   name: 'Philadelphia', emoji: '&#x1F9C0;' },
+            { id: 'pq_pepino',   name: 'Pepino',       emoji: '&#x1F952;' },
+            { id: 'pq_aguacate', name: 'Aguacate',     emoji: '&#x1F951;' }
+        ] },
+        { id: 'c2', dbId: 7, emoji: '&#x1F371;', name: 'Botix', price: 120, tag: null, hasSauce: true, hasSauce1Only: true, hasSushiChoice: true, hasAlga: true, hasStyle: true, desc: 'Mitad sushi (bombazo, sonora o california) mitad boneless. Salsa a elegir.', ingredients: [ing('b1', '&#x1F363;', '1/2 sushi a elegir', 'Bombazo/Sonora/California', false), ing('b2', '&#x1F357;', 'Boneless', 'Mitad', false), ing('b3', '&#x1F359;', 'Philadelphia', 'En sushi', true), ing('b4', '&#x1F952;', 'Pepino', 'En sushi', true), ing('b5', '&#x1F951;', 'Aguacate', 'En sushi', true)], extras: [], removable: [
+            { id: 'bx_philly',   name: 'Philadelphia', emoji: '&#x1F9C0;' },
+            { id: 'bx_pepino',   name: 'Pepino',       emoji: '&#x1F952;' },
+            { id: 'bx_aguacate', name: 'Aguacate',     emoji: '&#x1F951;' }
+        ] }
       ],
       sushis: [
         { id: 's22', dbId: 8, emoji: '&#x1F363;', name: 'Borbon', price: 220, tag: 'popular', hasSauce: true, hasSauce1Only: true, hasAlga: true, hasStyle: true, desc: 'Por dentro: surimi empanizado, pollo, res, tocino y camarón. Por fuera: queso gratinado con chile serrano. Boneles en salsa a elección.', ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b5', '&#x1F980;', 'Surimi empanizado', 'Relleno', true), ing('b6', '&#x1F357;', 'Pollo', 'Relleno', true), ing('b7', '&#x1F969;', 'Res', 'Relleno', true), ing('b8', '&#x1F953;', 'Tocino', 'Relleno', true), ing('b9', '&#x1F990;', 'Camarón', 'Relleno', true), ing('b10', '&#x1F9C0;', 'Queso gratinado', 'Cubierta', false), ing('b11', '&#x1F336;&#xFE0F;', 'Chile serrano', 'Cubierta', true)], extras: [] },
@@ -2476,6 +2484,18 @@
               + (cntCam>1?'<span class="p-count">'+cntCam+'</span>':'') + '</div>';
             html += '</div><div class="protein-note">Primera proteína incluida · Extras +$15 c/u</div></div>';
           }
+        }
+        // Ingredientes removibles (para items con hasSushiChoice como Botix y Paquetellenes)
+        if (item.removable && item.removable.length) {
+          html += '<div class="ing-section"><div class="ing-section-title">✏️ Quitar ingredientes</div><div class="ing-list">';
+          item.removable.forEach(function(i) {
+            var rm = currentMods.removed && currentMods.removed[i.id];
+            html += '<div class="ing-item' + (rm ? ' removed' : '') + '" id="ming-' + i.id + '">'
+              + '<div class="ing-left"><span class="ing-emoji">' + i.emoji + '</span>'
+              + '<div><div class="ing-name">' + i.name + '</div></div></div>'
+              + '<button class="ing-toggle" onclick="togIng(\'' + i.id + '\')">' + (rm ? 'Volver a poner' : 'Quitar') + '</button></div>';
+          });
+          html += '</div></div>';
         }
         if (item.hasIce) {
           html += '<div class="alga-section"><div class="alga-section-title">🧊 ¿Con o sin hielo?</div><div class="alga-grid">';
