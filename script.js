@@ -626,7 +626,7 @@ function buildModalBody(item) {
     html += '</div></div>';
   }
 
-  // Proteins — skip if hasSushiChoice (already shown inside sushi choice block)
+  // Proteins
   if (item.hasProtein && !item.hasSushiChoice) {
     if (item.hasPromo) {
       // PROMOS: Sushi 1 y Sushi 2. Camarón siempre +$15 sin excepción.
@@ -641,7 +641,7 @@ function buildModalBody(item) {
         });
         html += '</div>';
       });
-      html += '<div class="protein-note">Elige una proteína por cada sushi · 🦐 Camarón disponible en ➕ Extras (+$15)</div></div>';
+      html += '<div class="protein-note">Elige una proteína por cada sushi · 🦐 Camarón en ➕ Extras (+$15)</div></div>';
     } else {
       html += '<div class="protein-section"><div class="protein-section-title">🥩 Elige tu(s) proteína(s)</div><div class="protein-grid">';
       PROTEINS.forEach(function (p) {
@@ -743,9 +743,10 @@ function selProtSlot(slot, pid) {
   while (currentMods.proteins.length <= slot) currentMods.proteins.push(null);
   currentMods.proteins[slot] = pid;
   // Calcular costo de camarones elegidos
-  // camarón está en extras, no en proteínas
+  var camCount = currentMods.proteins.filter(function(p){ return p === 'p_camaron'; }).length;
+  currentMods._promoCamaronCost = camCount * 15;
   // Actualizar botones in-place (no re-renderizar el modal entero)
-  var allPids = PROTEINS.map(function(p){ return p.id; });
+  var allPids = PROTEINS.map(function(p){ return p.id; }).concat(['p_camaron']);
   [0,1].forEach(function(s) {
     allPids.forEach(function(pid2) {
       var b = document.getElementById('ps' + s + '-' + pid2);
