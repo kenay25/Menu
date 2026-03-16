@@ -2308,7 +2308,7 @@
                 + (cnt >= 0 ? '<span class="p-count">' + (cnt+1) + '</span>' : '')
                 + '</div>';
             });
-            html += '</div><div class="protein-note">Primera proteína incluida · +$15 por las demás</div></div>';
+            html += '</div><div class="protein-note">' + (item.hasPromo ? '🦐 Camarón +$15 · Otras proteínas: 1ª incluida · 2ª+ +$15' : 'Primera proteína incluida · +$15 por las demás') + '</div></div>';
           }
 
           // Ingredientes removibles por slot
@@ -2514,7 +2514,7 @@
               + (cnt >= 0 ? '<span class="p-count">' + (cnt+1) + '</span>' : '')
               + '</div>';
           });
-          html += '</div><div class="protein-note">Primera proteína incluida · +$15 por las demás</div></div>';
+          html += '</div><div class="protein-note">' + (currentItem.hasPromo ? '🦐 Camarón +$15 · Otras proteínas: 1ª incluida · 2ª+ +$15' : 'Primera proteína incluida · +$15 por las demás') + '</div></div>';
           protSection.innerHTML = html;
         } else {
           protSection.innerHTML = '';
@@ -2650,17 +2650,40 @@
           }
         });
       }
-      // 2. slotMods (combos/promos): contar todas las proteínas, 1ª incluida, resto +$15
-      if (inst.item.promoSlots && currentMods.slotMods && currentMods.slotMods.length) {
+      // 2. slotMods en PROMOCIONES (hasPromo: true): camarón siempre +$15, otras proteínas 1ª incluida · 2ª+ +$15
+      if (inst.item.hasPromo && currentMods.slotMods && currentMods.slotMods.length) {
+        var nonShrimpProts = 0;
+        var shrimpCount = 0;
+        currentMods.slotMods.forEach(function(sm) {
+          if (sm && sm.proteins && Array.isArray(sm.proteins)) {
+            sm.proteins.forEach(function(p) {
+              if (p && p === 'p_camaron') shrimpCount++;
+              else if (p) nonShrimpProts++;
+            });
+          }
+        });
+        // Camarón: siempre +$15 cada uno
+        extraCost += shrimpCount * 15;
+        // Otras proteínas: 1ª incluida, 2ª+ +$15
+        if (nonShrimpProts > 1) {
+          extraCost += (nonShrimpProts - 1) * 15;
+        }
+      }
+      // 3. slotMods en COMBOS (sin hasPromo): todas las proteínas 1ª incluida · 2ª+ +$15
+      if (inst.item.promoSlots && !inst.item.hasPromo && currentMods.slotMods && currentMods.slotMods.length) {
         var totalProts = 0;
         currentMods.slotMods.forEach(function(sm) {
-          if (sm && sm.proteins) totalProts += sm.proteins.length;
+          if (sm && sm.proteins && Array.isArray(sm.proteins)) {
+            sm.proteins.forEach(function(p) {
+              if (p) totalProts++;
+            });
+          }
         });
         if (totalProts > 1) {
           extraCost += (totalProts - 1) * 15;
         }
       }
-      // 3. Proteínas en items normales (sin promoSlots): 1ª incluida, resto +$15 c/u
+      // 4. Proteínas en items normales (sin promoSlots): 1ª incluida, resto +$15 c/u
       if (!inst.item.promoSlots && currentMods.proteins && currentMods.proteins.length > 1) {
         extraCost += (currentMods.proteins.length - 1) * 15;
       }
@@ -2861,16 +2884,33 @@
       // Mostrar proteínas de slotMods (combos/promos)
       if (m.slotMods && m.slotMods.length) {
         var slotProts = [];
+        var shrimpCount = 0;
         m.slotMods.forEach(function(sm) {
-          if (sm && sm.proteins && sm.proteins.length) {
+          if (sm && sm.proteins && Array.isArray(sm.proteins)) {
             sm.proteins.forEach(function(pid) {
-              var pr = PROTEINS.filter(function(x) { return x.id === pid; })[0];
-              if (pr) slotProts.push(pr.name);
+              if (pid) {
+                var pr = PROTEINS.filter(function(x) { return x.id === pid; })[0];
+                if (pr) {
+                  slotProts.push(pr.name);
+                  if (pid === 'p_camaron') shrimpCount++;
+                }
+              }
             });
           }
         });
         if (slotProts.length) {
-          var extraMsg = slotProts.length > 1 ? ' (+$' + ((slotProts.length - 1) * 15) + ')' : '';
+          var extraMsg = '';
+          if (item.hasPromo) {
+            // Promociones: camarón siempre +$15, otras proteínas 1ª incluida · 2ª+ +$15
+            var nonShrimpCount = slotProts.length - shrimpCount;
+            var shrimpCost = shrimpCount * 15;
+            var nonShrimpCost = nonShrimpCount > 1 ? (nonShrimpCount - 1) * 15 : 0;
+            var totalExtra = shrimpCost + nonShrimpCost;
+            if (totalExtra > 0) extraMsg = ' (+$' + totalExtra + ')';
+          } else {
+            // Combos: 1ª incluida · 2ª+ +$15
+            if (slotProts.length > 1) extraMsg = ' (+$' + ((slotProts.length - 1) * 15) + ')';
+          }
           lines += '<div class="oi-mod-added">🥩 Proteína(s): ' + slotProts.join(', ') + extraMsg + '</div>';
         }
       }
@@ -2933,16 +2973,33 @@
         // Proteínas de slotMods (combos/promos)
         if (m.slotMods && m.slotMods.length) {
           var slotProts = [];
+          var shrimpCount = 0;
           m.slotMods.forEach(function(sm) {
-            if (sm && sm.proteins && sm.proteins.length) {
+            if (sm && sm.proteins && Array.isArray(sm.proteins)) {
               sm.proteins.forEach(function(pid) {
-                var pr = PROTEINS.filter(function(x) { return x.id === pid; })[0];
-                if (pr) slotProts.push(pr.name);
+                if (pid) {
+                  var pr = PROTEINS.filter(function(x) { return x.id === pid; })[0];
+                  if (pr) {
+                    slotProts.push(pr.name);
+                    if (pid === 'p_camaron') shrimpCount++;
+                  }
+                }
               });
             }
           });
           if (slotProts.length) {
-            var extraMsg = slotProts.length > 1 ? ' (+$' + ((slotProts.length - 1) * 15) + ')' : '';
+            var extraMsg = '';
+            if (item.hasPromo) {
+              // Promociones: camarón siempre +$15, otras proteínas 1ª incluida · 2ª+ +$15
+              var nonShrimpCount = slotProts.length - shrimpCount;
+              var shrimpCost = shrimpCount * 15;
+              var nonShrimpCost = nonShrimpCount > 1 ? (nonShrimpCount - 1) * 15 : 0;
+              var totalExtra = shrimpCost + nonShrimpCost;
+              if (totalExtra > 0) extraMsg = ' (+$' + totalExtra + ')';
+            } else {
+              // Combos: 1ª incluida · 2ª+ +$15
+              if (slotProts.length > 1) extraMsg = ' (+$' + ((slotProts.length - 1) * 15) + ')';
+            }
             msg += '   Proteína(s): ' + slotProts.join(', ') + extraMsg + '\n';
           }
         }
