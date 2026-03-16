@@ -2288,8 +2288,8 @@
           // Estilo por slot
           if (slot.hasStyle) {
             html += '<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🍳 ¿Natural o empanizado?</div><div class="style-grid">';
-            html += '<div class="style-btn' + (sm.style==='natural'?' sel':'') + '" onclick="selSlotStyle(' + si + ',\'natural\')">🌿 Natural</div>';
-            html += '<div class="style-btn' + (sm.style==='empanizado'?' sel':'') + '" onclick="selSlotStyle(' + si + ',\'empanizado\')">🍳 Empanizado</div>';
+            html += '<div class="style-btn' + (sm.style==='natural'?' sel':'') + '" id="srstyle' + si + '-natural" onclick="selSlotStyle(' + si + ',\'natural\')">🌿 Natural</div>';
+            html += '<div class="style-btn' + (sm.style==='empanizado'?' sel':'') + '" id="srstyle' + si + '-empanizado" onclick="selSlotStyle(' + si + ',\'empanizado\')">🍳 Empanizado</div>';
             html += '</div></div>';
           }
 
@@ -2299,7 +2299,7 @@
             return sm.sushiName && sp.indexOf(sm.sushiName) >= 0;
           })());
           if (_showProt) {
-            html += '<div style="margin-bottom:4px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🥩 Proteína</div><div class="protein-grid">';
+            html += '<div id="slotprot-' + si + '" style="margin-bottom:4px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🥩 Proteína</div><div class="protein-grid">';
             PROTEINS.filter(function(p){ return p.id !== 'p_camaron'; }).forEach(function(p) {
               html += '<div class="protein-btn' + (sm.protein===p.id?' sel':'') + '" id="sp' + si + '-' + p.id + '" onclick="selSlotProtein(' + si + ',\''+p.id+'\')">'
                 + '<span class="p-emoji">' + p.emoji + '</span>'
@@ -2500,7 +2500,28 @@
       // Reset protein if new sushi doesn't have it
       var sushisConProt = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito'];
       if (sushisConProt.indexOf(name) < 0) currentMods.slotMods[si].protein = null;
-      buildModalBody(currentItem);
+      // Update protein section only (no re-render)
+      var protSection = document.getElementById('slotprot-' + si);
+      if (protSection) {
+        var necesitaProt = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito'].indexOf(name) >= 0;
+        if (necesitaProt) {
+          var html = '<div style="margin-top:6px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🥩 Proteína</div><div class="protein-grid">';
+          PROTEINS.filter(function(p){ return p.id !== 'p_camaron'; }).forEach(function(p) {
+            var sm = currentMods.slotMods[si];
+            html += '<div class="protein-btn' + (sm.protein===p.id?' sel':'') + '" id="sp' + si + '-' + p.id + '" onclick="selSlotProtein(' + si + ',\''+p.id+'\')">'
+              + '<span class="p-emoji">' + p.emoji + '</span>'
+              + '<span class="p-name">' + p.name + '</span></div>';
+          });
+          var sm2 = currentMods.slotMods[si];
+          html += '<div class="protein-btn' + (sm2.protein==='p_camaron'?' sel':'') + '" id="sp'+si+'-p_camaron" onclick="selSlotProtein('+si+',\'p_camaron\')">'
+            + '<span class="p-emoji">🦐</span>'
+            + '<span class="p-name">Camarón<br><small style="font-size:10px;color:var(--pink)">+$15</small></span></div>';
+          html += '</div><div class="protein-note">Primera proteína incluida · Camarón +$15</div></div>';
+          protSection.innerHTML = html;
+        } else {
+          protSection.innerHTML = '';
+        }
+      }
     }
     function selSlotAlga(si, val) {
       if (!currentMods.slotMods || !currentMods.slotMods[si]) return;
@@ -2529,22 +2550,24 @@
       if (!currentMods.slotMods || !currentMods.slotMods[si]) return;
       if (!currentMods.slotMods[si].removed) currentMods.slotMods[si].removed = {};
       currentMods.slotMods[si].removed[ingId] = !currentMods.slotMods[si].removed[ingId];
-      buildModalBody(currentItem);
+      // Update row only (no re-render)
+      var row = document.getElementById('sr' + si + '-' + ingId);
+      if (row) {
+        var rm = !!currentMods.slotMods[si].removed[ingId];
+        row.className = 'ing-item' + (rm ? ' removed' : '');
+        row.querySelector('.ing-toggle').textContent = rm ? 'Volver a poner' : 'Quitar';
+      }
     }
-    // selSlotAlga y selSlotStyle usan re-render para simplicidad
-    var _origSelSlotAlga = selSlotAlga;
-    selSlotAlga = function(si, val) {
-      if (!currentMods.slotMods || !currentMods.slotMods[si]) return;
-      currentMods.slotMods[si].alga = val;
-      buildModalBody(currentItem);
-    };
-    var _origSelSlotStyle = selSlotStyle;
-    selSlotStyle = function(si, val) {
+    function selSlotStyle(si, val) {
       if (!currentMods.slotMods || !currentMods.slotMods[si]) return;
       currentMods.slotMods[si].style = val;
-      buildModalBody(currentItem);
-    };
-        function selSushiChoice(val) {
+      // Update buttons
+      var bNat = document.getElementById('srstyle' + si + '-natural');
+      var bEmp = document.getElementById('srstyle' + si + '-empanizado');
+      if (bNat) bNat.className = 'style-btn' + (val === 'natural' ? ' sel' : '');
+      if (bEmp) bEmp.className = 'style-btn' + (val === 'empanizado' ? ' sel' : '');
+    }
+    function selSushiChoice(val) {
       currentMods.sushiChoice = currentMods.sushiChoice === val ? null : val;
       // Limpiar proteínas si se cambia de sushi
       currentMods.proteins = [];
@@ -2600,7 +2623,7 @@
 
       // Calcular extraCost
       var extraCost = 0;
-      // 1. Extras del producto (camarón en promos, queso gratinado, etc.)
+      // 1. Extras del producto (queso gratinado, etc.)
       if (currentMods.extras) {
         Object.keys(currentMods.extras).forEach(function(key) {
           var val = currentMods.extras[key];
@@ -2612,13 +2635,23 @@
           }
         });
       }
-      // 2. Proteínas en slotMods (combos y promos): camarón +$15, otras proteínas gratis
-      if (currentMods.slotMods && currentMods.slotMods.length) {
+      // 2. slotMods (combos): proteínas normales (1ª incluida, resto +$15)
+      if (inst.item.promoSlots && currentMods.slotMods && currentMods.slotMods.length) {
+        var totalProts = 0;
+        currentMods.slotMods.forEach(function(sm) {
+          if (sm && sm.protein) totalProts++;
+        });
+        if (totalProts > 1) {
+          extraCost += (totalProts - 1) * 15;
+        }
+      }
+      // 3. slotMods (promociones con hasPromo): solo camarón +$15, otras gratis
+      if (inst.item.hasPromo && currentMods.slotMods && currentMods.slotMods.length) {
         currentMods.slotMods.forEach(function(sm) {
           if (sm && sm.protein === 'p_camaron') extraCost += 15;
         });
       }
-      // 3. Proteínas en items normales (sin promoSlots ni hasPromo): primera incluida, resto +$15 c/u
+      // 4. Proteínas en items normales (sin promoSlots ni hasPromo): 1ª incluida, resto +$15 c/u
       if (!inst.item.promoSlots && !inst.item.hasPromo && currentMods.proteins && currentMods.proteins.length > 1) {
         extraCost += (currentMods.proteins.length - 1) * 15;
       }
@@ -2816,6 +2849,31 @@
         var protExtra = (item.hasPromo || item.promoSlots) ? false : (m.proteins.length > 1);
         lines += '<div class="oi-mod-added">🥩 Proteína(s): ' + pnames.join(', ') + (protExtra ? ' (+$' + ((m.proteins.length - 1) * 15) + ')' : '') + '</div>';
       }
+      // Mostrar proteínas de slotMods (combos/promos)
+      if (m.slotMods && m.slotMods.length) {
+        var slotProts = [];
+        var camaronCount = 0;
+        m.slotMods.forEach(function(sm) {
+          if (sm && sm.protein) {
+            var pr = PROTEINS.filter(function(x) { return x.id === sm.protein; })[0];
+            if (pr) {
+              slotProts.push(pr.name);
+              if (sm.protein === 'p_camaron') camaronCount++;
+            }
+          }
+        });
+        if (slotProts.length) {
+          var extraMsg = '';
+          if (item.hasPromo) {
+            // Promociones: solo camarón cuesta
+            if (camaronCount > 0) extraMsg = ' (+$' + (camaronCount * 15) + ')';
+          } else if (item.promoSlots) {
+            // Combos: más de 1 proteína cuesta
+            if (slotProts.length > 1) extraMsg = ' (+$' + ((slotProts.length - 1) * 15) + ')';
+          }
+          lines += '<div class="oi-mod-added">🥩 Proteína(s): ' + slotProts.join(', ') + extraMsg + '</div>';
+        }
+      }
       if (m.sauces && Object.keys(m.sauces).length) lines += '<div class="oi-mod-added">🫙 Salsa boneles: ' + SAUCES.filter(function (s) { return m.sauces[s.id]; }).map(function (s) { return s.name; }).join(', ') + '</div>';
       if (m.sauces2 && Object.keys(m.sauces2).length) lines += '<div class="oi-mod-added">🫙 Salsa 2ª orden: ' + SAUCES.filter(function (s) { return m.sauces2[s.id]; }).map(function (s) { return s.name; }).join(', ') + '</div>';
       if (m.saucesAlitas && Object.keys(m.saucesAlitas).length) lines += '<div class="oi-mod-added">🫙 Salsa alitas: ' + SAUCES.filter(function (s) { return m.saucesAlitas[s.id]; }).map(function (s) { return s.name; }).join(', ') + '</div>';
@@ -2871,6 +2929,29 @@
           var pnames = m.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
           var protExtra = (item.hasPromo || item.promoSlots) ? false : (m.proteins.length > 1);
           msg += '   Proteína(s): ' + pnames.join(', ') + (protExtra ? ' (+$' + ((m.proteins.length - 1) * 15) + ')' : '') + '\n';
+        }
+        // Proteínas de slotMods (combos/promos)
+        if (m.slotMods && m.slotMods.length) {
+          var slotProts = [];
+          var camaronCount = 0;
+          m.slotMods.forEach(function(sm) {
+            if (sm && sm.protein) {
+              var pr = PROTEINS.filter(function(x) { return x.id === sm.protein; })[0];
+              if (pr) {
+                slotProts.push(pr.name);
+                if (sm.protein === 'p_camaron') camaronCount++;
+              }
+            }
+          });
+          if (slotProts.length) {
+            var extraMsg = '';
+            if (item.hasPromo) {
+              if (camaronCount > 0) extraMsg = ' (+$' + (camaronCount * 15) + ')';
+            } else if (item.promoSlots) {
+              if (slotProts.length > 1) extraMsg = ' (+$' + ((slotProts.length - 1) * 15) + ')';
+            }
+            msg += '   Proteína(s): ' + slotProts.join(', ') + extraMsg + '\n';
+          }
         }
         if (m.sauces && Object.keys(m.sauces).length) msg += '   Salsa boneles: ' + SAUCES.filter(function (s) { return m.sauces[s.id]; }).map(function (s) { return s.name; }).join(', ') + '\n';
         if (m.sauces2 && Object.keys(m.sauces2).length) msg += '   Salsa 2ª orden boneles: ' + SAUCES.filter(function (s) { return m.sauces2[s.id]; }).map(function (s) { return s.name; }).join(', ') + '\n';
