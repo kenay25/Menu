@@ -629,36 +629,23 @@ function buildModalBody(item) {
   // Proteins
   if (item.hasProtein) {
     if (item.hasPromo) {
-      // PROMOS: Sushi 1 y Sushi 2 separados. Camarón siempre +$15.
-      var PROTS_PROMO = PROTEINS.filter(function(p) { return p.id !== 'p_camaron'; });
+      // PROMOS: Sushi 1 y Sushi 2. Camarón siempre +$15 sin excepción.
       html += '<div class="protein-section">';
-      // Sushi 1
-      html += '<div class="protein-section-title">🍣 Proteína — Sushi 1</div><div class="protein-grid">';
-      PROTS_PROMO.forEach(function(p) {
-        var sel = currentMods.proteins[0] === p.id;
-        html += '<div class="protein-btn' + (sel ? ' sel' : '') + '" onclick="selProtSlot(0,\'' + p.id + '\')">'
-          + '<span class="p-emoji">' + p.emoji + '</span>'
-          + '<span class="p-name">' + p.name + '</span></div>';
+      ['Sushi 1','Sushi 2'].forEach(function(label, slot) {
+        html += '<div class="protein-section-title" style="' + (slot>0?'margin-top:12px':'') + '">🍣 Proteína — ' + label + '</div><div class="protein-grid">';
+        PROTEINS.forEach(function(p) {
+          var sel = currentMods.proteins[slot] === p.id;
+          html += '<div class="protein-btn' + (sel?' sel':'') + '" id="ps' + slot + '-' + p.id + '" onclick="selProtSlot(' + slot + ',\'' + p.id + '\')">'
+            + '<span class="p-emoji">' + p.emoji + '</span>'
+            + '<span class="p-name">' + p.name + '</span></div>';
+        });
+        // Camarón siempre +$15 en promos
+        var selCam = currentMods.proteins[slot] === 'p_camaron';
+        html += '<div class="protein-btn' + (selCam?' sel':'') + '" id="ps' + slot + '-p_camaron" onclick="selProtSlot(' + slot + ',\'p_camaron\')"><span class="p-emoji">🦐</span><span class="p-name">Camarón<br><small style="font-size:10px;color:var(--pink)">+$15</small></span></div>';
+        html += '</div>';
       });
-      // Camarón sushi 1 (+$15 siempre)
-      var selCam1 = currentMods.proteins[0] === 'p_camaron';
-      html += '<div class="protein-btn' + (selCam1 ? ' sel' : '') + '" id="ps0-p_camaron" onclick="selProtSlot(0,\'p_camaron\')"><span class="p-emoji">🦐</span><span class="p-name">Camarón<br><small style=\"font-size:10px;color:var(--pink)\">+$15</small></span></div>';
-      html += '</div>';
-      // Sushi 2
-      html += '<div class="protein-section-title" style="margin-top:12px">🍣 Proteína — Sushi 2</div><div class="protein-grid">';
-      PROTS_PROMO.forEach(function(p) {
-        var sel = currentMods.proteins[1] === p.id;
-        html += '<div class="protein-btn' + (sel ? ' sel' : '') + '" onclick="selProtSlot(1,\'' + p.id + '\')">'
-          + '<span class="p-emoji">' + p.emoji + '</span>'
-          + '<span class="p-name">' + p.name + '</span></div>';
-      });
-      // Camarón sushi 2 (+$15 siempre)
-      var selCam2 = currentMods.proteins[1] === 'p_camaron';
-      html += '<div class="protein-btn' + (selCam2 ? ' sel' : '') + '" id="ps1-p_camaron" onclick="selProtSlot(1,\'p_camaron\')"><span class="p-emoji">🦐</span><span class="p-name">Camarón<br><small style=\"font-size:10px;color:var(--pink)\">+$15</small></span></div>';
-      html += '</div>';
-      html += '<div class="protein-note">🦐 Camarón tiene costo extra de $15 en promociones</div></div>';
+      html += '<div class="protein-note">🦐 Camarón tiene costo adicional de $15 en promociones</div></div>';
     } else {
-      // Sushis normales: primera proteína incluida, extras +$15
       html += '<div class="protein-section"><div class="protein-section-title">🥩 Elige tu(s) proteína(s)</div><div class="protein-grid">';
       PROTEINS.forEach(function (p) {
         var cnt = currentMods.proteins.filter(function (x) { return x === p.id; }).length;
@@ -754,20 +741,22 @@ function selAlga(val) {
   });
 }
 function selProtSlot(slot, pid) {
+  // Promos: slot 0=Sushi1, slot 1=Sushi2
+  // Camarón siempre +$15 en promos
   while (currentMods.proteins.length <= slot) currentMods.proteins.push(null);
   currentMods.proteins[slot] = pid;
+  // Calcular costo de camarones elegidos
   var camCount = currentMods.proteins.filter(function(p){ return p === 'p_camaron'; }).length;
   currentMods._promoCamaronCost = camCount * 15;
-  // Actualizar botones in-place sin re-renderizar el modal
-  var allIds = PROTEINS.map(function(p){ return p.id; }).concat(['p_camaron']);
-  allIds.forEach(function(pid2) {
-    var b0 = document.getElementById('ps0-' + pid2);
-    var b1 = document.getElementById('ps1-' + pid2);
-    if (b0) b0.className = 'protein-btn' + (currentMods.proteins[0] === pid2 ? ' sel' : '');
-    if (b1) b1.className = 'protein-btn' + (currentMods.proteins[1] === pid2 ? ' sel' : '');
+  // Actualizar botones in-place (no re-renderizar el modal entero)
+  var allPids = PROTEINS.map(function(p){ return p.id; }).concat(['p_camaron']);
+  [0,1].forEach(function(s) {
+    allPids.forEach(function(pid2) {
+      var b = document.getElementById('ps' + s + '-' + pid2);
+      if (b) b.className = 'protein-btn' + (currentMods.proteins[s] === pid2 ? ' sel' : '');
+    });
   });
 }
-
 
 function togProt(pid) {
   var idx = currentMods.proteins.indexOf(pid);
@@ -819,14 +808,12 @@ function confirmMods() {
     return;
   }
 
-  // Para promos: sumar costo de camarón al extraCost
-  var extraCamaronPromo = 0;
+  // Sumar costo de camarón en promos al extraCost
   if (inst.item.hasPromo && currentMods._promoCamaronCost) {
-    extraCamaronPromo = currentMods._promoCamaronCost;
+    inst.extraCost = (inst.extraCost || 0) + currentMods._promoCamaronCost;
+    currentMods._promoCamaronCost = 0;
   }
   inst.mods = JSON.stringify(currentMods);
-  inst.extraCost = (inst.extraCost || 0) - (inst._prevCamaronCost || 0) + extraCamaronPromo;
-  inst._prevCamaronCost = extraCamaronPromo;
   refreshCardState(inst.itemId);
   updateBar();
   closeModal();
