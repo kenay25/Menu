@@ -626,8 +626,8 @@ function buildModalBody(item) {
     html += '</div></div>';
   }
 
-  // Proteins
-  if (item.hasProtein) {
+  // Proteins — skip if hasSushiChoice (already shown inside sushi choice block)
+  if (item.hasProtein && !item.hasSushiChoice) {
     if (item.hasPromo) {
       // PROMOS: Sushi 1 y Sushi 2. Camarón siempre +$15 sin excepción.
       html += '<div class="protein-section">';
@@ -639,12 +639,9 @@ function buildModalBody(item) {
             + '<span class="p-emoji">' + p.emoji + '</span>'
             + '<span class="p-name">' + p.name + '</span></div>';
         });
-        // Camarón siempre +$15 en promos
-        var selCam = currentMods.proteins[slot] === 'p_camaron';
-        html += '<div class="protein-btn' + (selCam?' sel':'') + '" id="ps' + slot + '-p_camaron" onclick="selProtSlot(' + slot + ',\'p_camaron\')"><span class="p-emoji">🦐</span><span class="p-name">Camarón<br><small style="font-size:10px;color:var(--pink)">+$15</small></span></div>';
         html += '</div>';
       });
-      html += '<div class="protein-note">🦐 Camarón tiene costo adicional de $15 en promociones</div></div>';
+      html += '<div class="protein-note">Elige una proteína por cada sushi · 🦐 Camarón disponible en ➕ Extras (+$15)</div></div>';
     } else {
       html += '<div class="protein-section"><div class="protein-section-title">🥩 Elige tu(s) proteína(s)</div><div class="protein-grid">';
       PROTEINS.forEach(function (p) {
@@ -746,10 +743,9 @@ function selProtSlot(slot, pid) {
   while (currentMods.proteins.length <= slot) currentMods.proteins.push(null);
   currentMods.proteins[slot] = pid;
   // Calcular costo de camarones elegidos
-  var camCount = currentMods.proteins.filter(function(p){ return p === 'p_camaron'; }).length;
-  currentMods._promoCamaronCost = camCount * 15;
+  // camarón está en extras, no en proteínas
   // Actualizar botones in-place (no re-renderizar el modal entero)
-  var allPids = PROTEINS.map(function(p){ return p.id; }).concat(['p_camaron']);
+  var allPids = PROTEINS.map(function(p){ return p.id; });
   [0,1].forEach(function(s) {
     allPids.forEach(function(pid2) {
       var b = document.getElementById('ps' + s + '-' + pid2);
