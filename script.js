@@ -564,7 +564,7 @@ function addNewInstance(itemId, e) {
   if (e) e.stopPropagation();
   var item = findItem(itemId); if (!item) return;
   var iid = genId();
-  orderInstances.push({ instanceId: iid, itemId: itemId, item: item, mods: { removed: {}, extras: {}, sauces: {}, sauces2: {}, proteins: [], alga: null, extraIngs: [] }, extraCost: 0 });
+  orderInstances.push({ instanceId: iid, itemId: itemId, item: item, mods: { removed: {}, extras: {}, sauces: {}, sauces2: {}, proteins: [], alga: null, extraIngs: [], slotMods: [] }, extraCost: 0 });
   isNewInstance = true;
   refreshCardState(itemId);
   openModalEdit(iid, null);
@@ -627,13 +627,13 @@ function buildModalBody(item) {
   }
 
   // Proteins
-  if (item.hasProtein) {
+  if (item.hasProtein && !item.hasSushiChoice) {
     if (item.hasPromo) {
       // PROMOS: Sushi 1 y Sushi 2. Camarón siempre +$15 sin excepción.
       html += '<div class="protein-section">';
       ['Sushi 1','Sushi 2'].forEach(function(label, slot) {
         html += '<div class="protein-section-title" style="' + (slot>0?'margin-top:12px':'') + '">🍣 Proteína — ' + label + '</div><div class="protein-grid">';
-        PROTEINS.filter(function(p){ return p.id !== 'p_camaron'; }).forEach(function(p) {
+        PROTEINS.forEach(function(p) {
           var sel = currentMods.proteins[slot] === p.id;
           html += '<div class="protein-btn' + (sel?' sel':'') + '" id="ps' + slot + '-' + p.id + '" onclick="selProtSlot(' + slot + ',\'' + p.id + '\')">'
             + '<span class="p-emoji">' + p.emoji + '</span>'
@@ -757,7 +757,14 @@ function selProtSlot(slot, pid) {
 
 function togProt(pid) {
   var idx = currentMods.proteins.indexOf(pid);
-  if (idx >= 0) currentMods.proteins.splice(idx, 1); else currentMods.proteins.push(pid);
+  if (idx >= 0) {
+    currentMods.proteins.splice(idx, 1);
+  } else {
+    currentMods.proteins.push(pid);
+  }
+  // Camarón siempre +$15, independientemente del orden
+  var camCount = currentMods.proteins.filter(function(x){ return x === 'p_camaron'; }).length;
+  currentMods._camaronCost = camCount * 15;
   PROTEINS.forEach(function (p) {
     var cnt = currentMods.proteins.filter(function (x) { return x === p.id; }).length;
     var b = document.getElementById('pb-' + p.id);
@@ -769,7 +776,14 @@ function togProt(pid) {
       badge.textContent = cnt;
     } else if (badge) { badge.remove(); }
   });
+  // Update camarón button too
+  var camBtn = document.getElementById('pb-p_camaron');
+  if (camBtn) {
+    var cntCam = currentMods.proteins.filter(function(x){return x==='p_camaron';}).length;
+    camBtn.className = 'protein-btn' + (cntCam > 0 ? ' sel' : '');
+  }
 }
+
 function togSauce(sid, maxSauces, field, prefix) {
   var fn = field || 'sauces', pre = prefix || 'sb-';
   if (currentMods[fn][sid]) {
@@ -805,11 +819,15 @@ function confirmMods() {
     return;
   }
 
-  // Sumar costo de camarón en promos al extraCost
-  if (inst.item.hasPromo && currentMods._promoCamaronCost) {
-    inst.extraCost = (inst.extraCost || 0) + currentMods._promoCamaronCost;
-    currentMods._promoCamaronCost = 0;
+  // Calcular costos extra: camarón en proteínas + camarón en slots de promos
+  var camaronCost = 0;
+  if (currentMods._camaronCost) camaronCost += currentMods._camaronCost;
+  if (currentMods.slotMods && currentMods.slotMods.length) {
+    currentMods.slotMods.forEach(function(sm) {
+      if (sm.protein === 'p_camaron') camaronCost += 15;
+    });
   }
+  inst.extraCost = camaronCost;
   inst.mods = JSON.stringify(currentMods);
   refreshCardState(inst.itemId);
   updateBar();

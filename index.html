@@ -1958,10 +1958,60 @@
     };
 
     var PROMOS = [
-      { id: 'promo4', dbId: 50, emoji: '&#x1F371;', num: 'Paquete 4', title: '1 Boneless + 1 California', price: 200, tag: 'popular', hasProtein: true, hasStyle: true, hasAlga: true, hasPromo: true, hasSauce: true, desc: '1 Boneless (BBQ, Búfalo o mixtos) + 1 California con ingrediente a elegir (pollo, tocino, res o surimi).', ingredients: [ing('b1', '&#x1F357;', 'Boneless', 'Con salsa', false), ing('b2', '&#x1F363;', 'California', 'Prot. a elegir', false)], extras: [{ id: 'x_camaron', emoji: '&#x1F990;', name: 'Camarón', note: '+$15 extra', price: 15 }] },
-      { id: 'promo1', dbId: 51, emoji: '&#x1F363;', num: 'Paquete 1', title: '2 Californias + Tostitampico', price: 220, tag: 'popular', hasProtein: true, hasPromo: true, hasAlga: true, hasStyle: true, desc: '2 Californias con ingrediente a elegir (pollo, tocino, res o surimi) + 1 Tostitampico.', ingredients: [ing('b1', '&#x1F363;', '2 Californias', 'Prot. a elegir', false), ing('b2', '&#x1F32E;', 'Tostitampico', 'Incluido', false)], extras: [{ id: 'x_camaron', emoji: '&#x1F990;', name: 'Camarón', note: '+$15 extra', price: 15 }] },
-      { id: 'promo2', dbId: 52, emoji: '&#x1F363;', num: 'Paquete 2', title: '2 Sonoras', price: 200, tag: null, hasProtein: true, hasPromo: true, hasAlga: true, hasStyle: true, desc: '2 Sonoras (res, tocino, philadelphia y chile rescoldado).', ingredients: [ing('b1', '&#x1F363;', '2 Sonoras', 'Incluidas', false)], extras: [{ id: 'x_camaron', emoji: '&#x1F990;', name: 'Camarón', note: '+$15 extra', price: 15 }] },
-      { id: 'promo3', dbId: 53, emoji: '&#x1F363;', num: 'Paquete 3', title: '3 Bolas', price: 200, tag: null, hasProtein: true, hasStyle: true, hasAlga: true, hasPromo: true, desc: '3 Bolas con ingrediente a elegir (pollo, res, tocino o surimi).', ingredients: [ing('b1', '&#x1F363;', '3 Bolas', 'Prot. a elegir', false), ing('b2', '&#x1F951;', 'Aguacate, pepino, philadelphia', 'Por fuera', true), ing('b3', '&#x1F41F;', 'Tampico, anguila, ajonjolí', 'Por fuera', true)], extras: [{ id: 'x_camaron', emoji: '&#x1F990;', name: 'Camarón', note: '+$15 extra', price: 15 }] }
+      {
+        id: 'promo1', dbId: 51, emoji: '&#x1F363;', num: 'Paquete 1',
+        title: '2 Californias + Tostitampico', price: 220, tag: 'popular',
+        hasProtein: true, hasPromo: true, hasAlga: true, hasStyle: true,
+        desc: '2 Californias con ingrediente a elegir (pollo, tocino, res o surimi) + 1 Tostitampico.',
+        ingredients: [ing('b1', '&#x1F363;', '2 Californias', 'Prot. a elegir', false), ing('b2', '&#x1F32E;', 'Tostitampico', 'Incluido', false)],
+        extras: [{ id: 'x_camaron', emoji: '&#x1F990;', name: 'Camarón', note: '+$15 extra', price: 15 }],
+        promoSlots: [
+          { label: 'California 1', hasProtein: true, hasAlga: true, hasStyle: true },
+          { label: 'California 2', hasProtein: true, hasAlga: true, hasStyle: true }
+        ]
+      },
+      {
+        id: 'promo2', dbId: 52, emoji: '&#x1F363;', num: 'Paquete 2',
+        title: '2 Sonoras', price: 200, tag: null,
+        hasProtein: true, hasPromo: true, hasAlga: true, hasStyle: true,
+        desc: '2 Sonoras (res, tocino, philadelphia y chile rescoldado).',
+        ingredients: [ing('b1', '&#x1F363;', '2 Sonoras', 'Incluidas', false)],
+        extras: [{ id: 'x_camaron', emoji: '&#x1F990;', name: 'Camarón', note: '+$15 extra', price: 15 }],
+        promoSlots: [
+          { label: 'Sonora 1', hasAlga: true, hasStyle: true, removable: [
+            { id: 'rp1_philly', name: 'Philadelphia', emoji: '&#x1F9C0;' },
+            { id: 'rp1_chile',  name: 'Chile verde',  emoji: '&#x1F336;&#xFE0F;' }
+          ]},
+          { label: 'Sonora 2', hasAlga: true, hasStyle: true, removable: [
+            { id: 'rp2_philly', name: 'Philadelphia', emoji: '&#x1F9C0;' },
+            { id: 'rp2_chile',  name: 'Chile verde',  emoji: '&#x1F336;&#xFE0F;' }
+          ]}
+        ]
+      },
+      {
+        id: 'promo3', dbId: 53, emoji: '&#x1F363;', num: 'Paquete 3',
+        title: '3 Bolas', price: 200, tag: null,
+        hasProtein: true, hasPromo: true, hasAlga: true, hasStyle: true,
+        desc: '3 Bolas con ingrediente a elegir (pollo, res, tocino o surimi).',
+        ingredients: [ing('b1', '&#x1F363;', '3 Bolas', 'Prot. a elegir', false), ing('b2', '&#x1F951;', 'Aguacate, pepino, philadelphia', 'Por fuera', true), ing('b3', '&#x1F41F;', 'Tampico, anguila, ajonjolí', 'Por fuera', true)],
+        extras: [{ id: 'x_camaron', emoji: '&#x1F990;', name: 'Camarón', note: '+$15 extra', price: 15 }],
+        promoSlots: [
+          { label: 'Bola 1', hasProtein: true, hasAlga: true, hasStyle: true },
+          { label: 'Bola 2', hasProtein: true, hasAlga: true, hasStyle: true },
+          { label: 'Bola 3', hasProtein: true, hasAlga: true, hasStyle: true }
+        ]
+      },
+      {
+        id: 'promo4', dbId: 50, emoji: '&#x1F371;', num: 'Paquete 4',
+        title: '1 Boneless + 1 California', price: 200, tag: 'popular',
+        hasProtein: true, hasPromo: true, hasAlga: true, hasStyle: true, hasSauce: true,
+        desc: '1 Boneless (BBQ, Búfalo o mixtos) + 1 California con ingrediente a elegir (pollo, tocino, res o surimi).',
+        ingredients: [ing('b1', '&#x1F357;', 'Boneless', 'Con salsa', false), ing('b2', '&#x1F363;', 'California', 'Prot. a elegir', false)],
+        extras: [{ id: 'x_camaron', emoji: '&#x1F990;', name: 'Camarón', note: '+$15 extra', price: 15 }],
+        promoSlots: [
+          { label: 'California', hasProtein: true, hasAlga: true, hasStyle: true }
+        ]
+      }
     ];
 
     /* ══ ESTADO ══ */
@@ -2163,93 +2213,189 @@
       document.body.style.overflow = 'hidden';
     }
     function buildModalBody(item) {
-      var fixed = (item.ingredients || []).filter(function (i) { return !i.removable; });
-      var removable = (item.ingredients || []).filter(function (i) { return i.removable; });
       var extras = item.extras || [];
       var html = '';
-      if (item.isExtraIng) {
-        html += '<div class="extra-picker"><div class="extra-picker-title">➕ ¿Qué ingrediente(s) deseas?</div><div class="extra-picker-grid">';
-        EXTRA_INGS.forEach(function (nm) { html += '<div class="extra-chip' + (currentMods.extraIngs.indexOf(nm) >= 0 ? ' sel' : '') + '" onclick="togExtraIng(\'' + nm + '\')">' + nm + '</div>'; });
-        html += '</div><div class="sauce-note">$15 por ingrediente</div></div>';
-      }
-      if (item.hasAlga) {
-        html += '<div class="alga-section"><div class="alga-section-title">🌿 ¿Con o sin alga?</div><div class="alga-grid">';
-        html += '<div class="alga-btn' + (currentMods.alga === 'con' ? ' sel' : '') + '" id="alga-con" onclick="selAlga(\'con\')">🌿 Con alga</div>';
-        html += '<div class="alga-btn' + (currentMods.alga === 'sin' ? ' sel' : '') + '" id="alga-sin" onclick="selAlga(\'sin\')">❌ Sin alga</div>';
-        html += '</div></div>';
-      }
-      if (item.hasStyle) {
-        html += '<div class="style-section"><div class="style-section-title">🍳 ¿Natural o empanizado?</div><div class="style-grid">';
-        html += '<div class="style-btn' + (currentMods.style === 'natural' ? ' sel' : '') + '" id="style-natural" onclick="selStyle(\'natural\')">🌿 Natural</div>';
-        html += '<div class="style-btn' + (currentMods.style === 'empanizado' ? ' sel' : '') + '" id="style-empanizado" onclick="selStyle(\'empanizado\')">🍳 Empanizado</div>';
-        html += '</div></div>';
-      }
-      if (item.hasSushiChoice) {
-        html += '<div class="sushi-choice-section"><div class="sushi-choice-title">🍣 ¿Qué sushi quieres? <span style="font-size:10px;color:var(--muted)">(elige uno)</span></div><div class="sushi-choice-grid">';
-        ['Bombazo', 'California', 'Sonora'].forEach(function (s) {
-          html += '<div class="sushi-choice-btn' + (currentMods.sushiChoice === s ? ' sel' : '') + '" onclick="selSushiChoice(\'' + s + '\')">' + s + '</div>';
-        });
-        html += '</div></div>';
+
+      // ── Item con promoSlots: mostrar sección por cada sub-item ──
+      if (item.promoSlots && item.promoSlots.length) {
+        if (!currentMods.slotMods || currentMods.slotMods.length !== item.promoSlots.length) {
+          currentMods.slotMods = item.promoSlots.map(function() {
+            return { protein: null, alga: null, style: null, removed: {} };
+          });
         }
-      if (item.hasIce) {
-        html += '<div class="alga-section"><div class="alga-section-title">🧊 ¿Con o sin hielo?</div><div class="alga-grid">';
-        html += '<div class="alga-btn' + (currentMods.ice === 'con' ? ' sel' : '') + '" id="ice-con" onclick="selIce(\'con\')">🧊 Con hielo</div>';
-        html += '<div class="alga-btn' + (currentMods.ice === 'sin' ? ' sel' : '') + '" id="ice-sin" onclick="selIce(\'sin\')">🚫 Sin hielo</div>';
-        html += '</div></div>';
-      }
-      if (item.hasProtein) {
-        html += '<div class="protein-section"><div class="protein-section-title">🥩 Elige tu(s) proteína(s)</div><div class="protein-grid">';
-        PROTEINS.forEach(function (p) {
-          var cnt = currentMods.proteins.filter(function (x) { return x === p.id; }).length;
-          html += '<div class="protein-btn' + (cnt > 0 ? ' sel' : '') + '" id="pb-' + p.id + '" onclick="togProt(\'' + p.id + '\')">'
-            + '<span class="p-emoji">' + p.emoji + '</span><span class="p-name">' + p.name + '</span>'
-            + (cnt > 1 ? '<span class="p-count">' + cnt + '</span>' : '') + '</div>';
+        item.promoSlots.forEach(function(slot, si) {
+          var sm = currentMods.slotMods[si];
+          html += '<div style="margin-bottom:14px;border:1.5px solid rgba(232,84,122,0.2);border-radius:12px;padding:12px">';
+          html += '<div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--pink);margin-bottom:10px">🍣 ' + slot.label + '</div>';
+
+          // Alga por slot
+          if (slot.hasAlga) {
+            html += '<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🌿 ¿Con o sin alga?</div><div class="alga-grid">';
+            html += '<div class="alga-btn' + (sm.alga==='con'?' sel':'') + '" onclick="selSlotAlga(' + si + ',\'con\')">🌿 Con alga</div>';
+            html += '<div class="alga-btn' + (sm.alga==='sin'?' sel':'') + '" onclick="selSlotAlga(' + si + ',\'sin\')">❌ Sin alga</div>';
+            html += '</div></div>';
+          }
+
+          // Estilo por slot
+          if (slot.hasStyle) {
+            html += '<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🍳 ¿Natural o empanizado?</div><div class="style-grid">';
+            html += '<div class="style-btn' + (sm.style==='natural'?' sel':'') + '" onclick="selSlotStyle(' + si + ',\'natural\')">🌿 Natural</div>';
+            html += '<div class="style-btn' + (sm.style==='empanizado'?' sel':'') + '" onclick="selSlotStyle(' + si + ',\'empanizado\')">🍳 Empanizado</div>';
+            html += '</div></div>';
+          }
+
+          // Proteína por slot (camarón +$15)
+          if (slot.hasProtein) {
+            html += '<div style="margin-bottom:4px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🥩 Proteína</div><div class="protein-grid">';
+            PROTEINS.filter(function(p){ return p.id !== 'p_camaron'; }).forEach(function(p) {
+              html += '<div class="protein-btn' + (sm.protein===p.id?' sel':'') + '" id="sp' + si + '-' + p.id + '" onclick="selSlotProtein(' + si + ',\''+p.id+'\')">'
+                + '<span class="p-emoji">' + p.emoji + '</span>'
+                + '<span class="p-name">' + p.name + '</span></div>';
+            });
+            // Camarón con +$15
+            html += '<div class="protein-btn' + (sm.protein==='p_camaron'?' sel':'') + '" id="sp'+si+'-p_camaron" onclick="selSlotProtein('+si+',\'p_camaron\')">'
+              + '<span class="p-emoji">🦐</span>'
+              + '<span class="p-name">Camarón<br><small style="font-size:10px;color:var(--pink)">+$15</small></span></div>';
+            html += '</div><div class="protein-note">Primera proteína incluida · Camarón +$15</div></div>';
+          }
+
+          // Ingredientes removibles por slot
+          if (slot.removable && slot.removable.length) {
+            html += '<div style="margin-top:6px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">✏️ Quitar ingredientes</div><div class="ing-list">';
+            slot.removable.forEach(function(ing) {
+              var rm = sm.removed && sm.removed[ing.id];
+              html += '<div class="ing-item' + (rm?' removed':'') + '" id="sr' + si + '-' + ing.id + '">'
+                + '<div class="ing-left"><span class="ing-emoji">' + ing.emoji + '</span>'
+                + '<div><div class="ing-name">' + ing.name + '</div></div></div>'
+                + '<button class="ing-toggle" onclick="togSlotIng(' + si + ',\''+ing.id+'\')">' + (rm?'Volver a poner':'Quitar') + '</button></div>';
+            });
+            html += '</div></div>';
+          }
+
+          html += '</div>';
         });
-        html += '</div><div class="protein-note">Primera proteína incluida · Extras +$15 c/u</div></div>';
+
+        // Sauce general (ej paquete 4 - boneless)
+        if (item.hasSauce) {
+          var maxS = item.hasSauce1Only ? 1 : 2;
+          var sLabel = item.hasSauce1Only ? '🫙 Salsa para los boneles (elige 1)' : '🫙 Salsa para los boneles (hasta 2)';
+          html += '<div class="sauce-section"><div class="sauce-section-title">' + sLabel + '</div><div class="sauce-grid">';
+          SAUCES.forEach(function(s) {
+            html += '<div class="sauce-btn' + (currentMods.sauces[s.id]?' sel':'') + '" id="sb-' + s.id + '" onclick="togSauce(\''+s.id+'\','+maxS+',\'sauces\',\'sb-\')">' + s.name + '</div>';
+          });
+          html += '</div><div class="sauce-note">' + (item.hasSauce1Only?'Elige 1 salsa':'Puedes elegir hasta 2 salsas') + '</div></div>';
+        }
+
+        // Extras del promo (camarón)
+        if (extras.length) {
+          html += '<div class="ing-section"><div class="ing-section-title">➕ Agregar extras</div><div class="ing-list">';
+          extras.forEach(function(ex) {
+            var ad = currentMods.extras[ex.id];
+            html += '<div class="ing-item' + (ad?' extra-added':'') + '" id="mex-' + ex.id + '">'
+              + '<div class="ing-left"><span class="ing-emoji">' + ex.emoji + '</span>'
+              + '<div><div class="ing-name">' + ex.name + '</div><div class="ing-note">' + ex.note + '</div></div></div>'
+              + '<button class="ing-toggle" onclick="togExtra(\''+ex.id+'\')">' + (ad?'Quitar':'Agregar') + '</button></div>';
+          });
+          html += '</div></div>';
+        }
+
+      } else {
+        // ── Item normal (no promoSlots) ──
+        var fixed    = (item.ingredients || []).filter(function(i) { return !i.removable; });
+        var removable = (item.ingredients || []).filter(function(i) { return i.removable; });
+
+        if (item.isExtraIng) {
+          html += '<div class="extra-picker"><div class="extra-picker-title">➕ ¿Qué ingrediente(s) deseas?</div><div class="extra-picker-grid">';
+          EXTRA_INGS.forEach(function(nm) {
+            html += '<div class="extra-chip' + (currentMods.extraIngs.indexOf(nm)>=0?' sel':'') + '" onclick="togExtraIng(\''+nm+'\')">'+nm+'</div>';
+          });
+          html += '</div><div class="sauce-note">$15 por ingrediente</div></div>';
+        }
+        if (item.hasAlga) {
+          html += '<div class="alga-section"><div class="alga-section-title">🌿 ¿Con o sin alga?</div><div class="alga-grid">';
+          html += '<div class="alga-btn'+(currentMods.alga==='con'?' sel':'')+'" id="alga-con" onclick="selAlga(\'con\')">🌿 Con alga</div>';
+          html += '<div class="alga-btn'+(currentMods.alga==='sin'?' sel':'')+'" id="alga-sin" onclick="selAlga(\'sin\')">❌ Sin alga</div>';
+          html += '</div></div>';
+        }
+        if (item.hasStyle) {
+          html += '<div class="style-section"><div class="style-section-title">🍳 ¿Natural o empanizado?</div><div class="style-grid">';
+          html += '<div class="style-btn'+(currentMods.style==='natural'?' sel':'')+'" id="style-natural" onclick="selStyle(\'natural\')">🌿 Natural</div>';
+          html += '<div class="style-btn'+(currentMods.style==='empanizado'?' sel':'')+'" id="style-empanizado" onclick="selStyle(\'empanizado\')">🍳 Empanizado</div>';
+          html += '</div></div>';
+        }
+        if (item.hasSushiChoice) {
+          html += '<div class="sushi-choice-section"><div class="sushi-choice-title">🍣 ¿Qué sushi quieres? <span style="font-size:10px;color:var(--muted)">(elige uno)</span></div><div class="sushi-choice-grid">';
+          ['Bombazo','California','Sonora'].forEach(function(s) {
+            html += '<div class="sushi-choice-btn'+(currentMods.sushiChoice===s?' sel':'')+'" onclick="selSushiChoice(\''+s+'\')">'+s+'</div>';
+          });
+          html += '</div></div>';
+        }
+        if (item.hasIce) {
+          html += '<div class="alga-section"><div class="alga-section-title">🧊 ¿Con o sin hielo?</div><div class="alga-grid">';
+          html += '<div class="alga-btn'+(currentMods.ice==='con'?' sel':'')+'" id="ice-con" onclick="selIce(\'con\')">🧊 Con hielo</div>';
+          html += '<div class="alga-btn'+(currentMods.ice==='sin'?' sel':'')+'" id="ice-sin" onclick="selIce(\'sin\')">🚫 Sin hielo</div>';
+          html += '</div></div>';
+        }
+        if (item.hasProtein) {
+          html += '<div class="protein-section"><div class="protein-section-title">🥩 Elige tu(s) proteína(s)</div><div class="protein-grid">';
+          PROTEINS.filter(function(p){ return p.id !== 'p_camaron'; }).forEach(function(p) {
+            var cnt = currentMods.proteins.filter(function(x){return x===p.id;}).length;
+            html += '<div class="protein-btn'+(cnt>0?' sel':'')+'" id="pb-'+p.id+'" onclick="togProt(\''+p.id+'\')">'
+              + '<span class="p-emoji">'+p.emoji+'</span><span class="p-name">'+p.name+'</span>'
+              + (cnt>1?'<span class="p-count">'+cnt+'</span>':'') + '</div>';
+          });
+          // Camarón con +$15
+          var cntCam = currentMods.proteins.filter(function(x){return x==='p_camaron';}).length;
+          html += '<div class="protein-btn'+(cntCam>0?' sel':'')+'" id="pb-p_camaron" onclick="togProt(\'p_camaron\')">'
+            + '<span class="p-emoji">🦐</span>'
+            + '<span class="p-name">Camarón<br><small style="font-size:10px;color:var(--pink)">+$15</small></span>'
+            + (cntCam>1?'<span class="p-count">'+cntCam+'</span>':'') + '</div>';
+          html += '</div><div class="protein-note">Primera proteína incluida · Camarón y extras +$15 c/u</div></div>';
+        }
+        if (item.hasSauceAlitas) {
+          html += '<div class="sauce-section"><div class="sauce-section-title">🫙 Salsa para las alitas (hasta 2)</div><div class="sauce-grid">';
+          SAUCES.forEach(function(s){html += '<div class="sauce-btn'+(currentMods.saucesAlitas[s.id]?' sel':'')+'" id="sal-'+s.id+'" onclick="togSauce(\''+s.id+'\',2,\'saucesAlitas\',\'sal-\')">'+s.name+'</div>';});
+          html += '</div><div class="sauce-note">Puedes elegir hasta 2 salsas</div></div>';
+        }
+        if (item.hasSauce) {
+          var maxS = item.hasSauce1Only ? 1 : 2;
+          var sLabel = item.hasSauce1Only ? '🫙 Salsa para los boneles (elige 1)' : '🫙 Salsa para los boneles (hasta 2)';
+          html += '<div class="sauce-section"><div class="sauce-section-title">'+sLabel+'</div><div class="sauce-grid">';
+          SAUCES.forEach(function(s){html += '<div class="sauce-btn'+(currentMods.sauces[s.id]?' sel':'')+'" id="sb-'+s.id+'" onclick="togSauce(\''+s.id+'\','+maxS+',\'sauces\',\'sb-\')">'+s.name+'</div>';});
+          html += '</div><div class="sauce-note">'+(item.hasSauce1Only?'Elige 1 salsa':'Puedes elegir hasta 2 salsas')+'</div></div>';
+        }
+        if (item.hasSauce2) {
+          html += '<div class="sauce-section"><div class="sauce-section-title">🫙 Salsa para la 2ª orden de boneles (hasta 2)</div><div class="sauce-grid">';
+          SAUCES.forEach(function(s){html += '<div class="sauce-btn'+(currentMods.sauces2[s.id]?' sel':'')+'" id="sb2-'+s.id+'" onclick="togSauce(\''+s.id+'\',2,\'sauces2\',\'sb2-\')">'+s.name+'</div>';});
+          html += '</div><div class="sauce-note">Para la 2ª orden de boneles</div></div>';
+        }
+        if (fixed.length) {
+          html += '<div class="ing-section"><div class="ing-section-title">🔒 Ingredientes fijos</div><div class="ing-list">';
+          fixed.forEach(function(i){html += '<div class="ing-item"><div class="ing-left"><span class="ing-emoji">'+i.emoji+'</span><div><div class="ing-name">'+i.name+'</div><div class="ing-note">'+i.note+'</div></div></div><span style="font-size:11px;color:var(--muted)">Fijo</span></div>';});
+          html += '</div></div>';
+        }
+        if (removable.length) {
+          html += '<div class="ing-section"><div class="ing-section-title">✏️ Quitar ingredientes</div><div class="ing-list">';
+          removable.forEach(function(i) {
+            var rm = currentMods.removed[i.id];
+            html += '<div class="ing-item'+(rm?' removed':'')+'" id="ming-'+i.id+'">'
+              + '<div class="ing-left"><span class="ing-emoji">'+i.emoji+'</span><div><div class="ing-name">'+i.name+'</div><div class="ing-note">'+i.note+'</div></div></div>'
+              + '<button class="ing-toggle" onclick="togIng(\''+i.id+'\')">'+(rm?'Volver a poner':'Quitar')+'</button></div>';
+          });
+          html += '</div></div>';
+        }
+        if (extras.length) {
+          html += '<div class="ing-section"><div class="ing-section-title">➕ Agregar extras</div><div class="ing-list">';
+          extras.forEach(function(ex) {
+            var ad = currentMods.extras[ex.id];
+            html += '<div class="ing-item'+(ad?' extra-added':'')+'" id="mex-'+ex.id+'">'
+              + '<div class="ing-left"><span class="ing-emoji">'+ex.emoji+'</span><div><div class="ing-name">'+ex.name+'</div><div class="ing-note">'+ex.note+'</div></div></div>'
+              + '<button class="ing-toggle" onclick="togExtra(\''+ex.id+'\')">'+(ad?'Quitar':'Agregar')+'</button></div>';
+          });
+          html += '</div></div>';
+        }
       }
-      if (item.hasSauceAlitas) {
-        html += '<div class="sauce-section"><div class="sauce-section-title">🫙 Salsa para las alitas (hasta 2)</div><div class="sauce-grid">';
-        SAUCES.forEach(function (s) { html += '<div class="sauce-btn' + (currentMods.saucesAlitas[s.id] ? ' sel' : '') + '" id="sal-' + s.id + '" onclick="togSauce(\'' + s.id + '\',2,\'saucesAlitas\',\'sal-\')">' + s.name + '</div>'; });
-        html += '</div><div class="sauce-note">Puedes elegir hasta 2 salsas</div></div>';
-      }
-      if (item.hasSauce) {
-        var maxS = item.hasSauce1Only ? 1 : 2;
-        var sauceLabel = item.hasSauce1Only ? '🫙 Salsa para los boneles (elige 1)' : '🫙 Salsa para los boneles (hasta 2)';
-        var sauceNote = item.hasSauce1Only ? 'Elige 1 salsa' : 'Puedes elegir hasta 2 salsas';
-        html += '<div class="sauce-section"><div class="sauce-section-title">' + sauceLabel + '</div><div class="sauce-grid">';
-        SAUCES.forEach(function (s) { html += '<div class="sauce-btn' + (currentMods.sauces[s.id] ? ' sel' : '') + '" id="sb-' + s.id + '" onclick="togSauce(\'' + s.id + '\',' + maxS + ',\'sauces\',\'sb-\')">' + s.name + '</div>'; });
-        html += '</div><div class="sauce-note">' + sauceNote + '</div></div>';
-      }
-      if (item.hasSauce2) {
-        html += '<div class="sauce-section"><div class="sauce-section-title">🫙 Salsa para la 2ª orden de boneles (hasta 2)</div><div class="sauce-grid">';
-        SAUCES.forEach(function (s) { html += '<div class="sauce-btn' + (currentMods.sauces2[s.id] ? ' sel' : '') + '" id="sb2-' + s.id + '" onclick="togSauce(\'' + s.id + '\',2,\'sauces2\',\'sb2-\')">' + s.name + '</div>'; });
-        html += '</div><div class="sauce-note">Para la 2ª orden de boneles</div></div>';
-      }
-      if (fixed.length) {
-        html += '<div class="ing-section"><div class="ing-section-title">🔒 Ingredientes fijos</div><div class="ing-list">';
-        fixed.forEach(function (i) { html += '<div class="ing-item"><div class="ing-left"><span class="ing-emoji">' + i.emoji + '</span><div><div class="ing-name">' + i.name + '</div><div class="ing-note">' + i.note + '</div></div></div><span style="font-size:11px;color:var(--muted)">Fijo</span></div>'; });
-        html += '</div></div>';
-      }
-      if (removable.length) {
-        html += '<div class="ing-section"><div class="ing-section-title">✏️ Quitar ingredientes</div><div class="ing-list">';
-        removable.forEach(function (i) {
-          var rm = currentMods.removed[i.id];
-          html += '<div class="ing-item' + (rm ? ' removed' : '') + '" id="ming-' + i.id + '">'
-            + '<div class="ing-left"><span class="ing-emoji">' + i.emoji + '</span><div><div class="ing-name">' + i.name + '</div><div class="ing-note">' + i.note + '</div></div></div>'
-            + '<button class="ing-toggle" onclick="togIng(\'' + i.id + '\')">' + (rm ? 'Volver a poner' : 'Quitar') + '</button></div>';
-        });
-        html += '</div></div>';
-      }
-      if (extras.length) {
-        html += '<div class="ing-section"><div class="ing-section-title">➕ Agregar extras</div><div class="ing-list">';
-        extras.forEach(function (ex) {
-          var ad = currentMods.extras[ex.id];
-          html += '<div class="ing-item' + (ad ? ' extra-added' : '') + '" id="mex-' + ex.id + '">'
-            + '<div class="ing-left"><span class="ing-emoji">' + ex.emoji + '</span><div><div class="ing-name">' + ex.name + '</div><div class="ing-note">' + ex.note + '</div></div></div>'
-            + '<button class="ing-toggle" onclick="togExtra(\'' + ex.id + '\')">' + (ad ? 'Quitar' : 'Agregar') + '</button></div>';
-        });
-        html += '</div></div>';
-      }
+
       html += '<div class="modal-actions">'
         + '<button class="btn-modal-cancel" onclick="cancelModal()">Cancelar</button>'
         + '<button class="btn-modal-confirm" onclick="confirmMods()">✓ Listo</button>'
@@ -2281,7 +2427,48 @@
     function togIng(ingId) { if (currentMods.removed[ingId]) delete currentMods.removed[ingId]; else currentMods.removed[ingId] = true; var row = document.getElementById('ming-' + ingId), rm = !!currentMods.removed[ingId]; row.className = 'ing-item' + (rm ? ' removed' : ''); row.querySelector('.ing-toggle').textContent = rm ? 'Volver a poner' : 'Quitar'; }
     function togExtra(exId) { if (currentMods.extras[exId]) delete currentMods.extras[exId]; else currentMods.extras[exId] = true; var row = document.getElementById('mex-' + exId), ad = !!currentMods.extras[exId]; row.className = 'ing-item' + (ad ? ' extra-added' : ''); row.querySelector('.ing-toggle').textContent = ad ? 'Quitar' : 'Agregar'; }
     function selStyle(val) { currentMods.style = currentMods.style === val ? null : val;['natural', 'empanizado'].forEach(function (v) { var b = document.getElementById('style-' + v); if (b) b.className = 'style-btn' + (currentMods.style === v ? ' sel' : ''); }); }
-    function selSushiChoice(val) {
+    // ── Funciones de slots para promociones ──────────────────
+    function selSlotAlga(si, val) {
+      if (!currentMods.slotMods || !currentMods.slotMods[si]) return;
+      currentMods.slotMods[si].alga = val;
+      // Update buttons in place
+      var el = document.getElementById('sr_alga_' + si + '_con');
+      if (!el) { buildModalBody(currentItem); return; }
+    }
+    function selSlotStyle(si, val) {
+      if (!currentMods.slotMods || !currentMods.slotMods[si]) return;
+      currentMods.slotMods[si].style = val;
+    }
+    function selSlotProtein(si, pid) {
+      if (!currentMods.slotMods || !currentMods.slotMods[si]) return;
+      currentMods.slotMods[si].protein = pid;
+      // Update all protein buttons for this slot
+      var prots = ['p_res','p_pollo','p_tocino','p_surimi','p_camaron'];
+      prots.forEach(function(p) {
+        var b = document.getElementById('sp' + si + '-' + p);
+        if (b) b.className = 'protein-btn' + (currentMods.slotMods[si].protein === p ? ' sel' : '');
+      });
+    }
+    function togSlotIng(si, ingId) {
+      if (!currentMods.slotMods || !currentMods.slotMods[si]) return;
+      if (!currentMods.slotMods[si].removed) currentMods.slotMods[si].removed = {};
+      currentMods.slotMods[si].removed[ingId] = !currentMods.slotMods[si].removed[ingId];
+      buildModalBody(currentItem);
+    }
+    // selSlotAlga y selSlotStyle usan re-render para simplicidad
+    var _origSelSlotAlga = selSlotAlga;
+    selSlotAlga = function(si, val) {
+      if (!currentMods.slotMods || !currentMods.slotMods[si]) return;
+      currentMods.slotMods[si].alga = val;
+      buildModalBody(currentItem);
+    };
+    var _origSelSlotStyle = selSlotStyle;
+    selSlotStyle = function(si, val) {
+      if (!currentMods.slotMods || !currentMods.slotMods[si]) return;
+      currentMods.slotMods[si].style = val;
+      buildModalBody(currentItem);
+    };
+        function selSushiChoice(val) {
       currentMods.sushiChoice = currentMods.sushiChoice === val ? null : val;
       // Limpiar proteínas si se cambia de sushi
       currentMods.proteins = [];
