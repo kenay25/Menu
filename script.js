@@ -762,8 +762,7 @@ function togProt(pid) {
   } else {
     currentMods.proteins.push(pid);
   }
-  // Solo en promos el camarón tiene costo extra (manejado en confirmMods via slotMods)
-  currentMods._camaronCost = 0;
+  // (costo calculado en confirmMods)
   PROTEINS.forEach(function (p) {
     var cnt = currentMods.proteins.filter(function (x) { return x === p.id; }).length;
     var b = document.getElementById('pb-' + p.id);
@@ -813,17 +812,17 @@ function confirmMods() {
   var inst = orderInstances.filter(function (o) { return o.instanceId === currentInstanceId; })[0];
   if (!inst) return;
 
-  // Validar alga: para promos validar en cada slot, para items normales en currentMods.alga
+  // Validar alga
   if (inst.item.hasAlga) {
     if (inst.item.promoSlots && inst.item.promoSlots.length) {
-      // Verificar que cada slot con hasAlga tenga alga elegida
-      var slotsConAlga = inst.item.promoSlots.filter(function(s){ return s.hasAlga; });
-      var slotSinAlga = slotsConAlga.some(function(s, si) {
-        return !currentMods.slotMods || !currentMods.slotMods[si] || !currentMods.slotMods[si].alga;
-      });
-      if (slotSinAlga) {
-        alert('🌿 Por favor indica en cada sushi si lo quieres con alga o sin alga');
-        return;
+      // Para items con promoSlots: validar cada slot con hasAlga
+      for (var _si = 0; _si < inst.item.promoSlots.length; _si++) {
+        var _slot = inst.item.promoSlots[_si];
+        var _sm = currentMods.slotMods && currentMods.slotMods[_si];
+        if (_slot.hasAlga && (!_sm || !_sm.alga)) {
+          alert('🌿 Por favor indica en "' + _slot.label + '" si lo quieres con alga o sin alga');
+          return;
+        }
       }
     } else if (!currentMods.alga) {
       alert('🌿 Por favor indica si lo quieres con alga o sin alga');
@@ -831,14 +830,28 @@ function confirmMods() {
     }
   }
 
-  // Costo extra: solo camarón en promos (vía slotMods)
-  var camaronCost = 0;
+  // Calcular costos extra
+  var extraCost = 0;
+  // 1. Proteínas extras en items normales: primera incluida, resto +$15 c/u
+  if (!inst.item.promoSlots || !inst.item.promoSlots.length) {
+    if (currentMods.proteins && currentMods.proteins.length > 1) {
+      extraCost += (currentMods.proteins.length - 1) * 15;
+    }
+  }
+  // 2. Camarón en slots de promos: siempre +$15
   if (currentMods.slotMods && currentMods.slotMods.length) {
     currentMods.slotMods.forEach(function(sm) {
-      if (sm && sm.protein === 'p_camaron') camaronCost += 15;
+      if (sm && sm.protein === 'p_camaron') extraCost += 15;
     });
   }
-  inst.extraCost = camaronCost;
+  // 3. Extras de slots (Queso gratinado, Tampico, etc.)
+  if (currentMods.extras) {
+    Object.keys(currentMods.extras).forEach(function(key) {
+      var val = currentMods.extras[key];
+      if (val && typeof val === 'number') extraCost += val;
+    });
+  }
+  inst.extraCost = extraCost;
   inst.mods = JSON.stringify(currentMods);
   refreshCardState(inst.itemId);
   updateBar();

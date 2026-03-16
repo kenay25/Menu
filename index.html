@@ -1897,11 +1897,107 @@
 
     var MENU = {
       combos: [
-        { id: 'c7', dbId: 1, img: 'img/lacaja.jpg', emoji: '&#x1F371;', name: 'La Caja', price: 650, tag: 'new', hasSauce: true, hasSauce2: true, hasProtein: true, hasAlga: true, hasSushiChoice: true, hasStyle: true, desc: '2 órdenes de boneles (salsa a elección c/u), O. papas sazonadas, 3 sushis, O. dedos queso philadelphia, tampico, chipotle, ranch, anguila, soya y siracha.', ingredients: [ing('b1', '&#x1F357;', 'Boneles x2', '2 órdenes — salsa individual', false), ing('b2', '&#x1F35F;', 'Papas sazonadas', '1 orden', false), ing('b3', '&#x1F363;', 'Sushis x3', 'California, Bombazo, Sonora', false), ing('b4', '&#x1F9C0;', 'Dedos de queso', '1 orden', false), ing('b5', '&#x1F41F;', 'Tampico', 'Incluido', true), ing('b6', '&#x1F359;', 'Philadelphia', 'En sushis', true), ing('b7', '&#x1F952;', 'Pepino', 'En sushis', true), ing('b8', '&#x1F951;', 'Aguacate', 'En sushis', true)], extras: [] },
-        { id: 'c6', dbId: 2, img: 'img/lacajita.jpg', emoji: '&#x1F371;', name: 'La Cajita', price: 400, tag: null, hasSauce: true, hasProtein: true, hasAlga: true, hasSushiChoice: true, hasStyle: true, desc: 'O. boneles, 03 sushis (bombazo, california y sonora), apio, zanahoria, aderezo, ranch, anguila, soya y siracha.', ingredients: [ing('b1', '&#x1F357;', 'Boneles', '1 orden', false), ing('b2', '&#x1F363;', 'California', 'Sushi', false), ing('b3', '&#x1F363;', 'Bombazo', 'Sushi', false), ing('b4', '&#x1F363;', 'Sonora', 'Sushi', false), ing('b5', '&#x1F955;', 'Apio y zanahoria', 'Al lado', true), ing('b6', '&#x1F359;', 'Philadelphia', 'En sushis', true), ing('b7', '&#x1F952;', 'Pepino', 'En sushis', true), ing('b8', '&#x1F951;', 'Aguacate', 'En sushis', true)], extras: [] },
+        { id: 'c7', dbId: 1, img: 'img/lacaja.jpg', emoji: '&#x1F371;', name: 'La Caja', price: 650, tag: 'new', hasSauce: true, hasSauce2: true, hasAlga: true, hasPromo: true, desc: '2 órdenes de boneles (salsa a elección c/u), O. papas sazonadas, 3 sushis, O. dedos queso philadelphia, tampico, chipotle, ranch, anguila, soya y siracha.', promoSlots: [
+          {
+          label: 'California', hasProtein: true, hasAlga: true, hasStyle: true,
+          removable: [
+            { id: 'cal_philly', name: 'Philadelphia', emoji: '&#x1F9C0;' },
+            { id: 'cal_pepino', name: 'Pepino',       emoji: '&#x1F952;' },
+            { id: 'cal_aguacate', name: 'Aguacate',   emoji: '&#x1F951;' }
+          ],
+          extras: [
+            { id: 'cal_queso',   name: 'Queso gratinado', emoji: '&#x1F9C0;', note: '+$25', price: 25 },
+            { id: 'cal_tampico', name: 'Tampico por fuera', emoji: '&#x1F41F;', note: '+$15', price: 15 }
+          ]
+        },
+          {
+          label: 'Bombazo', hasProtein: true, hasAlga: true, hasStyle: true,
+          removable: [
+            { id: 'bom_philly',   name: 'Philadelphia', emoji: '&#x1F9C0;' },
+            { id: 'bom_pepino',   name: 'Pepino',       emoji: '&#x1F952;' },
+            { id: 'bom_aguacate', name: 'Aguacate',     emoji: '&#x1F951;' },
+            { id: 'bom_tampico',  name: 'Tampico',      emoji: '&#x1F41F;' },
+            { id: 'bom_anguila',  name: 'Anguila',      emoji: '&#x1FAD9;' },
+            { id: 'bom_ajonjoli', name: 'Ajonjolí',     emoji: '&#x26AB;'  }
+          ],
+          extras: [
+            { id: 'bom_queso', name: 'Queso gratinado', emoji: '&#x1F9C0;', note: '+$25', price: 25 }
+          ]
+        },
+          {
+          label: 'Sonora', hasAlga: true, hasStyle: true,
+          removable: [
+            { id: 'son_philly',  name: 'Philadelphia', emoji: '&#x1F9C0;' },
+            { id: 'son_pepino',  name: 'Pepino',       emoji: '&#x1F952;' },
+            { id: 'son_aguacate',name: 'Aguacate',     emoji: '&#x1F951;' },
+            { id: 'son_tocino',  name: 'Tocino',       emoji: '&#x1F953;' },
+            { id: 'son_chile',   name: 'Chile verde',  emoji: '&#x1F336;&#xFE0F;' }
+          ],
+          extras: [
+            { id: 'son_queso', name: 'Queso gratinado', emoji: '&#x1F9C0;', note: '+$25', price: 25 }
+          ]
+        }
+        ],
+        ingredients: [ing('b1', '&#x1F357;', 'Boneles x2', '2 órdenes — salsa individual', false), ing('b2', '&#x1F35F;', 'Papas sazonadas', '1 orden', false), ing('b3', '&#x1F363;', 'Sushis x3', 'California, Bombazo, Sonora', false), ing('b4', '&#x1F9C0;', 'Dedos de queso', '1 orden', false), ing('b5', '&#x1F41F;', 'Tampico', 'Incluido', true), ing('b6', '&#x1F359;', 'Philadelphia', 'En sushis', true), ing('b7', '&#x1F952;', 'Pepino', 'En sushis', true), ing('b8', '&#x1F951;', 'Aguacate', 'En sushis', true)], extras: [] },
+        { id: 'c6', dbId: 2, img: 'img/lacajita.jpg', emoji: '&#x1F371;', name: 'La Cajita', price: 400, tag: null, hasSauce: true, hasAlga: true, hasPromo: true, desc: 'O. boneles, 03 sushis (bombazo, california y sonora), apio, zanahoria, aderezo, ranch, anguila, soya y siracha.', promoSlots: [
+          {
+          label: 'California', hasProtein: true, hasAlga: true, hasStyle: true,
+          removable: [
+            { id: 'cal_philly', name: 'Philadelphia', emoji: '&#x1F9C0;' },
+            { id: 'cal_pepino', name: 'Pepino',       emoji: '&#x1F952;' },
+            { id: 'cal_aguacate', name: 'Aguacate',   emoji: '&#x1F951;' }
+          ],
+          extras: [
+            { id: 'cal_queso',   name: 'Queso gratinado', emoji: '&#x1F9C0;', note: '+$25', price: 25 },
+            { id: 'cal_tampico', name: 'Tampico por fuera', emoji: '&#x1F41F;', note: '+$15', price: 15 }
+          ]
+        },
+          {
+          label: 'Bombazo', hasProtein: true, hasAlga: true, hasStyle: true,
+          removable: [
+            { id: 'bom_philly',   name: 'Philadelphia', emoji: '&#x1F9C0;' },
+            { id: 'bom_pepino',   name: 'Pepino',       emoji: '&#x1F952;' },
+            { id: 'bom_aguacate', name: 'Aguacate',     emoji: '&#x1F951;' },
+            { id: 'bom_tampico',  name: 'Tampico',      emoji: '&#x1F41F;' },
+            { id: 'bom_anguila',  name: 'Anguila',      emoji: '&#x1FAD9;' },
+            { id: 'bom_ajonjoli', name: 'Ajonjolí',     emoji: '&#x26AB;'  }
+          ],
+          extras: [
+            { id: 'bom_queso', name: 'Queso gratinado', emoji: '&#x1F9C0;', note: '+$25', price: 25 }
+          ]
+        },
+          {
+          label: 'Sonora', hasAlga: true, hasStyle: true,
+          removable: [
+            { id: 'son_philly',  name: 'Philadelphia', emoji: '&#x1F9C0;' },
+            { id: 'son_pepino',  name: 'Pepino',       emoji: '&#x1F952;' },
+            { id: 'son_aguacate',name: 'Aguacate',     emoji: '&#x1F951;' },
+            { id: 'son_tocino',  name: 'Tocino',       emoji: '&#x1F953;' },
+            { id: 'son_chile',   name: 'Chile verde',  emoji: '&#x1F336;&#xFE0F;' }
+          ],
+          extras: [
+            { id: 'son_queso', name: 'Queso gratinado', emoji: '&#x1F9C0;', note: '+$25', price: 25 }
+          ]
+        }
+        ],
+        ingredients: [ing('b1', '&#x1F357;', 'Boneles', '1 orden', false), ing('b2', '&#x1F363;', 'California', 'Sushi', false), ing('b3', '&#x1F363;', 'Bombazo', 'Sushi', false), ing('b4', '&#x1F363;', 'Sonora', 'Sushi', false), ing('b5', '&#x1F955;', 'Apio y zanahoria', 'Al lado', true), ing('b6', '&#x1F359;', 'Philadelphia', 'En sushis', true), ing('b7', '&#x1F952;', 'Pepino', 'En sushis', true), ing('b8', '&#x1F951;', 'Aguacate', 'En sushis', true)], extras: [] },
         { id: 'c8', dbId: 3, img: 'img/rosca.jpg', emoji: '&#x1F363;', name: 'Rosca', price: 350, tag: null, desc: 'Orden especial. Consultar disponibilidad.', ingredients: [ing('b1', '&#x1F363;', 'Rosca de sushi', 'Presentación especial', false)], extras: [] },
         { id: 'c5', dbId: 4, emoji: '&#x1F371;', name: 'La Botanera', price: 350, tag: 'popular', hasSauce: true, hasSauceAlitas: true, desc: '01 alitas, 01 papas sazonadas, 01 boneles, 03 caribes, zanahoria, apio, aderezos y salsas.', ingredients: [ing('b1', '&#x1F357;', 'Alitas', '1 orden', false), ing('b2', '&#x1F35F;', 'Papas sazonadas', '1 orden', false), ing('b3', '&#x1F357;', 'Boneles', '1 orden', false), ing('b4', '&#x1F336;&#xFE0F;', '3 Caribes', 'Rellenos', true), ing('b5', '&#x1F955;', 'Zanahoria y apio', 'Al lado', true)], extras: [] },
-        { id: 'c4', dbId: 5, emoji: '&#x1F371;', name: 'Charola', price: 220, tag: 'popular', hasSauce: true, hasSauce1Only: true, hasAlga: true, hasProtein: true, hasStyle: true, desc: '1/2 California, 1/2 boneless, 1/2 papas sazonadas, dedos de queso y tampico.', ingredients: [ing('b1', '&#x1F363;', '1/2 California', 'Sushi', false), ing('b2', '&#x1F357;', 'Boneless', 'Mitad', false), ing('b3', '&#x1F35F;', 'Papas sazonadas', 'Mitad', false), ing('b4', '&#x1F9C0;', 'Dedos de queso', 'Incluidos', true), ing('b5', '&#x1F41F;', 'Tampico', 'Incluido', true), ing('b6', '&#x1F359;', 'Philadelphia', 'En sushi', true), ing('b7', '&#x1F952;', 'Pepino', 'En sushi', true), ing('b8', '&#x1F951;', 'Aguacate', 'En sushi', true)], extras: [] },
+        { id: 'c4', dbId: 5, emoji: '&#x1F371;', name: 'Charola', price: 220, tag: 'popular', hasSauce: true, hasSauce1Only: true, hasAlga: true, hasPromo: true, desc: '1/2 California, 1/2 boneless, 1/2 papas sazonadas, dedos de queso y tampico.', promoSlots: [
+          {
+          label: '1/2 California', hasProtein: true, hasAlga: true, hasStyle: true,
+          removable: [
+            { id: 'cha_philly',   name: 'Philadelphia', emoji: '&#x1F9C0;' },
+            { id: 'cha_pepino',   name: 'Pepino',       emoji: '&#x1F952;' },
+            { id: 'cha_aguacate', name: 'Aguacate',     emoji: '&#x1F951;' }
+          ],
+          extras: [
+            { id: 'cha_queso',   name: 'Queso gratinado', emoji: '&#x1F9C0;', note: '+$25', price: 25 },
+            { id: 'cha_tampico', name: 'Tampico por fuera', emoji: '&#x1F41F;', note: '+$15', price: 15 }
+          ]
+        }
+        ],
+        ingredients: [ing('b1', '&#x1F363;', '1/2 California', 'Sushi', false), ing('b2', '&#x1F357;', 'Boneless', 'Mitad', false), ing('b3', '&#x1F35F;', 'Papas sazonadas', 'Mitad', false), ing('b4', '&#x1F9C0;', 'Dedos de queso', 'Incluidos', true), ing('b5', '&#x1F41F;', 'Tampico', 'Incluido', true), ing('b6', '&#x1F359;', 'Philadelphia', 'En sushi', true), ing('b7', '&#x1F952;', 'Pepino', 'En sushi', true), ing('b8', '&#x1F951;', 'Aguacate', 'En sushi', true)], extras: [] },
         { id: 'c3', dbId: 6, img: 'img/paquetellenes.jpg', emoji: '&#x1F371;', name: 'Paquetellenes', price: 150, tag: null, hasSauce: true, hasSauce1Only: true, hasSushiChoice: true, hasAlga: true, hasStyle: true, desc: '1/2 sushi (bombazo, sonora o california), 1/2 boneless, 1/2 papas sazonadas.', ingredients: [ing('b1', '&#x1F363;', '1/2 sushi a elegir', 'Bombazo/Sonora/California', false), ing('b2', '&#x1F357;', 'Boneless', 'Mitad', false), ing('b3', '&#x1F35F;', 'Papas sazonadas', 'Mitad porción', false), ing('b4', '&#x1F359;', 'Philadelphia', 'En sushi', true), ing('b5', '&#x1F952;', 'Pepino', 'En sushi', true), ing('b6', '&#x1F951;', 'Aguacate', 'En sushi', true)], extras: [] },
         { id: 'c2', dbId: 7, emoji: '&#x1F371;', name: 'Botix', price: 120, tag: null, hasSauce: true, hasSauce1Only: true, hasSushiChoice: true, hasAlga: true, hasStyle: true, desc: 'Mitad sushi (bombazo, sonora o california) mitad boneless. Salsa a elegir.', ingredients: [ing('b1', '&#x1F363;', '1/2 sushi a elegir', 'Bombazo/Sonora/California', false), ing('b2', '&#x1F357;', 'Boneless', 'Mitad', false), ing('b3', '&#x1F359;', 'Philadelphia', 'En sushi', true), ing('b4', '&#x1F952;', 'Pepino', 'En sushi', true), ing('b5', '&#x1F951;', 'Aguacate', 'En sushi', true)], extras: [] }
       ],
@@ -1991,14 +2087,14 @@
       {
         id: 'promo3', dbId: 53, emoji: '&#x1F363;', num: 'Paquete 3',
         title: '3 Bolas', price: 200, tag: null,
-        hasProtein: true, hasPromo: true,
+        hasProtein: true, hasPromo: true, hasAlga: true, hasStyle: true,
         desc: '3 Bolas con ingrediente a elegir (pollo, res, tocino o surimi).',
         ingredients: [ing('b1', '&#x1F363;', '3 Bolas', 'Prot. a elegir', false), ing('b2', '&#x1F951;', 'Aguacate, pepino, philadelphia', 'Por fuera', true), ing('b3', '&#x1F41F;', 'Tampico, anguila, ajonjolí', 'Por fuera', true)],
         extras: [{ id: 'x_camaron', emoji: '&#x1F990;', name: 'Camarón', note: '+$15 extra', price: 15 }],
         promoSlots: [
-          { label: 'Bola 1', hasProtein: true },
-          { label: 'Bola 2', hasProtein: true },
-          { label: 'Bola 3', hasProtein: true }
+          { label: 'Bola 1', hasProtein: true, hasAlga: true, hasStyle: true },
+          { label: 'Bola 2', hasProtein: true, hasAlga: true, hasStyle: true },
+          { label: 'Bola 3', hasProtein: true, hasAlga: true, hasStyle: true }
         ]
       },
       {
@@ -2272,6 +2368,20 @@
             html += '</div></div>';
           }
 
+          // Extras por slot
+          if (slot.extras && slot.extras.length) {
+            html += '<div style="margin-top:6px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">➕ Extras</div><div class="ing-list">';
+            slot.extras.forEach(function(ex) {
+              var slotExKey = 'slot_' + si + '_' + ex.id;
+              var ad = currentMods.extras && currentMods.extras[slotExKey];
+              html += '<div class="ing-item' + (ad?' extra-added':'') + '" id="mex-' + slotExKey + '">'
+                + '<div class="ing-left"><span class="ing-emoji">' + ex.emoji + '</span>'
+                + '<div><div class="ing-name">' + ex.name + '</div><div class="ing-note">' + ex.note + '</div></div></div>'
+                + '<button class="ing-toggle" onclick="togExtra(\''+slotExKey+'\','+ex.price+')">'+(ad?'Quitar':'Agregar')+'</button></div>';
+            });
+            html += '</div></div>';
+          }
+
           html += '</div>';
         });
 
@@ -2344,12 +2454,13 @@
               + '<span class="p-emoji">'+p.emoji+'</span><span class="p-name">'+p.name+'</span>'
               + (cnt>1?'<span class="p-count">'+cnt+'</span>':'') + '</div>';
           });
-          // Camarón igual que otras proteínas en items normales
+          // Camarón con +$15
           var cntCam = currentMods.proteins.filter(function(x){return x==='p_camaron';}).length;
           html += '<div class="protein-btn'+(cntCam>0?' sel':'')+'" id="pb-p_camaron" onclick="togProt(\'p_camaron\')">'
-            + '<span class="p-emoji">🦐</span><span class="p-name">Camarón</span>'
+            + '<span class="p-emoji">🦐</span>'
+            + '<span class="p-name">Camarón<br><small style="font-size:10px;color:var(--pink)">+$15</small></span>'
             + (cntCam>1?'<span class="p-count">'+cntCam+'</span>':'') + '</div>';
-          html += '</div><div class="protein-note">Primera proteína incluida · Extras +$15 c/u</div></div>';
+          html += '</div><div class="protein-note">Primera proteína incluida · Camarón y extras +$15 c/u</div></div>';
         }
         if (item.hasSauceAlitas) {
           html += '<div class="sauce-section"><div class="sauce-section-title">🫙 Salsa para las alitas (hasta 2)</div><div class="sauce-grid">';
@@ -2424,7 +2535,7 @@
       SAUCES.forEach(function (s) { var b = document.getElementById(pre + s.id); if (b) b.className = 'sauce-btn' + (currentMods[fn][s.id] ? ' sel' : ''); });
     }
     function togIng(ingId) { if (currentMods.removed[ingId]) delete currentMods.removed[ingId]; else currentMods.removed[ingId] = true; var row = document.getElementById('ming-' + ingId), rm = !!currentMods.removed[ingId]; row.className = 'ing-item' + (rm ? ' removed' : ''); row.querySelector('.ing-toggle').textContent = rm ? 'Volver a poner' : 'Quitar'; }
-    function togExtra(exId) { if (currentMods.extras[exId]) delete currentMods.extras[exId]; else currentMods.extras[exId] = true; var row = document.getElementById('mex-' + exId), ad = !!currentMods.extras[exId]; row.className = 'ing-item' + (ad ? ' extra-added' : ''); row.querySelector('.ing-toggle').textContent = ad ? 'Quitar' : 'Agregar'; }
+    function togExtra(exId, price) { if (currentMods.extras[exId]) delete currentMods.extras[exId]; else currentMods.extras[exId] = price || true; var row = document.getElementById('mex-' + exId), ad = !!currentMods.extras[exId]; if(row){row.className = 'ing-item' + (ad ? ' extra-added' : ''); row.querySelector('.ing-toggle').textContent = ad ? 'Quitar' : 'Agregar';} }
     function selStyle(val) { currentMods.style = currentMods.style === val ? null : val;['natural', 'empanizado'].forEach(function (v) { var b = document.getElementById('style-' + v); if (b) b.className = 'style-btn' + (currentMods.style === v ? ' sel' : ''); }); }
     // ── Funciones de slots para promociones ──────────────────
     function selSlotAlga(si, val) {
