@@ -628,17 +628,46 @@ function buildModalBody(item) {
 
   // Proteins
   if (item.hasProtein) {
-    html += '<div class="protein-section"><div class="protein-section-title">🥩 Elige tu(s) proteína(s)</div><div class="protein-grid">';
-    PROTEINS.forEach(function (p) {
-      var cnt = currentMods.proteins.filter(function (x) { return x === p.id; }).length;
-      var isSel = cnt > 0;
-      html += '<div class="protein-btn' + (isSel ? ' sel' : '') + '" id="pb-' + p.id + '" onclick="togProt(\'' + p.id + '\')">'
-        + '<span class="p-emoji">' + p.emoji + '</span>'
-        + '<span class="p-name">' + p.name + '</span>'
-        + (cnt > 1 ? '<span class="p-count">' + cnt + '</span>' : '')
-        + '</div>';
-    });
-    html += '</div><div class="protein-note">Primera proteína incluida · Extras +$15 c/u</div></div>';
+    if (item.hasPromo) {
+      // Promos: mostrar Sushi 1 y Sushi 2 por separado
+      // Proteínas disponibles: solo pollo, res, tocino, surimi (camarón cuesta extra)
+      var PROTEINS_PROMO = PROTEINS.filter(function(p) { return p.id !== 'p_camaron'; });
+      html += '<div class="protein-section">';
+      html += '<div class="protein-section-title">🍣 Proteína Sushi 1</div>';
+      html += '<div class="protein-grid">';
+      PROTEINS_PROMO.forEach(function (p) {
+        var isSel = currentMods.proteins[0] === p.id;
+        html += '<div class="protein-btn' + (isSel ? ' sel' : '') + '" onclick="selProtPromo(0,\'' + p.id + '\')">'
+          + '<span class="p-emoji">' + p.emoji + '</span>'
+          + '<span class="p-name">' + p.name + '</span>'
+          + '</div>';
+      });
+      html += '</div>';
+      html += '<div class="protein-section-title" style="margin-top:12px">🍣 Proteína Sushi 2</div>';
+      html += '<div class="protein-grid">';
+      PROTEINS_PROMO.forEach(function (p) {
+        var isSel = currentMods.proteins[1] === p.id;
+        html += '<div class="protein-btn' + (isSel ? ' sel' : '') + '" onclick="selProtPromo(1,\'' + p.id + '\')">'
+          + '<span class="p-emoji">' + p.emoji + '</span>'
+          + '<span class="p-name">' + p.name + '</span>'
+          + '</div>';
+      });
+      html += '</div>';
+      html += '<div class="protein-note">🦐 Camarón disponible como extra (+$15)</div>';
+      html += '</div>';
+    } else {
+      html += '<div class="protein-section"><div class="protein-section-title">🥩 Elige tu(s) proteína(s)</div><div class="protein-grid">';
+      PROTEINS.forEach(function (p) {
+        var cnt = currentMods.proteins.filter(function (x) { return x === p.id; }).length;
+        var isSel = cnt > 0;
+        html += '<div class="protein-btn' + (isSel ? ' sel' : '') + '" id="pb-' + p.id + '" onclick="togProt(\'' + p.id + '\')">'
+          + '<span class="p-emoji">' + p.emoji + '</span>'
+          + '<span class="p-name">' + p.name + '</span>'
+          + (cnt > 1 ? '<span class="p-count">' + cnt + '</span>' : '')
+          + '</div>';
+      });
+      html += '</div><div class="protein-note">Primera proteína incluida · Extras +$15 c/u</div></div>';
+    }
   }
 
   // Sauce 1
@@ -721,6 +750,15 @@ function selAlga(val) {
     if (b) b.className = 'alga-btn' + (currentMods.alga === v ? ' sel' : '');
   });
 }
+function selProtPromo(slot, pid) {
+  // Para promos: slot 0 = Sushi 1, slot 1 = Sushi 2
+  // proteins[0] = proteína sushi 1, proteins[1] = proteína sushi 2
+  while (currentMods.proteins.length <= slot) currentMods.proteins.push(null);
+  currentMods.proteins[slot] = pid;
+  // Limpiar nulls al final si los hay
+  buildModalBody(currentItem);
+}
+
 function togProt(pid) {
   var idx = currentMods.proteins.indexOf(pid);
   if (idx >= 0) currentMods.proteins.splice(idx, 1); else currentMods.proteins.push(pid);
