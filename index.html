@@ -1909,15 +1909,15 @@
         }
         ],
         ingredients: [ing('b1', '&#x1F357;', 'Boneles x2', '2 órdenes — salsa individual', false), ing('b2', '&#x1F35F;', 'Papas sazonadas', '1 orden', false), ing('b3', '&#x1F363;', 'Sushis x3', 'California, Bombazo, Sonora', false), ing('b4', '&#x1F9C0;', 'Dedos de queso', '1 orden', false), ing('b5', '&#x1F41F;', 'Tampico', 'Incluido', true), ing('b6', '&#x1F359;', 'Philadelphia', 'En sushis', true), ing('b7', '&#x1F952;', 'Pepino', 'En sushis', true), ing('b8', '&#x1F951;', 'Aguacate', 'En sushis', true)], extras: [] },
-        { id: 'c6', dbId: 2, img: 'img/lacajita.jpg', emoji: '&#x1F371;', name: 'La Cajita', price: 400, tag: null, hasSauce: true, hasAlga: true, hasPromo: true, desc: 'O. boneles, 03 sushis (bombazo, california y sonora), apio, zanahoria, aderezo, ranch, anguila, soya y siracha.', promoSlots: [
+        { id: 'c6', dbId: 2, img: 'img/lacajita.jpg', emoji: '&#x1F371;', name: 'La Cajita', price: 400, tag: null, hasSauce: true, desc: 'O. boneles, 03 sushis (bombazo, california y sonora), apio, zanahoria, aderezo, ranch, anguila, soya y siracha.', promoSlots: [
           {
-          label: 'Sushi 1', hasAlga: true, hasStyle: true, hasProtein: true, isSushiPicker: true
+          label: 'Sushi 1', hasAlga: true, hasStyle: true, hasProtein: true, isSushiPicker: true, sushiOptions: ['Bombazo', 'California', 'Sonora']
         },
           {
-          label: 'Sushi 2', hasAlga: true, hasStyle: true, hasProtein: true, isSushiPicker: true
+          label: 'Sushi 2', hasAlga: true, hasStyle: true, hasProtein: true, isSushiPicker: true, sushiOptions: ['Bombazo', 'California', 'Sonora']
         },
           {
-          label: 'Sushi 3', hasAlga: true, hasStyle: true, hasProtein: true, isSushiPicker: true
+          label: 'Sushi 3', hasAlga: true, hasStyle: true, hasProtein: true, isSushiPicker: true, sushiOptions: ['Bombazo', 'California', 'Sonora']
         }
         ],
         ingredients: [ing('b1', '&#x1F357;', 'Boneles', '1 orden', false), ing('b2', '&#x1F363;', 'California', 'Sushi', false), ing('b3', '&#x1F363;', 'Bombazo', 'Sushi', false), ing('b4', '&#x1F363;', 'Sonora', 'Sushi', false), ing('b5', '&#x1F955;', 'Apio y zanahoria', 'Al lado', true), ing('b6', '&#x1F359;', 'Philadelphia', 'En sushis', true), ing('b7', '&#x1F952;', 'Pepino', 'En sushis', true), ing('b8', '&#x1F951;', 'Aguacate', 'En sushis', true)], extras: [] },
@@ -2267,7 +2267,7 @@
 
           // Selector de sushi si es isSushiPicker
           if (slot.isSushiPicker) {
-            var allSushis = ['Borbon', 'Monster', 'Franco Roll', 'La Chuyita', 'Mexicano 2', 'Mayito', 'Mix Roll', 'Baked', 'Fernanda', 'Hot', 'Mexicano 1', 'Tres Quesos', 'Chipotle', 'Queen Roll', 'Cielo Mar y Tierra', 'Antojo', 'Bombazo', 'Sonora', 'Daishi', 'Aguacate', 'California', 'Especial', 'Misil'];
+            var allSushis = slot.sushiOptions || ['Borbon', 'Monster', 'Franco Roll', 'La Chuyita', 'Mexicano 2', 'Mayito', 'Mix Roll', 'Baked', 'Fernanda', 'Hot', 'Mexicano 1', 'Tres Quesos', 'Chipotle', 'Queen Roll', 'Cielo Mar y Tierra', 'Antojo', 'Bombazo', 'Sonora', 'Daishi', 'Aguacate', 'California', 'Especial', 'Misil'];
             html += '<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">¿Cuál sushi?</div>';
             html += '<select style="width:100%;background:#FFF8F9;border:1.5px solid rgba(232,84,122,0.2);border-radius:8px;padding:7px 10px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none" onchange="selSlotSushi(' + si + ',this.value)">';
             html += '<option value="">— Elige un sushi —</option>';
@@ -2558,13 +2558,45 @@
     function confirmMods() {
       if (!currentInstanceId) return;
       var inst = orderInstances.filter(function (o) { return o.instanceId === currentInstanceId; })[0]; if (!inst) return;
-      if (inst.item.hasAlga && !currentMods.alga) { alert('🌿 Por favor indica si lo quieres con alga o sin alga'); return; }
-      if (inst.item.hasStyle && !currentMods.style) { alert('🍳 Por favor indica si lo quieres natural o empanizado'); return; }
-      if (inst.item.hasSushiChoice && !currentMods.sushiChoice) { alert('🍣 Por favor elige qué sushi quieres (Bombazo, California o Sonora)'); return; }
-      // Si el sushi elegido requiere proteína (Bombazo o California) y no la eligió
-      if (inst.item.hasSushiChoice && (currentMods.sushiChoice === 'Bombazo' || currentMods.sushiChoice === 'California') && !currentMods.proteins.length) { alert('🥩 Por favor elige la proteína para el ' + currentMods.sushiChoice); return; }
-      // Si tiene hasProtein propio (sin sushiChoice) y no eligió
-      if (inst.item.hasProtein && !inst.item.hasSushiChoice && !currentMods.proteins.length) { alert('🥩 Por favor elige la proteína'); return; }
+
+      // Validar alga en items con promoSlots (cada slot debe tener alga)
+      if (inst.item.promoSlots && inst.item.promoSlots.length) {
+        if (!currentMods.slotMods || currentMods.slotMods.length !== inst.item.promoSlots.length) {
+          alert('⚠️ Error en la estructura del pedido. Intenta de nuevo.');
+          return;
+        }
+        for (var si = 0; si < inst.item.promoSlots.length; si++) {
+          var slot = inst.item.promoSlots[si];
+          var sm = currentMods.slotMods[si];
+          if (slot.hasAlga && (!sm || !sm.alga)) {
+            alert('🌿 Por favor indica con o sin alga para "' + slot.label + '"');
+            return;
+          }
+          if (slot.hasStyle && (!sm || !sm.style)) {
+            alert('🍳 Por favor indica natural o empanizado para "' + slot.label + '"');
+            return;
+          }
+          if (slot.isSushiPicker && (!sm || !sm.sushiName)) {
+            alert('🍣 Por favor elige un sushi para "' + slot.label + '"');
+            return;
+          }
+          // Validar proteína si el sushi la requiere o si el slot la pide
+          if (slot.hasProtein) {
+            var necesitaProt = !slot.isSushiPicker || (sm.sushiName && ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito'].indexOf(sm.sushiName) >= 0);
+            if (necesitaProt && (!sm || !sm.protein)) {
+              alert('🥩 Por favor elige la proteína para "' + slot.label + '"');
+              return;
+            }
+          }
+        }
+      } else {
+        // Validar items normales (sin promoSlots)
+        if (inst.item.hasAlga && !currentMods.alga) { alert('🌿 Por favor indica si lo quieres con alga o sin alga'); return; }
+        if (inst.item.hasStyle && !currentMods.style) { alert('🍳 Por favor indica si lo quieres natural o empanizado'); return; }
+        if (inst.item.hasSushiChoice && !currentMods.sushiChoice) { alert('🍣 Por favor elige qué sushi quieres (Bombazo, California o Sonora)'); return; }
+        if (inst.item.hasSushiChoice && (currentMods.sushiChoice === 'Bombazo' || currentMods.sushiChoice === 'California') && !currentMods.proteins.length) { alert('🥩 Por favor elige la proteína para el ' + currentMods.sushiChoice); return; }
+        if (inst.item.hasProtein && !inst.item.hasSushiChoice && !currentMods.proteins.length) { alert('🥩 Por favor elige la proteína'); return; }
+      }
 
       // Calcular extraCost
       var extraCost = 0;
@@ -2573,7 +2605,6 @@
         Object.keys(currentMods.extras).forEach(function(key) {
           var val = currentMods.extras[key];
           if (val === true) {
-            // Buscar el precio del extra
             var ex = (inst.item.extras || []).filter(function(e) { return e.id === key; })[0];
             if (ex && ex.price) extraCost += ex.price;
           } else if (typeof val === 'number') {
@@ -2581,15 +2612,15 @@
           }
         });
       }
-      // 2. Proteínas en items normales: primera incluida, resto +$15 c/u
-      if (!inst.item.hasPromo && currentMods.proteins && currentMods.proteins.length > 1) {
-        extraCost += (currentMods.proteins.length - 1) * 15;
-      }
-      // 3. slotMods (promos con camarón)
+      // 2. Proteínas en slotMods (combos y promos): camarón +$15, otras proteínas gratis
       if (currentMods.slotMods && currentMods.slotMods.length) {
         currentMods.slotMods.forEach(function(sm) {
           if (sm && sm.protein === 'p_camaron') extraCost += 15;
         });
+      }
+      // 3. Proteínas en items normales (sin promoSlots ni hasPromo): primera incluida, resto +$15 c/u
+      if (!inst.item.promoSlots && !inst.item.hasPromo && currentMods.proteins && currentMods.proteins.length > 1) {
+        extraCost += (currentMods.proteins.length - 1) * 15;
       }
       inst.extraCost = extraCost;
 
@@ -2782,7 +2813,7 @@
       if (m.ice) lines += '<div class="oi-mod-added">🧊 Hielo: ' + (m.ice === 'con' ? 'Con hielo' : 'Sin hielo') + '</div>';
       if (m.proteins && m.proteins.length) {
         var pnames = m.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
-        var protExtra = item.hasPromo ? false : (m.proteins.length > 1);
+        var protExtra = (item.hasPromo || item.promoSlots) ? false : (m.proteins.length > 1);
         lines += '<div class="oi-mod-added">🥩 Proteína(s): ' + pnames.join(', ') + (protExtra ? ' (+$' + ((m.proteins.length - 1) * 15) + ')' : '') + '</div>';
       }
       if (m.sauces && Object.keys(m.sauces).length) lines += '<div class="oi-mod-added">🫙 Salsa boneles: ' + SAUCES.filter(function (s) { return m.sauces[s.id]; }).map(function (s) { return s.name; }).join(', ') + '</div>';
@@ -2838,7 +2869,7 @@
         if (m.ice) msg += '   Hielo: ' + (m.ice === 'con' ? 'Con hielo' : 'Sin hielo') + '\n';
         if (m.proteins && m.proteins.length) {
           var pnames = m.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
-          var protExtra = item.hasPromo ? false : (m.proteins.length > 1);
+          var protExtra = (item.hasPromo || item.promoSlots) ? false : (m.proteins.length > 1);
           msg += '   Proteína(s): ' + pnames.join(', ') + (protExtra ? ' (+$' + ((m.proteins.length - 1) * 15) + ')' : '') + '\n';
         }
         if (m.sauces && Object.keys(m.sauces).length) msg += '   Salsa boneles: ' + SAUCES.filter(function (s) { return m.sauces[s.id]; }).map(function (s) { return s.name; }).join(', ') + '\n';
