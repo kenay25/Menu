@@ -812,22 +812,25 @@ function confirmMods() {
   var inst = orderInstances.filter(function (o) { return o.instanceId === currentInstanceId; })[0];
   if (!inst) return;
 
-  // Validar alga
-  if (inst.item.hasAlga) {
-    if (inst.item.promoSlots && inst.item.promoSlots.length) {
-      // Para items con promoSlots: validar cada slot con hasAlga
-      for (var _si = 0; _si < inst.item.promoSlots.length; _si++) {
-        var _slot = inst.item.promoSlots[_si];
-        var _sm = currentMods.slotMods && currentMods.slotMods[_si];
-        if (_slot.hasAlga && (!_sm || !_sm.alga)) {
-          alert('🌿 Por favor indica en "' + _slot.label + '" si lo quieres con alga o sin alga');
-          return;
-        }
+  // Validar slots de promos/combos
+  if (inst.item.promoSlots && inst.item.promoSlots.length) {
+    for (var _si = 0; _si < inst.item.promoSlots.length; _si++) {
+      var _slot = inst.item.promoSlots[_si];
+      var _sm = currentMods.slotMods && currentMods.slotMods[_si];
+      // Validar que eligieron sushi si es picker
+      if (_slot.isSushiPicker && (!_sm || !_sm.sushiName)) {
+        alert('🍣 Por favor elige un sushi para "' + _slot.label + '"');
+        return;
       }
-    } else if (!currentMods.alga) {
-      alert('🌿 Por favor indica si lo quieres con alga o sin alga');
-      return;
+      // Validar alga en slots que la tienen
+      if (_slot.hasAlga && (!_sm || !_sm.alga)) {
+        alert('🌿 Por favor indica en "' + _slot.label + '" si lo quieres con alga o sin alga');
+        return;
+      }
     }
+  } else if (inst.item.hasAlga && !currentMods.alga) {
+    alert('🌿 Por favor indica si lo quieres con alga o sin alga');
+    return;
   }
 
   // Calcular costos extra
