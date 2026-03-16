@@ -1897,7 +1897,7 @@
 
     var MENU = {
       combos: [
-        { id: 'c7', dbId: 1, img: 'img/lacaja.jpg', emoji: '&#x1F371;', name: 'La Caja', price: 650, tag: 'new', hasSauce: true, hasSauce2: true, hasAlga: true, hasPromo: true, desc: '2 órdenes de boneles (salsa a elección c/u), O. papas sazonadas, 3 sushis, O. dedos queso philadelphia, tampico, chipotle, ranch, anguila, soya y siracha.', promoSlots: [
+        { id: 'c7', dbId: 1, img: 'img/lacaja.jpg', emoji: '&#x1F371;', name: 'La Caja', price: 650, tag: 'new', hasSauce: true, hasSauce2: true, hasAlga: true, desc: '2 órdenes de boneles (salsa a elección c/u), O. papas sazonadas, 3 sushis, O. dedos queso philadelphia, tampico, chipotle, ranch, anguila, soya y siracha.', promoSlots: [
           {
           label: 'Sushi 1', hasAlga: true, hasStyle: true, hasProtein: true, isSushiPicker: true
         },
@@ -1923,7 +1923,7 @@
         ingredients: [ing('b1', '&#x1F357;', 'Boneles', '1 orden', false), ing('b2', '&#x1F363;', 'California', 'Sushi', false), ing('b3', '&#x1F363;', 'Bombazo', 'Sushi', false), ing('b4', '&#x1F363;', 'Sonora', 'Sushi', false), ing('b5', '&#x1F955;', 'Apio y zanahoria', 'Al lado', true), ing('b6', '&#x1F359;', 'Philadelphia', 'En sushis', true), ing('b7', '&#x1F952;', 'Pepino', 'En sushis', true), ing('b8', '&#x1F951;', 'Aguacate', 'En sushis', true)], extras: [] },
         { id: 'c8', dbId: 3, img: 'img/rosca.jpg', emoji: '&#x1F363;', name: 'Rosca', price: 350, tag: null, desc: 'Orden especial. Consultar disponibilidad.', ingredients: [ing('b1', '&#x1F363;', 'Rosca de sushi', 'Presentación especial', false)], extras: [] },
         { id: 'c5', dbId: 4, emoji: '&#x1F371;', name: 'La Botanera', price: 350, tag: 'popular', hasSauce: true, hasSauceAlitas: true, desc: '01 alitas, 01 papas sazonadas, 01 boneles, 03 caribes, zanahoria, apio, aderezos y salsas.', ingredients: [ing('b1', '&#x1F357;', 'Alitas', '1 orden', false), ing('b2', '&#x1F35F;', 'Papas sazonadas', '1 orden', false), ing('b3', '&#x1F357;', 'Boneles', '1 orden', false), ing('b4', '&#x1F336;&#xFE0F;', '3 Caribes', 'Rellenos', true), ing('b5', '&#x1F955;', 'Zanahoria y apio', 'Al lado', true)], extras: [] },
-        { id: 'c4', dbId: 5, emoji: '&#x1F371;', name: 'Charola', price: 220, tag: 'popular', hasSauce: true, hasSauce1Only: true, hasAlga: true, hasPromo: true, desc: '1/2 California, 1/2 boneless, 1/2 papas sazonadas, dedos de queso y tampico.', promoSlots: [
+        { id: 'c4', dbId: 5, emoji: '&#x1F371;', name: 'Charola', price: 220, tag: 'popular', hasSauce: true, hasSauce1Only: true, hasAlga: true, desc: '1/2 California, 1/2 boneless, 1/2 papas sazonadas, dedos de queso y tampico.', promoSlots: [
           {
           label: '1/2 California', hasProtein: true, hasAlga: true, hasStyle: true,
           removable: [
@@ -2293,10 +2293,10 @@
             html += '</div></div>';
           }
 
-          // Proteína por slot — solo mostrar si el sushi la necesita o si no es picker
-          var _showProt = slot.hasProtein && (!slot.isSushiPicker || (function() {
+          // Proteína por slot — mostrar si el slot tiene hasProtein y (no es picker O el sushi seleccionado la necesita)
+          var _showProt = slot.hasProtein && (!slot.isSushiPicker || !sm.sushiName || (function() {
             var sp = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito'];
-            return sm.sushiName && sp.indexOf(sm.sushiName) >= 0;
+            return sp.indexOf(sm.sushiName) >= 0;
           })());
           if (_showProt) {
             html += '<div id="slotprot-' + si + '" style="margin-bottom:4px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🥩 Proteína</div><div class="protein-grid">';
@@ -2635,8 +2635,14 @@
           }
         });
       }
-      // 2. slotMods (combos): proteínas normales (1ª incluida, resto +$15)
-      if (inst.item.promoSlots && currentMods.slotMods && currentMods.slotMods.length) {
+      // 2. slotMods (promociones con hasPromo): solo camarón +$15, otras gratis
+      if (inst.item.hasPromo && currentMods.slotMods && currentMods.slotMods.length) {
+        currentMods.slotMods.forEach(function(sm) {
+          if (sm && sm.protein === 'p_camaron') extraCost += 15;
+        });
+      }
+      // 3. slotMods (combos SIN hasPromo): proteínas normales (1ª incluida, resto +$15)
+      if (inst.item.promoSlots && !inst.item.hasPromo && currentMods.slotMods && currentMods.slotMods.length) {
         var totalProts = 0;
         currentMods.slotMods.forEach(function(sm) {
           if (sm && sm.protein) totalProts++;
@@ -2644,12 +2650,6 @@
         if (totalProts > 1) {
           extraCost += (totalProts - 1) * 15;
         }
-      }
-      // 3. slotMods (promociones con hasPromo): solo camarón +$15, otras gratis
-      if (inst.item.hasPromo && currentMods.slotMods && currentMods.slotMods.length) {
-        currentMods.slotMods.forEach(function(sm) {
-          if (sm && sm.protein === 'p_camaron') extraCost += 15;
-        });
       }
       // 4. Proteínas en items normales (sin promoSlots ni hasPromo): 1ª incluida, resto +$15 c/u
       if (!inst.item.promoSlots && !inst.item.hasPromo && currentMods.proteins && currentMods.proteins.length > 1) {
@@ -2867,7 +2867,7 @@
           if (item.hasPromo) {
             // Promociones: solo camarón cuesta
             if (camaronCount > 0) extraMsg = ' (+$' + (camaronCount * 15) + ')';
-          } else if (item.promoSlots) {
+          } else {
             // Combos: más de 1 proteína cuesta
             if (slotProts.length > 1) extraMsg = ' (+$' + ((slotProts.length - 1) * 15) + ')';
           }
@@ -2947,7 +2947,7 @@
             var extraMsg = '';
             if (item.hasPromo) {
               if (camaronCount > 0) extraMsg = ' (+$' + (camaronCount * 15) + ')';
-            } else if (item.promoSlots) {
+            } else {
               if (slotProts.length > 1) extraMsg = ' (+$' + ((slotProts.length - 1) * 15) + ')';
             }
             msg += '   Proteína(s): ' + slotProts.join(', ') + extraMsg + '\n';
