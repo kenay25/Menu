@@ -361,13 +361,13 @@ var MENU = {
 /* ── PROMOCIONES ────────────────────────────── */
 var PROMOS = [
   {
-    id: 'promo4', dbId: 50, emoji: '&#x1F371;', num: 'Paquete 4', title: '1 Boneless + 1 California', price: 200, tag: 'popular', hasProtein: true, hasSauce: true,
+    id: 'promo4', dbId: 50, emoji: '&#x1F371;', num: 'Paquete 4', title: '1 Boneless + 1 California', price: 200, tag: 'popular', hasProtein: true, hasPromo: true, hasSauce: true,
     desc: '1 Boneless (BBQ, Búfalo o mixtos) + 1 California con ingrediente a elegir (pollo, tocino, res o surimi).',
     ingredients: [ing('b1', '&#x1F357;', 'Boneless', 'Con salsa', false), ing('b2', '&#x1F363;', 'California', 'Prot. a elegir', false)], extras: []
   },
 
   {
-    id: 'promo1', dbId: 51, emoji: '&#x1F363;', num: 'Paquete 1', title: '2 Californias + Tostitampico', price: 220, tag: 'popular', hasProtein: true,
+    id: 'promo1', dbId: 51, emoji: '&#x1F363;', num: 'Paquete 1', title: '2 Californias + Tostitampico', price: 220, tag: 'popular', hasProtein: true, hasPromo: true,
     desc: '2 Californias con ingrediente a elegir (pollo, tocino, res o surimi) + 1 Tostitampico.',
     ingredients: [ing('b1', '&#x1F363;', '2 Californias', 'Prot. a elegir', false), ing('b2', '&#x1F32E;', 'Tostitampico', 'Incluido', false)], extras: []
   },
@@ -379,7 +379,7 @@ var PROMOS = [
   },
 
   {
-    id: 'promo3', dbId: 53, emoji: '&#x1F363;', num: 'Paquete 3', title: '3 Bolas', price: 200, tag: null, hasProtein: true,
+    id: 'promo3', dbId: 53, emoji: '&#x1F363;', num: 'Paquete 3', title: '3 Bolas', price: 200, tag: null, hasProtein: true, hasPromo: true,
     desc: '3 Bolas con ingrediente a elegir (pollo, res, tocino o surimi).',
     ingredients: [ing('b1', '&#x1F363;', '3 Bolas', 'Prot. a elegir', false), ing('b2', '&#x1F951;', 'Aguacate, pepino, philadelphia', 'Por fuera', true), ing('b3', '&#x1F41F;', 'Tampico, anguila, ajonjolí', 'Por fuera', true)], extras: []
   }
@@ -564,7 +564,7 @@ function addNewInstance(itemId, e) {
   if (e) e.stopPropagation();
   var item = findItem(itemId); if (!item) return;
   var iid = genId();
-  orderInstances.push({ instanceId: iid, itemId: itemId, item: item, mods: { removed: {}, extras: {}, sauces: {}, sauces2: {}, proteins: [], alga: null, extraIngs: [], slotMods: [] }, extraCost: 0 });
+  orderInstances.push({ instanceId: iid, itemId: itemId, item: item, mods: { removed: {}, extras: {}, sauces: {}, sauces2: {}, proteins: [], alga: null, extraIngs: [] }, extraCost: 0 });
   isNewInstance = true;
   refreshCardState(itemId);
   openModalEdit(iid, null);
@@ -629,19 +629,19 @@ function buildModalBody(item) {
   // Proteins
   if (item.hasProtein && !item.hasSushiChoice) {
     if (item.hasPromo) {
-      // PROMOS: Sushi 1 y Sushi 2. Camarón siempre +$15 sin excepción.
-      html += '<div class="protein-section">';
-      ['Sushi 1','Sushi 2'].forEach(function(label, slot) {
-        html += '<div class="protein-section-title" style="' + (slot>0?'margin-top:12px':'') + '">🍣 Proteína — ' + label + '</div><div class="protein-grid">';
-        PROTEINS.forEach(function(p) {
-          var sel = currentMods.proteins[slot] === p.id;
-          html += '<div class="protein-btn' + (sel?' sel':'') + '" id="ps' + slot + '-' + p.id + '" onclick="selProtSlot(' + slot + ',\'' + p.id + '\')">'
-            + '<span class="p-emoji">' + p.emoji + '</span>'
-            + '<span class="p-name">' + p.name + '</span></div>';
-        });
-        html += '</div>';
+      // PROMOCIONES: Elige tu proteína · 🦐 Camarón +$15
+      html += '<div class="protein-section"><div class="protein-section-title">🥩 Elige tu proteína</div><div class="protein-grid">';
+      PROTEINS.forEach(function (p) {
+        var cnt = currentMods.proteins.filter(function (x) { return x === p.id; }).length;
+        var isSel = cnt > 0;
+        var extraLabel = p.id === 'p_camaron' ? ' (+$15)' : '';
+        html += '<div class="protein-btn' + (isSel ? ' sel' : '') + '" id="pb-' + p.id + '" onclick="togProt(\'' + p.id + '\')">'
+          + '<span class="p-emoji">' + p.emoji + '</span>'
+          + '<span class="p-name">' + p.name + extraLabel + '</span>'
+          + (cnt > 1 ? '<span class="p-count">' + cnt + '</span>' : '')
+          + '</div>';
       });
-      html += '<div class="protein-note">Elige una proteína por cada sushi · 🦐 Camarón en ➕ Extras (+$15)</div></div>';
+      html += '</div><div class="protein-note">🦐 Camarón +$15 · Otras proteínas sin costo extra</div></div>';
     } else {
       html += '<div class="protein-section"><div class="protein-section-title">🥩 Elige tu(s) proteína(s)</div><div class="protein-grid">';
       PROTEINS.forEach(function (p) {
@@ -731,30 +731,12 @@ function togExtraIng(nm) {
   });
 }
 function selAlga(val) {
-  currentMods.alga = currentMods.alga === val ? null : val;
+  currentMods.alga = val;
   ['con', 'sin'].forEach(function (v) {
     var b = document.getElementById('alga-' + v);
     if (b) b.className = 'alga-btn' + (currentMods.alga === v ? ' sel' : '');
   });
 }
-function selProtSlot(slot, pid) {
-  // Promos: slot 0=Sushi1, slot 1=Sushi2
-  // Camarón siempre +$15 en promos
-  while (currentMods.proteins.length <= slot) currentMods.proteins.push(null);
-  currentMods.proteins[slot] = pid;
-  // Calcular costo de camarones elegidos
-  var camCount = currentMods.proteins.filter(function(p){ return p === 'p_camaron'; }).length;
-  currentMods._promoCamaronCost = camCount * 15;
-  // Actualizar botones in-place (no re-renderizar el modal entero)
-  var allPids = PROTEINS.map(function(p){ return p.id; }).concat(['p_camaron']);
-  [0,1].forEach(function(s) {
-    allPids.forEach(function(pid2) {
-      var b = document.getElementById('ps' + s + '-' + pid2);
-      if (b) b.className = 'protein-btn' + (currentMods.proteins[s] === pid2 ? ' sel' : '');
-    });
-  });
-}
-
 function togProt(pid) {
   var idx = currentMods.proteins.indexOf(pid);
   if (idx >= 0) {
@@ -774,12 +756,6 @@ function togProt(pid) {
       badge.textContent = cnt;
     } else if (badge) { badge.remove(); }
   });
-  // Update camarón button too
-  var camBtn = document.getElementById('pb-p_camaron');
-  if (camBtn) {
-    var cntCam = currentMods.proteins.filter(function(x){return x==='p_camaron';}).length;
-    camBtn.className = 'protein-btn' + (cntCam > 0 ? ' sel' : '');
-  }
 }
 
 function togSauce(sid, maxSauces, field, prefix) {
@@ -812,23 +788,8 @@ function confirmMods() {
   var inst = orderInstances.filter(function (o) { return o.instanceId === currentInstanceId; })[0];
   if (!inst) return;
 
-  // Validar slots de promos/combos
-  if (inst.item.promoSlots && inst.item.promoSlots.length) {
-    for (var _si = 0; _si < inst.item.promoSlots.length; _si++) {
-      var _slot = inst.item.promoSlots[_si];
-      var _sm = currentMods.slotMods && currentMods.slotMods[_si];
-      // Validar que eligieron sushi si es picker
-      if (_slot.isSushiPicker && (!_sm || !_sm.sushiName)) {
-        alert('🍣 Por favor elige un sushi para "' + _slot.label + '"');
-        return;
-      }
-      // Validar alga en slots que la tienen
-      if (_slot.hasAlga && (!_sm || !_sm.alga)) {
-        alert('🌿 Por favor indica en "' + _slot.label + '" si lo quieres con alga o sin alga');
-        return;
-      }
-    }
-  } else if (inst.item.hasAlga && !currentMods.alga) {
+  // Validar alga si el item lo requiere
+  if (inst.item.hasAlga && !currentMods.alga) {
     alert('🌿 Por favor indica si lo quieres con alga o sin alga');
     return;
   }
@@ -836,16 +797,19 @@ function confirmMods() {
   // Calcular costos extra
   var extraCost = 0;
   // 1. Proteínas extras en items normales: primera incluida, resto +$15 c/u
-  if (!inst.item.promoSlots || !inst.item.promoSlots.length) {
+  // 2. En promociones (hasPromo): camarón siempre +$15, otras proteínas sin costo extra
+  if (inst.item.hasPromo) {
+    // Promociones: solo camarón cuesta extra (+$15)
+    if (currentMods.proteins && currentMods.proteins.length) {
+      currentMods.proteins.forEach(function(p) {
+        if (p === 'p_camaron') extraCost += 15;
+      });
+    }
+  } else {
+    // Items normales: primera proteína incluida, resto +$15 c/u
     if (currentMods.proteins && currentMods.proteins.length > 1) {
       extraCost += (currentMods.proteins.length - 1) * 15;
     }
-  }
-  // 2. Camarón en slots de promos: siempre +$15
-  if (currentMods.slotMods && currentMods.slotMods.length) {
-    currentMods.slotMods.forEach(function(sm) {
-      if (sm && sm.protein === 'p_camaron') extraCost += 15;
-    });
   }
   // 3. Extras de slots (Queso gratinado, Tampico, etc.)
   if (currentMods.extras) {
@@ -1048,7 +1012,7 @@ function renderOrderSummary() {
   }).join('');
 }
 
-/* ── Limpiar pedido ─────────────────────────── */
+/* ── Limpiar pedido ────────────��────────────── */
 function clearOrder() {
   if (!orderInstances.length) return;
   if (!confirm('¿Deseas limpiar todo tu pedido?')) return;
@@ -1068,7 +1032,7 @@ function doSendWhatsApp(clientName, clientPhone, clientAddress) {
   var total = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
 
   var msg = '🍣 *NUEVO PEDIDO — La Esquina del Sushi*\n';
-  msg += '━━━━━━━━━━━━━━━━━━━━\n';
+  msg += '━━━━━━━━��━━━━━━━━━━━\n';
   msg += '👤 *Nombre:* ' + clientName + '\n';
   if (clientPhone) msg += '📱 *Teléfono:* ' + clientPhone + '\n';
   if (clientAddress) msg += '📍 *Dirección:* ' + clientAddress + '\n';
