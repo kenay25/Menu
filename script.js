@@ -627,13 +627,13 @@ function buildModalBody(item) {
   }
 
   // Proteins
-  if (item.hasProtein && !item.hasSushiChoice) {
+  if (item.hasProtein) {
     if (item.hasPromo) {
       // PROMOS: Sushi 1 y Sushi 2. Camarón siempre +$15 sin excepción.
       html += '<div class="protein-section">';
       ['Sushi 1','Sushi 2'].forEach(function(label, slot) {
         html += '<div class="protein-section-title" style="' + (slot>0?'margin-top:12px':'') + '">🍣 Proteína — ' + label + '</div><div class="protein-grid">';
-        PROTEINS.forEach(function(p) {
+        PROTEINS.filter(function(p){ return p.id !== 'p_camaron'; }).forEach(function(p) {
           var sel = currentMods.proteins[slot] === p.id;
           html += '<div class="protein-btn' + (sel?' sel':'') + '" id="ps' + slot + '-' + p.id + '" onclick="selProtSlot(' + slot + ',\'' + p.id + '\')">'
             + '<span class="p-emoji">' + p.emoji + '</span>'

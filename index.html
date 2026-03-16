@@ -2190,18 +2190,7 @@
           html += '<div class="sushi-choice-btn' + (currentMods.sushiChoice === s ? ' sel' : '') + '" onclick="selSushiChoice(\'' + s + '\')">' + s + '</div>';
         });
         html += '</div></div>';
-        // Bombazo y California tienen proteína; Sonora no
-        if (currentMods.sushiChoice === 'Bombazo' || currentMods.sushiChoice === 'California') {
-          html += '<div class="protein-section"><div class="protein-section-title">🥩 Proteína del sushi</div><div class="protein-grid">';
-          PROTEINS.forEach(function (p) {
-            var cnt = currentMods.proteins.filter(function (x) { return x === p.id; }).length;
-            html += '<div class="protein-btn' + (cnt > 0 ? ' sel' : '') + '" id="pb-' + p.id + '" onclick="togProt(\'' + p.id + '\')">'
-              + '<span class="p-emoji">' + p.emoji + '</span><span class="p-name">' + p.name + '</span>'
-              + (cnt > 1 ? '<span class="p-count">' + cnt + '</span>' : '') + '</div>';
-          });
-          html += '</div><div class="protein-note">Primera proteína incluida · Extras +$15 c/u</div></div>';
         }
-      }
       if (item.hasIce) {
         html += '<div class="alga-section"><div class="alga-section-title">🧊 ¿Con o sin hielo?</div><div class="alga-grid">';
         html += '<div class="alga-btn' + (currentMods.ice === 'con' ? ' sel' : '') + '" id="ice-con" onclick="selIce(\'con\')">🧊 Con hielo</div>';
