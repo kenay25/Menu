@@ -2280,8 +2280,8 @@
           // Alga por slot
           if (slot.hasAlga) {
             html += '<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🌿 ¿Con o sin alga?</div><div class="alga-grid">';
-            html += '<div class="alga-btn' + (sm.alga==='con'?' sel':'') + '" onclick="selSlotAlga(' + si + ',\'con\')">🌿 Con alga</div>';
-            html += '<div class="alga-btn' + (sm.alga==='sin'?' sel':'') + '" onclick="selSlotAlga(' + si + ',\'sin\')">❌ Sin alga</div>';
+            html += '<div class="alga-btn' + (sm.alga==='con'?' sel':'') + '" id="sralga' + si + '-con" onclick="selSlotAlga(' + si + ',\'con\')">🌿 Con alga</div>';
+            html += '<div class="alga-btn' + (sm.alga==='sin'?' sel':'') + '" id="sralga' + si + '-sin" onclick="selSlotAlga(' + si + ',\'sin\')">❌ Sin alga</div>';
             html += '</div></div>';
           }
 
@@ -2471,7 +2471,7 @@
 
     /* ══ INTERACCIONES MODAL ══ */
     function togExtraIng(nm) { var idx = currentMods.extraIngs.indexOf(nm); if (idx >= 0) currentMods.extraIngs.splice(idx, 1); else currentMods.extraIngs.push(nm); document.querySelectorAll('.extra-chip').forEach(function (el) { el.className = 'extra-chip' + (currentMods.extraIngs.indexOf(el.textContent.trim()) >= 0 ? ' sel' : ''); }); }
-    function selAlga(val) { currentMods.alga = currentMods.alga === val ? null : val;['con', 'sin'].forEach(function (v) { var b = document.getElementById('alga-' + v); if (b) b.className = 'alga-btn' + (currentMods.alga === v ? ' sel' : ''); }); }
+    function selAlga(val) { currentMods.alga = val;['con', 'sin'].forEach(function (v) { var b = document.getElementById('alga-' + v); if (b) b.className = 'alga-btn' + (currentMods.alga === v ? ' sel' : ''); }); }
     function togProt(pid) {
       var idx = currentMods.proteins.indexOf(pid);
       if (idx >= 0) currentMods.proteins.splice(idx, 1); else currentMods.proteins.push(pid);
@@ -2505,9 +2505,11 @@
     function selSlotAlga(si, val) {
       if (!currentMods.slotMods || !currentMods.slotMods[si]) return;
       currentMods.slotMods[si].alga = val;
-      // Update buttons in place
-      var el = document.getElementById('sr_alga_' + si + '_con');
-      if (!el) { buildModalBody(currentItem); return; }
+      // Update buttons
+      var bCon = document.getElementById('sralga' + si + '-con');
+      var bSin = document.getElementById('sralga' + si + '-sin');
+      if (bCon) bCon.className = 'alga-btn' + (val === 'con' ? ' sel' : '');
+      if (bSin) bSin.className = 'alga-btn' + (val === 'sin' ? ' sel' : '');
     }
     function selSlotStyle(si, val) {
       if (!currentMods.slotMods || !currentMods.slotMods[si]) return;
@@ -2563,6 +2565,34 @@
       if (inst.item.hasSushiChoice && (currentMods.sushiChoice === 'Bombazo' || currentMods.sushiChoice === 'California') && !currentMods.proteins.length) { alert('🥩 Por favor elige la proteína para el ' + currentMods.sushiChoice); return; }
       // Si tiene hasProtein propio (sin sushiChoice) y no eligió
       if (inst.item.hasProtein && !inst.item.hasSushiChoice && !currentMods.proteins.length) { alert('🥩 Por favor elige la proteína'); return; }
+
+      // Calcular extraCost
+      var extraCost = 0;
+      // 1. Extras del producto (camarón en promos, queso gratinado, etc.)
+      if (currentMods.extras) {
+        Object.keys(currentMods.extras).forEach(function(key) {
+          var val = currentMods.extras[key];
+          if (val === true) {
+            // Buscar el precio del extra
+            var ex = (inst.item.extras || []).filter(function(e) { return e.id === key; })[0];
+            if (ex && ex.price) extraCost += ex.price;
+          } else if (typeof val === 'number') {
+            extraCost += val;
+          }
+        });
+      }
+      // 2. Proteínas en items normales: primera incluida, resto +$15 c/u
+      if (!inst.item.hasPromo && currentMods.proteins && currentMods.proteins.length > 1) {
+        extraCost += (currentMods.proteins.length - 1) * 15;
+      }
+      // 3. slotMods (promos con camarón)
+      if (currentMods.slotMods && currentMods.slotMods.length) {
+        currentMods.slotMods.forEach(function(sm) {
+          if (sm && sm.protein === 'p_camaron') extraCost += 15;
+        });
+      }
+      inst.extraCost = extraCost;
+
       inst.mods = JSON.parse(JSON.stringify(currentMods));
       refreshCardState(inst.itemId); updateBar(); closeModal();
     }
@@ -2752,7 +2782,8 @@
       if (m.ice) lines += '<div class="oi-mod-added">🧊 Hielo: ' + (m.ice === 'con' ? 'Con hielo' : 'Sin hielo') + '</div>';
       if (m.proteins && m.proteins.length) {
         var pnames = m.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
-        lines += '<div class="oi-mod-added">🥩 Proteína(s): ' + pnames.join(', ') + (m.proteins.length > 1 ? ' (+$' + ((m.proteins.length - 1) * 15) + ')' : '') + '</div>';
+        var protExtra = item.hasPromo ? false : (m.proteins.length > 1);
+        lines += '<div class="oi-mod-added">🥩 Proteína(s): ' + pnames.join(', ') + (protExtra ? ' (+$' + ((m.proteins.length - 1) * 15) + ')' : '') + '</div>';
       }
       if (m.sauces && Object.keys(m.sauces).length) lines += '<div class="oi-mod-added">🫙 Salsa boneles: ' + SAUCES.filter(function (s) { return m.sauces[s.id]; }).map(function (s) { return s.name; }).join(', ') + '</div>';
       if (m.sauces2 && Object.keys(m.sauces2).length) lines += '<div class="oi-mod-added">🫙 Salsa 2ª orden: ' + SAUCES.filter(function (s) { return m.sauces2[s.id]; }).map(function (s) { return s.name; }).join(', ') + '</div>';
@@ -2807,7 +2838,8 @@
         if (m.ice) msg += '   Hielo: ' + (m.ice === 'con' ? 'Con hielo' : 'Sin hielo') + '\n';
         if (m.proteins && m.proteins.length) {
           var pnames = m.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
-          msg += '   Proteína(s): ' + pnames.join(', ') + (m.proteins.length > 1 ? ' (+$' + ((m.proteins.length - 1) * 15) + ')' : '') + '\n';
+          var protExtra = item.hasPromo ? false : (m.proteins.length > 1);
+          msg += '   Proteína(s): ' + pnames.join(', ') + (protExtra ? ' (+$' + ((m.proteins.length - 1) * 15) + ')' : '') + '\n';
         }
         if (m.sauces && Object.keys(m.sauces).length) msg += '   Salsa boneles: ' + SAUCES.filter(function (s) { return m.sauces[s.id]; }).map(function (s) { return s.name; }).join(', ') + '\n';
         if (m.sauces2 && Object.keys(m.sauces2).length) msg += '   Salsa 2ª orden boneles: ' + SAUCES.filter(function (s) { return m.sauces2[s.id]; }).map(function (s) { return s.name; }).join(', ') + '\n';
