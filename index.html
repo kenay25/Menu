@@ -2451,17 +2451,20 @@
             html += '</div><div class="protein-note">' + (item.hasPromo ? '🦐 Camarón +$15 · Otras proteínas: 1ª gratis por sushi · 2ª+ +$15' : 'Primera proteína incluida · +$15 por las demás') + '</div></div>';
           }
 
-          // Ingredientes removibles por slot
+          // Ingredientes removibles por slot (depende del sushi elegido)
           if (slot.removable && slot.removable.length) {
-            html += '<div style="margin-top:6px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">✏️ Quitar ingredientes</div><div class="ing-list">';
-            slot.removable.forEach(function(ing) {
-              var rm = sm.removed && sm.removed[ing.id];
-              html += '<div class="ing-item' + (rm?' removed':'') + '" id="sr' + si + '-' + ing.id + '">'
-                + '<div class="ing-left"><span class="ing-emoji">' + ing.emoji + '</span>'
-                + '<div><div class="ing-name">' + ing.name + '</div></div></div>'
-                + '<button class="ing-toggle" onclick="togSlotIng(' + si + ',\''+ing.id+'\')">' + (rm?'Volver a poner':'Quitar') + '</button></div>';
-            });
-            html += '</div></div>';
+            var removableBySushi = getRemovableBySushi(sm.sushiName || '', slot.removable);
+            if (removableBySushi.length > 0) {
+              html += '<div id="srremovable-' + si + '" style="margin-top:6px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">✏️ Quitar ingredientes</div><div class="ing-list">';
+              removableBySushi.forEach(function(ing) {
+                var rm = sm.removed && sm.removed[ing.id];
+                html += '<div class="ing-item' + (rm?' removed':'') + '" id="sr' + si + '-' + ing.id + '">'
+                  + '<div class="ing-left"><span class="ing-emoji">' + ing.emoji + '</span>'
+                  + '<div><div class="ing-name">' + ing.name + '</div></div></div>'
+                  + '<button class="ing-toggle" onclick="togSlotIng(' + si + ',\''+ing.id+'\')">' + (rm?'Volver a poner':'Quitar') + '</button></div>';
+              });
+              html += '</div></div>';
+            }
           }
 
           // Extras por slot
@@ -2653,6 +2656,49 @@
           protSection.innerHTML = '';
         }
       }
+      // Update removable ingredients section
+      var removableSection = document.getElementById('srremovable-' + si);
+      if (removableSection) {
+        var slot = currentItem.promoSlots[si];
+        var sm = currentMods.slotMods[si];
+        // Filter removable based on sushi chosen
+        var removableBySushi = getRemovableBySushi(name, slot.removable || []);
+        if (removableBySushi.length > 0) {
+          var html = '<div style="margin-top:6px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">✏️ Quitar ingredientes</div><div class="ing-list">';
+          removableBySushi.forEach(function(ing) {
+            var rm = sm.removed && sm.removed[ing.id];
+            html += '<div class="ing-item' + (rm?' removed':'') + '" id="sr' + si + '-' + ing.id + '">'
+              + '<div class="ing-left"><span class="ing-emoji">' + ing.emoji + '</span>'
+              + '<div><div class="ing-name">' + ing.name + '</div></div></div>'
+              + '<button class="ing-toggle" onclick="togSlotIng(' + si + ',\''+ing.id+'\')">' + (rm?'Volver a poner':'Quitar') + '</button></div>';
+          });
+          html += '</div></div>';
+          removableSection.innerHTML = html;
+        } else {
+          removableSection.innerHTML = '';
+        }
+      }
+    }
+    function getRemovableBySushi(sushiName, allRemovable) {
+      // Define which ingredients belong to each sushi (by suffix after prefix)
+      var sushiIngredients = {
+        'Bombazo': ['tampico', 'anguila', 'ajonjoli'],
+        'Sonora': ['res', 'tocino', 'chile'],
+        'California': ['philly', 'pepino', 'aguacate'],
+        'Mix Roll': ['philly', 'pepino', 'aguacate'],
+        'Tres Quesos': ['philly', 'pepino', 'aguacate'],
+        'Aguacate': ['philly', 'pepino', 'aguacate'],
+        'Mayito': ['philly', 'pepino', 'aguacate']
+      };
+      // Base ingredients for all sushis
+      var baseIng = ['philly', 'pepino', 'aguacate'];
+      var specificIng = sushiIngredients[sushiName] || baseIng;
+      // Filter removable that match base + specific
+      return allRemovable.filter(function(ing) {
+        // Extract ingredient type from id (after prefix like 'c7s1_', 'pq_', 'rc1_', etc.)
+        var ingType = ing.id.replace(/^[a-z0-9]+_/i, '');
+        return baseIng.indexOf(ingType) >= 0 || specificIng.indexOf(ingType) >= 0;
+      });
     }
     function selSlotAlga(si, val) {
       if (!currentMods.slotMods || !currentMods.slotMods[si]) return;
