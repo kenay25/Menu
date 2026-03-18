@@ -2002,64 +2002,13 @@
         </div>
 
         <!-- Opciones de personalización — dinámicas por categoría -->
-        <div style="margin:18px 0 8px">
+        <div id="dynamic-options-wrap" style="margin:18px 0 8px;display:none">
           <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:10px">
-            ⚙️ Opciones de personalización
-            <span id="opts-cat-hint" style="font-size:10px;color:var(--pink);text-transform:none;letter-spacing:0;margin-left:8px;font-weight:500"></span>
+            ⚙️ Configuración del platillo
           </div>
 
-          <!-- Grupo: Presentación -->
-          <div style="margin-bottom:10px">
-            <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px">Presentación</div>
-            <div style="display:flex;flex-wrap:wrap;gap:8px">
-              <label class="opt-check"><input type="checkbox" id="opt-alga">🌿 Con/sin alga</label>
-              <label class="opt-check"><input type="checkbox" id="opt-style">🍳 Natural/empanizado</label>
-              <label class="opt-check"><input type="checkbox" id="opt-ice">🧊 Con/sin hielo</label>
-            </div>
-          </div>
-
-          <!-- Grupo: Proteína -->
-          <div style="margin-bottom:10px">
-            <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px">Proteína</div>
-            <div style="display:flex;flex-wrap:wrap;gap:8px">
-              <label class="opt-check"><input type="checkbox" id="opt-protein">🥩 Elige proteína</label>
-            </div>
-          </div>
-
-          <!-- Grupo: Salsas -->
-          <div style="margin-bottom:10px">
-            <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px">Salsas</div>
-            <div style="display:flex;flex-wrap:wrap;gap:8px">
-              <label class="opt-check"><input type="checkbox" id="opt-sauce">🫙 Salsa boneles (hasta 2)</label>
-              <label class="opt-check"><input type="checkbox" id="opt-sauce-1only">🫙 Solo 1 salsa boneles</label>
-              <label class="opt-check"><input type="checkbox" id="opt-sauce-2">🫙 Salsa 2ª orden boneles</label>
-              <label class="opt-check"><input type="checkbox" id="opt-sauce-alitas">🫙 Salsa alitas</label>
-            </div>
-          </div>
-
-          <!-- Grupo: Elecciones especiales -->
-          <div style="margin-bottom:10px">
-            <div style="font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px">Elecciones especiales</div>
-            <div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center">
-              <label class="opt-check"><input type="checkbox" id="opt-sushi-choice" onchange="toggleSushiOpts(this.checked)">🍣 Elige sushi</label>
-              <label class="opt-check"><input type="checkbox" id="opt-extra-ing">➕ Ingrediente extra ($15)</label>
-            </div>
-            <!-- Campo editable: qué sushis se pueden elegir -->
-            <div id="sushi-opts-wrap" style="display:none;margin-top:8px;padding:10px 12px;background:#FFF8F9;border-radius:10px;border:1.5px solid var(--border)">
-              <div style="font-size:10px;color:var(--muted);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">Sushis disponibles a elegir</div>
-              <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px" id="sushi-opts-checks">
-                <label class="opt-check"><input type="checkbox" id="sushi-opt-bombazo" checked>🍣 Bombazo</label>
-                <label class="opt-check"><input type="checkbox" id="sushi-opt-california" checked>🍣 California</label>
-                <label class="opt-check"><input type="checkbox" id="sushi-opt-sonora" checked>🍣 Sonora</label>
-                <label class="opt-check"><input type="checkbox" id="sushi-opt-misil">🍣 Misil</label>
-                <label class="opt-check"><input type="checkbox" id="sushi-opt-especial">🍣 Especial</label>
-              </div>
-              <div style="display:flex;align-items:center;gap:8px">
-                <span style="font-size:11px;color:var(--muted)">Otros:</span>
-                <input type="text" id="sushi-opts-custom" placeholder="Fernanda, Hot, ..." style="flex:1;background:white;border:1.5px solid var(--border);border-radius:8px;padding:5px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none">
-              </div>
-            </div>
-          </div>
+          <!-- Contenedor dinámico que cambia según categoría -->
+          <div id="category-options-container"></div>
         </div>
 
         <!-- Editor de ingredientes -->
@@ -2691,6 +2640,8 @@
       _prodExtras = JSON.parse(JSON.stringify(p.extras_producto || []));
       renderIngsList();
       renderExtrasList();
+      // Cargar opciones dinámicas según categoría
+      loadDynamicOptionsData(p);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -2701,19 +2652,17 @@
       clearImage();
       document.getElementById('prod-precio').value = '';
       document.getElementById('prod-categoria').value = '2';
-      toggleSushiOpts(false);
-      actualizarHintCategoria(2);
       document.getElementById('prod-tag').value = '';
       document.getElementById('prod-disponible').value = 'true';
       document.getElementById('prod-descripcion').value = '';
-      Object.values(OPTS_MAP).forEach(elId => {
-        const el = document.getElementById(elId);
-        if (el) el.checked = false;
-      });
       _prodIngs = [];
       _prodExtras = [];
+      _slotConfigs = [];
       renderIngsList();
       renderExtrasList();
+      document.getElementById('dynamic-options-wrap').style.display = 'none';
+      document.getElementById('category-options-container').innerHTML = '';
+      renderDynamicOptions(2);
     }
 
     async function guardarProducto() {
@@ -2738,11 +2687,10 @@
         ingredientes: ingsValidos,
         extras_producto: extrasValidos,
       };
-      // Checkboxes
-      Object.entries(OPTS_MAP).forEach(([key, elId]) => {
-        const el = document.getElementById(elId);
-        body[key] = el ? el.checked : false;
-      });
+
+      // Agregar opciones dinámicas según categoría
+      const dynamicOpts = getDynamicOptionsData();
+      Object.assign(body, dynamicOpts);
 
       let _savedId = id;
       if (id) {
@@ -3251,6 +3199,251 @@
     function actualizarHintCategoria(catId) {
       var hint = document.getElementById('opts-cat-hint');
       if (hint) hint.textContent = _CAT_HINTS[catId] || '';
+      renderDynamicOptions(catId);
+    }
+
+    /* ══ FORMULARIO DINÁMICO POR CATEGORÍA ═══════════════════════════════════════════ */
+    var _sushiPickerOpts = [];
+    var _slotConfigs = [];
+
+    function renderDynamicOptions(catId) {
+      var container = document.getElementById('category-options-container');
+      var wrap = document.getElementById('dynamic-options-wrap');
+      if (!container || !wrap) return;
+
+      wrap.style.display = 'block';
+      _sushiPickerOpts = [];
+      _slotConfigs = [];
+
+      if (catId == 1) {
+        // 🍱 Combos y Charolas — promoSlots con sushi picker (TODOS los sushis)
+        container.innerHTML = `
+          <div class="panel-card" style="margin-bottom:12px">
+            <div style="font-size:11px;font-weight:700;color:var(--dark);margin-bottom:10px">🍣 ¿Este combo incluye sushis para elegir?</div>
+            <label class="opt-check" style="display:inline-flex;align-items:center;gap:8px">
+              <input type="checkbox" id="combo-has-sushi-picker" onchange="toggleSushiPickerConfig(this.checked)">
+              <span style="font-size:13px">Sí, el cliente elige sushis</span>
+            </label>
+          </div>
+          <div id="sushi-picker-config" style="display:none" class="panel-card">
+            <div style="font-size:11px;font-weight:700;color:var(--dark);margin-bottom:10px">🍣 Sushis disponibles para elegir (selecciona todos los que quieras)</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px" id="sushi-picker-checks">
+              ${renderSushiPickerChecks()}
+            </div>
+            <div style="margin-bottom:12px">
+              <div style="font-size:10px;color:var(--muted);margin-bottom:6px">O agrega sushis personalizados:</div>
+              <input type="text" id="sushi-picker-custom" placeholder="Ej. Franco Roll, La Chuyita..." style="flex:1;background:white;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none" onkeypress="if(event.key==='Enter'){addCustomSushiPicker();return false}">
+              <button type="button" onclick="addCustomSushiPicker()" style="background:var(--pink);color:white;border:none;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;margin-left:8px">+ Agregar</button>
+            </div>
+          </div>
+          <div class="panel-card">
+            <div style="font-size:11px;font-weight:700;color:var(--dark);margin-bottom:10px">🍱 Slots del combo (cada sushi o platillo individual)</div>
+            <div id="slots-config-list" style="display:flex;flex-direction:column;gap:10px"></div>
+            <button type="button" onclick="addSlotConfig()" style="background:transparent;border:1.5px dashed rgba(232,84,122,0.4);color:var(--pink);border-radius:9px;padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;width:100%;margin-top:10px">+ Agregar otro slot</button>
+          </div>
+        `;
+      } else if (catId == 2) {
+        // 🍣 Sushis
+        container.innerHTML = `
+          <div class="panel-card">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <label class="opt-check"><input type="checkbox" id="sushi-alga"> 🌿 Con/sin alga</label>
+              <label class="opt-check"><input type="checkbox" id="sushi-style"> 🍳 Natural/empanizado</label>
+              <label class="opt-check"><input type="checkbox" id="sushi-protein"> 🥩 Elige proteína</label>
+            </div>
+          </div>
+        `;
+      } else if (catId == 3) {
+        // 🥗 Entradas — simple
+        container.innerHTML = `<div class="panel-card"><div style="font-size:12px;color:var(--muted)">📝 Las entradas solo llevan ingredientes fijos y opcionales para quitar.</div></div>`;
+      } else if (catId == 4) {
+        // ⭐ Especiales
+        container.innerHTML = `
+          <div class="panel-card">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <label class="opt-check"><input type="checkbox" id="esp-sauce"> 🫙 Salsa boneles (hasta 2)</label>
+              <label class="opt-check"><input type="checkbox" id="esp-sauce-alitas"> 🫙 Salsa alitas</label>
+            </div>
+          </div>
+        `;
+      } else if (catId == 5) {
+        // 🥤 Bebidas
+        container.innerHTML = `
+          <div class="panel-card">
+            <label class="opt-check"><input type="checkbox" id="beb-ice"> 🧊 Con/sin hielo</label>
+          </div>
+        `;
+      } else if (catId == 6) {
+        // 🎁 Promociones
+        container.innerHTML = `
+          <div class="panel-card">
+            <div style="font-size:11px;font-weight:700;color:var(--dark);margin-bottom:10px">🎁 Esta promoción incluye:</div>
+            <div id="promo-slots-config" style="display:flex;flex-direction:column;gap:10px"></div>
+            <button type="button" onclick="addPromoSlot()" style="background:transparent;border:1.5px dashed rgba(232,84,122,0.4);color:var(--pink);border-radius:9px;padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;width:100%;margin-top:10px">+ Agregar platillo a la promoción</button>
+          </div>
+        `;
+      }
+    }
+
+    function renderSushiPickerChecks() {
+      // TODOS los sushis del menú
+      var sushis = ['Borbon', 'Monster', 'Franco Roll', 'La Chuyita', 'Mexicano 2', 'Mayito', 'Mix Roll', 'Baked', 'Fernanda', 'Hot', 'Mexicano 1', 'Tres Quesos', 'Chipotle', 'Queen Roll', 'Cielo Mar y Tierra', 'Antojo', 'Bombazo', 'Sonora', 'Daishi', 'Aguacate', 'California', 'Especial', 'Misil'];
+      return sushis.map(function(s) {
+        return '<label class="opt-check" style="font-size:12px"><input type="checkbox" class="sushi-picker-opt" value="' + s + '" checked> 🍣 ' + s + '</label>';
+      }).join('');
+    }
+
+    function toggleSushiPickerConfig(checked) {
+      document.getElementById('sushi-picker-config').style.display = checked ? 'block' : 'none';
+    }
+
+    function addCustomSushiPicker() {
+      var input = document.getElementById('sushi-picker-custom');
+      var val = input.value.trim();
+      if (!val) return;
+      var container = document.getElementById('sushi-picker-checks');
+      var label = document.createElement('label');
+      label.className = 'opt-check';
+      label.style.fontSize = '12px';
+      label.innerHTML = '<input type="checkbox" class="sushi-picker-opt" value="' + val + '" checked> 🍣 ' + val;
+      container.appendChild(label);
+      input.value = '';
+    }
+
+    function addSlotConfig() {
+      var idx = _slotConfigs.length;
+      var slot = { label: 'Slot ' + (idx + 1), hasProtein: false, hasAlga: false, hasStyle: false, removable: [] };
+      _slotConfigs.push(slot);
+      renderSlotsConfig();
+    }
+
+    function renderSlotsConfig() {
+      var container = document.getElementById('slots-config-list');
+      if (!container) return;
+      container.innerHTML = _slotConfigs.map(function(slot, idx) {
+        return `
+          <div style="background:#FFF8F9;border:1.5px solid var(--border);border-radius:10px;padding:12px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+              <input type="text" value="${slot.label}" onchange="updateSlotLabel(${idx}, this.value)" placeholder="Nombre del slot" style="flex:1;background:white;border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none">
+              <button type="button" onclick="removeSlotConfig(${idx})" style="background:#FDEDEC;border:none;color:#C0392B;border-radius:7px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif">✕</button>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <label class="opt-check" style="font-size:12px"><input type="checkbox" ${slot.hasProtein ? 'checked' : ''} onchange="updateSlotOpt(${idx}, 'hasProtein', this.checked)"> 🥩 Elige proteína</label>
+              <label class="opt-check" style="font-size:12px"><input type="checkbox" ${slot.hasAlga ? 'checked' : ''} onchange="updateSlotOpt(${idx}, 'hasAlga', this.checked)"> 🌿 Con/sin alga</label>
+              <label class="opt-check" style="font-size:12px"><input type="checkbox" ${slot.hasStyle ? 'checked' : ''} onchange="updateSlotOpt(${idx}, 'hasStyle', this.checked)"> 🍳 Natural/empanizado</label>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateSlotLabel(idx, val) { _slotConfigs[idx].label = val; }
+    function updateSlotOpt(idx, key, val) { _slotConfigs[idx][key] = val; }
+    function removeSlotConfig(idx) { _slotConfigs.splice(idx, 1); renderSlotsConfig(); }
+
+    function addPromoSlot() {
+      var idx = _slotConfigs.length;
+      var slot = { label: 'Platillo ' + (idx + 1), sushiName: '', hasProtein: false, hasAlga: false, hasStyle: false, removable: [] };
+      _slotConfigs.push(slot);
+      renderPromoSlotsConfig();
+    }
+
+    function renderPromoSlotsConfig() {
+      var container = document.getElementById('promo-slots-config');
+      if (!container) return;
+      container.innerHTML = _slotConfigs.map(function(slot, idx) {
+        return `
+          <div style="background:#FFF8F9;border:1.5px solid var(--border);border-radius:10px;padding:12px">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+              <input type="text" value="${slot.label}" onchange="updateSlotLabel(${idx}, this.value)" placeholder="Nombre" style="flex:1;background:white;border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;font-family:'DM Sans',sans-serif;outline:none">
+              <button type="button" onclick="removeSlotConfig(${idx})" style="background:#FDEDEC;border:none;color:#C0392B;border-radius:7px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:'DM Sans',sans-serif">✕</button>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+              <label class="opt-check" style="font-size:12px"><input type="checkbox" ${slot.hasProtein ? 'checked' : ''} onchange="updateSlotOpt(${idx}, 'hasProtein', this.checked)"> 🥩 Elige proteína</label>
+              <label class="opt-check" style="font-size:12px"><input type="checkbox" ${slot.hasAlga ? 'checked' : ''} onchange="updateSlotOpt(${idx}, 'hasAlga', this.checked)"> 🌿 Con/sin alga</label>
+              <label class="opt-check" style="font-size:12px"><input type="checkbox" ${slot.hasStyle ? 'checked' : ''} onchange="updateSlotOpt(${idx}, 'hasStyle', this.checked)"> 🍳 Natural/empanizado</label>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function getDynamicOptionsData() {
+      var catId = parseInt(document.getElementById('prod-categoria').value);
+      var data = {};
+
+      if (catId == 1) {
+        // Combos
+        var hasSushiPicker = document.getElementById('combo-has-sushi-picker')?.checked;
+        if (hasSushiPicker) {
+          var sushiOpts = Array.from(document.querySelectorAll('.sushi-picker-opt:checked')).map(function(cb) { return cb.value; });
+          data.sushiOptions = sushiOpts;
+        }
+        data.slots = _slotConfigs;
+      } else if (catId == 2) {
+        // Sushis
+        data.hasAlga = document.getElementById('sushi-alga')?.checked;
+        data.hasStyle = document.getElementById('sushi-style')?.checked;
+        data.hasProtein = document.getElementById('sushi-protein')?.checked;
+      } else if (catId == 4) {
+        // Especiales
+        data.hasSauce = document.getElementById('esp-sauce')?.checked;
+        data.hasSauceAlitas = document.getElementById('esp-sauce-alitas')?.checked;
+      } else if (catId == 5) {
+        // Bebidas
+        data.hasIce = document.getElementById('beb-ice')?.checked;
+      } else if (catId == 6) {
+        // Promociones
+        data.hasPromo = true;
+        data.slots = _slotConfigs;
+      }
+
+      return data;
+    }
+
+    function loadDynamicOptionsData(prod) {
+      var catId = prod.id_categoria;
+      renderDynamicOptions(catId);
+
+      if (catId == 1) {
+        // Combos
+        if (prod.sushiOptions && prod.sushiOptions.length) {
+          document.getElementById('combo-has-sushi-picker').checked = true;
+          toggleSushiPickerConfig(true);
+          // Llenar checkboxes con las opciones del producto
+          var container = document.getElementById('sushi-picker-checks');
+          container.innerHTML = prod.sushiOptions.map(function(s) {
+            return '<label class="opt-check" style="font-size:12px"><input type="checkbox" class="sushi-picker-opt" value="' + s + '" checked> 🍣 ' + s + '</label>';
+          }).join('');
+        } else {
+          // Producto nuevo - usar todos los sushis por defecto
+          document.getElementById('combo-has-sushi-picker').checked = true;
+          toggleSushiPickerConfig(true);
+          renderSushiPickerChecks();
+        }
+        if (prod.slots && prod.slots.length) {
+          _slotConfigs = prod.slots;
+          renderSlotsConfig();
+        }
+      } else if (catId == 2) {
+        // Sushis
+        if (document.getElementById('sushi-alga')) document.getElementById('sushi-alga').checked = prod.hasAlga;
+        if (document.getElementById('sushi-style')) document.getElementById('sushi-style').checked = prod.hasStyle;
+        if (document.getElementById('sushi-protein')) document.getElementById('sushi-protein').checked = prod.hasProtein;
+      } else if (catId == 4) {
+        // Especiales
+        if (document.getElementById('esp-sauce')) document.getElementById('esp-sauce').checked = prod.hasSauce;
+        if (document.getElementById('esp-sauce-alitas')) document.getElementById('esp-sauce-alitas').checked = prod.hasSauceAlitas;
+      } else if (catId == 5) {
+        // Bebidas
+        if (document.getElementById('beb-ice')) document.getElementById('beb-ice').checked = prod.hasIce;
+      } else if (catId == 6) {
+        // Promociones
+        if (prod.slots && prod.slots.length) {
+          _slotConfigs = prod.slots;
+          renderPromoSlotsConfig();
+        }
+      }
     }
 
   </script>
