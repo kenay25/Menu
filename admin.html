@@ -3228,7 +3228,7 @@
           <div id="sushi-picker-config" style="display:none" class="panel-card">
             <div style="font-size:11px;font-weight:700;color:var(--dark);margin-bottom:10px">🍣 Sushis disponibles para elegir</div>
             <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px" id="sushi-picker-checks">
-              ${renderSushiPickerChecks()}
+              <!-- Se llena dinámicamente -->
             </div>
             <div style="margin-bottom:12px">
               <div style="font-size:10px;color:var(--muted);margin-bottom:6px">O agrega sushis personalizados:</div>
@@ -3409,9 +3409,19 @@
         if (prod.sushiOptions && prod.sushiOptions.length) {
           document.getElementById('combo-has-sushi-picker').checked = true;
           toggleSushiPickerConfig(true);
-          document.querySelectorAll('.sushi-picker-opt').forEach(function(cb) {
-            cb.checked = prod.sushiOptions.indexOf(cb.value) >= 0;
-          });
+          // Llenar checkboxes con las opciones del producto
+          var container = document.getElementById('sushi-picker-checks');
+          container.innerHTML = prod.sushiOptions.map(function(s) {
+            return '<label class="opt-check" style="font-size:12px"><input type="checkbox" class="sushi-picker-opt" value="' + s + '" checked> 🍣 ' + s + '</label>';
+          }).join('');
+        } else {
+          // Producto nuevo - usar las 3 por defecto
+          document.getElementById('combo-has-sushi-picker').checked = true;
+          toggleSushiPickerConfig(true);
+          var container = document.getElementById('sushi-picker-checks');
+          container.innerHTML = ['Bombazo', 'California', 'Sonora'].map(function(s) {
+            return '<label class="opt-check" style="font-size:12px"><input type="checkbox" class="sushi-picker-opt" value="' + s + '" checked> 🍣 ' + s + '</label>';
+          }).join('');
         }
         if (prod.slots && prod.slots.length) {
           _slotConfigs = prod.slots;
