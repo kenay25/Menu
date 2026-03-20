@@ -3499,7 +3499,11 @@
           if (!MENU[sec]) return;
           var updated = false;
           MENU[sec].forEach(function (item) {
-            if (item.dbId && imgMap[item.dbId] && item.img !== imgMap[item.dbId]) {
+            // No cargar imagen desde DB si el producto no debería tener imagen (ej. California)
+            if (item.dbId && imgMap[item.dbId] && !item.img && item.id !== 's1') {
+              item.img = imgMap[item.dbId];
+              updated = true;
+            } else if (item.dbId && imgMap[item.dbId] && item.img && item.img !== imgMap[item.dbId]) {
               item.img = imgMap[item.dbId];
               updated = true;
             }
