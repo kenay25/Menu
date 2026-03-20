@@ -543,6 +543,15 @@
       overflow: hidden;
     }
 
+    .promo-card .card-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      display: block;
+    }
+
     .promo-card::before {
       content: '';
       position: absolute;
@@ -2325,7 +2334,8 @@
       g.innerHTML = sorted.map(function (p) {
         var th = p.tag ? '<span class="card-tag ' + tags[p.tag] + '">' + labels[p.tag] + '</span>' : '';
         return '<div class="promo-card" id="card-' + p.id + '" onclick="addNewInstance(\'' + p.id + '\')">'
-          + '<div class="promo-num">' + p.num + '</div>'
+          + (p.img ? '<img class="card-img" src="' + p.img + '" alt="' + p.title + '" loading="lazy">' : '<div class="promo-num">' + p.num + '</div>')
+          + (!p.img ? '<div class="promo-num">' + p.num + '</div>' : '')
           + '<div class="promo-title">' + p.emoji + ' ' + p.title + '</div>'
           + '<div class="card-desc">' + p.desc + '</div>'
           + '<div class="card-footer"><span class="promo-price">$' + p.price + ' <small>MXN</small></span>' + th + '</div>'
