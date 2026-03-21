@@ -11,7 +11,7 @@
   <style>
     :root {
       --pink: #E8547A;
-      --pink-light: #F9D0DC;
+      s --pink-light: #F9D0DC;
       --pink-deep: #C23060;
       --cream: #FFF8F9;
       --dark: #1A0A10;
@@ -906,80 +906,198 @@
     }
 
     /* ── Emoji picker ── */
-    .emoji-field-wrap { position: relative; }
-    .emoji-preview-input {
-      display: flex; align-items: center; gap: 8px;
+    .emoji-field-wrap {
+      position: relative;
     }
+
+    .emoji-preview-input {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .emoji-preview-input input {
       flex: 1;
     }
+
     .btn-emoji-pick {
-      background: #FFF8F9; border: 1.5px solid var(--border);
-      border-radius: 10px; padding: 8px 12px; font-size: 13px;
-      cursor: pointer; white-space: nowrap; color: var(--dark);
-      font-family: 'DM Sans', sans-serif; transition: all 0.2s;
+      background: #FFF8F9;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+      color: var(--dark);
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
       flex-shrink: 0;
     }
-    .btn-emoji-pick:hover { border-color: var(--pink); background: #FFF0F4; }
+
+    .btn-emoji-pick:hover {
+      border-color: var(--pink);
+      background: #FFF0F4;
+    }
+
     .emoji-panel {
-      display: none; position: absolute; top: calc(100% + 6px); left: 0;
-      background: var(--white); border: 1.5px solid var(--border);
-      border-radius: 14px; padding: 12px;
-      box-shadow: 0 8px 32px rgba(194,48,96,0.15);
-      z-index: 300; width: 320px; max-height: 260px; overflow-y: auto;
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      background: var(--white);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 12px;
+      box-shadow: 0 8px 32px rgba(194, 48, 96, 0.15);
+      z-index: 300;
+      width: 320px;
+      max-height: 260px;
+      overflow-y: auto;
     }
-    .emoji-panel.open { display: block; }
+
+    .emoji-panel.open {
+      display: block;
+    }
+
     .emoji-panel-title {
-      font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
-      color: var(--muted); font-weight: 700; margin-bottom: 8px; margin-top: 4px;
+      font-size: 9px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 700;
+      margin-bottom: 8px;
+      margin-top: 4px;
     }
-    .emoji-panel-grid { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+
+    .emoji-panel-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
     .emoji-opt {
-      font-size: 22px; padding: 5px 7px; border-radius: 8px; cursor: pointer;
-      transition: background 0.15s; line-height: 1;
+      font-size: 22px;
+      padding: 5px 7px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+      line-height: 1;
     }
-    .emoji-opt:hover { background: #FFF0F4; }
-    .emoji-opt.sel { background: var(--pink-light); outline: 2px solid var(--pink); }
+
+    .emoji-opt:hover {
+      background: #FFF0F4;
+    }
+
+    .emoji-opt.sel {
+      background: var(--pink-light);
+      outline: 2px solid var(--pink);
+    }
 
     /* ── Image uploader ── */
     .img-upload-wrap {
-      border: 2px dashed var(--border); border-radius: 12px;
-      padding: 14px; text-align: center; cursor: pointer;
-      transition: all 0.2s; background: #FFF8F9; position: relative;
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #FFF8F9;
+      position: relative;
     }
-    .img-upload-wrap:hover { border-color: var(--pink); background: #FFF0F4; }
+
+    .img-upload-wrap:hover {
+      border-color: var(--pink);
+      background: #FFF0F4;
+    }
+
     .img-upload-wrap input[type=file] {
-      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
     }
+
     .img-upload-preview {
-      width: 100%; max-height: 140px; object-fit: cover;
-      border-radius: 8px; margin-bottom: 8px; display: block;
+      width: 100%;
+      max-height: 140px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      display: block;
     }
-    .img-upload-label { font-size: 12px; color: var(--muted); }
-    .img-upload-label span { color: var(--pink); font-weight: 600; }
+
+    .img-upload-label {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .img-upload-label span {
+      color: var(--pink);
+      font-weight: 600;
+    }
+
     .btn-img-clear {
-      background: #FDEDEC; border: none; color: #C0392B;
-      border-radius: 7px; padding: 4px 10px; font-size: 11px;
-      cursor: pointer; margin-top: 6px; font-family: 'DM Sans', sans-serif;
+      background: #FDEDEC;
+      border: none;
+      color: #C0392B;
+      border-radius: 7px;
+      padding: 4px 10px;
+      font-size: 11px;
+      cursor: pointer;
+      margin-top: 6px;
+      font-family: 'DM Sans', sans-serif;
     }
-    .btn-img-clear:hover { background: #C0392B; color: white; }
+
+    .btn-img-clear:hover {
+      background: #C0392B;
+      color: white;
+    }
 
     /* ── Imagen en tabla ── */
     .tabla-img {
-      width: 52px; height: 40px; object-fit: cover;
-      border-radius: 7px; display: block;
+      width: 52px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 7px;
+      display: block;
     }
-    .tabla-emoji-cell { font-size: 22px; text-align: center; }
+
+    .tabla-emoji-cell {
+      font-size: 22px;
+      text-align: center;
+    }
 
     /* ── Password eye ── */
-    .pwd-wrap { position: relative; }
-    .pwd-wrap input { padding-right: 42px !important; width: 100%; }
-    .btn-eye-pwd {
-      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
-      background: none; border: none; cursor: pointer; font-size: 16px;
-      color: var(--muted); padding: 4px; line-height: 1; transition: color 0.2s;
+    .pwd-wrap {
+      position: relative;
     }
-    .btn-eye-pwd:hover { color: var(--pink); }
+
+    .pwd-wrap input {
+      padding-right: 42px !important;
+      width: 100%;
+    }
+
+    .btn-eye-pwd {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      color: var(--muted);
+      padding: 4px;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+
+    .btn-eye-pwd:hover {
+      color: var(--pink);
+    }
 
     /* ── Toggle disponible ── */
     .toggle-wrap {
@@ -1942,7 +2060,8 @@
             <label>Emoji</label>
             <div class="emoji-field-wrap">
               <div class="emoji-preview-input">
-                <input type="text" id="prod-emoji" placeholder="🍣" maxlength="4" style="font-size:22px;text-align:center" oninput="syncEmojiSel(this.value)">
+                <input type="text" id="prod-emoji" placeholder="🍣" maxlength="4"
+                  style="font-size:22px;text-align:center" oninput="syncEmojiSel(this.value)">
                 <button type="button" class="btn-emoji-pick" onclick="toggleEmojiPanel()">☺ Elegir</button>
               </div>
               <div class="emoji-panel" id="emoji-panel"></div>
@@ -1991,11 +2110,15 @@
           </div>
           <div class="form-group">
             <label>Imagen del platillo</label>
-            <div class="img-upload-wrap" id="img-drop-zone" onclick="document.getElementById('prod-imagen-file').click()">
-              <input type="file" id="prod-imagen-file" accept="image/*" style="display:none" onchange="onImageSelected(this)">
+            <div class="img-upload-wrap" id="img-drop-zone"
+              onclick="document.getElementById('prod-imagen-file').click()">
+              <input type="file" id="prod-imagen-file" accept="image/*" style="display:none"
+                onchange="onImageSelected(this)">
               <img id="prod-imagen-preview" class="img-upload-preview" style="display:none" src="" alt="preview">
-              <div class="img-upload-label" id="img-upload-label">🖼 <span>Elige una imagen</span><br>JPG, PNG, WEBP</div>
-              <button type="button" class="btn-img-clear" id="btn-img-clear" style="display:none" onclick="event.stopPropagation();clearImage()">✕ Quitar</button>
+              <div class="img-upload-label" id="img-upload-label">🖼 <span>Elige una imagen</span><br>JPG, PNG, WEBP
+              </div>
+              <button type="button" class="btn-img-clear" id="btn-img-clear" style="display:none"
+                onclick="event.stopPropagation();clearImage()">✕ Quitar</button>
             </div>
             <input type="hidden" id="prod-imagen-url" value="">
           </div>
@@ -2003,7 +2126,8 @@
 
         <!-- Opciones de personalización — dinámicas por categoría -->
         <div id="dynamic-options-wrap" style="margin:18px 0 8px;display:none">
-          <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:10px">
+          <div
+            style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:10px">
             ⚙️ Configuración del platillo
           </div>
 
@@ -2152,8 +2276,8 @@
                 para nuevo usuario)</small></label>
             <div class="pwd-wrap">
               <input type="password" id="usr-password" placeholder="••••••••">
-              <button type="button" class="btn-eye-pwd" id="btn-eye-pwd"
-                onclick="togglePwdEye()" title="Mostrar contraseña">👁</button>
+              <button type="button" class="btn-eye-pwd" id="btn-eye-pwd" onclick="togglePwdEye()"
+                title="Mostrar contraseña">👁</button>
             </div>
           </div>
         </div>
@@ -2524,7 +2648,7 @@
         if (p.is_extra_ing) opts.push('➕Extra');
         return `<tr>
       <td>${p.id_producto}</td>
-      <td>${(p.imagen_url || _imgGet(p.id_producto)) ? `<img class='tabla-img' src='${p.imagen_url || _imgGet(p.id_producto)}' alt='${p.nombre}' onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"><span class='tabla-emoji-cell' style='display:none'>${p.emoji||'🍣'}</span>` : `<span class='tabla-emoji-cell'>${p.emoji || '🍣'}</span>`}</td>
+      <td>${(p.imagen_url || _imgGet(p.id_producto)) ? `<img class='tabla-img' src='${p.imagen_url || _imgGet(p.id_producto)}' alt='${p.nombre}' onerror="this.style.display='none';this.nextElementSibling.style.display='inline'"><span class='tabla-emoji-cell' style='display:none'>${p.emoji || '🍣'}</span>` : `<span class='tabla-emoji-cell'>${p.emoji || '🍣'}</span>`}</td>
       <td><strong>${p.nombre}</strong>${p.tag ? ` <span class="badge" style="background:#FDE8EF;color:var(--pink-deep);font-size:10px">${p.tag}</span>` : ''}</td>
       <td style="max-width:180px;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.descripcion || '—'}</td>
       <td><strong>$${parseFloat(p.precio).toLocaleString()}</strong></td>
@@ -2834,14 +2958,14 @@
       document.getElementById('usr-password-hint').textContent = '(dejar vacío para no cambiar)';
       // Reset eye button al estado inicial
       const _eyeBtn = document.getElementById('btn-eye-pwd');
-      const _pwdIn  = document.getElementById('usr-password');
+      const _pwdIn = document.getElementById('usr-password');
       if (_eyeBtn) { _eyeBtn.textContent = '👁'; _eyeBtn.title = 'Mostrar contraseña'; }
-      if (_pwdIn)  _pwdIn.type = 'password';
+      if (_pwdIn) _pwdIn.type = 'password';
       // Intentar traer la contraseña del backend
       try {
         const _u = await api('/admin/usuarios/' + id);
         if (_u && _u.password_plain) _pwdIn.value = _u.password_plain;
-      } catch(e) {}
+      } catch (e) { }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -2976,11 +3100,11 @@
 
     /* ══ EMOJI PICKER ══════════════════════════════════════════════ */
     const EMOJI_GROUPS = {
-      'Sushi & Japonesa': ['🍣','🍱','🍜','🍙','🍘','🍥','🥟','🦐','🦑','🦀','🐟','🐡'],
-      'Pollo & Carnes':   ['🍗','🍖','🥩','🍔','🌮','🌯','🥪','🥚','🍳','🥓'],
-      'Vegetales':        ['🥦','🥕','🧅','🧄','🌽','🫑','🥑','🥒','🍅','🌿','🥬'],
-      'Bebidas':          ['🥤','🧃','☕','🍵','🧋','🍶'],
-      'Snacks & Otros':   ['🍟','🧀','🫙','🍞','🧆','🥙','🌶️','⭐','✨','🔥','🎁'],
+      'Sushi & Japonesa': ['🍣', '🍱', '🍜', '🍙', '🍘', '🍥', '🥟', '🦐', '🦑', '🦀', '🐟', '🐡'],
+      'Pollo & Carnes': ['🍗', '🍖', '🥩', '🍔', '🌮', '🌯', '🥪', '🥚', '🍳', '🥓'],
+      'Vegetales': ['🥦', '🥕', '🧅', '🧄', '🌽', '🫑', '🥑', '🥒', '🍅', '🌿', '🥬'],
+      'Bebidas': ['🥤', '🧃', '☕', '🍵', '🧋', '🍶'],
+      'Snacks & Otros': ['🍟', '🧀', '🫙', '🍞', '🧆', '🥙', '🌶️', '⭐', '✨', '🔥', '🎁'],
     };
 
     function buildEmojiPanel() {
@@ -3013,7 +3137,7 @@
       });
     }
 
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
       const panel = document.getElementById('emoji-panel');
       if (!panel) return;
       if (!panel.contains(e.target) && !e.target.closest('.btn-emoji-pick')) {
@@ -3026,7 +3150,7 @@
        Modo 2 (local):       sin config, guarda la ruta img/nombre.jpg
        para que funcione con la carpeta /img/ de tu repositorio.
     ══════════════════════════════════════════════════════════════ */
-    const CLOUDINARY_CLOUD  = 'dccpuq4r4';
+    const CLOUDINARY_CLOUD = 'dccpuq4r4';
     const CLOUDINARY_PRESET = 'sushi_menu';
 
     async function onImageSelected(input) {
@@ -3060,7 +3184,7 @@
             document.getElementById('prod-imagen-preview').src = data.secure_url;
             document.getElementById('img-upload-label').style.display = 'none';
           } else throw new Error();
-        } catch(e) {
+        } catch (e) {
           document.getElementById('img-upload-label').style.display = 'block';
           document.getElementById('img-upload-label').innerHTML = '⚠️ Error al subir. Se guardará ruta local.';
           document.getElementById('prod-imagen-url').value = 'img/' + file.name;
@@ -3106,19 +3230,19 @@
     function _hoyHermosillo() {
       const d = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Hermosillo' }));
       return d.getFullYear() + '-' +
-             String(d.getMonth() + 1).padStart(2, '0') + '-' +
-             String(d.getDate()).padStart(2, '0');
+        String(d.getMonth() + 1).padStart(2, '0') + '-' +
+        String(d.getDate()).padStart(2, '0');
     }
 
     /* ── Toggle ojo contraseña ────────────────────────────────── */
     function togglePwdEye() {
       const input = document.getElementById('usr-password');
-      const btn   = document.getElementById('btn-eye-pwd');
+      const btn = document.getElementById('btn-eye-pwd');
       if (!input || !btn) return;
-      const show  = input.type === 'password';
-      input.type      = show ? 'text'    : 'password';
-      btn.textContent = show ? '🙈'      : '👁';
-      btn.title       = show ? 'Ocultar' : 'Mostrar';
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      btn.textContent = show ? '🙈' : '👁';
+      btn.title = show ? 'Ocultar' : 'Mostrar';
     }
 
 
@@ -3126,7 +3250,7 @@
     var _emojiIngTarget = null; // {tipo:'ing'|'ext', idx:number}
 
     function abrirEmojiIngrediente(tipo, idx) {
-      _emojiIngTarget = {tipo, idx};
+      _emojiIngTarget = { tipo, idx };
       // Reuse the emoji groups from EMOJI_GROUPS
       buildEmojiPanel();
       // Create a floating picker near the field
@@ -3140,13 +3264,13 @@
 
       container.innerHTML = '<div style="position:absolute;top:4px;left:0;background:white;border:1.5px solid var(--border);border-radius:14px;padding:12px;box-shadow:0 8px 32px rgba(194,48,96,0.15);z-index:500;width:300px;max-height:220px;overflow-y:auto">'
         + panel.innerHTML.replace(/onclick="selectEmoji\('([^']+)'\)"/g,
-            `onclick="selectEmojiIngrediente('$1')"`)
+          `onclick="selectEmojiIngrediente('$1')"`)
         + '<button onclick="cerrarEmojiIngrediente()" style="position:absolute;top:8px;right:8px;background:none;border:none;font-size:14px;cursor:pointer;color:var(--muted)">✕</button>'
         + '</div>';
       container.style.display = 'block';
 
       // Close on outside click
-      setTimeout(function() {
+      setTimeout(function () {
         document.addEventListener('click', _closeEmojiIngHandler);
       }, 100);
     }
@@ -3160,7 +3284,7 @@
 
     function selectEmojiIngrediente(emoji) {
       if (!_emojiIngTarget) return;
-      var {tipo, idx} = _emojiIngTarget;
+      var { tipo, idx } = _emojiIngTarget;
       if (tipo === 'ing') {
         _prodIngs[idx].emoji = emoji;
         renderIngsList();
@@ -3288,7 +3412,7 @@
     function renderSushiPickerChecks() {
       // TODOS los sushis del menú
       var sushis = ['Borbon', 'Monster', 'Franco Roll', 'La Chuyita', 'Mexicano 2', 'Mayito', 'Mix Roll', 'Baked', 'Fernanda', 'Hot', 'Mexicano 1', 'Tres Quesos', 'Chipotle', 'Queen Roll', 'Cielo Mar y Tierra', 'Antojo', 'Bombazo', 'Sonora', 'Daishi', 'Aguacate', 'California', 'Especial', 'Misil'];
-      return sushis.map(function(s) {
+      return sushis.map(function (s) {
         return '<label class="opt-check" style="font-size:12px"><input type="checkbox" class="sushi-picker-opt" value="' + s + '" checked> 🍣 ' + s + '</label>';
       }).join('');
     }
@@ -3320,7 +3444,7 @@
     function renderSlotsConfig() {
       var container = document.getElementById('slots-config-list');
       if (!container) return;
-      container.innerHTML = _slotConfigs.map(function(slot, idx) {
+      container.innerHTML = _slotConfigs.map(function (slot, idx) {
         return `
           <div style="background:#FFF8F9;border:1.5px solid var(--border);border-radius:10px;padding:12px">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
@@ -3351,7 +3475,7 @@
     function renderPromoSlotsConfig() {
       var container = document.getElementById('promo-slots-config');
       if (!container) return;
-      container.innerHTML = _slotConfigs.map(function(slot, idx) {
+      container.innerHTML = _slotConfigs.map(function (slot, idx) {
         return `
           <div style="background:#FFF8F9;border:1.5px solid var(--border);border-radius:10px;padding:12px">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
@@ -3376,7 +3500,7 @@
         // Combos
         var hasSushiPicker = document.getElementById('combo-has-sushi-picker')?.checked;
         if (hasSushiPicker) {
-          var sushiOpts = Array.from(document.querySelectorAll('.sushi-picker-opt:checked')).map(function(cb) { return cb.value; });
+          var sushiOpts = Array.from(document.querySelectorAll('.sushi-picker-opt:checked')).map(function (cb) { return cb.value; });
           data.sushiOptions = sushiOpts;
         }
         data.slots = _slotConfigs;
@@ -3412,7 +3536,7 @@
           toggleSushiPickerConfig(true);
           // Llenar checkboxes con las opciones del producto
           var container = document.getElementById('sushi-picker-checks');
-          container.innerHTML = prod.sushiOptions.map(function(s) {
+          container.innerHTML = prod.sushiOptions.map(function (s) {
             return '<label class="opt-check" style="font-size:12px"><input type="checkbox" class="sushi-picker-opt" value="' + s + '" checked> 🍣 ' + s + '</label>';
           }).join('');
         } else {
