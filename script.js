@@ -693,6 +693,94 @@ function buildModalBody(item) {
     html += '</div><div class="sauce-note">$15 por ingrediente · Puedes elegir varios</div></div>';
   }
 
+  // Para La Caja y La Cajita, cargar el sushi específico y mostrar sus ingredientes
+  if (item.hasSushiChoice && currentMods.sushiChoice && currentMods.sushiChoice.length) {
+    var sushiId = currentMods.sushiChoice[0];
+    var sushiItem = findItem(sushiId);
+    if (sushiItem) {
+      // Usar los ingredientes del sushi específico
+      fixed = (sushiItem.ingredients || []).filter(function (i) { return !i.removable; });
+      removable = (sushiItem.ingredients || []).filter(function (i) { return i.removable; });
+      extras = sushiItem.extras || [];
+
+      // Mostrar qué sushi se está editando
+      html += '<div class="sushi-choice-section"><div class="sushi-choice-title">🍣 Sushi</div>';
+      html += '<div style="background:#FFF0F4;border-radius:12px;padding:14px;text-align:center;">';
+      html += '<span style="font-size:32px;">' + sushiItem.emoji + '</span><br>';
+      html += '<strong style="color:var(--pink);font-size:16px;">' + sushiItem.name + '</strong>';
+      html += '</div></div>';
+
+      // Alga si el sushi lo requiere
+      if (sushiItem.hasAlga) {
+        html += '<div class="alga-section"><div class="alga-section-title">🌿 ¿Con o sin alga?</div><div class="alga-grid">';
+        html += '<div class="alga-btn' + (currentMods.alga === 'con' ? ' sel' : '') + '" id="alga-con" onclick="selAlga(\'con\')">🌿 Con alga</div>';
+        html += '<div class="alga-btn' + (currentMods.alga === 'sin' ? ' sel' : '') + '" id="alga-sin" onclick="selAlga(\'sin\')">❌ Sin alga</div>';
+        html += '</div></div>';
+      }
+
+      // Proteínas si el sushi lo requiere
+      if (sushiItem.hasProtein) {
+        html += '<div class="protein-section"><div class="protein-section-title">🥩 Elige tu proteína</div><div class="protein-grid">';
+        PROTEINS.forEach(function (p) {
+          var cnt = currentMods.proteins.filter(function (x) { return x === p.id; }).length;
+          var isSel = cnt > 0;
+          var extraLabel = p.id === 'p_camaron' ? ' (+$15)' : '';
+          html += '<div class="protein-btn' + (isSel ? ' sel' : '') + '" id="pb-' + p.id + '" onclick="togProt(\'' + p.id + '\')">'
+            + '<span class="p-emoji">' + p.emoji + '</span>'
+            + '<span class="p-name">' + p.name + extraLabel + '</span>'
+            + (cnt > 1 ? '<span class="p-count">' + cnt + '</span>' : '')
+            + '</div>';
+        });
+        html += '</div><div class="protein-note">🦐 Camarón +$15 · Otras proteínas sin costo extra</div></div>';
+      }
+
+      // Ingredientes fijos del sushi específico
+      if (fixed.length) {
+        html += '<div class="ing-section"><div class="ing-section-title">🔒 Ingredientes fijos</div><div class="ing-list">';
+        fixed.forEach(function (i) {
+          html += '<div class="ing-item"><div class="ing-left"><span class="ing-emoji">' + i.emoji + '</span>'
+            + '<div><div class="ing-name">' + i.name + '</div><div class="ing-note">' + i.note + '</div></div></div>'
+            + '<span style="font-size:11px;color:var(--muted)">Fijo</span></div>';
+        });
+        html += '</div></div>';
+      }
+
+      // Ingredientes removibles del sushi específico
+      if (removable.length) {
+        html += '<div class="ing-section"><div class="ing-section-title">✏️ Quitar ingredientes</div><div class="ing-list">';
+        removable.forEach(function (i) {
+          var rm = currentMods.removed[i.id];
+          html += '<div class="ing-item' + (rm ? ' removed' : '') + '" id="ming-' + i.id + '">'
+            + '<div class="ing-left"><span class="ing-emoji">' + i.emoji + '</span>'
+            + '<div><div class="ing-name">' + i.name + '</div><div class="ing-note">' + i.note + '</div></div></div>'
+            + '<button class="ing-toggle" onclick="togIng(\'' + i.id + '\')">' + (rm ? 'Volver a poner' : 'Quitar') + '</button></div>';
+        });
+        html += '</div></div>';
+      }
+
+      // Extras del sushi específico
+      if (extras.length) {
+        html += '<div class="ing-section"><div class="ing-section-title">➕ Agregar extras</div><div class="ing-list">';
+        extras.forEach(function (ex) {
+          var ad = currentMods.extras[ex.id];
+          html += '<div class="ing-item' + (ad ? ' extra-added' : '') + '" id="mex-' + ex.id + '">'
+            + '<div class="ing-left"><span class="ing-emoji">' + ex.emoji + '</span>'
+            + '<div><div class="ing-name">' + ex.name + '</div><div class="ing-note">' + ex.note + '</div></div></div>'
+            + '<button class="ing-toggle" onclick="togExtra(\'' + ex.id + '\')">' + (ad ? 'Quitar' : 'Agregar') + '</button></div>';
+        });
+        html += '</div></div>';
+      }
+
+      html += '<div class="modal-actions">'
+        + '<button class="btn-modal-cancel" onclick="cancelModal()">Cancelar</button>'
+        + '<button class="btn-modal-confirm" onclick="confirmMods()">✓ Listo</button>'
+        + '</div>';
+
+      document.getElementById('modal-body').innerHTML = html;
+      return;
+    }
+  }
+
   // Alga
   if (item.hasAlga) {
     html += '<div class="alga-section"><div class="alga-section-title">🌿 ¿Con o sin alga?</div><div class="alga-grid">';
@@ -729,24 +817,6 @@ function buildModalBody(item) {
           + '</div>';
       });
       html += '</div><div class="protein-note">Primera proteína incluida · Extras +$15 c/u</div></div>';
-    }
-  }
-
-  // Sushi choice (La Caja y La Cajita) - Mostrar cuál sushi se está editando
-  if (item.hasSushiChoice && currentMods.sushiChoice && currentMods.sushiChoice.length) {
-    var SUSHIS_DISP = {
-      's1': { name: 'California', emoji: '&#x1F363;' },
-      's2': { name: 'Bombazo', emoji: '&#x1F363;' },
-      's3': { name: 'Sonora', emoji: '&#x1F363;' }
-    };
-    var sushiId = currentMods.sushiChoice[0];
-    var sushi = SUSHIS_DISP[sushiId];
-    if (sushi) {
-      html += '<div class="sushi-choice-section"><div class="sushi-choice-title">🍣 Sushi seleccionado</div>';
-      html += '<div style="background:#FFF0F4;border-radius:12px;padding:14px;text-align:center;">';
-      html += '<span style="font-size:32px;">' + sushi.emoji + '</span><br>';
-      html += '<strong style="color:var(--pink);font-size:16px;">' + sushi.name + '</strong>';
-      html += '</div></div>';
     }
   }
 
