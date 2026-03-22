@@ -14,7 +14,7 @@ var PROTEINS = [
   { id: 'p_tocino', emoji: '&#x1F953;', name: 'Tocino' },
   { id: 'p_surimi', emoji: '&#x1F980;', name: 'Surimi' },
   { id: 'p_camaron', emoji: '&#x1F990;', name: 'Camarón' }
-]; a
+];
 
 var SAUCES = [
   { id: 'sc1', name: 'BBQ' },
