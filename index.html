@@ -2444,7 +2444,15 @@
       var iid = genId();
       var initialMods = { removed: {}, extras: {}, sauces: {}, sauces2: {}, saucesAlitas: {}, proteins: [], alga: null, style: null, ice: null, extraIngs: [] };
       if (item.promoSlots) {
-        initialMods.slotMods = item.promoSlots.map(function () { return { proteins: [], alga: null, style: null, removed: {} }; });
+        // Para La Caja y La Cajita, pre-seleccionar los 3 sushis
+        if (item.id === 'c7' || item.id === 'c6') {
+          var sushisPorDefecto = ['California', 'Bombazo', 'Sonora'];
+          initialMods.slotMods = item.promoSlots.map(function (slot, idx) {
+            return { proteins: [], alga: null, style: null, removed: {}, sushiName: sushisPorDefecto[idx] || null };
+          });
+        } else {
+          initialMods.slotMods = item.promoSlots.map(function () { return { proteins: [], alga: null, style: null, removed: {}, sushiName: null }; });
+        }
       }
       orderInstances.push({ instanceId: iid, itemId: itemId, item: item, mods: initialMods, extraCost: 0 });
       isNewInstance = true;
@@ -2466,23 +2474,6 @@
       currentItem = inst.item; currentInstanceId = iid;
       var sv = inst.mods;
 
-      // Pre-seleccionar sushis para La Caja y La Cajita
-      var defaultSlotMods = [];
-      if (inst.item.promoSlots && (inst.item.id === 'c7' || inst.item.id === 'c6')) {
-        var sushisPorDefecto = ['California', 'Bombazo', 'Sonora'];
-        defaultSlotMods = inst.item.promoSlots.map(function (slot, idx) {
-          return {
-            proteins: [],
-            alga: null,
-            style: null,
-            removed: {},
-            sushiName: sushisPorDefecto[idx] || null
-          };
-        });
-      } else {
-        defaultSlotMods = inst.item.promoSlots ? inst.item.promoSlots.map(function () { return { proteins: [], alga: null, style: null, removed: {}, sushiName: null }; }) : [];
-      }
-
       currentMods = {
         removed: JSON.parse(JSON.stringify(sv.removed || {})),
         extras: JSON.parse(JSON.stringify(sv.extras || {})),
@@ -2494,7 +2485,7 @@
         style: sv.style || null,
         ice: sv.ice || null,
         extraIngs: (sv.extraIngs || []).slice(),
-        slotMods: sv.slotMods ? JSON.parse(JSON.stringify(sv.slotMods)) : defaultSlotMods
+        slotMods: sv.slotMods ? JSON.parse(JSON.stringify(sv.slotMods)) : []
       };
       var insts = getItemInstances(inst.itemId);
       var idx = insts.findIndex(function (o) { return o.instanceId === iid; }) + 1;
