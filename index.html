@@ -2044,7 +2044,7 @@
         {
           id: 'c4', dbId: 5, img: 'img/lacharola.jpg', emoji: '&#x1F371;', name: 'Charola', price: 220, tag: 'popular', hasSauce: true, hasSauce1Only: true, desc: '1/2 California, 1/2 boneless, 1/2 papas sazonadas, dedos de queso y tampico.', promoSlots: [
             {
-              label: '1/2 California', hasProtein: true, hasAlga: true, hasStyle: true, isSushiPicker: true, sushiOptions: ['California'],
+              label: '1/2 California', hasProtein: true, hasAlga: true, hasStyle: true, sushiName: 'California',
               removable: [
                 { id: 'cha_philly', name: 'Philadelphia', emoji: '&#x1F9C0;' },
                 { id: 'cha_pepino', name: 'Pepino', emoji: '&#x1F952;' },
@@ -2444,11 +2444,16 @@
       var iid = genId();
       var initialMods = { removed: {}, extras: {}, sauces: {}, sauces2: {}, saucesAlitas: {}, proteins: [], alga: null, style: null, ice: null, extraIngs: [] };
       if (item.promoSlots) {
-        // Para La Caja y La Cajita, pre-seleccionar los 3 sushis
+        // Para La Caja, La Cajita y Charola, pre-seleccionar los sushis
         if (item.id === 'c7' || item.id === 'c6') {
           var sushisPorDefecto = ['California', 'Bombazo', 'Sonora'];
           initialMods.slotMods = item.promoSlots.map(function (slot, idx) {
             return { proteins: [], alga: null, style: null, removed: {}, sushiName: sushisPorDefecto[idx] || null };
+          });
+        } else if (item.id === 'c4') {
+          // Charola - solo 1 sushi (California)
+          initialMods.slotMods = item.promoSlots.map(function (slot) {
+            return { proteins: [], alga: null, style: null, removed: {}, sushiName: slot.sushiName || null };
           });
         } else {
           initialMods.slotMods = item.promoSlots.map(function () { return { proteins: [], alga: null, style: null, removed: {}, sushiName: null }; });
