@@ -14,7 +14,7 @@ var PROTEINS = [
   { id: 'p_tocino', emoji: '&#x1F953;', name: 'Tocino' },
   { id: 'p_surimi', emoji: '&#x1F980;', name: 'Surimi' },
   { id: 'p_camaron', emoji: '&#x1F990;', name: 'Camarón' }
-];
+]; a
 
 var SAUCES = [
   { id: 'sc1', name: 'BBQ' },
@@ -567,7 +567,7 @@ function refreshCardState(itemId) {
         's2': 'Bombazo',
         's3': 'Sonora'
       };
-      var sushiNames = m.sushiChoice.map(function(sid) { return SUSHIS_DISP[sid] || ''; }).filter(Boolean);
+      var sushiNames = m.sushiChoice.map(function (sid) { return SUSHIS_DISP[sid] || ''; }).filter(Boolean);
       if (sushiNames.length) tags.push('🍣 ' + sushiNames.join(', '));
     }
 
@@ -608,7 +608,7 @@ function addNewInstance(itemId, e) {
       { id: 's3', name: 'Sonora' }
     ];
 
-    SUSHIS.forEach(function(sushi) {
+    SUSHIS.forEach(function (sushi) {
       var iid = genId();
       var mods = { removed: {}, extras: {}, sauces: {}, sauces2: {}, proteins: [], alga: null, extraIngs: [], sushiChoice: [sushi.id] };
       orderInstances.push({ instanceId: iid, itemId: itemId, item: item, mods: mods, extraCost: 0 });
@@ -955,7 +955,7 @@ function confirmMods() {
   if (inst.item.hasPromo) {
     // Promociones: solo camarón cuesta extra (+$15)
     if (currentMods.proteins && currentMods.proteins.length) {
-      currentMods.proteins.forEach(function(p) {
+      currentMods.proteins.forEach(function (p) {
         if (p === 'p_camaron') extraCost += 15;
       });
     }
@@ -967,7 +967,7 @@ function confirmMods() {
   }
   // 3. Extras de slots (Queso gratinado, Tampico, etc.)
   if (currentMods.extras) {
-    Object.keys(currentMods.extras).forEach(function(key) {
+    Object.keys(currentMods.extras).forEach(function (key) {
       var val = currentMods.extras[key];
       if (val && typeof val === 'number') extraCost += val;
     });
