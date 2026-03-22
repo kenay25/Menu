@@ -2388,6 +2388,34 @@
       var container = document.getElementById('instances-' + itemId); if (!container) return;
       if (!insts.length) { card.classList.remove('selected'); container.innerHTML = ''; return; }
       card.classList.add('selected');
+
+      // Para La Caja y La Cajita, mostrar cada sushi con su nombre
+      var item = insts[0].item;
+      if (item.id === 'c7' || item.id === 'c6') {
+        var sushisPorDefecto = ['California', 'Bombazo', 'Sonora'];
+        container.innerHTML = insts.map(function (inst, idx) {
+          var m = inst.mods;
+          var sushiName = m.slotMods && m.slotMods[idx] && m.slotMods[idx].sushiName ? m.slotMods[idx].sushiName : sushisPorDefecto[idx];
+          var tags = [];
+          if (m.alga) tags.push(m.alga === 'con' ? 'Con alga' : 'Sin alga');
+          if (m.style) tags.push(m.style === 'natural' ? 'Natural' : 'Empanizado');
+          if (m.proteins && m.proteins.length) {
+            var pnames = m.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
+            if (pnames.length) tags.push(pnames.join('+'));
+          }
+          if (m.sauces && Object.keys(m.sauces).length) tags.push(SAUCES.filter(function (s) { return m.sauces[s.id]; }).map(function (s) { return s.name; }).join('/'));
+          if (m.sauces2 && Object.keys(m.sauces2).length) tags.push('Orden2: ' + SAUCES.filter(function (s) { return m.sauces2[s.id]; }).map(function (s) { return s.name; }).join('/'));
+          if (m.extraIngs && m.extraIngs.length) tags.push(m.extraIngs.join(', '));
+          var label = '🍣 ' + sushiName + (tags.length ? ' · ' + tags.join(' · ') : '');
+          return '<div class="inst-row" onclick="event.stopPropagation()">'
+            + '<span class="inst-label" onclick="openModalEdit(\'' + inst.instanceId + '\',event)">✏️ ' + label + '</span>'
+            + '<button class="inst-remove" onclick="removeInstance(\'' + inst.instanceId + '\',event)">−</button>'
+            + '</div>';
+        }).join('');
+        return;
+      }
+
+      // Para los demás items
       container.innerHTML = insts.map(function (inst, idx) {
         var m = inst.mods, tags = [];
         if (m.alga) tags.push(m.alga === 'con' ? 'Con alga' : 'Sin alga');
@@ -2437,6 +2465,24 @@
       var inst = orderInstances.filter(function (o) { return o.instanceId === iid; })[0]; if (!inst) return;
       currentItem = inst.item; currentInstanceId = iid;
       var sv = inst.mods;
+
+      // Pre-seleccionar sushis para La Caja y La Cajita
+      var defaultSlotMods = [];
+      if (inst.item.promoSlots && (inst.item.id === 'c7' || inst.item.id === 'c6')) {
+        var sushisPorDefecto = ['California', 'Bombazo', 'Sonora'];
+        defaultSlotMods = inst.item.promoSlots.map(function (slot, idx) {
+          return {
+            proteins: [],
+            alga: null,
+            style: null,
+            removed: {},
+            sushiName: sushisPorDefecto[idx] || null
+          };
+        });
+      } else {
+        defaultSlotMods = inst.item.promoSlots ? inst.item.promoSlots.map(function () { return { proteins: [], alga: null, style: null, removed: {}, sushiName: null }; }) : [];
+      }
+
       currentMods = {
         removed: JSON.parse(JSON.stringify(sv.removed || {})),
         extras: JSON.parse(JSON.stringify(sv.extras || {})),
@@ -2448,7 +2494,7 @@
         style: sv.style || null,
         ice: sv.ice || null,
         extraIngs: (sv.extraIngs || []).slice(),
-        slotMods: sv.slotMods ? JSON.parse(JSON.stringify(sv.slotMods)) : (inst.item.promoSlots ? inst.item.promoSlots.map(function () { return { proteins: [], alga: null, style: null, removed: {} }; }) : [])
+        slotMods: sv.slotMods ? JSON.parse(JSON.stringify(sv.slotMods)) : defaultSlotMods
       };
       var insts = getItemInstances(inst.itemId);
       var idx = insts.findIndex(function (o) { return o.instanceId === iid; }) + 1;
@@ -2476,14 +2522,19 @@
 
           // Selector de sushi si es isSushiPicker
           if (slot.isSushiPicker) {
-            var allSushis = slot.sushiOptions || ['Borbon', 'Monster', 'Franco Roll', 'La Chuyita', 'Mexicano 2', 'Mayito', 'Mix Roll', 'Baked', 'Fernanda', 'Hot', 'Mexicano 1', 'Tres Quesos', 'Chipotle', 'Queen Roll', 'Cielo Mar y Tierra', 'Antojo', 'Bombazo', 'Sonora', 'Daishi', 'Aguacate', 'California', 'Especial', 'Misil'];
-            html += '<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">¿Cuál sushi?</div>';
-            html += '<select style="width:100%;background:#FFF8F9;border:1.5px solid rgba(232,84,122,0.2);border-radius:8px;padding:7px 10px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none" onchange="selSlotSushi(' + si + ',this.value)">';
-            html += '<option value="">— Elige un sushi —</option>';
-            allSushis.forEach(function (s) {
-              html += '<option value="' + s + '"' + (sm.sushiName === s ? ' selected' : '') + '>' + s + '</option>';
-            });
-            html += '</select></div>';
+            // Si ya hay un sushi seleccionado (La Caja y La Cajita), mostrarlo directamente
+            if (sm.sushiName) {
+              html += '<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🍣 ' + sm.sushiName + '</div></div>';
+            } else {
+              var allSushis = slot.sushiOptions || ['Borbon', 'Monster', 'Franco Roll', 'La Chuyita', 'Mexicano 2', 'Mayito', 'Mix Roll', 'Baked', 'Fernanda', 'Hot', 'Mexicano 1', 'Tres Quesos', 'Chipotle', 'Queen Roll', 'Cielo Mar y Tierra', 'Antojo', 'Bombazo', 'Sonora', 'Daishi', 'Aguacate', 'California', 'Especial', 'Misil'];
+              html += '<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">¿Cuál sushi?</div>';
+              html += '<select style="width:100%;background:#FFF8F9;border:1.5px solid rgba(232,84,122,0.2);border-radius:8px;padding:7px 10px;font-family:\'DM Sans\',sans-serif;font-size:13px;outline:none" onchange="selSlotSushi(' + si + ',this.value)">';
+              html += '<option value="">— Elige un sushi —</option>';
+              allSushis.forEach(function (s) {
+                html += '<option value="' + s + '"' + (sm.sushiName === s ? ' selected' : '') + '>' + s + '</option>';
+              });
+              html += '</select></div>';
+            }
           } else if (slot.sushiName) {
             // Sushi fijo (promociones)
             html += '<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🍣 ' + slot.sushiName + '</div></div>';
@@ -2700,7 +2751,7 @@
     function togIng(ingId) { if (currentMods.removed[ingId]) delete currentMods.removed[ingId]; else currentMods.removed[ingId] = true; var row = document.getElementById('ming-' + ingId), rm = !!currentMods.removed[ingId]; row.className = 'ing-item' + (rm ? ' removed' : ''); row.querySelector('.ing-toggle').textContent = rm ? 'Volver a poner' : 'Quitar'; }
     function togExtra(exId, price) { if (currentMods.extras[exId]) delete currentMods.extras[exId]; else currentMods.extras[exId] = price || true; var row = document.getElementById('mex-' + exId), ad = !!currentMods.extras[exId]; if (row) { row.className = 'ing-item' + (ad ? ' extra-added' : ''); row.querySelector('.ing-toggle').textContent = ad ? 'Quitar' : 'Agregar'; } }
     function selStyle(val) { currentMods.style = currentMods.style === val ? null : val;['natural', 'empanizado'].forEach(function (v) { var b = document.getElementById('style-' + v); if (b) b.className = 'style-btn' + (currentMods.style === v ? ' sel' : ''); }); }
-    // ── Funciones de slots para promociones ──────────────────
+    // ── Funciones de slots para promociones ───────��──────────
     function selSlotSushi(si, name) {
       if (!currentMods.slotMods || !currentMods.slotMods[si]) return;
       currentMods.slotMods[si].sushiName = name;
@@ -3110,6 +3161,18 @@
     }
     function modsLabel(inst) {
       var m = inst.mods, item = inst.item, lines = '';
+
+      // Mostrar sushis para La Caja y La Cajita
+      if (item.id === 'c7' || item.id === 'c6') {
+        var sushisPorDefecto = ['California', 'Bombazo', 'Sonora'];
+        if (m.slotMods && m.slotMods.length) {
+          var sushiNames = m.slotMods.map(function (sm, idx) {
+            return sm && sm.sushiName ? sm.sushiName : sushisPorDefecto[idx];
+          }).filter(Boolean);
+          if (sushiNames.length) lines += '<div class="oi-mod-added">🍣 Sushis: ' + sushiNames.join(', ') + '</div>';
+        }
+      }
+
       if (m.extraIngs && m.extraIngs.length) lines += '<div class="oi-mod-added">➕ Ingrediente(s): ' + m.extraIngs.join(', ') + (m.extraIngs.length > 1 ? ' ($' + m.extraIngs.length * 15 + ')' : '') + '</div>';
       if (m.alga) lines += '<div class="oi-mod-added">🌿 Alga: ' + (m.alga === 'con' ? 'Con alga' : 'Sin alga') + '</div>';
       if (m.style) lines += '<div class="oi-mod-added">🍳 Estilo: ' + (m.style === 'natural' ? 'Natural' : 'Empanizado') + '</div>';
@@ -3208,67 +3271,90 @@
       msg += '━━━━━━━━━━━━━━━━━━━━\n\n';
       orderInstances.forEach(function (inst) {
         var m = inst.mods, item = inst.item, ec = inst.extraCost || 0;
-        msg += '• ' + item.name + ' — $' + (item.price + ec) + '\n';
-        if (m.extraIngs && m.extraIngs.length) msg += '   + Ingrediente(s): ' + m.extraIngs.join(', ') + '\n';
-        if (m.alga) msg += '   Alga: ' + (m.alga === 'con' ? 'Con alga' : 'Sin alga') + '\n';
-        if (m.style) msg += '   Estilo: ' + (m.style === 'natural' ? 'Natural' : 'Empanizado') + '\n';
-        if (m.ice) msg += '   Hielo: ' + (m.ice === 'con' ? 'Con hielo' : 'Sin hielo') + '\n';
-        if (m.proteins && m.proteins.length) {
-          var pnames = m.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
-          var protExtra = (item.hasPromo || item.promoSlots) ? false : (m.proteins.length > 1);
-          msg += '   Proteína(s): ' + pnames.join(', ') + (protExtra ? ' (+$' + ((m.proteins.length - 1) * 15) + ')' : '') + '\n';
-        }
-        // Proteínas de slotMods (combos/promos)
-        if (m.slotMods && m.slotMods.length) {
-          var allSlotProts = [];
-          var totalExtra = 0;
-          // Calcular extra
-          if (item.hasPromo) {
-            // Promociones: camarón +$15 cada uno, otras proteínas 1ª gratis POR SLOT · 2ª+ +$15
-            m.slotMods.forEach(function (sm) {
-              if (sm && sm.proteins && Array.isArray(sm.proteins)) {
-                var shrimpInSlot = 0;
-                var nonShrimpInSlot = 0;
-                sm.proteins.forEach(function (pid) {
-                  if (pid) {
-                    var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0];
-                    if (pr) allSlotProts.push(pr.name);
-                    if (pid === 'p_camaron') shrimpInSlot++;
-                    else if (pid) nonShrimpInSlot++;
-                  }
-                });
-                totalExtra += shrimpInSlot * 15;
-                if (nonShrimpInSlot > 1) totalExtra += (nonShrimpInSlot - 1) * 15;
+
+        // Para La Caja y La Cajita, mostrar cada sushi por separado
+        if (item.id === 'c7' || item.id === 'c6') {
+          var sushisPorDefecto = ['California', 'Bombazo', 'Sonora'];
+          if (m.slotMods && m.slotMods.length) {
+            m.slotMods.forEach(function (sm, idx) {
+              var sushiName = sm && sm.sushiName ? sm.sushiName : sushisPorDefecto[idx];
+              msg += '• ' + item.name + ' — ' + sushiName + ' — $' + ((item.price + ec) / 3).toFixed(0) + '\n';
+              if (sm.alga) msg += '   Alga: ' + (sm.alga === 'con' ? 'Con alga' : 'Sin alga') + '\n';
+              if (sm.style) msg += '   Estilo: ' + (sm.style === 'natural' ? 'Natural' : 'Empanizado') + '\n';
+              if (sm.proteins && sm.proteins.length) {
+                var pnames = sm.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
+                msg += '   Proteína(s): ' + pnames.join(', ') + '\n';
+              }
+              if (sm.removed) {
+                var removedNames = Object.keys(sm.removed).filter(function (k) { return sm.removed[k]; });
+                if (removedNames.length) msg += '   Sin: ' + removedNames.join(', ') + '\n';
               }
             });
-          } else {
-            // Combos: 1ª incluida POR SLOT · 2ª+ +$15
-            m.slotMods.forEach(function (sm) {
-              if (sm && sm.proteins && Array.isArray(sm.proteins)) {
-                sm.proteins.forEach(function (pid) {
-                  if (pid) {
-                    var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0];
-                    if (pr) allSlotProts.push(pr.name);
-                  }
-                });
-                if (sm.proteins.length > 1) {
-                  totalExtra += (sm.proteins.length - 1) * 15;
+          }
+        } else {
+          // Items normales
+          msg += '• ' + item.name + ' — $' + (item.price + ec) + '\n';
+          if (m.extraIngs && m.extraIngs.length) msg += '   + Ingrediente(s): ' + m.extraIngs.join(', ') + '\n';
+          if (m.alga) msg += '   Alga: ' + (m.alga === 'con' ? 'Con alga' : 'Sin alga') + '\n';
+          if (m.style) msg += '   Estilo: ' + (m.style === 'natural' ? 'Natural' : 'Empanizado') + '\n';
+          if (m.ice) msg += '   Hielo: ' + (m.ice === 'con' ? 'Con hielo' : 'Sin hielo') + '\n';
+          if (m.proteins && m.proteins.length) {
+            var pnames = m.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
+            var protExtra = (item.hasPromo || item.promoSlots) ? false : (m.proteins.length > 1);
+            msg += '   Proteína(s): ' + pnames.join(', ') + (protExtra ? ' (+$' + ((m.proteins.length - 1) * 15) + ')' : '') + '\n';
+          }
+          // Proteínas de slotMods (combos/promos)
+          if (m.slotMods && m.slotMods.length) {
+            var allSlotProts = [];
+            var totalExtra = 0;
+            // Calcular extra
+            if (item.hasPromo) {
+              // Promociones: camarón +$15 cada uno, otras proteínas 1ª gratis POR SLOT · 2ª+ +$15
+              m.slotMods.forEach(function (sm) {
+                if (sm && sm.proteins && Array.isArray(sm.proteins)) {
+                  var shrimpInSlot = 0;
+                  var nonShrimpInSlot = 0;
+                  sm.proteins.forEach(function (pid) {
+                    if (pid) {
+                      var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0];
+                      if (pr) allSlotProts.push(pr.name);
+                      if (pid === 'p_camaron') shrimpInSlot++;
+                      else if (pid) nonShrimpInSlot++;
+                    }
+                  });
+                  totalExtra += shrimpInSlot * 15;
+                  if (nonShrimpInSlot > 1) totalExtra += (nonShrimpInSlot - 1) * 15;
                 }
-              }
-            });
+              });
+            } else {
+              // Combos: 1ª incluida POR SLOT · 2ª+ +$15
+              m.slotMods.forEach(function (sm) {
+                if (sm && sm.proteins && Array.isArray(sm.proteins)) {
+                  sm.proteins.forEach(function (pid) {
+                    if (pid) {
+                      var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0];
+                      if (pr) allSlotProts.push(pr.name);
+                    }
+                  });
+                  if (sm.proteins.length > 1) {
+                    totalExtra += (sm.proteins.length - 1) * 15;
+                  }
+                }
+              });
+            }
+            if (allSlotProts.length) {
+              var extraMsg = totalExtra > 0 ? ' (+$' + totalExtra + ')' : '';
+              msg += '   Proteína(s): ' + allSlotProts.join(', ') + extraMsg + '\n';
+            }
           }
-          if (allSlotProts.length) {
-            var extraMsg = totalExtra > 0 ? ' (+$' + totalExtra + ')' : '';
-            msg += '   Proteína(s): ' + allSlotProts.join(', ') + extraMsg + '\n';
-          }
+          if (m.sauces && Object.keys(m.sauces).length) msg += '   Salsa boneles: ' + SAUCES.filter(function (s) { return m.sauces[s.id]; }).map(function (s) { return s.name; }).join(', ') + '\n';
+          if (m.sauces2 && Object.keys(m.sauces2).length) msg += '   Salsa 2ª orden: ' + SAUCES.filter(function (s) { return m.sauces2[s.id]; }).map(function (s) { return s.name; }).join(', ') + '\n';
+          if (m.saucesAlitas && Object.keys(m.saucesAlitas).length) msg += '   Salsa alitas: ' + SAUCES.filter(function (s) { return m.saucesAlitas[s.id]; }).map(function (s) { return s.name; }).join(', ') + '\n';
+          var rm = (item.ingredients || []).filter(function (i) { return m.removed && m.removed[i.id]; });
+          if (rm.length) msg += '   Sin: ' + rm.map(function (i) { return i.name; }).join(', ') + '\n';
+          var ax = (item.extras || []).filter(function (ex) { return m.extras && m.extras[ex.id]; });
+          if (ax.length) msg += '   Extra: ' + ax.map(function (ex) { return ex.name + (ex.price > 0 ? ' (+$' + ex.price + ')' : ''); }).join(', ') + '\n';
         }
-        if (m.sauces && Object.keys(m.sauces).length) msg += '   Salsa boneles: ' + SAUCES.filter(function (s) { return m.sauces[s.id]; }).map(function (s) { return s.name; }).join(', ') + '\n';
-        if (m.sauces2 && Object.keys(m.sauces2).length) msg += '   Salsa 2ª orden boneles: ' + SAUCES.filter(function (s) { return m.sauces2[s.id]; }).map(function (s) { return s.name; }).join(', ') + '\n';
-        if (m.saucesAlitas && Object.keys(m.saucesAlitas).length) msg += '   Salsa alitas: ' + SAUCES.filter(function (s) { return m.saucesAlitas[s.id]; }).map(function (s) { return s.name; }).join(', ') + '\n';
-        var rm = (item.ingredients || []).filter(function (i) { return m.removed && m.removed[i.id]; });
-        if (rm.length) msg += '   Sin: ' + rm.map(function (i) { return i.name; }).join(', ') + '\n';
-        var ax = (item.extras || []).filter(function (ex) { return m.extras && m.extras[ex.id]; });
-        if (ax.length) msg += '   Extra: ' + ax.map(function (ex) { return ex.name + (ex.price > 0 ? ' (+$' + ex.price + ')' : ''); }).join(', ') + '\n';
       });
       msg += '\n━━━━━━━━━━━━━━━━━━━━\n💰 *TOTAL: $' + total + ' MXN*\n';
       if (notes.trim()) msg += '\n📝 Notas:\n' + notes.trim() + '\n';
