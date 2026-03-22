@@ -6,6 +6,11 @@ from app.core.security import hashear_password
 from app.models.usuario import Usuario
 from app.routers import auth, clientes, pedidos, admin, productos, historial
 import os
+import subprocess
+import re
+from datetime import datetime
+from pathlib import Path
+from apscheduler.schedulers.background import BackgroundScheduler
 
 os.environ['TZ'] = 'America/Hermosillo'
 
@@ -74,3 +79,86 @@ def estado_pedidos_publico():
     """Endpoint público para que el menú consulte si se aceptan pedidos."""
     from app.routers.admin import pedidos_habilitados
     return {"pedidos_habilitados": pedidos_habilitados}
+
+
+# ─────────────────────────────────────────────────────────────
+# Backups automáticos
+# ─────────────────────────────────────────────────────────────
+
+def parse_mysql_url(url: str) -> dict:
+    """Extraer credenciales de la URL de MySQL."""
+    pattern = r"mysql\+pymysql://([^:]+):([^@]+)@([^:]+):(\d+)/(.+)"
+    match = re.match(pattern, url)
+    if not match:
+        raise ValueError("DATABASE_URL inválida")
+    return {
+        "user": match.group(1),
+        "password": match.group(2),
+        "host": match.group(3),
+        "port": match.group(4),
+        "database": match.group(5)
+    }
+
+
+def ejecutar_backup():
+    """Ejecutar backup de la base de datos."""
+    try:
+        db_info = parse_mysql_url(settings.DATABASE_URL)
+    except ValueError as e:
+        print(f"❌ Backup error: {e}")
+        return
+
+    Path(settings.BACKUP_DIR).mkdir(exist_ok=True)
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    backup_filename = f"backup_{timestamp}.sql"
+    backup_path = os.path.join(settings.BACKUP_DIR, backup_filename)
+
+    cmd = [
+        "mysqldump",
+        f"-u{db_info['user']}",
+        f"-p{db_info['password']}",
+        f"-h{db_info['host']}",
+        f"-P{db_info['port']}",
+        "--single-transaction",
+        "--quick",
+        "--lock-tables=false",
+        db_info['database']
+    ]
+
+    try:
+        with open(backup_path, "w", encoding="utf-8") as f:
+            subprocess.run(cmd, stdout=f, stderr=subprocess.PIPE, check=True, text=True)
+        tamaño = os.path.getsize(backup_path) / 1024
+        print(f"✅ Backup creado: {backup_filename} ({tamaño:.2f} KB)")
+
+        # Limpiar backups antiguos
+        backups = sorted(
+            [f for f in os.listdir(settings.BACKUP_DIR) if f.startswith("backup_") and f.endswith(".sql")],
+            reverse=True
+        )
+        if len(backups) > settings.MAX_BACKUPS:
+            for old in backups[settings.MAX_BACKUPS:]:
+                os.remove(os.path.join(settings.BACKUP_DIR, old))
+                print(f"🗑️ Eliminado: {old}")
+    except FileNotFoundError:
+        print("❌ 'mysqldump' no encontrado. Instala MySQL Server.")
+    except Exception as e:
+        print(f"❌ Error en backup: {e}")
+
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(
+    ejecutar_backup,
+    "cron",
+    hour=settings.BACKUP_HORA,
+    minute=0,
+    id="backup_automatico",
+    replace_existing=True
+)
+
+
+@app.on_event("startup")
+def iniciar_scheduler():
+    """Iniciar el scheduler de backups automáticos."""
+    scheduler.start()
+    print(f"⏰ Backup automático programado a las {settings.BACKUP_HORA:02d}:00")
