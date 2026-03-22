@@ -543,8 +543,8 @@ function refreshCardState(itemId) {
       's3': 'Sonora'
     };
 
-    container.innerHTML = insts.map(function (inst, idx) {
-      var m = typeof inst.mods === 'string' ? JSON.parse(inst.mods) : inst.mods;
+    container.innerHTML = insts.map(function (inst) {
+      var m = inst.mods;
       var sushiId = m.sushiChoice && m.sushiChoice.length ? m.sushiChoice[0] : null;
       var sushiName = sushiId ? SUSHIS_DISP[sushiId] : 'Sushi';
 
@@ -611,7 +611,7 @@ function addNewInstance(itemId, e) {
     SUSHIS.forEach(function(sushi) {
       var iid = genId();
       var mods = { removed: {}, extras: {}, sauces: {}, sauces2: {}, proteins: [], alga: null, extraIngs: [], sushiChoice: [sushi.id] };
-      orderInstances.push({ instanceId: iid, itemId: itemId, item: item, mods: JSON.stringify(mods), extraCost: 0 });
+      orderInstances.push({ instanceId: iid, itemId: itemId, item: item, mods: mods, extraCost: 0 });
     });
 
     refreshCardState(itemId);
@@ -643,12 +643,6 @@ function openModalEdit(iid, e) {
   currentItem = inst.item; currentInstanceId = iid;
   var sv = inst.mods;
 
-  // Si mods es string (La Caja/Cajita), convertirlo a objeto
-  if (typeof sv === 'string') {
-    sv = JSON.parse(sv);
-    inst.mods = sv;
-  }
-
   currentMods = {
     removed: JSON.parse(JSON.stringify(sv.removed || {})),
     extras: JSON.parse(JSON.stringify(sv.extras || {})),
@@ -659,9 +653,6 @@ function openModalEdit(iid, e) {
     extraIngs: (sv.extraIngs || []).slice(),
     sushiChoice: (sv.sushiChoice || []).slice()
   };
-
-  var insts = getItemInstances(inst.itemId);
-  var idx = insts.findIndex(function (o) { return o.instanceId === iid; }) + 1;
 
   // Para La Caja y La Cajita, mostrar el nombre del sushi específico
   var displayName = inst.item.name;
