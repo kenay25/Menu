@@ -54,13 +54,13 @@ var MENU = {
   /* ── COMBOS (de $650 a $120) ──────────────── */
   combos: [
     {
-      id: 'c7', dbId: 1, emoji: '&#x1F371;', name: 'La Caja', price: 650, tag: 'new', hasSauce: true, hasSauce2: true,
+      id: 'c7', dbId: 1, emoji: '&#x1F371;', name: 'La Caja', price: 650, tag: 'new', hasSauce: true, hasSauce2: true, hasSushiChoice: true,
       desc: '2 órdenes de boneles (salsa a elección c/u), O. papas sazonadas, 3 sushis, O. dedos queso philadelphia, tampico, chipotle, ranch, anguila, soya y siracha.',
       ingredients: [ing('b1', '&#x1F357;', 'Boneles x2', '2 órdenes — salsa individual', false), ing('b2', '&#x1F35F;', 'Papas sazonadas', '1 orden', false), ing('b3', '&#x1F363;', 'Sushis x3', 'California, Bombazo, Sonora', false), ing('b4', '&#x1F9C0;', 'Dedos de queso', '1 orden', false), ing('b5', '&#x1F41F;', 'Tampico', 'Incluido', true)], extras: []
     },
 
     {
-      id: 'c6', dbId: 2, emoji: '&#x1F371;', name: 'La Cajita', price: 400, tag: null, hasSauce: true,
+      id: 'c6', dbId: 2, emoji: '&#x1F371;', name: 'La Cajita', price: 400, tag: null, hasSauce: true, hasSushiChoice: true,
       desc: 'O. boneles, 03 sushis (bombazo, california y sonora), apio, zanahoria, aderezo, ranch, anguila, soya y siracha.',
       ingredients: [ing('b1', '&#x1F357;', 'Boneles', '1 orden', false), ing('b2', '&#x1F363;', 'California', 'Sushi', false), ing('b3', '&#x1F363;', 'Bombazo', 'Sushi', false), ing('b4', '&#x1F363;', 'Sonora', 'Sushi', false), ing('b5', '&#x1F955;', 'Apio y zanahoria', 'Al lado', true)], extras: []
     },
@@ -535,6 +535,18 @@ function refreshCardState(itemId) {
   card.classList.add('selected');
   container.innerHTML = insts.map(function (inst, idx) {
     var m = inst.mods, tags = [];
+
+    // Mostrar sushis seleccionados para La Caja y La Cajita
+    if (inst.item.hasSushiChoice && m.sushiChoice && m.sushiChoice.length) {
+      var SUSHIS_DISP = {
+        's1': 'California',
+        's2': 'Bombazo',
+        's3': 'Sonora'
+      };
+      var sushiNames = m.sushiChoice.map(function(sid) { return SUSHIS_DISP[sid] || ''; }).filter(Boolean);
+      if (sushiNames.length) tags.push('🍣 ' + sushiNames.join(', '));
+    }
+
     if (m.alga) tags.push(m.alga === 'con' ? 'Con alga' : 'Sin alga');
     if (m.proteins && m.proteins.length) {
       var pnames = m.proteins.map(function (pid) {
@@ -564,7 +576,15 @@ function addNewInstance(itemId, e) {
   if (e) e.stopPropagation();
   var item = findItem(itemId); if (!item) return;
   var iid = genId();
-  orderInstances.push({ instanceId: iid, itemId: itemId, item: item, mods: { removed: {}, extras: {}, sauces: {}, sauces2: {}, proteins: [], alga: null, extraIngs: [] }, extraCost: 0 });
+
+  // Pre-seleccionar sushis para La Caja y La Cajita
+  var initialMods = { removed: {}, extras: {}, sauces: {}, sauces2: {}, proteins: [], alga: null, extraIngs: [], sushiChoice: [] };
+  if (item.hasSushiChoice) {
+    // Pre-seleccionar California, Bombazo y Sonora
+    initialMods.sushiChoice = ['s1', 's2', 's3'];
+  }
+
+  orderInstances.push({ instanceId: iid, itemId: itemId, item: item, mods: initialMods, extraCost: 0 });
   isNewInstance = true;
   refreshCardState(itemId);
   openModalEdit(iid, null);
@@ -592,7 +612,8 @@ function openModalEdit(iid, e) {
     sauces2: JSON.parse(JSON.stringify(sv.sauces2 || {})),
     proteins: (sv.proteins || []).slice(),
     alga: sv.alga || null,
-    extraIngs: (sv.extraIngs || []).slice()
+    extraIngs: (sv.extraIngs || []).slice(),
+    sushiChoice: (sv.sushiChoice || []).slice()
   };
   var insts = getItemInstances(inst.itemId);
   var idx = insts.findIndex(function (o) { return o.instanceId === iid; }) + 1;
@@ -655,6 +676,24 @@ function buildModalBody(item) {
       });
       html += '</div><div class="protein-note">Primera proteína incluida · Extras +$15 c/u</div></div>';
     }
+  }
+
+  // Sushi choice (La Caja y La Cajita)
+  if (item.hasSushiChoice) {
+    var SUSHIS_DISP = [
+      { id: 's1', name: 'California', emoji: '&#x1F363;' },
+      { id: 's2', name: 'Bombazo', emoji: '&#x1F363;' },
+      { id: 's3', name: 'Sonora', emoji: '&#x1F363;' }
+    ];
+    html += '<div class="sushi-choice-section"><div class="sushi-choice-title">🍣 Elige los 3 sushis (1 de cada uno)</div><div class="sushi-choice-grid">';
+    SUSHIS_DISP.forEach(function (s) {
+      var isSelected = currentMods.sushiChoice && currentMods.sushiChoice.indexOf(s.id) >= 0;
+      html += '<div class="sushi-choice-btn' + (isSelected ? ' sel' : '') + '" id="scb-' + s.id + '" onclick="togSushiChoice(\'' + s.id + '\')">'
+        + '<span class="sc-emoji">' + s.emoji + '</span>'
+        + '<span class="sc-name">' + s.name + '</span>'
+        + '</div>';
+    });
+    html += '</div><div class="sauce-note">Debes seleccionar exactamente 3 sushis diferentes</div></div>';
   }
 
   // Sauce 1
@@ -758,6 +797,33 @@ function togProt(pid) {
   });
 }
 
+function togSushiChoice(sushiId) {
+  var idx = currentMods.sushiChoice.indexOf(sushiId);
+  if (idx >= 0) {
+    // No permitir deseleccionar si es uno de los 3 iniciales
+    alert('🍣 Debes tener exactamente 3 sushis seleccionados. Si quieres cambiar este sushi por otro, primero selecciona el nuevo y luego quita este.');
+    return;
+  } else {
+    // No permitir más de 3 sushis
+    if (currentMods.sushiChoice.length >= 3) {
+      alert('🍣 Ya tienes 3 sushis seleccionados. Para elegir este sushi, primero quita uno de los actuales.');
+      return;
+    }
+    currentMods.sushiChoice.push(sushiId);
+  }
+  // Actualizar UI
+  var SUSHIS_DISP = [
+    { id: 's1', name: 'California' },
+    { id: 's2', name: 'Bombazo' },
+    { id: 's3', name: 'Sonora' }
+  ];
+  SUSHIS_DISP.forEach(function (s) {
+    var isSelected = currentMods.sushiChoice.indexOf(s.id) >= 0;
+    var b = document.getElementById('scb-' + s.id);
+    if (b) b.className = 'sushi-choice-btn' + (isSelected ? ' sel' : '');
+  });
+}
+
 function togSauce(sid, maxSauces, field, prefix) {
   var fn = field || 'sauces', pre = prefix || 'sb-';
   if (currentMods[fn][sid]) {
@@ -791,6 +857,12 @@ function confirmMods() {
   // Validar alga si el item lo requiere
   if (inst.item.hasAlga && !currentMods.alga) {
     alert('🌿 Por favor indica si lo quieres con alga o sin alga');
+    return;
+  }
+
+  // Validar selección de sushis si el item lo requiere (La Caja y La Cajita)
+  if (inst.item.hasSushiChoice && (!currentMods.sushiChoice || currentMods.sushiChoice.length !== 3)) {
+    alert('🍣 Por favor selecciona exactamente 3 sushis diferentes (California, Bombazo, Sonora)');
     return;
   }
 
@@ -974,6 +1046,18 @@ function updateBar() {
 
 function modsLabel(inst) {
   var m = inst.mods, item = inst.item, lines = '';
+
+  // Mostrar sushis seleccionados para La Caja y La Cajita
+  if (item.hasSushiChoice && m.sushiChoice && m.sushiChoice.length) {
+    var SUSHIS_DISP = {
+      's1': 'California',
+      's2': 'Bombazo',
+      's3': 'Sonora'
+    };
+    var sushiNames = m.sushiChoice.map(function(sid) { return SUSHIS_DISP[sid] || ''; }).filter(Boolean);
+    if (sushiNames.length) lines += '<div class="oi-mod-added">🍣 Sushis: ' + sushiNames.join(', ') + '</div>';
+  }
+
   if (m.extraIngs && m.extraIngs.length)
     lines += '<div class="oi-mod-added">➕ Ingrediente(s): ' + m.extraIngs.join(', ') + (m.extraIngs.length > 1 ? ' ($' + m.extraIngs.length * 15 + ')' : '') + '</div>';
   if (m.alga)
@@ -1026,7 +1110,7 @@ function clearOrder() {
 
 /* ══════════════════════════════════════════════
    ENVÍO POR WHATSAPP
-   ══════════════════════════════════════════════ */
+   ══════════════════════════��════════════════���══ */
 function doSendWhatsApp(clientName, clientPhone, clientAddress) {
   var notes = document.getElementById('order-notes').value;
   var total = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
@@ -1042,6 +1126,18 @@ function doSendWhatsApp(clientName, clientPhone, clientAddress) {
   orderInstances.forEach(function (inst) {
     var m = inst.mods, item = inst.item, ec = inst.extraCost || 0;
     msg += '• ' + item.name + ' — $' + (item.price + ec) + '\n';
+
+    // Mostrar sushis seleccionados para La Caja y La Cajita
+    if (item.hasSushiChoice && m.sushiChoice && m.sushiChoice.length) {
+      var SUSHIS_DISP = {
+        's1': 'California',
+        's2': 'Bombazo',
+        's3': 'Sonora'
+      };
+      var sushiNames = m.sushiChoice.map(function(sid) { return SUSHIS_DISP[sid] || ''; }).filter(Boolean);
+      if (sushiNames.length) msg += '   🍣 Sushis: ' + sushiNames.join(', ') + '\n';
+    }
+
     if (m.extraIngs && m.extraIngs.length) msg += '   + Ingrediente(s): ' + m.extraIngs.join(', ') + '\n';
     if (m.alga) msg += '   Alga: ' + (m.alga === 'con' ? 'Con alga' : 'Sin alga') + '\n';
     if (m.proteins && m.proteins.length) {
