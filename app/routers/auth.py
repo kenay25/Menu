@@ -1,19 +1,26 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
 from sqlalchemy.orm import Session
 from datetime import datetime
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
 from app.database import get_db
 from app.core.security import verificar_password, crear_token
 from app.models.usuario import Usuario
 from app.schemas.usuario import UsuarioLogin, Token, UsuarioRespuesta
 from app.routers.deps import get_usuario_actual
 from app.core.security import hashear_password
+from app.core.config import settings
 
 router = APIRouter(prefix="/auth", tags=["Autenticación"])
 
+# Rate limiter para login
+limiter = Limiter(key_func=get_remote_address)
 
-@router.post("/login", response_model=Token)
-def login(datos: UsuarioLogin, db: Session = Depends(get_db)):
-    """Inicia sesión y devuelve un token JWT."""
+
+@router.post("/login")
+@limiter.limit(f"{settings.RATE_LIMIT_LOGIN_PER_MINUTE}/minute")
+async def login(request: Request, datos: UsuarioLogin, db: Session = Depends(get_db)):
+    """Inicia sesión y devuelve un token JWT. Máximo 5 intentos por minuto por IP."""
 
     # Buscar usuario por email
     usuario = db.query(Usuario).filter(Usuario.email == datos.email).first()
@@ -55,9 +62,10 @@ def mi_perfil(usuario: Usuario = Depends(get_usuario_actual)):
     """Devuelve los datos del usuario autenticado."""
     return usuario
 
-@router.post("/registro", response_model=Token)
-def registro(datos: dict, db: Session = Depends(get_db)):
-    """Registra un nuevo cliente y devuelve un token JWT."""
+@router.post("/registro")
+@limiter.limit(f"{settings.RATE_LIMIT_LOGIN_PER_MINUTE}/minute")
+async def registro(request: Request, datos: dict, db: Session = Depends(get_db)):
+    """Registra un nuevo cliente y devuelve un token JWT. Máximo 5 registros por minuto por IP."""
 
     email    = datos.get("email", "").strip().lower()
     password = datos.get("password", "").strip()

@@ -1,5 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from app.core.config import settings
 from app.database import engine, Base, SessionLocal
 from app.core.security import hashear_password
@@ -11,10 +12,18 @@ import re
 from datetime import datetime
 from pathlib import Path
 from apscheduler.schedulers.background import BackgroundScheduler
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 os.environ['TZ'] = 'America/Hermosillo'
 
 Base.metadata.create_all(bind=engine)
+
+# ─────────────────────────────────────────────────────────────
+# Rate Limiting
+# ─────────────────────────────────────────────────────────────
+limiter = Limiter(key_func=get_remote_address)
 
 app = FastAPI(
     title="La Esquina del Sushi — API",
@@ -22,13 +31,41 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# Configurar Rate Limiting
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+# ─────────────────────────────────────────────────────────────
+# CORS - Solo dominios autorizados
+# ─────────────────────────────────────────────────────────────
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.get_cors_origins(),
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
+
+# ─────────────────────────────────────────────────────────────
+# Forzar HTTPS en producción
+# ─────────────────────────────────────────────────────────────
+@app.middleware("http")
+async def enforce_https(request: Request, call_next):
+    """Redirige HTTP a HTTPS en producción."""
+    # No redirigir en desarrollo o si ya es HTTPS
+    if settings.APP_ENV == "development":
+        return await call_next(request)
+
+    # Verificar si viene detrás de un proxy (como en Vercel/Render)
+    forwarded_proto = request.headers.get("x-forwarded-proto", "")
+
+    # Si ya es HTTPS o viene de proxy HTTPS, continuar
+    if request.url.scheme == "https" or forwarded_proto == "https":
+        return await call_next(request)
+
+    # Redirigir a HTTPS
+    https_url = request.url.replace(scheme="https")
+    return RedirectResponse(url=https_url)
 
 # Registrar routers
 app.include_router(auth.router)

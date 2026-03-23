@@ -23,7 +23,13 @@ class Settings(BaseSettings):
 
     # App
     APP_ENV: str = "development"
+
+    # CORS - Dominios permitidos (separados por coma)
     CORS_ORIGINS: str = "https://laesquinadelsushi.vercel.app"
+
+    # Rate Limiting
+    RATE_LIMIT_PER_MINUTE: int = 30  # Peticiones por minuto por IP
+    RATE_LIMIT_LOGIN_PER_MINUTE: int = 5  # Intentos de login por minuto
 
     def get_cors_origins(self) -> List[str]:
         return [o.strip() for o in self.CORS_ORIGINS.split(",")]
