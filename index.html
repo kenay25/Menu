@@ -2556,6 +2556,8 @@
           var sushisConProt = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito'];
           var mostrarProt = slot.hasProtein && sm.sushiName && sushisConProt.indexOf(sm.sushiName) >= 0;
 
+          // El contenedor de proteínas siempre existe, se llena/vacía según el sushi seleccionado
+          html += '<div id="slotprot-' + si + '" style="margin-bottom:4px">';
           if (mostrarProt) {
             // Nota específica para Paquetellenes y Botix
             var esPaquetellenesOBotix = item && (item.id === 'c3' || item.id === 'c2');
@@ -2563,7 +2565,7 @@
               ? '🥩 Primera proteína incluida · +$15 por cada proteína adicional'
               : 'Primera proteína incluida · +$15 por las demás';
 
-            html += '<div id="slotprot-' + si + '" style="margin-bottom:4px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🥩 Proteína</div><div class="protein-grid">';
+            html += '<div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🥩 Proteína</div><div class="protein-grid">';
             PROTEINS.forEach(function (p) {
               var cnt = sm.proteins ? sm.proteins.indexOf(p.id) : -1;
               html += '<div class="protein-btn' + (cnt >= 0 ? ' sel' : '') + '" id="sp' + si + '-' + p.id + '" onclick="selSlotProtein(' + si + ',\'' + p.id + '\')">'
@@ -2572,8 +2574,9 @@
                 + (cnt >= 0 ? '<span class="p-count">' + (cnt + 1) + '</span>' : '')
                 + '</div>';
             });
-            html += '</div><div class="protein-note">' + notaProt + '</div></div>';
+            html += '</div><div class="protein-note">' + notaProt + '</div>';
           }
+          html += '</div>';
 
           // Ingredientes removibles por slot (depende del sushi elegido)
           if (slot.removable && slot.removable.length) {
@@ -2757,6 +2760,11 @@
       if (!currentMods.slotMods || !currentMods.slotMods[si]) return;
       currentMods.slotMods[si].sushiName = name;
 
+      // Inicializar proteins si no existe
+      if (!currentMods.slotMods[si].proteins) {
+        currentMods.slotMods[si].proteins = [];
+      }
+
       // Reset proteins if new sushi doesn't have it (Sonora no lleva proteína selectable)
       var sushisConProt = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito'];
       if (sushisConProt.indexOf(name) < 0) {
@@ -2768,7 +2776,7 @@
       if (protSection) {
         var necesitaProt = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito'].indexOf(name) >= 0;
         if (necesitaProt) {
-          var html = '<div style="margin-top:6px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🥩 Proteína</div><div class="protein-grid">';
+          var html = '<div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🥩 Proteína</div><div class="protein-grid">';
           PROTEINS.forEach(function (p) {
             var sm = currentMods.slotMods[si];
             var cnt = sm.proteins.indexOf(p.id);
@@ -2783,7 +2791,7 @@
           var notaProt = esPaquetellenesOBotix
             ? '🥩 Primera proteína incluida · +$15 por cada proteína adicional'
             : 'Primera proteína incluida · +$15 por las demás';
-          html += '</div><div class="protein-note">' + notaProt + '</div></div>';
+          html += '</div><div class="protein-note">' + notaProt + '</div>';
           protSection.innerHTML = html;
         } else {
           // Sonora no muestra selector de proteínas
