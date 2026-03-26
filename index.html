@@ -2765,9 +2765,13 @@
     function selSlotSushi(si, name) {
       if (!currentMods.slotMods || !currentMods.slotMods[si]) return;
       currentMods.slotMods[si].sushiName = name;
-      // Reset proteins if new sushi doesn't have it
+
+      // Reset proteins if new sushi doesn't have it (Sonora no lleva proteína selectable)
       var sushisConProt = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito'];
-      if (sushisConProt.indexOf(name) < 0) currentMods.slotMods[si].proteins = [];
+      if (sushisConProt.indexOf(name) < 0) {
+        currentMods.slotMods[si].proteins = [];
+      }
+
       // Update protein section only (no re-render)
       var protSection = document.getElementById('slotprot-' + si);
       if (protSection) {
@@ -2783,12 +2787,19 @@
               + (cnt >= 0 ? '<span class="p-count">' + (cnt + 1) + '</span>' : '')
               + '</div>';
           });
-          html += '</div><div class="protein-note">' + (currentItem.hasPromo ? '🦐 Camarón +$15 · Otras proteínas: 1ª gratis por sushi · 2ª+ +$15' : 'Primera proteína incluida · +$15 por las demás') + '</div></div>';
+          // Nota específica para Paquetellenes y Botix
+          var esPaquetellenesOBotix = currentItem && (currentItem.id === 'c3' || currentItem.id === 'c2');
+          var notaProt = esPaquetellenesOBotix
+            ? '🥩 Primera proteína incluida · +$15 por cada proteína adicional'
+            : 'Primera proteína incluida · +$15 por las demás';
+          html += '</div><div class="protein-note">' + notaProt + '</div></div>';
           protSection.innerHTML = html;
         } else {
+          // Sonora no muestra selector de proteínas
           protSection.innerHTML = '';
         }
       }
+
       // Update removable ingredients section
       var removableSection = document.getElementById('srremovable-' + si);
       if (removableSection) {
@@ -2810,6 +2821,31 @@
         } else {
           removableSection.innerHTML = '';
         }
+      }
+
+      // Update extras section (remove protein extras for California/Bombazo since they use protein picker)
+      var extrasSection = document.getElementById('slotextras-' + si);
+      if (extrasSection && protSection.innerHTML === '') {
+        // Sonora: mostrar extras normales
+        var slot = currentItem.promoSlots[si];
+        if (slot.extras && slot.extras.length) {
+          var html = '<div style="margin-top:6px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">➕ Extras</div><div class="ing-list">';
+          slot.extras.forEach(function (ex) {
+            var slotExKey = 'slot_' + si + '_' + ex.id;
+            var ad = currentMods.extras && currentMods.extras[slotExKey];
+            html += '<div class="ing-item' + (ad ? ' extra-added' : '') + '" id="mex-' + slotExKey + '">'
+              + '<div class="ing-left"><span class="ing-emoji">' + ex.emoji + '</span>'
+              + '<div><div class="ing-name">' + ex.name + '</div><div class="ing-note">' + ex.note + '</div></div></div>'
+              + '<button class="ing-toggle" onclick="togExtra(\'' + slotExKey + '\',' + ex.price + ')">' + (ad ? 'Quitar' : 'Agregar') + '</button></div>';
+          });
+          html += '</div></div>';
+          extrasSection.innerHTML = html;
+        } else {
+          extrasSection.innerHTML = '';
+        }
+      } else if (extrasSection) {
+        // California/Bombazo: no mostrar extras de proteínas porque usan el protein picker
+        extrasSection.innerHTML = '';
       }
     }
     function getRemovableBySushi(sushiName, allRemovable) {
@@ -2931,9 +2967,10 @@
             alert('🍣 Por favor elige un sushi para "' + slot.label + '"');
             return;
           }
-          // Validar proteína si el sushi la requiere o si el slot la pide
-          if (slot.hasProtein) {
-            var necesitaProt = !slot.isSushiPicker || (sm.sushiName && ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito'].indexOf(sm.sushiName) >= 0);
+          // Validar proteína si el sushi la requiere (California o Bombazo, NO Sonora)
+          if (slot.hasProtein && sm.sushiName) {
+            var sushisConProt = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito'];
+            var necesitaProt = sushisConProt.indexOf(sm.sushiName) >= 0;
             if (necesitaProt && (!sm || !sm.proteins || sm.proteins.length === 0)) {
               alert('🥩 Por favor elige la proteína para "' + slot.label + '"');
               return;
