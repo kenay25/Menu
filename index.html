@@ -2552,7 +2552,7 @@
             html += '</div></div>';
           }
 
-          // Proteína por slot — mostrar solo si el sushi seleccionado la requiere (California o Bombazo)
+          // Proteína por slot — mostrar solo si el sushi seleccionado la requiere (California o Bombazo, NO Sonora)
           var sushisConProt = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito'];
           var mostrarProt = slot.hasProtein && sm.sushiName && sushisConProt.indexOf(sm.sushiName) >= 0;
 
@@ -2565,7 +2565,7 @@
 
             html += '<div id="slotprot-' + si + '" style="margin-bottom:4px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🥩 Proteína</div><div class="protein-grid">';
             PROTEINS.forEach(function (p) {
-              var cnt = sm.proteins.indexOf(p.id);
+              var cnt = sm.proteins ? sm.proteins.indexOf(p.id) : -1;
               html += '<div class="protein-btn' + (cnt >= 0 ? ' sel' : '') + '" id="sp' + si + '-' + p.id + '" onclick="selSlotProtein(' + si + ',\'' + p.id + '\')">'
                 + '<span class="p-emoji">' + p.emoji + '</span>'
                 + '<span class="p-name">' + p.name + '</span>'
