@@ -2566,12 +2566,17 @@
             html += '</div></div>';
           }
 
-          // Proteína por slot — mostrar si el slot tiene hasProtein y (no es picker O el sushi seleccionado la necesita)
-          var _showProt = slot.hasProtein && (!slot.isSushiPicker || !sm.sushiName || (function () {
-            var sp = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito'];
-            return sp.indexOf(sm.sushiName) >= 0;
-          })());
-          if (_showProt) {
+          // Proteína por slot — mostrar solo si el sushi seleccionado la requiere (California o Bombazo)
+          var sushisConProt = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito'];
+          var mostrarProt = slot.hasProtein && sm.sushiName && sushisConProt.indexOf(sm.sushiName) >= 0;
+
+          if (mostrarProt) {
+            // Nota específica para Paquetellenes y Botix
+            var esPaquetellenesOBotix = item && (item.id === 'c3' || item.id === 'c2');
+            var notaProt = esPaquetellenesOBotix
+              ? '🥩 Primera proteína incluida · +$15 por cada proteína adicional'
+              : 'Primera proteína incluida · +$15 por las demás';
+
             html += '<div id="slotprot-' + si + '" style="margin-bottom:4px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🥩 Proteína</div><div class="protein-grid">';
             PROTEINS.forEach(function (p) {
               var cnt = sm.proteins.indexOf(p.id);
@@ -2581,7 +2586,7 @@
                 + (cnt >= 0 ? '<span class="p-count">' + (cnt + 1) + '</span>' : '')
                 + '</div>';
             });
-            html += '</div><div class="protein-note">' + (item.hasPromo ? '🦐 Camarón +$15 · Otras proteínas: 1ª gratis por sushi · 2ª+ +$15' : 'Primera proteína incluida · +$15 por las demás') + '</div></div>';
+            html += '</div><div class="protein-note">' + notaProt + '</div></div>';
           }
 
           // Ingredientes removibles por slot (depende del sushi elegido)
