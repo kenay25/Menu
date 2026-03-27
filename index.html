@@ -3650,8 +3650,8 @@
           if (!MENU[sec]) return;
           var updated = false;
           MENU[sec].forEach(function (item) {
-            // No cargar imagen desde DB si el producto no debería tener imagen (ej. California)
-            if (item.dbId && imgMap[item.dbId] && !item.img && item.id !== 's1') {
+            // Cargar imagen desde DB si existe
+            if (item.dbId && imgMap[item.dbId] && !item.img) {
               item.img = imgMap[item.dbId];
               updated = true;
             } else if (item.dbId && imgMap[item.dbId] && item.img && item.img !== imgMap[item.dbId]) {
