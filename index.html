@@ -2681,9 +2681,9 @@
           html += '</div><div class="protein-note">Primera proteína incluida · Extras +$15 c/u</div></div>';
         }
         if (item.hasSauceAlitas) {
-          html += '<div class="sauce-section"><div class="sauce-section-title">🫙 Salsa para las alitas (hasta 2)</div><div class="sauce-grid">';
-          SAUCES.forEach(function (s) { html += '<div class="sauce-btn' + (currentMods.saucesAlitas[s.id] ? ' sel' : '') + '" id="sal-' + s.id + '" onclick="togSauce(\'' + s.id + '\',2,\'saucesAlitas\',\'sal-\')">' + s.name + '</div>'; });
-          html += '</div><div class="sauce-note">Puedes elegir hasta 2 salsas</div></div>';
+          html += '<div class="sauce-section"><div class="sauce-section-title">🫙 Salsa para las alitas (elige 1)</div><div class="sauce-grid">';
+          SAUCES.forEach(function (s) { html += '<div class="sauce-btn' + (currentMods.saucesAlitas[s.id] ? ' sel' : '') + '" id="sal-' + s.id + '" onclick="togSauce(\'' + s.id + '\',1,\'saucesAlitas\',\'sal-\')">' + s.name + '</div>'; });
+          html += '</div><div class="sauce-note">Elige 1 salsa para las alitas</div></div>';
         }
         if (item.hasSauce) {
           var maxS = item.hasSauce1Only ? 1 : 2;
