@@ -2850,11 +2850,13 @@
     function getRemovableBySushi(sushiName, allRemovable) {
       if (!sushiName) return allRemovable; // Si no hay sushi seleccionado, mostrar todos
 
-      // Para Sonora, res y tocino son fijos (no se pueden quitar)
+      // Para Sonora, mostrar solo sus ingredientes específicos
       if (sushiName === 'Sonora') {
+        var sonoraIngs = ['philly', 'pepino', 'aguacate', 'res', 'tocino', 'chile'];
         return allRemovable.filter(function (ing) {
-          // Excluir res y tocino para Sonora
-          return ing.id.indexOf('_res') < 0 && ing.id.indexOf('_tocino') < 0;
+          // Extraer tipo de ingrediente del ID (después del prefijo como 'c7s1_', 'pq_', etc.)
+          var ingType = ing.id.replace(/^[a-z0-9]+_/i, '');
+          return sonoraIngs.indexOf(ingType) >= 0;
         });
       }
 
