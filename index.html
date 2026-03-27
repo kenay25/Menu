@@ -3650,6 +3650,8 @@
           if (!MENU[sec]) return;
           var updated = false;
           MENU[sec].forEach(function (item) {
+            // No sobrescribir imagen si ya está definida estáticamente (ej. California s1)
+            if (item.id === 's1') return;
             // Cargar imagen desde DB si existe
             if (item.dbId && imgMap[item.dbId] && !item.img) {
               item.img = imgMap[item.dbId];
