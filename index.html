@@ -1829,6 +1829,8 @@
           <label id="cf-phone-label">📱 Tu número de celular <span class="cf-required">*</span></label>
           <input type="tel" id="cl-phone" placeholder="Ej. 642-123-4567" autocomplete="tel"
             oninput="buscarClientePorTelefono(this.value)">
+          <div class="privacy-notice">🔒 Al continuar, aceptas nuestro <a onclick="openPrivacyModal()">Aviso de
+              Privacidad</a></div>
         </div>
         <div class="cf cf-hidden" id="cf-address-wrap">
           <label>📍 Dirección de entrega <span class="cf-required">*</span></label>
@@ -1932,6 +1934,32 @@
           <div id="historial-lista"></div>
         </div>
         <div id="historial-loading" style="text-align:center;padding:32px;color:#9E7080">Cargando...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════ MODAL: AVISO DE PRIVACIDAD ═══════════════════════ -->
+  <div class="modal-overlay" id="privacy-overlay" onclick="cerrarPrivacyModalOutside(event)">
+    <div class="modal privacy-modal" id="privacy-modal">
+      <div class="modal-head">
+        <h3>🔒 Aviso de Privacidad</h3>
+        <button class="modal-close" onclick="cerrarPrivacyModal()">&#x2715;</button>
+      </div>
+      <div class="modal-body">
+        <div class="privacy-content">
+          <h4>AVISO DE PRIVACIDAD</h4>
+          <p><strong>La Esquina del Sushi</strong>, ubicado en <strong>Blvd. Sonora #21 · Media Cuadra del
+              Socum</strong>, es responsable del uso y protección de sus datos personales.</p>
+          <p>Los datos que recopilamos (<strong>nombre y número telefónico</strong>) se utilizan únicamente para
+            gestionar su pedido y facilitar futuras compras mediante autocompletado.</p>
+          <p>Sus datos no serán compartidos con terceros. Usted puede solicitar acceso, rectificación, cancelación u
+            oposición al uso de sus datos (derechos ARCO) contactándonos por WhatsApp al <strong>+52 1 642 482
+              6979</strong>.</p>
+          <p>Este aviso puede actualizarse. La versión vigente estará disponible en este sitio web.</p>
+          <p style="font-size:11px;color:var(--muted);margin-top:16px"><strong>Última actualización:</strong> Marzo 2026
+          </p>
+        </div>
+        <button class="btn-cs" style="width:100%;margin-top:16px" onclick="cerrarPrivacyModal()">Entendido</button>
       </div>
     </div>
   </div>
@@ -3470,6 +3498,11 @@
     function abrirLoginModal() { document.getElementById('login-overlay').classList.add('open'); document.body.style.overflow = 'hidden'; switchTab('login'); setTimeout(function () { document.getElementById('login-email').focus(); }, 150); }
     function cerrarLoginModal() { document.getElementById('login-overlay').classList.remove('open'); document.body.style.overflow = ''; document.getElementById('login-error').style.display = 'none'; document.getElementById('login-success').style.display = 'none'; }
     function cerrarLoginModalOutside(e) { if (e.target === document.getElementById('login-overlay')) cerrarLoginModal(); }
+
+    /* ══ AVISO DE PRIVACIDAD ══ */
+    function openPrivacyModal() { document.getElementById('privacy-overlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function cerrarPrivacyModal() { document.getElementById('privacy-overlay').classList.remove('open'); document.body.style.overflow = ''; }
+    function cerrarPrivacyModalOutside(e) { if (e.target === document.getElementById('privacy-overlay')) cerrarPrivacyModal(); }
 
     function switchTab(tab) {
       var isLogin = tab === 'login';
