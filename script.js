@@ -298,7 +298,7 @@ var MENU = {
 
     {
       id: 'esp1', dbId: 40, emoji: '&#x1F357;', name: 'Alitas', price: 120, tag: 'popular', hasSauce: true,
-      desc: 'Picositas o salsa a elección.',
+      desc: 'Picositas o 1 salsa a elección.',
       ingredients: [ing('b1', '&#x1F357;', 'Alitas de pollo', 'Orden', false)], extras: []
     },
 

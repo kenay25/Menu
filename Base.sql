@@ -342,7 +342,7 @@ VALUES
 -- Especiales (id_categoria = 4)
 (4, 1, 'Yakimeshi',      'Arroz frito con pollo, res, tocino, camarón, aguacate y tampico.',         135.00, NULL,      0, 0, 0),
 (4, 1, 'Gohan',          'Arroz, philadelphia, tampico, proteínas, aguacate, serrano y cebollín.',   135.00, 'popular', 0, 0, 0),
-(4, 1, 'Alitas',         'Picositas o salsa a elección.',                                            120.00, 'popular', 0, 1, 0),
+(4, 1, 'Alitas',         'Picositas o 1 salsa a elección.',                                            120.00, 'popular', 0, 1, 0),
 (4, 1, 'Boneless',       'Tiras de pollo empanizadas en salsa. Con apio, zanahoria y aderezo.',      120.00, 'popular', 0, 1, 0),
 (4, 1, 'Boneless con Papas', 'Boneless más papas sazonadas.',                                        120.00, NULL,      0, 1, 0),
 (4, 1, 'Bolas Mixta',    'Bolas de sushi con mix de proteínas.',                                      95.00, NULL,      1, 0, 0),
