@@ -2381,19 +2381,15 @@
       const opts = { method, headers: { 'Authorization': 'Bearer ' + TOKEN, 'Content-Type': 'application/json' } };
       if (body) {
         opts.body = JSON.stringify(body);
-        console.log(' API Request:', method, path, body);
       }
       try {
         const res = await fetch(API + path, opts);
-        console.log('📥 API Response:', method, path, res.status);
         if (res.status === 401) { adminLogout(); return null; }
         if (!res.ok) {
-          console.error('Error API:', res.status, res.statusText);
           return null;
         }
         return await res.json();
       } catch (e) {
-        console.error('Error fetch:', e);
         return null;
       }
     }
@@ -2547,15 +2543,9 @@
     function cargarPedidos(estado = null) { cargarPedidosHoy(estado); }
 
     async function cambiarEstado(id, estado) {
-      console.log(' Cambiando estado:', id, estado);
       const result = await api(`/admin/pedidos/${id}/estado`, 'PATCH', { estado });
-      console.log('🔵 Resultado:', result);
       if (result && result.ok) {
-        // Recargar pedidos para mostrar el estado actualizado
-        console.log('✅ Estado actualizado, recargando pedidos...');
         cargarPedidosHoy(pedidosHoyFiltro);
-      } else {
-        console.error('❌ Error al cambiar estado:', result);
       }
     }
 

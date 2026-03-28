@@ -3560,21 +3560,17 @@
           total: total,
           productos: productos
         };
-        console.log(' Payload pedido:', payload);
-        console.log('🔍 _coloniaSeleccionada:', _coloniaSeleccionada);
-        console.log('🔍 _costoEnvioActual:', _costoEnvioActual);
         var res = await fetch(API_URL + '/pedidos/', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify(payload) });
-        if (res.ok) { var data = await res.json(); console.log('✅ Pedido guardado #' + data.id_pedido); return data.id_pedido; }
+        if (res.ok) { var data = await res.json(); return data.id_pedido; }
         if (res.status === 401) {
           API_TOKEN = null;
           var newToken = await loginMenuToken();
           if (!newToken) return null;
           var res2 = await fetch(API_URL + '/pedidos/', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + newToken }, body: JSON.stringify(payload) });
-          if (res2.ok) { var d2 = await res2.json(); console.log('✅ Pedido guardado (retry) #' + d2.id_pedido); return d2.id_pedido; }
+          if (res2.ok) { var d2 = await res2.json(); return d2.id_pedido; }
         }
-        console.warn('Pedido no guardado en DB, status:', res.status);
         return null;
-      } catch (e) { console.warn('Backend no disponible, el pedido se envía por WhatsApp', e); return null; }
+      } catch (e) { return null; }
     }
 
     /* ══ BARRA Y RESUMEN ══ */
