@@ -3495,23 +3495,33 @@
         if (!address) { alert('Por favor ingresa la dirección de entrega 📍'); document.getElementById('cl-address').focus(); return; }
         // Validar que haya seleccionado una colonia
         if (!_coloniaSeleccionada) { alert('Por favor selecciona tu colonia para calcular el envío 🛵'); document.getElementById('envio-colonia').focus(); return; }
-        // Guardar valores ANTES de cerrar el modal
+        // Guardar valores ANTES de cerrar el modal (incluyendo notas)
         var coloniaParaGuardar = _coloniaSeleccionada;
         var costoEnvioParaGuardar = _costoEnvioActual;
+        var notasParaGuardar = document.getElementById('order-notes').value;
         document.getElementById('cl-address').value = address;
         closeClientModal();
         // Restaurar valores temporalmente para guardar el pedido y WhatsApp
         _coloniaSeleccionada = coloniaParaGuardar;
         _costoEnvioActual = costoEnvioParaGuardar;
+        document.getElementById('order-notes').value = notasParaGuardar;
         guardarPedidoBackend(name, phone, address).then(function () {
           doSendWhatsApp(name, phone, address);
           // Resetear valores DESPUES de guardar y enviar WhatsApp
           _coloniaSeleccionada = null;
           _costoEnvioActual = 0;
+          document.getElementById('order-notes').value = '';
         });
       } else {
+        // Guardar notas antes de cerrar
+        var notasParaGuardar2 = document.getElementById('order-notes').value;
         closeClientModal();
-        guardarPedidoBackend(name, phone, null).then(function () { doSendWhatsApp(name, phone, null); });
+        // Restaurar notas temporalmente
+        document.getElementById('order-notes').value = notasParaGuardar2;
+        guardarPedidoBackend(name, phone, null).then(function () {
+          doSendWhatsApp(name, phone, null);
+          document.getElementById('order-notes').value = '';
+        });
       }
     }
 
