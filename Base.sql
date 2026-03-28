@@ -134,12 +134,14 @@ CREATE TABLE pedidos (
   telefono_cliente   VARCHAR(20)       NULL,
   tipo_entrega       ENUM('sucursal','domicilio') NOT NULL DEFAULT 'sucursal',
   direccion_entrega  TEXT              NULL,  -- solo si es domicilio
+  colonia_entrega    VARCHAR(100)      NULL,  -- colonia de entrega (Navojoa)
+  costo_envio        DECIMAL(10,2)     NOT NULL DEFAULT 0.00,  -- costo de envío
   notas              TEXT              NULL,
   total              DECIMAL(10,2) NOT NULL DEFAULT 0.00,
-  estado             ENUM('recibido','preparando','listo','entregado','cancelado') 
+  estado             ENUM('recibido','preparando','listo','entregado','cancelado')
                      NOT NULL DEFAULT 'recibido',
   fecha_pedido       DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  fecha_actualizacion DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP 
+  fecha_actualizacion DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
                                    ON UPDATE CURRENT_TIMESTAMP,
 
   PRIMARY KEY (id_pedido),
@@ -450,3 +452,20 @@ WHERE email = 'silvakenay5@gmail.com';
 
 INSERT INTO usuarios (id_restaurante, nombre, email, password_hash, rol)
 VALUES (1, 'Menu App', 'menu@laesquinasushi.com', 'TEMPORAL', 'caja');
+
+-- ═══════════════════════════════════════════════════════════════════
+-- ACTUALIZACIÓN PARA BASE DE DATOS EXISTENTE (Railway)
+-- Ejecutar solo si la tabla 'pedidos' ya existe
+-- ═══════════════════════════════════════════════════════════════════
+
+-- Agregar columnas de colonia y costo de envío (si no existen)
+-- Para Railway: Copia y pega esto en el panel de MySQL de tu proyecto
+
+/*
+ALTER TABLE pedidos 
+ADD COLUMN IF NOT EXISTS colonia_entrega VARCHAR(100) NULL COMMENT 'Colonia de entrega (Navojoa)',
+ADD COLUMN IF NOT EXISTS costo_envio DECIMAL(10,2) NOT NULL DEFAULT 0.00 COMMENT 'Costo de envío';
+
+-- Verificar que se agregaron
+DESCRIBE pedidos;
+*/

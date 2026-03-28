@@ -1304,6 +1304,91 @@
       color: var(--pink-deep);
     }
 
+    /* ── Selector de colonias y envío ───────────────────── */
+    .envio-section {
+      margin-top: 16px;
+      background: #FFF0F4;
+      border-radius: 12px;
+      padding: 14px;
+      border: 2px solid var(--border);
+    }
+
+    .envio-section label {
+      font-size: 12px;
+      color: var(--dark);
+      font-weight: 600;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .envio-select-wrap {
+      position: relative;
+    }
+
+    .envio-select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      background: var(--white);
+      color: var(--dark);
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+    }
+
+    .envio-select:focus {
+      outline: none;
+      border-color: var(--pink);
+    }
+
+    .envio-select-wrap::after {
+      content: '▼';
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      font-size: 10px;
+      pointer-events: none;
+    }
+
+    .envio-info {
+      display: none;
+      margin-top: 12px;
+      padding: 10px;
+      background: var(--white);
+      border-radius: 8px;
+    }
+
+    .envio-info.visible {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .envio-colonia-nombre {
+      font-size: 12px;
+      color: var(--dark);
+      font-weight: 500;
+    }
+
+    .envio-costo {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--pink);
+    }
+
+    .envio-hint {
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 6px;
+      text-align: center;
+    }
+
     .btn-cc {
       flex: 1;
       background: transparent;
@@ -1849,6 +1934,27 @@
               style="margin-left:4px;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:8px;padding:2px 10px;font-size:11px;cursor:pointer">No</button>
           </div>
         </div>
+
+        <!-- ═══════ SECCIÓN DE ENVÍO (Colonias de Navojoa) ═══════════════════════ -->
+        <div class="cf cf-hidden" id="cf-envio-wrap">
+          <div class="envio-section">
+            <label>🛵 Selecciona tu colonia para calcular el envío:</label>
+            <div class="envio-select-wrap">
+              <select class="envio-select" id="envio-colonia" onchange="calcularEnvioPorColonia()">
+                <option value="">-- Selecciona tu colonia --</option>
+              </select>
+            </div>
+            <div class="envio-hint">💡 Si no encuentras tu colonia, selecciona la más cercana</div>
+            <div class="envio-info" id="envio-info">
+              <div>
+                <div class="envio-colonia-nombre" id="envio-colonia-nombre">--</div>
+                <div style="font-size:10px;color:var(--muted)">Costo de envío</div>
+              </div>
+              <div class="envio-costo" id="envio-costo">$--</div>
+            </div>
+          </div>
+        </div>
+
         <div class="client-actions">
           <button class="btn-cc" onclick="closeClientModal()">Cancelar</button>
           <button class="btn-cs" onclick="submitOrder()">
@@ -1996,6 +2102,96 @@
       { id: 'sc8', name: 'Mango Habanero' }, { id: 'sc9', name: 'Piña Hot' }
     ];
     var EXTRA_INGS = ['Camarón', 'Pollo', 'Res', 'Tocino', 'Surimi', 'Tampico', 'Soya', 'Anguila', 'Chipotle', 'Ranch'];
+
+    /* ═══════ COLONIAS DE NAVOJOA - TARIFAS DE ENVÍO ═══════════════════════ */
+    var COLONIAS_ENVIO = {
+      '16_de_junio': { nombre: '16 de Junio', tarifa: 35 },
+      '16_de_septiembre': { nombre: '16 de Septiembre', tarifa: 35 },
+      '23_de_abril': { nombre: '23 de Abril', tarifa: 35 },
+      'aeropuerto': { nombre: 'Aeropuerto', tarifa: 35 },
+      'allende': { nombre: 'Allende', tarifa: 35 },
+      'animas': { nombre: 'Animas', tarifa: 50 },
+      'armando_lopez_nogales': { nombre: 'Armando Lopez Nogales', tarifa: 35 },
+      'arboledas': { nombre: 'Arboledas', tarifa: 25 },
+      'arcos': { nombre: 'Arcos', tarifa: 40 },
+      'arroyos': { nombre: 'Arroyos', tarifa: 40 },
+      'aviacion': { nombre: 'Aviación', tarifa: 35 },
+      'bahuises': { nombre: 'Bahuises', tarifa: 60 },
+      'beltrones': { nombre: 'Beltrones', tarifa: 35 },
+      'brisas': { nombre: 'Brisas', tarifa: 35 },
+      'bugambilias': { nombre: 'Bugambilias', tarifa: 35 },
+      'callejon_bahuises': { nombre: 'Callejon Bahuises', tarifa: 40 },
+      'camino_real': { nombre: 'Camino Real', tarifa: 40 },
+      'campestre': { nombre: 'Campestre', tarifa: 40 },
+      'centenario_datil': { nombre: 'Centenario - Datil', tarifa: 40 },
+      'capohuiza': { nombre: 'Capohuiza', tarifa: 70 },
+      'centro': { nombre: 'Centro', tarifa: 35 },
+      'constitucion': { nombre: 'Constitución', tarifa: 35 },
+      'deportiva': { nombre: 'Deportiva', tarifa: 35 },
+      'fovissste': { nombre: 'Fovissste', tarifa: 35 },
+      'francisco_villa': { nombre: 'Francisco Villa', tarifa: 35 },
+      'girasoles': { nombre: 'Girasoles', tarifa: 34 },
+      'guadalupe': { nombre: 'Guadalupe', tarifa: 40 },
+      'guaymitas': { nombre: 'Guaymitas', tarifa: 50 },
+      'hacienda_cazadores': { nombre: 'Hacienda Cazadores', tarifa: 50 },
+      'hacienda_real': { nombre: 'Hacienda Real', tarifa: 45 },
+      'herradura_desnivel': { nombre: 'Herradura Desnivel', tarifa: 35 },
+      'herradura_pueblo_viejo': { nombre: 'Herradura Pueblo Viejo', tarifa: 40 },
+      'hidalgo': { nombre: 'Hidalgo', tarifa: 35 },
+      'indeur': { nombre: 'Indeur', tarifa: 30 },
+      'infonavit': { nombre: 'Infonavit', tarifa: 30 },
+      'infonavit_obrera': { nombre: 'Infonavit Obrera', tarifa: 35 },
+      'jacarandas': { nombre: 'Jacarandas', tarifa: 35 },
+      'jacarandas_2': { nombre: 'Jacarandas 2', tarifa: 35 },
+      'joya': { nombre: 'Joya', tarifa: 35 },
+      'juarez': { nombre: 'Juarez', tarifa: 35 },
+      'kowi': { nombre: 'Kowi', tarifa: 50 },
+      'la_mas': { nombre: 'La Mas', tarifa: 60 },
+      'laureles': { nombre: 'Laureles', tarifa: 35 },
+      'loma_del_refugio': { nombre: 'Loma del Refugio', tarifa: 70 },
+      'mezquital': { nombre: 'Mezquital', tarifa: 40 },
+      'minas_de_arena': { nombre: 'Minas de Arena', tarifa: 30 },
+      'miravalle': { nombre: 'Miravalle', tarifa: 40 },
+      'misioneros': { nombre: 'Misioneros', tarifa: 30 },
+      'mocuzarit': { nombre: 'Mocuzarit', tarifa: 35 },
+      'moderna': { nombre: 'Moderna', tarifa: 35 },
+      'naranjos': { nombre: 'Naranjos', tarifa: 40 },
+      'nogalitos': { nombre: 'Nogalitos', tarifa: 35 },
+      'nueva_generacion': { nombre: 'Nueva Generacion', tarifa: 35 },
+      'parque_industrial': { nombre: 'Parque Industrial', tarifa: 50 },
+      'pedregal': { nombre: 'Pedregal', tarifa: 25 },
+      'peon': { nombre: 'Peñon', tarifa: 40 },
+      'pueblo_nuevo': { nombre: 'Pueblo Nuevo', tarifa: 40 },
+      'pueblo_viejo': { nombre: 'Pueblo Viejo', tarifa: 40 },
+      'real_del_alamo': { nombre: 'Real del Alamo', tarifa: 30 },
+      'pradera_dorada': { nombre: 'Pradera Dorada', tarifa: 40 },
+      'reforma': { nombre: 'Reforma', tarifa: 35 },
+      'rosales': { nombre: 'Rosales', tarifa: 35 },
+      'rosario_ruelas': { nombre: 'Rosario Ruelas', tarifa: 30 },
+      'san_ignacio': { nombre: 'San Ignacio', tarifa: 45 },
+      'santa_barbara': { nombre: 'Santa Barbara', tarifa: 35 },
+      'santa_maria': { nombre: 'Santa Maria 1-2-3 y 4', tarifa: 35 },
+      'salva_tierra': { nombre: 'Salva Tierra', tarifa: 35 },
+      'sexto_sentido': { nombre: 'Sexto Sentido', tarifa: 50 },
+      'sonora': { nombre: 'Sonora', tarifa: 30 },
+      'sonora_progresista': { nombre: 'Sonora Progresista', tarifa: 30 },
+      'sop': { nombre: 'Sop', tarifa: 30 },
+      'succa': { nombre: 'Succa', tarifa: 50 },
+      'tepeyac': { nombre: 'Tepeyac', tarifa: 30 },
+      'tetaboca': { nombre: 'Tetaboca', tarifa: 30 },
+      'tetancho': { nombre: 'Tetancho', tarifa: 30 },
+      'tetanchopo': { nombre: 'Tetanchopo', tarifa: 40 },
+      'tierra_blanca_10_ade': { nombre: 'Tierra Blanca 10 ade', tarifa: 40 },
+      'tierra_blanca_1_10': { nombre: 'Tierra Blanca 1-10', tarifa: 35 },
+      'tierra_y_libertad': { nombre: 'Tierra y Libertad', tarifa: 35 },
+      'villa_del_sol': { nombre: 'Villa del Sol', tarifa: 40 },
+      'villa_dorada': { nombre: 'Villa Dorada', tarifa: 35 },
+      'villas_las_fuentes': { nombre: 'Villas las Fuentes', tarifa: 40 },
+      'villa_lourdes': { nombre: 'Villa Lourdes', tarifa: 40 }
+    };
+
+    var _costoEnvioActual = 0;
+    var _coloniaSeleccionada = null;
 
     function ing(id, em, nm, nt, rm) { return { id: id, emoji: em, name: nm, note: nt, removable: rm }; }
     function base() { return [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true)]; }
@@ -2204,7 +2400,7 @@
         { id: 's7', dbId: 30, img: 'img/yaquiymisil.jpg', emoji: '&#x1F363;', name: 'Misil', price: 80, tag: null, hasAlga: false, hasAlga: true, hasStyle: true, desc: 'Por dentro: relleno de philadelphia, tampico, tocino y res. Por fuera: chile verde empanizado.', ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Relleno', true), ing('b2', '&#x1F41F;', 'Tampico', 'Relleno', true), ing('b3', '&#x1F953;', 'Tocino', 'Relleno', true), ing('b4', '&#x1F969;', 'Res', 'Relleno', true), ing('b5', '&#x1F336;&#xFE0F;', 'Chile verde empanizado', 'Cubierta', false)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }] }
       ],
       entradas: [
-        { id: 'en1', dbId: 31, emoji: '&#x1F9C6;', name: 'Tostiboneles', price: 150, tag: null, hasSauce: true, desc: 'Tostitos bañados en queso amarillo y boneles en salsa a elegir.', ingredients: [ing('b1', '&#x1F96B;', 'Tostitos', 'Base', false), ing('b2', '&#x1F9C0;', 'Queso amarillo', 'Bañados', false), ing('b3', '&#x1F357;', 'Boneles', 'Con salsa', false)], extras: [] },
+        { id: 'en1', dbId: 31, img: 'img/tostiboneles.jpg', emoji: '&#x1F9C6;', name: 'Tostiboneles', price: 150, tag: null, hasSauce: true, desc: 'Tostitos bañados en queso amarillo y boneles en salsa a elegir.', ingredients: [ing('b1', '&#x1F96B;', 'Tostitos', 'Base', false), ing('b2', '&#x1F9C0;', 'Queso amarillo', 'Bañados', false), ing('b3', '&#x1F357;', 'Boneles', 'Con salsa', false)], extras: [] },
         { id: 'en7', dbId: 32, img: 'img/papiboneles.jpg', emoji: '&#x1F35F;', name: 'Papiboneles', price: 130, tag: 'new', hasSauce: true, desc: 'Cama de papa sazonada con boneles en salsa a elección, acompañados de queso amarillo preparado.', ingredients: [ing('b1', '&#x1F954;', 'Papa sazonada', 'Cama base', false), ing('b2', '&#x1F357;', 'Boneles', 'Con salsa', false), ing('b3', '&#x1F9C0;', 'Queso amarillo preparado', 'Encima', false)], extras: [] },
         { id: 'en6', dbId: 33, img: 'img/boliblitz.jpg', emoji: '&#x26AB;', name: 'Boliblitz', price: 100, tag: 'popular', desc: '08 bolitas de tampico, philadelphia, anguila y cebollín.', ingredients: [ing('b1', '&#x1F41F;', 'Tampico', 'Relleno', false), ing('b2', '&#x1F9C0;', 'Philadelphia', 'Relleno', false), ing('b3', '&#x1FAD9;', 'Anguila', 'Salsa', true), ing('b4', '&#x1F331;', 'Cebollín', 'Decorado', true)], extras: [{ id: 'x1', emoji: '&#x26AB;', name: 'Ajonjolí', note: 'Gratis', price: 0 }] },
         { id: 'en2', dbId: 34, img: 'img/tostitampico.jpg', emoji: '&#x1F32E;', name: 'Tostitampico', price: 70, tag: null, desc: 'Tostitos, tampico y zanahoria, bañados en aderezo chipotle, anguila y ajonjolí.', ingredients: [ing('b1', '&#x1F96B;', 'Tostitos', 'Base', false), ing('b2', '&#x1F41F;', 'Tampico', 'Encima', false), ing('b3', '&#x1F955;', 'Zanahoria', 'Decorado', true), ing('b4', '&#x1FAD9;', 'Aderezo chipotle', 'Bañado', true), ing('b5', '&#x1FAD9;', 'Anguila', 'Bañado', true), ing('b6', '&#x26AB;', 'Ajonjolí', 'Encima', true)], extras: [] },
@@ -2219,8 +2415,8 @@
         { id: 'esp2', dbId: 41, img: 'img/boneles.jpg', emoji: '&#x1F357;', name: 'Boneless', price: 120, tag: 'popular', hasSauce: true, desc: 'Tiras de pollo empanizadas y bañadas en salsa a elección. Con apio, zanahoria y aderezo.', ingredients: [ing('b1', '&#x1F357;', 'Pollo empanizado', 'Tiras', false), ing('b2', '&#x1F96C;', 'Apio', 'Guarnición', true), ing('b3', '&#x1F955;', 'Zanahoria', 'Guarnición', true), ing('b4', '&#x1FAD9;', 'Aderezo', 'Al lado', true)], extras: [] },
         { id: 'esp3', dbId: 42, img: 'img/bonelesconpapas.jpg', emoji: '&#x1F357;', name: 'Boneless con Papas', price: 120, tag: null, hasSauce: true, desc: 'Boneless + papas sazonadas.', ingredients: [ing('b1', '&#x1F357;', 'Pollo empanizado', 'Tiras', false), ing('b2', '&#x1F35F;', 'Papas sazonadas', 'Incluidas', false), ing('b3', '&#x1F96C;', 'Apio', 'Guarnición', true), ing('b4', '&#x1F955;', 'Zanahoria', 'Guarnición', true)], extras: [] },
         { id: 'esp8', dbId: 43, img: 'img/bolas.jpg', emoji: '&#x1F363;', name: 'Bolas — Mixta', price: 95, tag: null, hasProtein: true, desc: 'Bolas de sushi con mix de proteínas a elegir.', ingredients: [ing('b1', '&#x1F9C0;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b4', '&#x1F41F;', 'Tampico', 'Por fuera', true)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }] },
-        { id: 'esp7', dbId: 44, emoji: '&#x1F363;', name: 'Bolas — Camarón', price: 85, tag: null, desc: 'Bolas de sushi con camarón.', ingredients: [ing('b1', '&#x1F9C0;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b4', '&#x1F990;', 'Camarón', 'Proteína', false), ing('b5', '&#x1F41F;', 'Tampico', 'Por fuera', true)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }] },
-        { id: 'esp6', dbId: 45, emoji: '&#x1F363;', name: 'Bolas — Básica', price: 75, tag: null, hasProtein: true, desc: '01 proteína a elegir: res, camarón, tocino, pollo o surimi.', ingredients: [ing('b1', '&#x1F9C0;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b4', '&#x1F41F;', 'Tampico', 'Por fuera', true), ing('b5', '&#x1FAD9;', 'Anguila', 'Por fuera', true), ing('b6', '&#x26AB;', 'Ajonjolí', 'Por fuera', true)], extras: [] }
+        { id: 'esp7', dbId: 44, img: 'img/bolas.jpg', emoji: '&#x1F363;', name: 'Bolas — Camarón', price: 85, tag: null, desc: 'Bolas de sushi con camarón.', ingredients: [ing('b1', '&#x1F9C0;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b4', '&#x1F990;', 'Camarón', 'Proteína', false), ing('b5', '&#x1F41F;', 'Tampico', 'Por fuera', true)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }] },
+        { id: 'esp6', dbId: 45, img: 'img/bolas.jpg', emoji: '&#x1F363;', name: 'Bolas — Básica', price: 75, tag: null, hasProtein: true, desc: '01 proteína a elegir: res, camarón, tocino, pollo o surimi.', ingredients: [ing('b1', '&#x1F9C0;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b4', '&#x1F41F;', 'Tampico', 'Por fuera', true), ing('b5', '&#x1FAD9;', 'Anguila', 'Por fuera', true), ing('b6', '&#x26AB;', 'Ajonjolí', 'Por fuera', true)], extras: [] }
       ],
       bebidas: [
         { id: 'b1', dbId: 46, emoji: '&#x1F9CB;', name: 'Té 1 litro', price: 25, tag: null, hasIce: true, desc: 'Té helado 1 litro.', ingredients: [ing('b1', '&#x1F9CB;', 'Té helado', '1 litro', false)], extras: [{ id: 'x1', emoji: '&#x1F34B;', name: 'Limón', note: 'Gratis', price: 0 }] },
@@ -2232,7 +2428,7 @@
 
     var PROMOS = [
       {
-        id: 'promo1', dbId: 51, emoji: '&#x1F363;', num: 'Paquete 1',
+        id: 'promo1', dbId: 51, img: 'img/p1.jpg', emoji: '&#x1F363;', num: 'Paquete 1',
         title: '2 Californias + Tostitampico', price: 220, tag: 'popular',
         hasProtein: true, hasPromo: true, desc: '2 Californias con ingrediente a elegir (pollo, tocino, res o surimi) + 1 Tostitampico.',
         ingredients: [ing('b1', '&#x1F363;', '2 Californias', 'Prot. a elegir', false), ing('b2', '&#x1F32E;', 'Tostitampico', 'Incluido', false)],
@@ -2257,7 +2453,7 @@
         ]
       },
       {
-        id: 'promo2', dbId: 52, emoji: '&#x1F363;', num: 'Paquete 2',
+        id: 'promo2', dbId: 52, img: 'img/p2.jpg', emoji: '&#x1F363;', num: 'Paquete 2',
         title: '2 Sonoras', price: 200, tag: null,
         hasProtein: false, hasPromo: true, desc: '2 Sonoras (res, tocino, philadelphia y chile rescoldado).',
         ingredients: [ing('b1', '&#x1F363;', '2 Sonoras', 'Incluidas', false)],
@@ -2319,7 +2515,7 @@
         ]
       },
       {
-        id: 'promo4', dbId: 50, emoji: '&#x1F371;', num: 'Paquete 4',
+        id: 'promo4', dbId: 50, img: 'img/p4.jpg', emoji: '&#x1F371;', num: 'Paquete 4',
         title: '1 Boneless + 1 California', price: 200, tag: 'popular',
         hasProtein: true, hasPromo: true, hasSauce: true, desc: '1 Boneless (BBQ, Búfalo o mixtos) + 1 California con ingrediente a elegir (pollo, tocino, res o surimi).',
         ingredients: [ing('b1', '&#x1F357;', 'Boneless', 'Con salsa', false), ing('b2', '&#x1F363;', 'California', 'Prot. a elegir', false)],
@@ -2350,6 +2546,7 @@
       var lbl = document.getElementById('cf-phone-label');
       if (lbl) lbl.innerHTML = (type === 'envio' ? '📱 Teléfono' : '📱 Tu número de celular') + ' <span class="cf-required">*</span>';
       document.getElementById('cf-address-wrap').classList.toggle('cf-hidden', type !== 'envio');
+      document.getElementById('cf-envio-wrap').classList.toggle('cf-hidden', type !== 'envio');
       // Si cambia a envío y hay dir guardada, rellenar
       if (type === 'envio' && _dirGuardada && !document.getElementById('cl-address').value.trim()) {
         document.getElementById('cl-address').value = _dirGuardada;
@@ -2360,9 +2557,56 @@
       if (nombre && tel) mostrarSavedCard(nombre, tel, _dirGuardada, type);
     }
 
+    /* ══ ENVÍO - COLONIAS DE NAVOJOA ══ */
+    function llenarSelectorColonias() {
+      var select = document.getElementById('envio-colonia');
+      if (!select) return;
+
+      // Ordenar alfabéticamente
+      var coloniasOrdenadas = Object.keys(COLONIAS_ENVIO).sort(function (a, b) {
+        return COLONIAS_ENVIO[a].nombre.localeCompare(COLONIAS_ENVIO[b].nombre);
+      });
+
+      coloniasOrdenadas.forEach(function (key) {
+        var colonia = COLONIAS_ENVIO[key];
+        var option = document.createElement('option');
+        option.value = key;
+        option.textContent = colonia.nombre + ' - $' + colonia.tarifa;
+        select.appendChild(option);
+      });
+    }
+
+    function calcularEnvioPorColonia() {
+      var select = document.getElementById('envio-colonia');
+      var infoDiv = document.getElementById('envio-info');
+      var nombreEl = document.getElementById('envio-colonia-nombre');
+      var costoEl = document.getElementById('envio-costo');
+
+      if (!select.value) {
+        infoDiv.classList.remove('visible');
+        _costoEnvioActual = 0;
+        _coloniaSeleccionada = null;
+        actualizarTotalPedido();
+        return;
+      }
+
+      var colonia = COLONIAS_ENVIO[select.value];
+      if (colonia) {
+        _coloniaSeleccionada = select.value;
+        _costoEnvioActual = colonia.tarifa;
+
+        nombreEl.textContent = colonia.nombre;
+        costoEl.textContent = '$' + colonia.tarifa;
+        infoDiv.classList.add('visible');
+
+        actualizarTotalPedido();
+      }
+    }
+
     /* ══ INIT ══ */
     function init() {
       cargarSesionGuardada();
+      llenarSelectorColonias();
       var s = document.getElementById('sakura');
       for (var i = 0; i < 16; i++) {
         var p = document.createElement('div');
@@ -3142,6 +3386,14 @@
       document.getElementById('cf-saved-card').style.display = 'none';
       document.getElementById('cf-addr-hint').style.display = 'none';
       _dirGuardada = '';
+      // Reset envío
+      _costoEnvioActual = 0;
+      _coloniaSeleccionada = null;
+      var select = document.getElementById('envio-colonia');
+      if (select) select.value = '';
+      var info = document.getElementById('envio-info');
+      if (info) info.classList.remove('visible');
+
       document.getElementById('client-overlay').classList.add('open');
       document.body.style.overflow = 'hidden';
       setOrderType('recoger');
@@ -3215,7 +3467,17 @@
 
     function descartarCambioDir() { document.getElementById('cf-addr-hint').style.display = 'none'; }
 
-    function closeClientModal() { document.getElementById('client-overlay').classList.remove('open'); document.body.style.overflow = ''; }
+    function closeClientModal() {
+      document.getElementById('client-overlay').classList.remove('open');
+      document.body.style.overflow = '';
+      // Resetear envío
+      _costoEnvioActual = 0;
+      _coloniaSeleccionada = null;
+      var select = document.getElementById('envio-colonia');
+      if (select) select.value = '';
+      var info = document.getElementById('envio-info');
+      if (info) info.classList.remove('visible');
+    }
 
     function submitOrder() {
       var name = document.getElementById('cl-name').value.trim();
@@ -3226,6 +3488,8 @@
         // Si el textarea quedó vacío por carga asíncrona, usar la dirección guardada como respaldo
         var address = document.getElementById('cl-address').value.trim() || _dirGuardada;
         if (!address) { alert('Por favor ingresa la dirección de entrega 📍'); document.getElementById('cl-address').focus(); return; }
+        // Validar que haya seleccionado una colonia
+        if (!_coloniaSeleccionada) { alert('Por favor selecciona tu colonia para calcular el envío 🛵'); document.getElementById('envio-colonia').focus(); return; }
         document.getElementById('cl-address').value = address;
         closeClientModal();
         guardarPedidoBackend(name, phone, address).then(function () { doSendWhatsApp(name, phone, address); });
@@ -3255,7 +3519,8 @@
         var token = await obtenerToken();
         if (!token) { console.warn('Sin token, pedido no registrado en DB'); return null; }
         var notes = document.getElementById('order-notes').value;
-        var total = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
+        var subtotal = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
+        var total = subtotal + _costoEnvioActual;
         var tipo = orderType === 'envio' ? 'domicilio' : 'sucursal';
         var productos = orderInstances.map(function (inst) {
           var m = inst.mods, item = inst.item, ec = inst.extraCost || 0;
@@ -3273,7 +3538,17 @@
           if (m.extras) mods.extras_producto = Object.keys(m.extras).filter(function (k) { return m.extras[k]; });
           return { id_producto: item.dbId || 0, nombre_producto: item.name || item.title, precio_unitario: item.price, cantidad: 1, modificaciones: mods, costo_extra: ec, subtotal: item.price + ec };
         });
-        var payload = { nombre_cliente: clientName, telefono_cliente: clientPhone || null, tipo_entrega: tipo, direccion_entrega: clientAddress || null, notas: notes.trim() || null, total: total, productos: productos };
+        var payload = {
+          nombre_cliente: clientName,
+          telefono_cliente: clientPhone || null,
+          tipo_entrega: tipo,
+          direccion_entrega: clientAddress || null,
+          colonia_entrega: _coloniaSeleccionada || null,
+          costo_envio: _costoEnvioActual || 0,
+          notas: notes.trim() || null,
+          total: total,
+          productos: productos
+        };
         var res = await fetch(API_URL + '/pedidos/', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify(payload) });
         if (res.ok) { var data = await res.json(); console.log('✅ Pedido guardado #' + data.id_pedido); return data.id_pedido; }
         if (res.status === 401) {
@@ -3290,7 +3565,8 @@
 
     /* ══ BARRA Y RESUMEN ══ */
     function updateBar() {
-      var total = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
+      var subtotal = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
+      var total = subtotal + _costoEnvioActual;
       var count = orderInstances.length;
       document.getElementById('bar-total').textContent = '$' + total;
       document.getElementById('bar-count').textContent = count + (count === 1 ? ' artículo' : ' artículos');
@@ -3398,13 +3674,21 @@
     /* ══ WHATSAPP ══ */
     function doSendWhatsApp(clientName, clientPhone, clientAddress) {
       var notes = document.getElementById('order-notes').value;
-      var total = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
+      var subtotal = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
+      var total = subtotal + _costoEnvioActual;
       var msg = '🍣 *NUEVO PEDIDO — La Esquina del Sushi*\n';
       msg += '━━━━━━━━━━━━━━━━━━━━\n';
       msg += '👤 *Nombre:* ' + clientName + '\n';
       if (clientPhone) msg += '📱 *Teléfono:* ' + clientPhone + '\n';
       if (clientAddress) msg += '📍 *Dirección:* ' + clientAddress + '\n';
+      if (orderType === 'envio' && _coloniaSeleccionada) {
+        var colonia = COLONIAS_ENVIO[_coloniaSeleccionada];
+        if (colonia) msg += '🏘️ *Colonia:* ' + colonia.nombre + '\n';
+      }
       msg += '📦 *Tipo:* ' + (orderType === 'envio' ? 'Envío a domicilio' : 'Recoge en sucursal') + '\n';
+      if (orderType === 'envio' && _costoEnvioActual > 0) {
+        msg += '🛵 *Envío:* $' + _costoEnvioActual + '\n';
+      }
       msg += '━━━━━━━━━━━━━━━━━━━━\n\n';
       orderInstances.forEach(function (inst) {
         var m = inst.mods, item = inst.item, ec = inst.extraCost || 0;
