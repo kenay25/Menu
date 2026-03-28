@@ -1840,11 +1840,6 @@
         <p>Revisa antes de enviar</p>
       </div>
       <div class="order-items" id="order-list"></div>
-      <div class="notes-section">
-        <label>📝 Notas especiales</label>
-        <textarea id="order-notes"
-          placeholder="Instrucciones de entrega, aclaraciones adicionales, horario preferido..."></textarea>
-      </div>
     </div>
 
   </main>
@@ -1953,6 +1948,13 @@
               <div class="envio-costo" id="envio-costo">$--</div>
             </div>
           </div>
+        </div>
+
+        <!-- ═══════ NOTAS ESPECIALES ═══════════════════════════════════════════ -->
+        <div class="cf">
+          <label>📝 Notas especiales</label>
+          <textarea id="order-notes"
+            placeholder="Instrucciones de entrega, aclaraciones adicionales, horario preferido..."></textarea>
         </div>
 
         <div class="client-actions">
@@ -2416,7 +2418,7 @@
         { id: 'esp3', dbId: 42, img: 'img/bonelesconpapas.jpg', emoji: '&#x1F357;', name: 'Boneless con Papas', price: 120, tag: null, hasSauce: true, desc: 'Boneless + papas sazonadas.', ingredients: [ing('b1', '&#x1F357;', 'Pollo empanizado', 'Tiras', false), ing('b2', '&#x1F35F;', 'Papas sazonadas', 'Incluidas', false), ing('b3', '&#x1F96C;', 'Apio', 'Guarnición', true), ing('b4', '&#x1F955;', 'Zanahoria', 'Guarnición', true)], extras: [] },
         { id: 'esp8', dbId: 43, img: 'img/bolas.jpg', emoji: '&#x1F363;', name: 'Bolas — Mixta', price: 95, tag: null, hasProtein: true, desc: 'Bolas de sushi con mix de proteínas a elegir.', ingredients: [ing('b1', '&#x1F9C0;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b4', '&#x1F41F;', 'Tampico', 'Por fuera', true)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }] },
         { id: 'esp7', dbId: 44, img: 'img/bolas.jpg', emoji: '&#x1F363;', name: 'Bolas — Camarón', price: 85, tag: null, desc: 'Bolas de sushi con camarón.', ingredients: [ing('b1', '&#x1F9C0;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b4', '&#x1F990;', 'Camarón', 'Proteína', false), ing('b5', '&#x1F41F;', 'Tampico', 'Por fuera', true)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }] },
-        { id: 'esp6', dbId: 45, img: 'img/bolas.jpg', emoji: '&#x1F363;', name: 'Bolas — Básica', price: 75, tag: null, hasProtein: true, desc: '01 proteína a elegir: res, camarón, tocino, pollo o surimi.', ingredients: [ing('b1', '&#x1F9C0;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b4', '&#x1F41F;', 'Tampico', 'Por fuera', true), ing('b5', '&#x1FAD9;', 'Anguila', 'Por fuera', true), ing('b6', '&#x26AB;', 'Ajonjolí', 'Por fuera', true)], extras: [] }
+        { id: 'esp6', dbId: 45, img: 'img/bolas.jpg', emoji: '&#x1F363;', name: 'Bolas — Básica', price: 75, tag: null, hasProtein: true, desc: '01 proteína a elegir: res, camarón, tocino, pollo o surimi.', ingredients: [ing('b1', '&#x1F9C0;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b4', '&#x1F41F;', 'Tampico', 'Por fuera', true), ing('b5', '&#x26AB;', 'Ajonjolí', 'Por fuera', true)], extras: [] }
       ],
       bebidas: [
         { id: 'b1', dbId: 46, emoji: '&#x1F9CB;', name: 'Té 1 litro', price: 25, tag: null, hasIce: true, desc: 'Té helado 1 litro.', ingredients: [ing('b1', '&#x1F9CB;', 'Té helado', '1 litro', false)], extras: [{ id: 'x1', emoji: '&#x1F34B;', name: 'Limón', note: 'Gratis', price: 0 }] },
@@ -3477,6 +3479,9 @@
       if (select) select.value = '';
       var info = document.getElementById('envio-info');
       if (info) info.classList.remove('visible');
+      // Resetear notas
+      var notes = document.getElementById('order-notes');
+      if (notes) notes.value = '';
     }
 
     function submitOrder() {
@@ -3707,13 +3712,15 @@
         var itemName = item.name || item.title || 'Producto';
         var itemPrice = item.price || 0;
 
-        // Para La Caja y La Cajita, mostrar cada sushi por separado
-        if (item.id === 'c7' || item.id === 'c6') {
+        // Para La Caja, La Cajita, Paquetellenes y Botix - mostrar cada sushi por separado
+        if (item.id === 'c7' || item.id === 'c6' || item.id === 'c3' || item.id === 'c2') {
           var sushisPorDefecto = ['California', 'Bombazo', 'Sonora'];
+          var totalSushis = (item.id === 'c7' || item.id === 'c6') ? 3 : 1;
+          var precioPorSushi = (itemPrice + ec) / totalSushis;
           if (m.slotMods && m.slotMods.length) {
             m.slotMods.forEach(function (sm, idx) {
               var sushiName = sm && sm.sushiName ? sm.sushiName : sushisPorDefecto[idx];
-              msg += '• ' + itemName + ' — ' + sushiName + ' — $' + ((itemPrice + ec) / 3).toFixed(0) + '\n';
+              msg += '• ' + itemName + ' — ' + sushiName + ' — $' + precioPorSushi.toFixed(0) + '\n';
               if (sm.alga) msg += '   Alga: ' + (sm.alga === 'con' ? 'Con alga' : 'Sin alga') + '\n';
               if (sm.style) msg += '   Estilo: ' + (sm.style === 'natural' ? 'Natural' : 'Empanizado') + '\n';
               if (sm.proteins && sm.proteins.length) {
@@ -3737,6 +3744,11 @@
             var pnames = m.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
             var protExtra = (item.hasPromo || item.promoSlots) ? false : (m.proteins.length > 1);
             msg += '   Proteína(s): ' + pnames.join(', ') + (protExtra ? ' (+$' + ((m.proteins.length - 1) * 15) + ')' : '') + '\n';
+          }
+          // Mostrar ingredientes removidos
+          if (m.removed) {
+            var removedNames = Object.keys(m.removed).filter(function (k) { return m.removed[k]; });
+            if (removedNames.length) msg += '   Sin: ' + removedNames.join(', ') + '\n';
           }
           // Proteínas de slotMods (combos/promos)
           if (m.slotMods && m.slotMods.length) {
