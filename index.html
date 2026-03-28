@@ -2586,7 +2586,7 @@
         infoDiv.classList.remove('visible');
         _costoEnvioActual = 0;
         _coloniaSeleccionada = null;
-        actualizarTotalPedido();
+        updateBar();
         return;
       }
 
@@ -2599,7 +2599,7 @@
         costoEl.textContent = '$' + colonia.tarifa;
         infoDiv.classList.add('visible');
 
-        actualizarTotalPedido();
+        updateBar();
       }
     }
 
