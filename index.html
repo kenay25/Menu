@@ -3549,6 +3549,9 @@
           total: total,
           productos: productos
         };
+        console.log(' Payload pedido:', payload);
+        console.log('🔍 _coloniaSeleccionada:', _coloniaSeleccionada);
+        console.log('🔍 _costoEnvioActual:', _costoEnvioActual);
         var res = await fetch(API_URL + '/pedidos/', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify(payload) });
         if (res.ok) { var data = await res.json(); console.log('✅ Pedido guardado #' + data.id_pedido); return data.id_pedido; }
         if (res.status === 401) {
