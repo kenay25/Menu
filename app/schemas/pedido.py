@@ -18,6 +18,8 @@ class PedidoEntrada(BaseModel):
     telefono_cliente:  Optional[str]
     tipo_entrega:      str  # 'sucursal' o 'domicilio'
     direccion_entrega: Optional[str]
+    colonia_entrega:   Optional[str]  # Colonia de entrega (Navojoa)
+    costo_envio:       float = 0.0    # Costo de envío
     notas:             Optional[str]
     total:             float
     productos:         List[DetallePedidoEntrada]
@@ -33,6 +35,8 @@ class PedidoRespuesta(BaseModel):
     telefono_cliente:   Optional[str]
     tipo_entrega:       str
     direccion_entrega:  Optional[str]
+    colonia_entrega:    Optional[str]
+    costo_envio:        float
     notas:              Optional[str]
     total:              float
     estado:             str

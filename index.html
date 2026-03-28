@@ -3676,6 +3676,7 @@
       var notes = document.getElementById('order-notes').value;
       var subtotal = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
       var total = subtotal + _costoEnvioActual;
+
       var msg = '🍣 *NUEVO PEDIDO — La Esquina del Sushi*\n';
       msg += '━━━━━━━━━━━━━━━━━━━━\n';
       msg += '👤 *Nombre:* ' + clientName + '\n';
@@ -3690,8 +3691,11 @@
         msg += '🛵 *Envío:* $' + _costoEnvioActual + '\n';
       }
       msg += '━━━━━━━━━━━━━━━━━━━━\n\n';
+
       orderInstances.forEach(function (inst) {
         var m = inst.mods, item = inst.item, ec = inst.extraCost || 0;
+        var itemName = item.name || item.title || 'Producto';
+        var itemPrice = item.price || 0;
 
         // Para La Caja y La Cajita, mostrar cada sushi por separado
         if (item.id === 'c7' || item.id === 'c6') {
@@ -3699,7 +3703,7 @@
           if (m.slotMods && m.slotMods.length) {
             m.slotMods.forEach(function (sm, idx) {
               var sushiName = sm && sm.sushiName ? sm.sushiName : sushisPorDefecto[idx];
-              msg += '• ' + item.name + ' — ' + sushiName + ' — $' + ((item.price + ec) / 3).toFixed(0) + '\n';
+              msg += '• ' + itemName + ' — ' + sushiName + ' — $' + ((itemPrice + ec) / 3).toFixed(0) + '\n';
               if (sm.alga) msg += '   Alga: ' + (sm.alga === 'con' ? 'Con alga' : 'Sin alga') + '\n';
               if (sm.style) msg += '   Estilo: ' + (sm.style === 'natural' ? 'Natural' : 'Empanizado') + '\n';
               if (sm.proteins && sm.proteins.length) {
@@ -3714,7 +3718,7 @@
           }
         } else {
           // Items normales
-          msg += '• ' + item.name + ' — $' + (item.price + ec) + '\n';
+          msg += '• ' + itemName + ' — $' + (itemPrice + ec) + '\n';
           if (m.extraIngs && m.extraIngs.length) msg += '   + Ingrediente(s): ' + m.extraIngs.join(', ') + '\n';
           if (m.alga) msg += '   Alga: ' + (m.alga === 'con' ? 'Con alga' : 'Sin alga') + '\n';
           if (m.style) msg += '   Estilo: ' + (m.style === 'natural' ? 'Natural' : 'Empanizado') + '\n';
@@ -3780,6 +3784,7 @@
       msg += '\n━━━━━━━━━━━━━━━━━━━━\n💰 *TOTAL: $' + total + ' MXN*\n';
       if (notes.trim()) msg += '\n📝 Notas:\n' + notes.trim() + '\n';
       msg += '\n🌸 La Esquina del Sushi · Blvd. Sonora #21';
+
       window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
     }
 

@@ -13,6 +13,8 @@ class Pedido(Base):
     telefono_cliente    = Column(String(20),   nullable=True)
     tipo_entrega        = Column(Enum("sucursal", "domicilio"), nullable=False, default="sucursal")
     direccion_entrega   = Column(Text,         nullable=True)
+    colonia_entrega     = Column(String(100),  nullable=True)  # Colonia de entrega (Navojoa)
+    costo_envio         = Column(DECIMAL(10,2),nullable=False, default=0.00)  # Costo de envío
     notas               = Column(Text,         nullable=True)
     total               = Column(DECIMAL(10,2),nullable=False, default=0.00)
     estado              = Column(Enum("recibido", "preparando", "listo", "entregado", "cancelado"), nullable=False, default="recibido")

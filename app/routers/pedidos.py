@@ -33,6 +33,8 @@ def crear_pedido(
         telefono_cliente=datos.telefono_cliente,
         tipo_entrega=datos.tipo_entrega,
         direccion_entrega=datos.direccion_entrega,
+        colonia_entrega=datos.colonia_entrega,
+        costo_envio=datos.costo_envio,
         notas=datos.notas,
         total=datos.total,
         estado="recibido"
