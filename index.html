@@ -3707,54 +3707,115 @@
       }
       msg += '━━━━━━━━━━━━━━━━━━━━\n\n';
 
+      // Función auxiliar para obtener nombres de salsas
+      function getSauceNames(saucesObj) {
+        if (!saucesObj) return [];
+        return SAUCES.filter(function (s) { return saucesObj[s.id]; }).map(function (s) { return s.name; });
+      }
+
+      // Función auxiliar para obtener nombres de ingredientes removidos
+      function getRemovedNames(removedObj, ingredientsList) {
+        if (!removedObj) return [];
+        var names = [];
+        Object.keys(removedObj).forEach(function (key) {
+          if (removedObj[key]) {
+            var ing = ingredientsList ? ingredientsList.find(function (i) { return i.id === key; }) : null;
+            names.push(ing ? ing.name : key);
+          }
+        });
+        return names;
+      }
+
       orderInstances.forEach(function (inst) {
         var m = inst.mods, item = inst.item, ec = inst.extraCost || 0;
         var itemName = item.name || item.title || 'Producto';
         var itemPrice = item.price || 0;
+        var ingredients = item.ingredients || [];
 
-        // Para La Caja, La Cajita, Paquetellenes y Botix - mostrar cada sushi por separado
+        // ══ La Caja, La Cajita, Paquetellenes y Botix ═══════════════════════════
         if (item.id === 'c7' || item.id === 'c6' || item.id === 'c3' || item.id === 'c2') {
           var sushisPorDefecto = ['California', 'Bombazo', 'Sonora'];
           var totalSushis = (item.id === 'c7' || item.id === 'c6') ? 3 : 1;
           var precioPorSushi = (itemPrice + ec) / totalSushis;
+
           if (m.slotMods && m.slotMods.length) {
             m.slotMods.forEach(function (sm, idx) {
               var sushiName = sm && sm.sushiName ? sm.sushiName : sushisPorDefecto[idx];
               msg += '• ' + itemName + ' — ' + sushiName + ' — $' + precioPorSushi.toFixed(0) + '\n';
+
+              // Alga
               if (sm.alga) msg += '   Alga: ' + (sm.alga === 'con' ? 'Con alga' : 'Sin alga') + '\n';
+              // Estilo
               if (sm.style) msg += '   Estilo: ' + (sm.style === 'natural' ? 'Natural' : 'Empanizado') + '\n';
+              // Proteínas
               if (sm.proteins && sm.proteins.length) {
-                var pnames = sm.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
+                var pnames = sm.proteins.map(function (pid) {
+                  var pr = PROTEINS.find(function (x) { return x.id === pid; });
+                  return pr ? pr.name : '';
+                }).filter(Boolean);
                 msg += '   Proteína(s): ' + pnames.join(', ') + '\n';
               }
+              // Ingredientes removidos (usando los ingredientes del item padre)
               if (sm.removed) {
-                var removedNames = Object.keys(sm.removed).filter(function (k) { return sm.removed[k]; });
+                var removedNames = getRemovedNames(sm.removed, ingredients);
                 if (removedNames.length) msg += '   Sin: ' + removedNames.join(', ') + '\n';
               }
             });
           }
+
+          // Salsas (nivel del item, no del slot)
+          if (m.sauces && Object.keys(m.sauces).length) {
+            msg += '   Salsa boneles: ' + getSauceNames(m.sauces).join(', ') + '\n';
+          }
+          if (m.sauces2 && Object.keys(m.sauces2).length) {
+            msg += '   Salsa 2ª orden: ' + getSauceNames(m.sauces2).join(', ') + '\n';
+          }
+
+          // ══ Todos los demás productos ═══════════════════════════════════════════
         } else {
-          // Items normales
           msg += '• ' + itemName + ' — $' + (itemPrice + ec) + '\n';
-          if (m.extraIngs && m.extraIngs.length) msg += '   + Ingrediente(s): ' + m.extraIngs.join(', ') + '\n';
-          if (m.alga) msg += '   Alga: ' + (m.alga === 'con' ? 'Con alga' : 'Sin alga') + '\n';
-          if (m.style) msg += '   Estilo: ' + (m.style === 'natural' ? 'Natural' : 'Empanizado') + '\n';
-          if (m.ice) msg += '   Hielo: ' + (m.ice === 'con' ? 'Con hielo' : 'Sin hielo') + '\n';
+
+          // Ingredientes extra
+          if (m.extraIngs && m.extraIngs.length) {
+            msg += '   + Ingrediente(s): ' + m.extraIngs.join(', ') + '\n';
+          }
+
+          // Alga
+          if (m.alga) {
+            msg += '   Alga: ' + (m.alga === 'con' ? 'Con alga' : 'Sin alga') + '\n';
+          }
+
+          // Estilo (empanizado/natural)
+          if (m.style) {
+            msg += '   Estilo: ' + (m.style === 'natural' ? 'Natural' : 'Empanizado') + '\n';
+          }
+
+          // Hielo
+          if (m.ice) {
+            msg += '   Hielo: ' + (m.ice === 'con' ? 'Con hielo' : 'Sin hielo') + '\n';
+          }
+
+          // Proteínas simples
           if (m.proteins && m.proteins.length) {
-            var pnames = m.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
+            var pnames = m.proteins.map(function (pid) {
+              var pr = PROTEINS.find(function (x) { return x.id === pid; });
+              return pr ? pr.name : '';
+            }).filter(Boolean);
             var protExtra = (item.hasPromo || item.promoSlots) ? false : (m.proteins.length > 1);
             msg += '   Proteína(s): ' + pnames.join(', ') + (protExtra ? ' (+$' + ((m.proteins.length - 1) * 15) + ')' : '') + '\n';
           }
-          // Mostrar ingredientes removidos
+
+          // Ingredientes removidos
           if (m.removed) {
-            var removedNames = Object.keys(m.removed).filter(function (k) { return m.removed[k]; });
+            var removedNames = getRemovedNames(m.removed, ingredients);
             if (removedNames.length) msg += '   Sin: ' + removedNames.join(', ') + '\n';
           }
-          // Proteínas de slotMods (combos/promos)
+
+          // Proteínas de slotMods (combos/promos con múltiples slots)
           if (m.slotMods && m.slotMods.length) {
             var allSlotProts = [];
             var totalExtra = 0;
-            // Calcular extra
+
             if (item.hasPromo) {
               // Promociones: camarón +$15 cada uno, otras proteínas 1ª gratis POR SLOT · 2ª+ +$15
               m.slotMods.forEach(function (sm) {
@@ -3763,7 +3824,7 @@
                   var nonShrimpInSlot = 0;
                   sm.proteins.forEach(function (pid) {
                     if (pid) {
-                      var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0];
+                      var pr = PROTEINS.find(function (x) { return x.id === pid; });
                       if (pr) allSlotProts.push(pr.name);
                       if (pid === 'p_camaron') shrimpInSlot++;
                       else if (pid) nonShrimpInSlot++;
@@ -3779,7 +3840,7 @@
                 if (sm && sm.proteins && Array.isArray(sm.proteins)) {
                   sm.proteins.forEach(function (pid) {
                     if (pid) {
-                      var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0];
+                      var pr = PROTEINS.find(function (x) { return x.id === pid; });
                       if (pr) allSlotProts.push(pr.name);
                     }
                   });
@@ -3789,22 +3850,40 @@
                 }
               });
             }
+
             if (allSlotProts.length) {
               var extraMsg = totalExtra > 0 ? ' (+$' + totalExtra + ')' : '';
               msg += '   Proteína(s): ' + allSlotProts.join(', ') + extraMsg + '\n';
             }
           }
-          if (m.sauces && Object.keys(m.sauces).length) msg += '   Salsa boneles: ' + SAUCES.filter(function (s) { return m.sauces[s.id]; }).map(function (s) { return s.name; }).join(', ') + '\n';
-          if (m.sauces2 && Object.keys(m.sauces2).length) msg += '   Salsa 2ª orden: ' + SAUCES.filter(function (s) { return m.sauces2[s.id]; }).map(function (s) { return s.name; }).join(', ') + '\n';
-          if (m.saucesAlitas && Object.keys(m.saucesAlitas).length) msg += '   Salsa alitas: ' + SAUCES.filter(function (s) { return m.saucesAlitas[s.id]; }).map(function (s) { return s.name; }).join(', ') + '\n';
-          var rm = (item.ingredients || []).filter(function (i) { return m.removed && m.removed[i.id]; });
-          if (rm.length) msg += '   Sin: ' + rm.map(function (i) { return i.name; }).join(', ') + '\n';
-          var ax = (item.extras || []).filter(function (ex) { return m.extras && m.extras[ex.id]; });
-          if (ax.length) msg += '   Extra: ' + ax.map(function (ex) { return ex.name + (ex.price > 0 ? ' (+$' + ex.price + ')' : ''); }).join(', ') + '\n';
+
+          // Salsas
+          if (m.sauces && Object.keys(m.sauces).length) {
+            msg += '   Salsa boneles: ' + getSauceNames(m.sauces).join(', ') + '\n';
+          }
+          if (m.sauces2 && Object.keys(m.sauces2).length) {
+            msg += '   Salsa 2ª orden: ' + getSauceNames(m.sauces2).join(', ') + '\n';
+          }
+          if (m.saucesAlitas && Object.keys(m.saucesAlitas).length) {
+            msg += '   Salsa alitas: ' + getSauceNames(m.saucesAlitas).join(', ') + '\n';
+          }
+
+          // Extras del producto (queso gratinado, etc.)
+          if (item.extras && m.extras) {
+            var extrasList = item.extras.filter(function (ex) { return m.extras[ex.id]; });
+            if (extrasList.length) {
+              msg += '   Extra: ' + extrasList.map(function (ex) {
+                return ex.name + (ex.price > 0 ? ' (+$' + ex.price + ')' : '');
+              }).join(', ') + '\n';
+            }
+          }
         }
       });
+
       msg += '\n━━━━━━━━━━━━━━━━━━━━\n💰 *TOTAL: $' + total + ' MXN*\n';
-      if (notes.trim()) msg += '\n📝 Notas:\n' + notes.trim() + '\n';
+      if (notes && notes.trim()) {
+        msg += '\n📝 *Notas especiales:*\n' + notes.trim() + '\n';
+      }
       msg += '\n🌸 La Esquina del Sushi · Blvd. Sonora #21';
 
       window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
