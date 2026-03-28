@@ -328,21 +328,25 @@ def cambiar_estado_pedido(
     usuario=Depends(requerir_admin)
 ):
     """Cambia el estado de un pedido."""
+    print(f"🔵 Cambiar estado: id={id_pedido}, body={body}")
     pedido = db.query(Pedido).filter(
         Pedido.id_pedido == id_pedido,
         Pedido.id_restaurante == usuario.id_restaurante
     ).first()
     if not pedido:
+        print(f"❌ Pedido no encontrado: {id_pedido}")
         raise HTTPException(status_code=404, detail="Pedido no encontrado")
 
     estados_validos = ["recibido", "preparando", "listo", "entregado", "cancelado"]
     nuevo_estado = body.get("estado")
+    print(f"🔵 Estado anterior: {pedido.estado}, nuevo estado: {nuevo_estado}")
     if nuevo_estado not in estados_validos:
         raise HTTPException(status_code=400, detail="Estado inválido")
 
     pedido.estado = nuevo_estado
     db.commit()
     db.refresh(pedido)
+    print(f"✅ Estado actualizado: {pedido.estado}")
     return {"ok": True, "estado": nuevo_estado, "id_pedido": id_pedido}
 
 
