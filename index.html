@@ -3490,9 +3490,19 @@
         if (!address) { alert('Por favor ingresa la dirección de entrega 📍'); document.getElementById('cl-address').focus(); return; }
         // Validar que haya seleccionado una colonia
         if (!_coloniaSeleccionada) { alert('Por favor selecciona tu colonia para calcular el envío 🛵'); document.getElementById('envio-colonia').focus(); return; }
+        // Guardar valores ANTES de cerrar el modal
+        var coloniaParaGuardar = _coloniaSeleccionada;
+        var costoEnvioParaGuardar = _costoEnvioActual;
         document.getElementById('cl-address').value = address;
         closeClientModal();
-        guardarPedidoBackend(name, phone, address).then(function () { doSendWhatsApp(name, phone, address); });
+        // Restaurar valores temporalmente para guardar el pedido
+        _coloniaSeleccionada = coloniaParaGuardar;
+        _costoEnvioActual = costoEnvioParaGuardar;
+        guardarPedidoBackend(name, phone, address).then(function () {
+          _coloniaSeleccionada = null;
+          _costoEnvioActual = 0;
+          doSendWhatsApp(name, phone, address);
+        });
       } else {
         closeClientModal();
         guardarPedidoBackend(name, phone, null).then(function () { doSendWhatsApp(name, phone, null); });
