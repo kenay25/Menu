@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, Enum, DateTime, DECIMAL, JSON
+from sqlalchemy import Column, Integer, String, Text, Enum, DateTime, DECIMAL, JSON, Float
 from sqlalchemy.sql import func
 from app.database import Base
 
@@ -13,8 +13,8 @@ class Pedido(Base):
     telefono_cliente    = Column(String(20),   nullable=True)
     tipo_entrega        = Column(Enum("sucursal", "domicilio"), nullable=False, default="sucursal")
     direccion_entrega   = Column(Text,         nullable=True)
-    colonia_entrega     = Column(String(100),  nullable=True)  # Colonia de entrega (Navojoa)
-    costo_envio         = Column(DECIMAL(10,2),nullable=False, default=0.00)  # Costo de envío
+    colonia_entrega     = Column(Text,         nullable=True)  # Colonia de entrega (Navojoa)
+    costo_envio         = Column(Float,        nullable=True, default=0.0)   # Costo de envío
     notas               = Column(Text,         nullable=True)
     total               = Column(DECIMAL(10,2),nullable=False, default=0.00)
     estado              = Column(Enum("recibido", "preparando", "listo", "entregado", "cancelado"), nullable=False, default="recibido")
