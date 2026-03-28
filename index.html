@@ -3495,13 +3495,14 @@
         var costoEnvioParaGuardar = _costoEnvioActual;
         document.getElementById('cl-address').value = address;
         closeClientModal();
-        // Restaurar valores temporalmente para guardar el pedido
+        // Restaurar valores temporalmente para guardar el pedido y WhatsApp
         _coloniaSeleccionada = coloniaParaGuardar;
         _costoEnvioActual = costoEnvioParaGuardar;
         guardarPedidoBackend(name, phone, address).then(function () {
+          doSendWhatsApp(name, phone, address);
+          // Resetear valores DESPUES de guardar y enviar WhatsApp
           _coloniaSeleccionada = null;
           _costoEnvioActual = 0;
-          doSendWhatsApp(name, phone, address);
         });
       } else {
         closeClientModal();

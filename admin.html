@@ -2543,7 +2543,11 @@
     function cargarPedidos(estado = null) { cargarPedidosHoy(estado); }
 
     async function cambiarEstado(id, estado) {
-      await api(`/admin/pedidos/${id}/estado`, 'PATCH', { estado });
+      const result = await api(`/admin/pedidos/${id}/estado`, 'PATCH', { estado });
+      if (result && result.ok) {
+        // Recargar pedidos para mostrar el estado actualizado
+        cargarPedidosHoy(pedidosHoyFiltro);
+      }
     }
 
     async function verDetallePedido(id) {

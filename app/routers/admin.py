@@ -342,7 +342,8 @@ def cambiar_estado_pedido(
 
     pedido.estado = nuevo_estado
     db.commit()
-    return {"ok": True, "estado": nuevo_estado}
+    db.refresh(pedido)
+    return {"ok": True, "estado": nuevo_estado, "id_pedido": id_pedido}
 
 
 # ── Estadísticas adicionales ─────────────────────────────────
