@@ -2398,7 +2398,7 @@
         { id: 's8', dbId: 26, img: 'img/daishi.jpg', emoji: '&#x1F363;', name: 'Daishi', price: 100, tag: null, hasAlga: true, hasStyle: true, desc: 'Relleno de tampico y tocino.', ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b5', '&#x1F41F;', 'Tampico', 'Relleno', false), ing('b6', '&#x1F953;', 'Tocino', 'Relleno', true)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }, { id: 'x2', emoji: '&#x1FAD9;', name: 'Anguila', note: '+$15', price: 15 }] },
         { id: 's6', dbId: 27, img: 'img/agucate.jpg', emoji: '&#x1F363;', name: 'Aguacate', price: 100, tag: null, hasProtein: true, hasAlga: true, hasStyle: true, desc: '01 proteína a elegir, cubierto de aguacate y ajonjolí.', ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Relleno y cubierta', false), ing('b5', '&#x26AB;', 'Ajonjolí', 'Cubierta', true)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }] },
         { id: 's1', dbId: 28, img: 'img/california.jpg', emoji: '&#x1F363;', name: 'California', price: 95, tag: null, hasProtein: true, hasAlga: true, hasStyle: true, desc: '01 proteína a elegir: res, camarón, tocino, pollo o surimi.', ingredients: base(), extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }, { id: 'x2', emoji: '&#x1F41F;', name: 'Tampico por fuera', note: '+$15', price: 15 }] },
-        { id: 's4', dbId: 29, img: 'img/especial.jpg', emoji: '&#x1F363;', name: 'Especial', price: 115, tag: 'popular', hasAlga: true, hasStyle: true, desc: 'Relleno de surimi, cubierto de tampico, aguacate, anguila y ajonjolí.', ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Cubierta', true), ing('b5', '&#x1F980;', 'Surimi', 'Relleno', false), ing('b6', '&#x1F41F;', 'Tampico', 'Cubierta', true), ing('b7', '&#x1FAD9;', 'Anguila', 'Cubierta', true), ing('b8', '&#x26AB;', 'Ajonjolí', 'Cubierta', true)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }] },
+        { id: 's4', dbId: 29, img: 'img/especial.jpg', emoji: '&#x1F363;', name: 'Especial', price: 115, tag: 'popular', hasAlga: true, hasStyle: true, desc: 'Relleno de surimi, cubierto de tampico, aguacate y ajonjolí.', ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Cubierta', true), ing('b5', '&#x1F980;', 'Surimi', 'Relleno', false), ing('b6', '&#x1F41F;', 'Tampico', 'Cubierta', true), ing('b8', '&#x26AB;', 'Ajonjolí', 'Cubierta', true)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }] },
         { id: 's7', dbId: 30, img: 'img/yaquiymisil.jpg', emoji: '&#x1F363;', name: 'Misil', price: 80, tag: null, hasAlga: false, hasAlga: true, hasStyle: true, desc: 'Por dentro: relleno de philadelphia, tampico, tocino y res. Por fuera: chile verde empanizado.', ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Relleno', true), ing('b2', '&#x1F41F;', 'Tampico', 'Relleno', true), ing('b3', '&#x1F953;', 'Tocino', 'Relleno', true), ing('b4', '&#x1F969;', 'Res', 'Relleno', true), ing('b5', '&#x1F336;&#xFE0F;', 'Chile verde empanizado', 'Cubierta', false)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }] }
       ],
       entradas: [
@@ -3688,7 +3688,8 @@
 
     /* ══ WHATSAPP ══ */
     function doSendWhatsApp(clientName, clientPhone, clientAddress) {
-      var notes = document.getElementById('order-notes').value;
+      var notesEl = document.getElementById('order-notes');
+      var notes = notesEl ? notesEl.value : '';
       var subtotal = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
       var total = subtotal + _costoEnvioActual;
 
@@ -3713,14 +3714,42 @@
         return SAUCES.filter(function (s) { return saucesObj[s.id]; }).map(function (s) { return s.name; });
       }
 
+      // Función auxiliar para convertir IDs de ingredientes a nombres legibles
+      function getIngredientNameFromId(id, ingredientsList) {
+        // Primero buscar en la lista de ingredientes del producto
+        if (ingredientsList) {
+          var ing = ingredientsList.find(function (i) { return i.id === id; });
+          if (ing) return ing.name;
+        }
+        // Mapeo manual para IDs de slotMods (La Caja, La Cajita, Paquetellenes, Botix)
+        var slotIngMap = {
+          // La Cajita (c6)
+          'c6s1_pepino': 'Pepino', 'c6s1_philly': 'Philadelphia', 'c6s1_aguacate': 'Aguacate',
+          'c6s2_pepino': 'Pepino', 'c6s2_philly': 'Philadelphia', 'c6s2_aguacate': 'Aguacate',
+          'c6s3_pepino': 'Pepino', 'c6s3_philly': 'Philadelphia', 'c6s3_aguacate': 'Aguacate', 'c6s3_chile': 'Chile verde',
+          // La Caja (c7)
+          'c7s1_pepino': 'Pepino', 'c7s1_philly': 'Philadelphia', 'c7s1_aguacate': 'Aguacate',
+          'c7s2_pepino': 'Pepino', 'c7s2_philly': 'Philadelphia', 'c7s2_aguacate': 'Aguacate', 'c7s2_tampico': 'Tampico', 'c7s2_anguila': 'Anguila',
+          'c7s3_pepino': 'Pepino', 'c7s3_philly': 'Philadelphia', 'c7s3_aguacate': 'Aguacate', 'c7s3_chile': 'Chile verde', 'c7s3_tocino': 'Tocino',
+          // Paquetellenes (c3)
+          'c3s1_pepino': 'Pepino', 'c3s1_philly': 'Philadelphia', 'c3s1_aguacate': 'Aguacate',
+          // Botix (c2)
+          'c2s1_pepino': 'Pepino', 'c2s1_philly': 'Philadelphia', 'c2s1_aguacate': 'Aguacate',
+          'bx_pepino': 'Pepino', 'bx_philly': 'Philadelphia', 'bx_aguacate': 'Aguacate'
+        };
+        if (slotIngMap[id]) return slotIngMap[id];
+        // Si no está en el mapeo, devolver el ID limpio (quitar prefijos)
+        return id.replace(/^(c[0-9]+s[0-9]+|bx)_/i, '');
+      }
+
       // Función auxiliar para obtener nombres de ingredientes removidos
       function getRemovedNames(removedObj, ingredientsList) {
         if (!removedObj) return [];
         var names = [];
         Object.keys(removedObj).forEach(function (key) {
           if (removedObj[key]) {
-            var ing = ingredientsList ? ingredientsList.find(function (i) { return i.id === key; }) : null;
-            names.push(ing ? ing.name : key);
+            var name = getIngredientNameFromId(key, ingredientsList);
+            names.push(name);
           }
         });
         return names;
