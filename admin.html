@@ -2380,9 +2380,18 @@
     async function api(path, method = 'GET', body = null) {
       const opts = { method, headers: { 'Authorization': 'Bearer ' + TOKEN, 'Content-Type': 'application/json' } };
       if (body) opts.body = JSON.stringify(body);
-      const res = await fetch(API + path, opts);
-      if (res.status === 401) { adminLogout(); return null; }
-      return res.json();
+      try {
+        const res = await fetch(API + path, opts);
+        if (res.status === 401) { adminLogout(); return null; }
+        if (!res.ok) {
+          console.error('Error API:', res.status, res.statusText);
+          return null;
+        }
+        return await res.json();
+      } catch (e) {
+        console.error('Error fetch:', e);
+        return null;
+      }
     }
 
     /* ══ NAVEGACIÓN ═════════════════════════════════════════════ */
@@ -2477,19 +2486,21 @@
       const tbody = document.getElementById(tbodyId);
       if (!tbody) return;
       if (!data || !data.length) {
-        tbody.innerHTML = `<tr><td colspan="7" class="empty" style="padding:30px"><div class="emoji">🍣</div><p>Sin pedidos</p></td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" class="empty" style="padding:30px"><div class="emoji">🍣</div><p>Sin pedidos</p></td></tr>`;
         return;
       }
       tbody.innerHTML = data.map(p => {
         const fechaObj = new Date(p.fecha_pedido + 'Z');
         const hora = fechaObj.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'America/Hermosillo' });
         const fecha = fechaObj.toLocaleDateString('es-MX', { day: 'numeric', month: 'short', timeZone: 'America/Hermosillo' });
+        const colonia = p.colonia_entrega || '—';
+        const envio = p.costo_envio > 0 ? `$${parseFloat(p.costo_envio).toLocaleString()}` : '—';
         return `<tr>
       <td><strong>#${p.id_pedido}</strong></td>
       <td>${p.nombre_cliente}<br><small style="color:var(--muted)">${p.telefono_cliente || ''}</small></td>
       <td>${p.tipo_entrega === 'domicilio' ? '🛵' : '🏪'} ${p.tipo_entrega}</td>
-      <td>${p.colonia_entrega ? `<small>${p.colonia_entrega}</small>` : '<small>—</small>'}</td>
-      <td>${p.costo_envio > 0 ? `<strong>$${parseFloat(p.costo_envio).toLocaleString()}</strong>` : '<small>—</small>'}</td>
+      <td><small>${colonia}</small></td>
+      <td><small>${envio}</small></td>
       <td><strong>$${parseFloat(p.total).toLocaleString()}</strong></td>
       <td>
         <select class="estado-select"
