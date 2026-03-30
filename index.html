@@ -1725,6 +1725,24 @@
         grid-template-columns: repeat(3, 1fr);
       }
     }
+
+    /* ── Footer ─────────────────────────────────── */
+    .site-footer {
+      background: var(--dark);
+      text-align: center;
+      padding: 28px 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .site-footer p {
+      font-size: 13px;
+      color: var(--muted);
+      letter-spacing: 0.5px;
+    }
+
+    .site-footer p span {
+      color: var(--pink-light);
+    }
   </style>
 </head>
 
@@ -4203,6 +4221,12 @@
 
     document.addEventListener('DOMContentLoaded', init);
   </script>
+
+  <!-- ═══════ FOOTER ═══════════════════════════════════════════ -->
+  <footer class="site-footer">
+    <p>© 2026 La Esquina del Sushi · Sistema desarrollado por <span>Kenay Silva</span></p>
+  </footer>
+
 </body>
 
 </html>
