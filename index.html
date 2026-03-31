@@ -3765,6 +3765,7 @@
           // Paquetellenes (c3) - usa c3s1_ para el sushi
           'c3s1_pepino': 'Pepino', 'c3s1_philly': 'Philadelphia', 'c3s1_aguacate': 'Aguacate',
           'c3_pepino': 'Pepino', 'c3_philly': 'Philadelphia', 'c3_aguacate': 'Aguacate',
+          'pq_pepino': 'Pepino', 'pq_philly': 'Philadelphia', 'pq_aguacate': 'Aguacate',
           // Botix (c2)
           'c2s1_pepino': 'Pepino', 'c2s1_philly': 'Philadelphia', 'c2s1_aguacate': 'Aguacate',
           'bx_pepino': 'Pepino', 'bx_philly': 'Philadelphia', 'bx_aguacate': 'Aguacate',
@@ -3772,8 +3773,25 @@
           'cha_pepino': 'Pepino', 'cha_philly': 'Philadelphia', 'cha_aguacate': 'Aguacate'
         };
         if (slotIngMap[id]) return slotIngMap[id];
-        // Si no está en el mapeo, devolver el ID limpio (quitar prefijos)
-        return id.replace(/^(c[0-9]+s[0-9]+|bx)_/i, '');
+        // Si no está en el mapeo, devolver el ID limpio (quitar prefijos) y con mayúscula inicial
+        var cleanId = id.replace(/^(c[0-9]+s[0-9]+|bx|pq|cha)_/i, '');
+        // Mapeo de IDs genéricos a nombres con mayúscula
+        var genericMap = {
+          'pepino': 'Pepino',
+          'philly': 'Philadelphia',
+          'aguacate': 'Aguacate',
+          'tampico': 'Tampico',
+          'anguila': 'Anguila',
+          'ajonjoli': 'Ajonjolí',
+          'ajonjolí': 'Ajonjolí',
+          'res': 'Res',
+          'tocino': 'Tocino',
+          'chile': 'Chile verde',
+          'chile verde': 'Chile verde'
+        };
+        if (genericMap[cleanId.toLowerCase()]) return genericMap[cleanId.toLowerCase()];
+        // Capitalizar primera letra si no está en el mapeo
+        return cleanId.charAt(0).toUpperCase() + cleanId.slice(1);
       }
 
       // Función auxiliar para obtener nombres de ingredientes removidos
