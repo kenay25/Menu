@@ -3752,7 +3752,7 @@
           var ing = ingredientsList.find(function (i) { return i.id === id; });
           if (ing) return ing.name;
         }
-        // Mapeo manual para IDs de slotMods (La Caja, La Cajita, Paquetellenes, Botix)
+        // Mapeo manual para IDs de slotMods (La Caja, La Cajita, Paquetellenes, Botix, Charola)
         var slotIngMap = {
           // La Cajita (c6)
           'c6s1_pepino': 'Pepino', 'c6s1_philly': 'Philadelphia', 'c6s1_aguacate': 'Aguacate',
@@ -3762,11 +3762,14 @@
           'c7s1_pepino': 'Pepino', 'c7s1_philly': 'Philadelphia', 'c7s1_aguacate': 'Aguacate',
           'c7s2_pepino': 'Pepino', 'c7s2_philly': 'Philadelphia', 'c7s2_aguacate': 'Aguacate', 'c7s2_tampico': 'Tampico', 'c7s2_anguila': 'Anguila',
           'c7s3_pepino': 'Pepino', 'c7s3_philly': 'Philadelphia', 'c7s3_aguacate': 'Aguacate', 'c7s3_chile': 'Chile verde', 'c7s3_tocino': 'Tocino',
-          // Paquetellenes (c3)
+          // Paquetellenes (c3) - usa c3s1_ para el sushi
           'c3s1_pepino': 'Pepino', 'c3s1_philly': 'Philadelphia', 'c3s1_aguacate': 'Aguacate',
+          'c3_pepino': 'Pepino', 'c3_philly': 'Philadelphia', 'c3_aguacate': 'Aguacate',
           // Botix (c2)
           'c2s1_pepino': 'Pepino', 'c2s1_philly': 'Philadelphia', 'c2s1_aguacate': 'Aguacate',
-          'bx_pepino': 'Pepino', 'bx_philly': 'Philadelphia', 'bx_aguacate': 'Aguacate'
+          'bx_pepino': 'Pepino', 'bx_philly': 'Philadelphia', 'bx_aguacate': 'Aguacate',
+          // Charola (c4)
+          'cha_pepino': 'Pepino', 'cha_philly': 'Philadelphia', 'cha_aguacate': 'Aguacate'
         };
         if (slotIngMap[id]) return slotIngMap[id];
         // Si no está en el mapeo, devolver el ID limpio (quitar prefijos)
@@ -3792,8 +3795,8 @@
         var itemPrice = item.price || 0;
         var ingredients = item.ingredients || [];
 
-        // ══ La Caja, La Cajita, Paquetellenes y Botix ═══════════════════════════
-        if (item.id === 'c7' || item.id === 'c6' || item.id === 'c3' || item.id === 'c2') {
+        // ══ La Caja, La Cajita, Paquetellenes, Botix y Charola ═══════════════════════════
+        if (item.id === 'c7' || item.id === 'c6' || item.id === 'c3' || item.id === 'c2' || item.id === 'c4') {
           var sushisPorDefecto = ['California', 'Bombazo', 'Sonora'];
           var totalSushis = (item.id === 'c7' || item.id === 'c6') ? 3 : 1;
           var precioPorSushi = (itemPrice + ec) / totalSushis;
@@ -3815,7 +3818,7 @@
                 }).filter(Boolean);
                 msg += '   Proteína(s): ' + pnames.join(', ') + '\n';
               }
-              // Ingredientes removidos (usando los ingredientes del item padre)
+              // Ingredientes removidos (usando mapeo especial para slotMods)
               if (sm.removed) {
                 var removedNames = getRemovedNames(sm.removed, ingredients);
                 if (removedNames.length) msg += '   Sin: ' + removedNames.join(', ') + '\n';
