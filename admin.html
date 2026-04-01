@@ -3593,6 +3593,47 @@
     }
 
   </script>
+  <!-- ═══════ TWEMOJI — Emojis universales ═══════ -->
+  <script src="https://cdn.jsdelivr.net/npm/@twemoji/api@latest/dist/twemoji.min.js" crossorigin="anonymous"></script>
+  <script>
+    (function () {
+      var twOpts = { folder: 'svg', ext: '.svg' };
+      function parseEmojis(el) {
+        if (typeof twemoji !== 'undefined') twemoji.parse(el || document.body, twOpts);
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () { parseEmojis(); });
+      } else {
+        parseEmojis();
+      }
+      var observer = new MutationObserver(function (mutations) {
+        mutations.forEach(function (m) {
+          m.addedNodes.forEach(function (node) {
+            if (node.nodeType === 1) parseEmojis(node);
+          });
+        });
+      });
+      observer.observe(document.body || document.documentElement, { childList: true, subtree: true });
+      window.parseEmojis = parseEmojis;
+    })();
+  </script>
+  <style>
+    img.emoji {
+      height: 1.2em;
+      width: 1.2em;
+      margin: 0 0.05em 0 0.1em;
+      vertical-align: -0.15em;
+      display: inline-block;
+    }
+    .nav-item .icon img.emoji {
+      height: 1.1em;
+      width: 1.1em;
+    }
+    .metric-icon img.emoji {
+      height: 1.4em;
+      width: 1.4em;
+    }
+  </style>
 </body>
 
 </html>
