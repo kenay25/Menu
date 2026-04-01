@@ -919,6 +919,31 @@ function sendWhatsApp() {
   document.getElementById('client-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
   setOrderType('recoger');
+
+  // Cargar teléfono del usuario si tiene sesión
+  if (sesionActual && sesionActual.usuario.telefono) {
+    var tel = sesionActual.usuario.telefono;
+    var phoneEl = document.getElementById('cl-phone');
+    var prefixEl = document.getElementById('cl-phone-prefix');
+    var nameEl = document.getElementById('cl-name');
+
+    if (tel.startsWith('+1')) {
+      prefixEl.checked = true;
+      tel = tel.substring(2);
+    } else {
+      prefixEl.checked = false;
+    }
+    var soloDigitos = tel.replace(/\D/g, '');
+    if (soloDigitos.length >= 6) {
+      phoneEl.value = soloDigitos.substring(0, 3) + '-' + soloDigitos.substring(3, 6) + '-' + soloDigitos.substring(6);
+    } else if (soloDigitos.length >= 3) {
+      phoneEl.value = soloDigitos.substring(0, 3) + '-' + soloDigitos.substring(3);
+    } else {
+      phoneEl.value = soloDigitos;
+    }
+    if (nameEl && !nameEl.value) nameEl.value = sesionActual.usuario.nombre;
+  }
+
   setTimeout(function () { document.getElementById('cl-name').focus(); }, 150);
 }
 function closeClientModal() {
@@ -929,22 +954,20 @@ function submitOrder() {
   var name = document.getElementById('cl-name').value.trim();
   if (!name) { alert('Por favor ingresa tu nombre 👤'); document.getElementById('cl-name').focus(); return; }
   if (orderType === 'envio') {
-    var phone = document.getElementById('cl-phone').value.trim();
     var address = document.getElementById('cl-address').value.trim();
-    if (!phone) { alert('Por favor ingresa tu teléfono 📱'); document.getElementById('cl-phone').focus(); return; }
 
     // Validar teléfono
-    var validacion = validarTelefono(phone);
+    var validacion = validarYBuscarTelefono();
     if (!validacion.valido) {
-      alert('⚠️ El número de teléfono no es válido. Debe tener exactamente 10 dígitos (puedes agregar +1 opcional al inicio).');
+      alert('⚠️ El número de teléfono debe tener exactamente 10 dígitos.');
       document.getElementById('cl-phone').focus();
       return;
     }
 
     if (!address) { alert('Por favor ingresa la dirección de entrega 📍'); document.getElementById('cl-address').focus(); return; }
     closeClientModal();
-    guardarPedidoBackend(name, validacion.limpio, address).then(function () {
-      doSendWhatsApp(name, validacion.limpio, address);
+    guardarPedidoBackend(name, validacion.completo, address).then(function () {
+      doSendWhatsApp(name, validacion.completo, address);
     });
   } else {
     closeClientModal();
@@ -1285,9 +1308,9 @@ async function hacerRegistro() {
   }
 
   // Validar teléfono
-  var validacion = validarTelefono(telefono);
+  var validacion = validarTelefonoRegistro();
   if (!validacion.valido) {
-    errEl.textContent = '⚠️ El teléfono debe tener exactamente 10 dígitos (puedes agregar +1 opcional al inicio).';
+    errEl.textContent = '⚠️ El teléfono debe tener exactamente 10 dígitos.';
     errEl.style.display = 'block';
     document.getElementById('btn-auth-submit').textContent = 'Registrarse →';
     return;
@@ -1299,7 +1322,7 @@ async function hacerRegistro() {
     var res = await fetch(API_URL + '/auth/registro', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nombre: nombre, email: email, password: password, telefono: validacion.limpio })
+      body: JSON.stringify({ nombre: nombre, email: email, password: password, telefono: validacion.completo })
     });
 
     var data = await res.json();
@@ -1412,13 +1435,12 @@ async function cargarHistorialSesion() {
 }
 
 async function buscarHistorialTelefono() {
-  var tel = document.getElementById('historial-tel').value.trim();
   var errEl = document.getElementById('historial-error');
 
   // Validar teléfono
-  var validacion = validarTelefono(tel);
+  var validacion = validarTelefonoHistorial();
   if (!validacion.valido) {
-    errEl.textContent = 'Ingresa un teléfono válido (10 dígitos, puedes usar +1 opcional)';
+    errEl.textContent = 'Ingresa un teléfono válido (10 dígitos, puedes marcar +1 si es necesario)';
     errEl.style.display = 'block';
     return;
   }
@@ -1429,7 +1451,7 @@ async function buscarHistorialTelefono() {
   document.getElementById('historial-buscar').style.display = 'none';
 
   try {
-    var res = await fetch(API_URL + '/historial/telefono/' + encodeURIComponent(validacion.limpio));
+    var res = await fetch(API_URL + '/historial/telefono/' + encodeURIComponent(validacion.completo));
     var data = await res.json();
     (data.pedidos || []).forEach(function (p) {
       if (p.fecha && !p.fecha.endsWith('Z') && !p.fecha.includes('+'))
@@ -1449,43 +1471,6 @@ async function buscarHistorialTelefono() {
     errEl.textContent = 'Error de conexión';
     errEl.style.display = 'block';
   }
-}
-
-function validarTelefonoHistorial(telefono) {
-  // Remover espacios, guiones, paréntesis
-  var limpio = telefono.replace(/[\s\-\(\)]/g, '');
-
-  // Verificar si tiene +1 al inicio
-  var tienePrefijo = limpio.startsWith('+1');
-  var numeroSinPrefijo = tienePrefijo ? limpio.substring(2) : limpio;
-
-  // Solo dígitos restantes
-  var soloDigitos = numeroSinPrefijo.replace(/\D/g, '');
-
-  // Calcular longitud real del número (sin el +1)
-  var longitud = soloDigitos.length;
-
-  var errorEl = document.getElementById('historial-tel-error');
-
-  if (longitud === 0) {
-    errorEl.style.display = 'none';
-    return;
-  }
-
-  if (longitud < 10) {
-    errorEl.style.display = 'block';
-    errorEl.textContent = '⚠️ El número debe tener 10 dígitos (faltan ' + (10 - longitud) + ')';
-    return;
-  }
-
-  if (longitud > 10) {
-    errorEl.style.display = 'block';
-    errorEl.textContent = '⚠️ El número tiene ' + longitud + ' dígitos (debe tener 10)';
-    return;
-  }
-
-  // Exactamente 10 dígitos
-  errorEl.style.display = 'none';
 }
 
 function mostrarHistorialDatos(data) {
@@ -1550,88 +1535,130 @@ function mostrarHistorialError(msg) {
   errEl.style.display = 'block';
 }
 
-/* ── Validar teléfono ───────────────────────── */
-function validarTelefono(telefono) {
-  // Remover espacios, guiones, paréntesis
-  var limpio = telefono.replace(/[\s\-\(\)]/g, '');
+/* ── Formatear teléfono ─────────────────────── */
+function formatarTelefono(input) {
+  // Solo permitir dígitos
+  var val = input.value.replace(/\D/g, '');
+  // Limitar a 10 dígitos
+  if (val.length > 10) val = val.substring(0, 10);
+  // Formatear con guiones: 642-123-4567
+  if (val.length >= 6) {
+    val = val.substring(0, 3) + '-' + val.substring(3, 6) + '-' + val.substring(6);
+  } else if (val.length >= 3) {
+    val = val.substring(0, 3) + '-' + val.substring(3);
+  }
+  input.value = val;
+}
 
-  // Verificar si tiene +1 al inicio
-  var tienePrefijo = limpio.startsWith('+1');
-  var numeroSinPrefijo = tienePrefijo ? limpio.substring(2) : limpio;
-
-  // Solo dígitos restantes
-  var soloDigitos = numeroSinPrefijo.replace(/\D/g, '');
-
-  // Calcular longitud real del número (sin el +1)
-  var longitud = soloDigitos.length;
-
+/* ── Validar teléfono (pedido) ───────────────── */
+function validarYBuscarTelefono() {
+  var phoneInput = document.getElementById('cl-phone');
+  var checkbox = document.getElementById('cl-phone-prefix');
   var errorEl = document.getElementById('cl-phone-error');
 
-  if (longitud === 0) {
-    errorEl.style.display = 'none';
-    return { valido: false, limpio: '' };
-  }
-
-  if (longitud < 10) {
-    errorEl.style.display = 'block';
-    errorEl.textContent = '⚠️ El número debe tener 10 dígitos (faltan ' + (10 - longitud) + ')';
-    return { valido: false, limpio: limpio };
-  }
-
-  if (longitud > 10) {
-    errorEl.style.display = 'block';
-    errorEl.textContent = '⚠️ El número tiene ' + longitud + ' dígitos (debe tener 10)';
-    return { valido: false, limpio: limpio };
-  }
-
-  // Exactamente 10 dígitos
-  errorEl.style.display = 'none';
-  var formatoFinal = (tienePrefijo ? '+1' : '') + soloDigitos;
-  return { valido: true, limpio: formatoFinal };
-}
-
-function validarYBuscarTelefono(telefono) {
-  var resultado = validarTelefono(telefono);
-  if (resultado.valido && telefono.length >= 10) {
-    buscarClientePorTelefono(telefono);
-  }
-}
-
-function validarTelefonoRegistro(telefono) {
-  // Remover espacios, guiones, paréntesis
-  var limpio = telefono.replace(/[\s\-\(\)]/g, '');
-
-  // Verificar si tiene +1 al inicio
-  var tienePrefijo = limpio.startsWith('+1');
-  var numeroSinPrefijo = tienePrefijo ? limpio.substring(2) : limpio;
-
-  // Solo dígitos restantes
-  var soloDigitos = numeroSinPrefijo.replace(/\D/g, '');
-
-  // Calcular longitud real del número (sin el +1)
+  var soloDigitos = phoneInput.value.replace(/\D/g, '');
   var longitud = soloDigitos.length;
 
-  var errorEl = document.getElementById('reg-telefono-error');
-
   if (longitud === 0) {
     errorEl.style.display = 'none';
-    return;
+    return { valido: false, completo: '' };
   }
 
   if (longitud < 10) {
     errorEl.style.display = 'block';
-    errorEl.textContent = '⚠️ El número debe tener 10 dígitos (faltan ' + (10 - longitud) + ')';
-    return;
+    errorEl.textContent = '⚠️ Faltan ' + (10 - longitud) + ' dígitos';
+    return { valido: false, completo: '' };
   }
 
   if (longitud > 10) {
     errorEl.style.display = 'block';
-    errorEl.textContent = '⚠️ El número tiene ' + longitud + ' dígitos (debe tener 10)';
-    return;
+    errorEl.textContent = '⚠️ Sobran ' + (longitud - 10) + ' dígitos';
+    return { valido: false, completo: '' };
   }
 
   // Exactamente 10 dígitos
   errorEl.style.display = 'none';
+  var prefijo = checkbox.checked ? '+1' : '';
+  var completo = prefijo + soloDigitos;
+
+  // Buscar cliente si hay sesión
+  if (longitud >= 10 && sesionActual) {
+    buscarClientePorTelefono(completo);
+  }
+
+  return { valido: true, completo: completo };
+}
+
+function validarTelefono() {
+  return validarYBuscarTelefono();
+}
+
+/* ── Validar teléfono (registro) ─────────────── */
+function validarTelefonoRegistro() {
+  var phoneInput = document.getElementById('reg-telefono');
+  var checkbox = document.getElementById('reg-telefono-prefix');
+  var errorEl = document.getElementById('reg-telefono-error');
+
+  var soloDigitos = phoneInput.value.replace(/\D/g, '');
+  var longitud = soloDigitos.length;
+
+  if (longitud === 0) {
+    errorEl.style.display = 'none';
+    return { valido: false, completo: '' };
+  }
+
+  if (longitud < 10) {
+    errorEl.style.display = 'block';
+    errorEl.textContent = '⚠️ Faltan ' + (10 - longitud) + ' dígitos';
+    return { valido: false, completo: '' };
+  }
+
+  if (longitud > 10) {
+    errorEl.style.display = 'block';
+    errorEl.textContent = '⚠️ Sobran ' + (longitud - 10) + ' dígitos';
+    return { valido: false, completo: '' };
+  }
+
+  // Exactamente 10 dígitos
+  errorEl.style.display = 'none';
+  var prefijo = checkbox.checked ? '+1' : '';
+  var completo = prefijo + soloDigitos;
+
+  return { valido: true, completo: completo };
+}
+
+/* ── Validar teléfono (historial) ────────────── */
+function validarTelefonoHistorial() {
+  var phoneInput = document.getElementById('historial-tel');
+  var checkbox = document.getElementById('historial-tel-prefix');
+  var errorEl = document.getElementById('historial-tel-error');
+
+  var soloDigitos = phoneInput.value.replace(/\D/g, '');
+  var longitud = soloDigitos.length;
+
+  if (longitud === 0) {
+    errorEl.style.display = 'none';
+    return { valido: false, completo: '' };
+  }
+
+  if (longitud < 10) {
+    errorEl.style.display = 'block';
+    errorEl.textContent = '⚠️ Faltan ' + (10 - longitud) + ' dígitos';
+    return { valido: false, completo: '' };
+  }
+
+  if (longitud > 10) {
+    errorEl.style.display = 'block';
+    errorEl.textContent = '⚠️ Sobran ' + (longitud - 10) + ' dígitos';
+    return { valido: false, completo: '' };
+  }
+
+  // Exactamente 10 dígitos
+  errorEl.style.display = 'none';
+  var prefijo = checkbox.checked ? '+1' : '';
+  var completo = prefijo + soloDigitos;
+
+  return { valido: true, completo: completo };
 }
 
 /* ── Autocompletar cliente por teléfono ─────── */
@@ -1648,8 +1675,32 @@ async function buscarClientePorTelefono(telefono) {
       var cliente = await res.json();
       var nameEl = document.getElementById('cl-name');
       var addrEl = document.getElementById('cl-address');
+      var phoneEl = document.getElementById('cl-phone');
+      var prefixEl = document.getElementById('cl-phone-prefix');
+
       if (nameEl && !nameEl.value) nameEl.value = cliente.nombre;
       if (addrEl && !addrEl.value) addrEl.value = cliente.direccion || '';
+
+      // Llenar teléfono y checkbox
+      if (phoneEl && prefixEl) {
+        var tel = cliente.telefono || '';
+        // Verificar si empieza con +1
+        if (tel.startsWith('+1')) {
+          prefixEl.checked = true;
+          tel = tel.substring(2);
+        } else {
+          prefixEl.checked = false;
+        }
+        // Quitar solo dígitos y formatear
+        var soloDigitos = tel.replace(/\D/g, '');
+        if (soloDigitos.length >= 6) {
+          phoneEl.value = soloDigitos.substring(0, 3) + '-' + soloDigitos.substring(3, 6) + '-' + soloDigitos.substring(6);
+        } else if (soloDigitos.length >= 3) {
+          phoneEl.value = soloDigitos.substring(0, 3) + '-' + soloDigitos.substring(3);
+        } else {
+          phoneEl.value = soloDigitos;
+        }
+      }
     }
   } catch (e) {
   }
