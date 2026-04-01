@@ -2132,6 +2132,9 @@
     </div>
 
 
+    <!-- ═══════ Cargar script.js con funciones de validación ═══════ -->
+    <script src="script.js"></script>
+
     <script>
       /* ═══════════════════════════════════════════════
          La Esquina del Sushi — JS completo inline
@@ -3430,39 +3433,44 @@
       /* ══ MODAL CLIENTE ══ */
       var _dirGuardada = '';
 
+      // NOTA: Las funciones submitOrder, doSendWhatsApp, buscarClientePorTelefono están más abajo
+      // Aquí solo mantenemos funciones auxiliares
+
       function sendWhatsApp() {
         if (!_pedidosAbiertos) { alert('🚫 Los pedidos están temporalmente cerrados. Intenta más tarde.'); return; }
         if (!orderInstances.length) { alert('¡Primero selecciona algo del menú! 🍣'); return; }
-        // Reset modal
-        document.getElementById('cl-name').value = '';
-        document.getElementById('cl-phone').value = '';
-        document.getElementById('cl-address').value = '';
-        document.getElementById('cf-saved-card').style.display = 'none';
-        document.getElementById('cf-addr-hint').style.display = 'none';
-        _dirGuardada = '';
-        // Reset envío
-        _costoEnvioActual = 0;
-        _coloniaSeleccionada = null;
-        var select = document.getElementById('envio-colonia');
-        if (select) select.value = '';
-        var info = document.getElementById('envio-info');
-        if (info) info.classList.remove('visible');
 
         document.getElementById('client-overlay').classList.add('open');
         document.body.style.overflow = 'hidden';
         setOrderType('recoger');
 
-        if (sesionActual && sesionActual.usuario) {
-          var u = sesionActual.usuario;
-          document.getElementById('cl-name').value = u.nombre || '';
-          if (u.telefono) {
-            document.getElementById('cl-phone').value = u.telefono;
-            cargarDatosCliente(u.telefono, true);
-            setOrderType('envio');
+        // Cargar teléfono del usuario si tiene sesión
+        if (sesionActual && sesionActual.usuario && sesionActual.usuario.telefono) {
+          var tel = sesionActual.usuario.telefono;
+          var phoneEl = document.getElementById('cl-phone');
+          var prefixEl = document.getElementById('cl-phone-prefix');
+          var nameEl = document.getElementById('cl-name');
+
+          // Verificar si empieza con +1 o 1
+          if (tel.startsWith('+1') || tel.startsWith('1')) {
+            prefixEl.checked = true;
+            tel = tel.replace(/^\+?1/, '');
+          } else {
+            prefixEl.checked = false;
           }
-        } else {
-          setTimeout(function () { document.getElementById('cl-phone').focus(); }, 150);
+          // Formatear teléfono
+          var soloDigitos = tel.replace(/\D/g, '');
+          if (soloDigitos.length >= 6) {
+            phoneEl.value = soloDigitos.substring(0, 3) + '-' + soloDigitos.substring(3, 6) + '-' + soloDigitos.substring(6);
+          } else if (soloDigitos.length >= 3) {
+            phoneEl.value = soloDigitos.substring(0, 3) + '-' + soloDigitos.substring(3);
+          } else {
+            phoneEl.value = soloDigitos;
+          }
+          if (nameEl && !nameEl.value) nameEl.value = sesionActual.usuario.nombre;
         }
+
+        setTimeout(function () { document.getElementById('cl-name').focus(); }, 150);
       }
 
       function mostrarSavedCard(nombre, telefono, direccion, tipo) {
@@ -3494,8 +3502,63 @@
       }
 
       async function buscarClientePorTelefono(telefono) {
-        if (telefono.length < 10) { document.getElementById('cf-saved-card').style.display = 'none'; _dirGuardada = ''; return; }
+        if (telefono.length < 10) {
+          document.getElementById('cf-saved-card').style.display = 'none';
+          _dirGuardada = '';
+          return;
+        }
         await cargarDatosCliente(telefono, false);
+      }
+
+      async function cargarDatosCliente(telefono, esSesion) {
+        try {
+          var token = sesionActual ? sesionActual.token : await obtenerToken();
+          if (!token) return;
+          var res = await fetch(API_URL + '/clientes/buscar/' + telefono, { headers: { 'Authorization': 'Bearer ' + token } });
+          if (!res.ok) return;
+          var c = await res.json();
+
+          // Llenar nombre
+          if (c.nombre) {
+            var nameEl = document.getElementById('cl-name');
+            if (nameEl && !nameEl.value) nameEl.value = c.nombre;
+          }
+
+          // Llenar dirección
+          if (c.direccion) {
+            _dirGuardada = c.direccion;
+            var addrEl = document.getElementById('cl-address');
+            if (addrEl && orderType === 'envio' && !addrEl.value) addrEl.value = c.direccion;
+          }
+
+          // Llenar teléfono y checkbox
+          if (c.telefono) {
+            var phoneEl = document.getElementById('cl-phone');
+            var prefixEl = document.getElementById('cl-phone-prefix');
+            var tel = c.telefono;
+
+            if (tel.startsWith('+1') || tel.startsWith('1')) {
+              prefixEl.checked = true;
+              tel = tel.replace(/^\+?1/, '');
+            } else {
+              prefixEl.checked = false;
+            }
+
+            var soloDigitos = tel.replace(/\D/g, '');
+            if (soloDigitos.length >= 6) {
+              phoneEl.value = soloDigitos.substring(0, 3) + '-' + soloDigitos.substring(3, 6) + '-' + soloDigitos.substring(6);
+            } else if (soloDigitos.length >= 3) {
+              phoneEl.value = soloDigitos.substring(0, 3) + '-' + soloDigitos.substring(3);
+            } else {
+              phoneEl.value = soloDigitos;
+            }
+          }
+
+          mostrarSavedCard(
+            document.getElementById('cl-name').value || c.nombre || telefono,
+            telefono, _dirGuardada, orderType
+          );
+        } catch (e) { }
       }
 
       function revisarCambioDir() {
@@ -3524,51 +3587,52 @@
       function closeClientModal() {
         document.getElementById('client-overlay').classList.remove('open');
         document.body.style.overflow = '';
-        // Resetear envío
         _costoEnvioActual = 0;
         _coloniaSeleccionada = null;
         var select = document.getElementById('envio-colonia');
         if (select) select.value = '';
         var info = document.getElementById('envio-info');
         if (info) info.classList.remove('visible');
-        // Resetear notas
         var notes = document.getElementById('order-notes');
         if (notes) notes.value = '';
       }
 
       function submitOrder() {
         var name = document.getElementById('cl-name').value.trim();
-        var phone = document.getElementById('cl-phone').value.trim();
         if (!name) { alert('Por favor ingresa tu nombre 👤'); document.getElementById('cl-name').focus(); return; }
-        if (!phone) { alert('Por favor ingresa tu número de celular 📱'); document.getElementById('cl-phone').focus(); return; }
+
+        // Validar teléfono usando la función de script.js
+        var validacion = validarYBuscarTelefono();
+        if (!validacion.valido) {
+          alert('⚠️ El número de teléfono debe tener exactamente 10 dígitos.');
+          document.getElementById('cl-phone').focus();
+          return;
+        }
+        var phone = validacion.completo;
+
         if (orderType === 'envio') {
-          // Si el textarea quedó vacío por carga asíncrona, usar la dirección guardada como respaldo
           var address = document.getElementById('cl-address').value.trim() || _dirGuardada;
           if (!address) { alert('Por favor ingresa la dirección de entrega 📍'); document.getElementById('cl-address').focus(); return; }
-          // Validar que haya seleccionado una colonia
           if (!_coloniaSeleccionada) { alert('Por favor selecciona tu colonia para calcular el envío 🛵'); document.getElementById('envio-colonia').focus(); return; }
-          // Guardar valores ANTES de cerrar el modal (incluyendo notas)
+
           var coloniaParaGuardar = _coloniaSeleccionada;
           var costoEnvioParaGuardar = _costoEnvioActual;
           var notasParaGuardar = document.getElementById('order-notes').value;
           document.getElementById('cl-address').value = address;
           closeClientModal();
-          // Restaurar valores temporalmente para guardar el pedido y WhatsApp
+
           _coloniaSeleccionada = coloniaParaGuardar;
           _costoEnvioActual = costoEnvioParaGuardar;
           document.getElementById('order-notes').value = notasParaGuardar;
           guardarPedidoBackend(name, phone, address).then(function () {
             doSendWhatsApp(name, phone, address);
-            // Resetear valores DESPUES de guardar y enviar WhatsApp
             _coloniaSeleccionada = null;
             _costoEnvioActual = 0;
             document.getElementById('order-notes').value = '';
           });
         } else {
-          // Guardar notas antes de cerrar
           var notasParaGuardar2 = document.getElementById('order-notes').value;
           closeClientModal();
-          // Restaurar notas temporalmente
           document.getElementById('order-notes').value = notasParaGuardar2;
           guardarPedidoBackend(name, phone, null).then(function () {
             doSendWhatsApp(name, phone, null);
