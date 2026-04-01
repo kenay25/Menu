@@ -1562,6 +1562,29 @@ function formatarTelefono(input) {
   }
 }
 
+/* ── Forzar limitador de 10 dígitos (evento change) ── */
+function limitarDiezDigitos(input) {
+  var val = input.value.replace(/\D/g, '');
+  if (val.length > 10) {
+    val = val.substring(0, 10);
+    // Reformatear
+    if (val.length >= 6) {
+      val = val.substring(0, 3) + '-' + val.substring(3, 6) + '-' + val.substring(6);
+    } else if (val.length >= 3) {
+      val = val.substring(0, 3) + '-' + val.substring(3);
+    }
+    input.value = val;
+  }
+  // Validar después de limitar
+  if (input.id === 'cl-phone') {
+    validarYBuscarTelefono();
+  } else if (input.id === 'reg-telefono') {
+    validarTelefonoRegistro();
+  } else if (input.id === 'historial-tel') {
+    validarTelefonoHistorial();
+  }
+}
+
 /* ── Validar teléfono (pedido) ───────────────── */
 function validarYBuscarTelefono() {
   var phoneInput = document.getElementById('cl-phone');

@@ -1934,11 +1934,12 @@
           <label id="cf-phone-label">📱 Tu número de celular <span class="cf-required">*</span></label>
           <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
             <label style="display:flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap;font-size:13px">
-              <input type="checkbox" id="cl-phone-prefix" style="width:18px;height:18px;cursor:pointer">
+              <input type="checkbox" id="cl-phone-prefix" style="width:18px;height:18px;cursor:pointer"
+                onchange="validarYBuscarTelefono()">
               +1
             </label>
             <input type="tel" id="cl-phone" placeholder="Ej. 642-123-4567" autocomplete="tel" maxlength="12"
-              oninput="formatarTelefono(this)" style="flex:1">
+              oninput="formatarTelefono(this)" onchange="limitarDiezDigitos(this)" style="flex:1">
           </div>
           <div id="cl-phone-error" class="cf-error" style="display:none;font-size:11px;color:#C0392B;margin-top:4px">
           </div>
@@ -2030,11 +2031,12 @@
           <div class="cf" style="margin-top:12px"><label>📱 Teléfono <span class="cf-required">*</span></label>
             <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
               <label style="display:flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap;font-size:13px">
-                <input type="checkbox" id="reg-telefono-prefix" style="width:18px;height:18px;cursor:pointer">
+                <input type="checkbox" id="reg-telefono-prefix" style="width:18px;height:18px;cursor:pointer"
+                  onchange="validarTelefonoRegistro()">
                 +1
               </label>
               <input type="tel" id="reg-telefono" placeholder="Ej. 642-123-4567" maxlength="12"
-                oninput="formatarTelefono(this)" style="flex:1">
+                oninput="formatarTelefono(this)" onchange="limitarDiezDigitos(this)" style="flex:1">
             </div>
             <div id="reg-telefono-error" class="cf-error"
               style="display:none;font-size:11px;color:#C0392B;margin-top:4px"></div>
@@ -2067,11 +2069,12 @@
               <label>📱 Ingresa tu teléfono</label>
               <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
                 <label style="display:flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap;font-size:13px">
-                  <input type="checkbox" id="historial-tel-prefix" style="width:18px;height:18px;cursor:pointer">
+                  <input type="checkbox" id="historial-tel-prefix" style="width:18px;height:18px;cursor:pointer"
+                    onchange="validarTelefonoHistorial()">
                   +1
                 </label>
                 <input type="tel" id="historial-tel" placeholder="Ej. 642-123-4567" maxlength="12"
-                  oninput="formatarTelefono(this)" style="flex:1">
+                  oninput="formatarTelefono(this)" onchange="limitarDiezDigitos(this)" style="flex:1">
               </div>
               <div id="historial-tel-error" style="display:none;font-size:11px;color:#C0392B;margin-top:4px"></div>
             </div>
