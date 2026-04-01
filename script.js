@@ -927,9 +927,10 @@ function sendWhatsApp() {
     var prefixEl = document.getElementById('cl-phone-prefix');
     var nameEl = document.getElementById('cl-name');
 
-    if (tel.startsWith('+1')) {
+    // Verificar si empieza con +1 o 1
+    if (tel.startsWith('+1') || tel.startsWith('1')) {
       prefixEl.checked = true;
-      tel = tel.substring(2);
+      tel = tel.replace(/^\+?1/, '');
     } else {
       prefixEl.checked = false;
     }
@@ -1539,8 +1540,10 @@ function mostrarHistorialError(msg) {
 function formatarTelefono(input) {
   // Solo permitir dígitos
   var val = input.value.replace(/\D/g, '');
-  // Limitar a 10 dígitos
-  if (val.length > 10) val = val.substring(0, 10);
+  // Limitar estrictamente a 10 dígitos
+  if (val.length > 10) {
+    val = val.substring(0, 10);
+  }
   // Formatear con guiones: 642-123-4567
   if (val.length >= 6) {
     val = val.substring(0, 3) + '-' + val.substring(3, 6) + '-' + val.substring(6);
@@ -1548,6 +1551,15 @@ function formatarTelefono(input) {
     val = val.substring(0, 3) + '-' + val.substring(3);
   }
   input.value = val;
+
+  // Llamar a la función de validación correspondiente
+  if (input.id === 'cl-phone') {
+    validarYBuscarTelefono();
+  } else if (input.id === 'reg-telefono') {
+    validarTelefonoRegistro();
+  } else if (input.id === 'historial-tel') {
+    validarTelefonoHistorial();
+  }
 }
 
 /* ── Validar teléfono (pedido) ───────────────── */
@@ -1556,8 +1568,22 @@ function validarYBuscarTelefono() {
   var checkbox = document.getElementById('cl-phone-prefix');
   var errorEl = document.getElementById('cl-phone-error');
 
+  if (!phoneInput || !checkbox || !errorEl) {
+    console.error('No se encontraron los elementos del teléfono');
+    return { valido: false, completo: '' };
+  }
+
   var soloDigitos = phoneInput.value.replace(/\D/g, '');
   var longitud = soloDigitos.length;
+  var isChecked = checkbox.checked;
+
+  console.log('DEBUG teléfono:', {
+    value: phoneInput.value,
+    soloDigitos: soloDigitos,
+    longitud: longitud,
+    checkbox: isChecked,
+    checkboxType: typeof isChecked
+  });
 
   if (longitud === 0) {
     errorEl.style.display = 'none';
@@ -1578,8 +1604,11 @@ function validarYBuscarTelefono() {
 
   // Exactamente 10 dígitos
   errorEl.style.display = 'none';
-  var prefijo = checkbox.checked ? '+1' : '';
+  // Si el checkbox está marcado, agregar 1 al inicio (para WhatsApp)
+  var prefijo = isChecked ? '1' : '';
   var completo = prefijo + soloDigitos;
+
+  console.log('Teléfono válido:', completo);
 
   // Buscar cliente si hay sesión
   if (longitud >= 10 && sesionActual) {
@@ -1599,8 +1628,13 @@ function validarTelefonoRegistro() {
   var checkbox = document.getElementById('reg-telefono-prefix');
   var errorEl = document.getElementById('reg-telefono-error');
 
+  if (!phoneInput || !checkbox || !errorEl) {
+    return { valido: false, completo: '' };
+  }
+
   var soloDigitos = phoneInput.value.replace(/\D/g, '');
   var longitud = soloDigitos.length;
+  var isChecked = checkbox.checked;
 
   if (longitud === 0) {
     errorEl.style.display = 'none';
@@ -1621,7 +1655,7 @@ function validarTelefonoRegistro() {
 
   // Exactamente 10 dígitos
   errorEl.style.display = 'none';
-  var prefijo = checkbox.checked ? '+1' : '';
+  var prefijo = isChecked ? '1' : '';
   var completo = prefijo + soloDigitos;
 
   return { valido: true, completo: completo };
@@ -1633,8 +1667,13 @@ function validarTelefonoHistorial() {
   var checkbox = document.getElementById('historial-tel-prefix');
   var errorEl = document.getElementById('historial-tel-error');
 
+  if (!phoneInput || !checkbox || !errorEl) {
+    return { valido: false, completo: '' };
+  }
+
   var soloDigitos = phoneInput.value.replace(/\D/g, '');
   var longitud = soloDigitos.length;
+  var isChecked = checkbox.checked;
 
   if (longitud === 0) {
     errorEl.style.display = 'none';
@@ -1655,7 +1694,7 @@ function validarTelefonoHistorial() {
 
   // Exactamente 10 dígitos
   errorEl.style.display = 'none';
-  var prefijo = checkbox.checked ? '+1' : '';
+  var prefijo = isChecked ? '1' : '';
   var completo = prefijo + soloDigitos;
 
   return { valido: true, completo: completo };
@@ -1684,10 +1723,10 @@ async function buscarClientePorTelefono(telefono) {
       // Llenar teléfono y checkbox
       if (phoneEl && prefixEl) {
         var tel = cliente.telefono || '';
-        // Verificar si empieza con +1
-        if (tel.startsWith('+1')) {
+        // Verificar si empieza con +1 o 1
+        if (tel.startsWith('+1') || tel.startsWith('1')) {
           prefixEl.checked = true;
-          tel = tel.substring(2);
+          tel = tel.replace(/^\+?1/, '');
         } else {
           prefixEl.checked = false;
         }
