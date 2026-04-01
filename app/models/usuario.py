@@ -5,6 +5,7 @@ from app.database import Base
 
 class Usuario(Base):
     __tablename__ = "usuarios"
+    __table_args__ = {'mysql_charset': 'utf8mb4', 'mysql_collate': 'utf8mb4_unicode_ci'}
 
     id_usuario     = Column(Integer,     primary_key=True, autoincrement=True)
     id_restaurante = Column(Integer,     nullable=False)

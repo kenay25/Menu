@@ -4,6 +4,7 @@ from app.database import Base
 
 class Producto(Base):
     __tablename__ = "productos"
+    __table_args__ = {'mysql_charset': 'utf8mb4', 'mysql_collate': 'utf8mb4_unicode_ci'}
 
     id_producto     = Column(Integer,       primary_key=True, autoincrement=True)
     id_restaurante  = Column(Integer,       nullable=False)

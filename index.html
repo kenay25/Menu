@@ -4238,9 +4238,7 @@
           if (promoUpdated) renderPromos();
         }
 
-      } catch (e) {
-        // Sin conexión — el menú estático ya está visible, no pasa nada
-      }
+      } catch (e) { }
     }
 
     document.addEventListener('DOMContentLoaded', init);
@@ -4287,25 +4285,30 @@
       vertical-align: -0.15em;
       display: inline-block;
     }
+
     /* Emojis más grandes en cards y headers */
     .card-emoji img.emoji {
       height: 1.6em;
       width: 1.6em;
     }
+
     .sec-header h2 img.emoji,
     .nav-btn img.emoji {
       height: 1.1em;
       width: 1.1em;
       vertical-align: -0.1em;
     }
+
     .metric-icon img.emoji {
       height: 1.4em;
       width: 1.4em;
     }
+
     .empty-state p img.emoji {
       height: 2em;
       width: 2em;
     }
+
     .ing-emoji img.emoji {
       height: 1.2em;
       width: 1.2em;
