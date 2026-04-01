@@ -1932,8 +1932,10 @@
         </div>
         <div class="cf" id="cf-phone-wrap">
           <label id="cf-phone-label">📱 Tu número de celular <span class="cf-required">*</span></label>
-          <input type="tel" id="cl-phone" placeholder="Ej. 642-123-4567" autocomplete="tel"
-            oninput="buscarClientePorTelefono(this.value)">
+          <input type="tel" id="cl-phone" placeholder="Ej. +1 642-123-4567" autocomplete="tel"
+            oninput="validarYBuscarTelefono(this.value)">
+          <div id="cl-phone-error" class="cf-error" style="display:none;font-size:11px;color:#C0392B;margin-top:4px">
+          </div>
           <div class="privacy-notice">🔒 Al continuar, aceptas nuestro <a onclick="openPrivacyModal()">Aviso de
               Privacidad</a></div>
         </div>
@@ -2020,7 +2022,10 @@
           <div class="cf" style="margin-top:12px"><label>🔒 Contraseña</label><input type="password" id="reg-password"
               placeholder="Mínimo 6 caracteres"></div>
           <div class="cf" style="margin-top:12px"><label>📱 Teléfono <span class="cf-required">*</span></label><input
-              type="tel" id="reg-telefono" placeholder="642-123-4567"></div>
+              type="tel" id="reg-telefono" placeholder="Ej. +1 642-123-4567"
+              oninput="validarTelefonoRegistro(this.value)"></div>
+          <div id="reg-telefono-error" class="cf-error"
+            style="display:none;font-size:11px;color:#C0392B;margin-top:4px"></div>
           <div class="privacy-notice" style="margin-top:12px">🔒 Al registrarte, aceptas nuestro <a
               onclick="openPrivacyModal()">Aviso de Privacidad</a></div>
         </div>
@@ -2047,8 +2052,10 @@
         <div id="historial-buscar" style="display:none">
           <div class="cf">
             <label>📱 Ingresa tu teléfono</label>
-            <input type="tel" id="historial-tel" placeholder="642-123-4567" maxlength="15">
+            <input type="tel" id="historial-tel" placeholder="Ej. +1 642-123-4567" maxlength="20"
+              oninput="validarTelefonoHistorial(this.value)">
           </div>
+          <div id="historial-tel-error" style="display:none;font-size:11px;color:#C0392B;margin-top:4px"></div>
           <button class="btn-cs" style="width:100%;margin-top:8px" onclick="buscarHistorialTelefono()">🔍 Buscar mis
             pedidos</button>
           <div id="historial-error" style="color:#ff6b8a;font-size:13px;display:none;margin-top:8px;text-align:center">
