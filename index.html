@@ -3662,7 +3662,8 @@
           if (!token) { console.warn('Sin token, pedido no registrado en DB'); return null; }
           var notes = document.getElementById('order-notes').value;
           var subtotal = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
-          var total = subtotal + _costoEnvioActual;
+          // Solo agregar costo de envío si es domicilio
+          var total = orderType === 'envio' ? subtotal + _costoEnvioActual : subtotal;
           var tipo = orderType === 'envio' ? 'domicilio' : 'sucursal';
           var productos = orderInstances.map(function (inst) {
             var m = inst.mods, item = inst.item, ec = inst.extraCost || 0;
@@ -3707,7 +3708,8 @@
       /* ══ BARRA Y RESUMEN ══ */
       function updateBar() {
         var subtotal = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
-        var total = subtotal + _costoEnvioActual;
+        // Solo agregar costo de envío si es domicilio
+        var total = orderType === 'envio' ? subtotal + _costoEnvioActual : subtotal;
         var count = orderInstances.length;
         document.getElementById('bar-total').textContent = '$' + total;
         document.getElementById('bar-count').textContent = count + (count === 1 ? ' artículo' : ' artículos');
@@ -3817,7 +3819,8 @@
         var notesEl = document.getElementById('order-notes');
         var notes = notesEl ? notesEl.value : '';
         var subtotal = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
-        var total = subtotal + _costoEnvioActual;
+        // Solo agregar costo de envío si es domicilio
+        var total = orderType === 'envio' ? subtotal + _costoEnvioActual : subtotal;
 
         var msg = '🍣 *NUEVO PEDIDO — La Esquina del Sushi*\n';
         msg += '━━━━━━━━━━━━━━━━━━━━\n';
