@@ -4084,6 +4084,12 @@
           overlay.classList.add('open');
           document.body.style.overflow = 'hidden';
           console.log('Clase open agregada');
+
+          // Debug: verificar estilos computados
+          var computedDisplay = window.getComputedStyle(overlay).display;
+          console.log('Display computado:', computedDisplay);
+          console.log('Clases del overlay:', overlay.className);
+          console.log('Z-index:', window.getComputedStyle(overlay).zIndex);
         }
       }
       function cerrarPrivacyModal() { document.getElementById('privacy-overlay').classList.remove('open'); document.body.style.overflow = ''; }
