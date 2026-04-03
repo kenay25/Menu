@@ -4077,22 +4077,42 @@
 
       /* ══ AVISO DE PRIVACIDAD ══ */
       function openPrivacyModal() {
-        console.log('Abriendo aviso de privacidad...');
         var overlay = document.getElementById('privacy-overlay');
-        console.log('Overlay encontrado:', !!overlay);
         if (overlay) {
-          overlay.classList.add('open');
+          // Forzar estilos inline para asegurar que se muestre
+          overlay.style.display = 'flex';
+          overlay.style.position = 'fixed';
+          overlay.style.top = '0';
+          overlay.style.left = '0';
+          overlay.style.right = '0';
+          overlay.style.bottom = '0';
+          overlay.style.zIndex = '9999';
+          overlay.style.background = 'rgba(10, 4, 8, 0.7)';
+          overlay.style.backdropFilter = 'blur(4px)';
+          overlay.style.alignItems = 'center';
+          overlay.style.justifyContent = 'center';
+          overlay.style.padding = '20px';
           document.body.style.overflow = 'hidden';
-          console.log('Clase open agregada');
-
-          // Debug: verificar estilos computados
-          var computedDisplay = window.getComputedStyle(overlay).display;
-          console.log('Display computado:', computedDisplay);
-          console.log('Clases del overlay:', overlay.className);
-          console.log('Z-index:', window.getComputedStyle(overlay).zIndex);
         }
       }
-      function cerrarPrivacyModal() { document.getElementById('privacy-overlay').classList.remove('open'); document.body.style.overflow = ''; }
+      function cerrarPrivacyModal() {
+        var overlay = document.getElementById('privacy-overlay');
+        if (overlay) {
+          overlay.style.display = '';
+          overlay.style.position = '';
+          overlay.style.top = '';
+          overlay.style.left = '';
+          overlay.style.right = '';
+          overlay.style.bottom = '';
+          overlay.style.zIndex = '';
+          overlay.style.background = '';
+          overlay.style.backdropFilter = '';
+          overlay.style.alignItems = '';
+          overlay.style.justifyContent = '';
+          overlay.style.padding = '';
+        }
+        document.body.style.overflow = '';
+      }
       function cerrarPrivacyModalOutside(e) { if (e.target === document.getElementById('privacy-overlay')) cerrarPrivacyModal(); }
 
       function switchTab(tab) {
