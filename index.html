@@ -4076,7 +4076,16 @@
       function cerrarLoginModalOutside(e) { if (e.target === document.getElementById('login-overlay')) cerrarLoginModal(); }
 
       /* ══ AVISO DE PRIVACIDAD ══ */
-      function openPrivacyModal() { document.getElementById('privacy-overlay').classList.add('open'); document.body.style.overflow = 'hidden'; }
+      function openPrivacyModal() {
+        console.log('Abriendo aviso de privacidad...');
+        var overlay = document.getElementById('privacy-overlay');
+        console.log('Overlay encontrado:', !!overlay);
+        if (overlay) {
+          overlay.classList.add('open');
+          document.body.style.overflow = 'hidden';
+          console.log('Clase open agregada');
+        }
+      }
       function cerrarPrivacyModal() { document.getElementById('privacy-overlay').classList.remove('open'); document.body.style.overflow = ''; }
       function cerrarPrivacyModalOutside(e) { if (e.target === document.getElementById('privacy-overlay')) cerrarPrivacyModal(); }
 
