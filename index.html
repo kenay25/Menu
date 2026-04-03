@@ -4078,22 +4078,20 @@
       /* ══ AVISO DE PRIVACIDAD ══ */
       function openPrivacyModal() {
         var overlay = document.getElementById('privacy-overlay');
-        if (overlay) {
-          // Forzar estilos inline para asegurar que se muestre
-          overlay.style.display = 'flex';
-          overlay.style.position = 'fixed';
-          overlay.style.top = '0';
-          overlay.style.left = '0';
-          overlay.style.right = '0';
-          overlay.style.bottom = '0';
-          overlay.style.zIndex = '9999';
-          overlay.style.background = 'rgba(10, 4, 8, 0.7)';
-          overlay.style.backdropFilter = 'blur(4px)';
-          overlay.style.alignItems = 'center';
-          overlay.style.justifyContent = 'center';
-          overlay.style.padding = '20px';
-          document.body.style.overflow = 'hidden';
+        var modal = document.getElementById('privacy-modal');
+
+        // Mover overlay al body directamente para evitar problemas de anidamiento
+        if (overlay && overlay.parentNode !== document.body) {
+          document.body.appendChild(overlay);
         }
+
+        if (overlay) {
+          overlay.style.cssText = 'display:flex !important; position:fixed !important; top:0 !important; left:0 !important; right:0 !important; bottom:0 !important; z-index:999999 !important; background:rgba(10,4,8,0.7) !important; align-items:center !important; justify-content:center !important; padding:20px !important;';
+        }
+        if (modal) {
+          modal.style.cssText = 'display:block !important; position:relative !important; z-index:1000000 !important;';
+        }
+        document.body.style.overflow = 'hidden';
       }
       function cerrarPrivacyModal() {
         var overlay = document.getElementById('privacy-overlay');
