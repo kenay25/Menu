@@ -2521,28 +2521,34 @@
         {
           id: 'promo2', dbId: 52, img: 'img/p2.jpg', emoji: '&#x1F363;', num: 'Paquete 2',
           title: '🍣 2 Sonoras', price: 200, tag: null,
-          hasProtein: false, hasPromo: true, desc: '2 Sonoras (res, tocino, philadelphia y chile rescoldado).',
+          desc: '2 Sonoras. Elige proteína para cada una: Res, Tocino, Philadelphia o Chile rescoldado.',
           ingredients: [ing('b1', '&#x1F363;', '2 Sonoras', 'Incluidas', false)],
           extras: [],
           promoSlots: [
             {
-              label: 'Sonora 1', hasAlga: true, hasStyle: true, sushiName: 'Sonora', removable: [
-                { id: 'rp1_philly', name: 'Philadelphia', emoji: '&#x1F9C0;' },
+              label: 'Sonora 1', hasProtein: true, hasAlga: true, hasStyle: true, sushiName: 'Sonora',
+              proteinOptions: [
+                { id: 'p_res', emoji: '&#x1F969;', name: 'Res' },
+                { id: 'p_tocino', emoji: '&#x1F953;', name: 'Tocino' },
+                { id: 'p_philly', emoji: '&#x1F9C0;', name: 'Philadelphia' },
+                { id: 'p_chile', emoji: '&#x1F336;&#xFE0F;', name: 'Chile rescoldado' }
+              ],
+              removable: [
                 { id: 'rp1_pepino', name: 'Pepino', emoji: '&#x1F952;' },
-                { id: 'rp1_aguacate', name: 'Aguacate', emoji: '&#x1F951;' },
-                { id: 'rp1_res', name: 'Res', emoji: '&#x1F969;' },
-                { id: 'rp1_tocino', name: 'Tocino', emoji: '&#x1F953;' },
-                { id: 'rp1_chile', name: 'Chile verde', emoji: '&#x1F336;&#xFE0F;' }
+                { id: 'rp1_aguacate', name: 'Aguacate', emoji: '&#x1F951;' }
               ]
             },
             {
-              label: 'Sonora 2', hasAlga: true, hasStyle: true, sushiName: 'Sonora', removable: [
-                { id: 'rp2_philly', name: 'Philadelphia', emoji: '&#x1F9C0;' },
+              label: 'Sonora 2', hasProtein: true, hasAlga: true, hasStyle: true, sushiName: 'Sonora',
+              proteinOptions: [
+                { id: 'p_res', emoji: '&#x1F969;', name: 'Res' },
+                { id: 'p_tocino', emoji: '&#x1F953;', name: 'Tocino' },
+                { id: 'p_philly', emoji: '&#x1F9C0;', name: 'Philadelphia' },
+                { id: 'p_chile', emoji: '&#x1F336;&#xFE0F;', name: 'Chile rescoldado' }
+              ],
+              removable: [
                 { id: 'rp2_pepino', name: 'Pepino', emoji: '&#x1F952;' },
-                { id: 'rp2_aguacate', name: 'Aguacate', emoji: '&#x1F951;' },
-                { id: 'rp2_res', name: 'Res', emoji: '&#x1F969;' },
-                { id: 'rp2_tocino', name: 'Tocino', emoji: '&#x1F953;' },
-                { id: 'rp2_chile', name: 'Chile verde', emoji: '&#x1F336;&#xFE0F;' }
+                { id: 'rp2_aguacate', name: 'Aguacate', emoji: '&#x1F951;' }
               ]
             }
           ]
@@ -2941,24 +2947,30 @@
             }
 
             // Proteína por slot — mostrar solo si el sushi seleccionado la requiere (California o Bombazo, NO Sonora)
-            var sushisConProt = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito'];
+            var sushisConProt = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito', 'Bola', 'Sonora'];
             var mostrarProt = slot.hasProtein && sm.sushiName && sushisConProt.indexOf(sm.sushiName) >= 0;
 
             // El contenedor de proteínas siempre existe, se llena/vacía según el sushi seleccionado
             html += '<div id="slotprot-' + si + '" style="margin-bottom:4px">';
             if (mostrarProt) {
-              // Nota específica para Paquetellenes y Botix
-              var esPaquetellenesOBotix = item && (item.id === 'c3' || item.id === 'c2');
-              var notaProt = esPaquetellenesOBotix
-                ? '🥩 Primera proteína incluida · +$15 por cada proteína adicional'
-                : 'Primera proteína incluida · +$15 por las demás';
+              // Use slot-specific protein options or fall back to PROTEINS
+              var protList = slot.proteinOptions || PROTEINS;
+              // Nota específica para paquetes especiales
+              var esPaqueteEspecial = item && (item.id === 'promo1' || item.id === 'promo3' || item.id === 'promo4');
+              var notaProt = esPaqueteEspecial
+                ? '🥩 Primera proteína incluida · 🦐 Camarón +$15 · Extras +$15 c/u'
+                : (item && (item.id === 'c3' || item.id === 'c2')
+                  ? '🥩 Primera proteína incluida · +$15 por cada proteína adicional'
+                  : 'Primera proteína incluida · +$15 por las demás');
 
               html += '<div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🥩 Proteína</div><div class="protein-grid">';
-              PROTEINS.forEach(function (p) {
+              protList.forEach(function (p) {
                 var cnt = sm.proteins ? sm.proteins.indexOf(p.id) : -1;
+                var isShrimp = p.id === 'p_camaron' && esPaqueteEspecial;
+                var extraLabel = isShrimp ? ' (+$15)' : '';
                 html += '<div class="protein-btn' + (cnt >= 0 ? ' sel' : '') + '" id="sp' + si + '-' + p.id + '" onclick="selSlotProtein(' + si + ',\'' + p.id + '\')">'
                   + '<span class="p-emoji">' + p.emoji + '</span>'
-                  + '<span class="p-name">' + p.name + '</span>'
+                  + '<span class="p-name">' + p.name + extraLabel + '</span>'
                   + (cnt >= 0 ? '<span class="p-count">' + (cnt + 1) + '</span>' : '')
                   + '</div>';
               });
@@ -3182,7 +3194,7 @@
         }
 
         // Reset proteins if new sushi doesn't have it (Sonora no lleva proteína selectable)
-        var sushisConProt = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito'];
+        var sushisConProt = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito', 'Bola', 'Sonora'];
         if (sushisConProt.indexOf(name) < 0) {
           currentMods.slotMods[si].proteins = [];
         }
@@ -3190,23 +3202,30 @@
         // Update protein section only (no re-render)
         var protSection = document.getElementById('slotprot-' + si);
         if (protSection) {
-          var necesitaProt = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito'].indexOf(name) >= 0;
+          var necesitaProt = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito', 'Bola', 'Sonora'].indexOf(name) >= 0;
           if (necesitaProt) {
+            // Use slot-specific protein options or fall back to PROTEINS
+            var slotDef = currentItem && currentItem.promoSlots && currentItem.promoSlots[si];
+            var protList = (slotDef && slotDef.proteinOptions) ? slotDef.proteinOptions : PROTEINS;
+            var esPaqueteEspecial = currentItem && (currentItem.id === 'promo1' || currentItem.id === 'promo3' || currentItem.id === 'promo4');
+            var notaProt = esPaqueteEspecial
+              ? '🥩 Primera proteína incluida · 🦐 Camarón +$15 · Extras +$15 c/u'
+              : (currentItem && (currentItem.id === 'c3' || currentItem.id === 'c2')
+                ? '🥩 Primera proteína incluida · +$15 por cada proteína adicional'
+                : 'Primera proteína incluida · +$15 por las demás');
+
             var html = '<div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🥩 Proteína</div><div class="protein-grid">';
-            PROTEINS.forEach(function (p) {
+            protList.forEach(function (p) {
               var sm = currentMods.slotMods[si];
               var cnt = sm.proteins.indexOf(p.id);
+              var isShrimp = p.id === 'p_camaron' && esPaqueteEspecial;
+              var extraLabel = isShrimp ? ' (+$15)' : '';
               html += '<div class="protein-btn' + (cnt >= 0 ? ' sel' : '') + '" id="sp' + si + '-' + p.id + '" onclick="selSlotProtein(' + si + ',\'' + p.id + '\')">'
                 + '<span class="p-emoji">' + p.emoji + '</span>'
-                + '<span class="p-name">' + p.name + '</span>'
+                + '<span class="p-name">' + p.name + extraLabel + '</span>'
                 + (cnt >= 0 ? '<span class="p-count">' + (cnt + 1) + '</span>' : '')
                 + '</div>';
             });
-            // Nota específica para Paquetellenes y Botix
-            var esPaquetellenesOBotix = currentItem && (currentItem.id === 'c3' || currentItem.id === 'c2');
-            var notaProt = esPaquetellenesOBotix
-              ? '🥩 Primera proteína incluida · +$15 por cada proteína adicional'
-              : 'Primera proteína incluida · +$15 por las demás';
             html += '</div><div class="protein-note">' + notaProt + '</div>';
             protSection.innerHTML = html;
           } else {
@@ -3320,7 +3339,9 @@
           currentMods.slotMods[si].proteins.push(pid);
         }
         // Update all protein buttons for this slot
-        var prots = ['p_res', 'p_pollo', 'p_tocino', 'p_surimi', 'p_camaron'];
+        var slotDef = currentItem && currentItem.promoSlots && currentItem.promoSlots[si];
+        var protList = (slotDef && slotDef.proteinOptions) ? slotDef.proteinOptions : PROTEINS;
+        var prots = protList.map(function (p) { return p.id; });
         prots.forEach(function (p) {
           var b = document.getElementById('sp' + si + '-' + p);
           if (b) {
@@ -3384,9 +3405,9 @@
               alert('🍣 Por favor elige un sushi para "' + slot.label + '"');
               return;
             }
-            // Validar proteína si el sushi la requiere (California o Bombazo, NO Sonora)
+            // Validar proteína si el sushi la requiere (California, Bombazo, Bola, Sonora)
             if (slot.hasProtein && sm.sushiName) {
-              var sushisConProt = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito'];
+              var sushisConProt = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito', 'Bola', 'Sonora'];
               var necesitaProt = sushisConProt.indexOf(sm.sushiName) >= 0;
               if (necesitaProt && (!sm || !sm.proteins || sm.proteins.length === 0)) {
                 alert('🥩 Por favor elige la proteína para "' + slot.label + '"');
@@ -3806,13 +3827,17 @@
           // Calcular extra
           if (item.hasPromo) {
             // Promociones: camarón +$15 cada uno, otras proteínas 1ª gratis POR SLOT · 2ª+ +$15
-            m.slotMods.forEach(function (sm) {
+            m.slotMods.forEach(function (sm, si) {
               if (sm && sm.proteins && Array.isArray(sm.proteins)) {
                 var shrimpInSlot = 0;
                 var nonShrimpInSlot = 0;
                 sm.proteins.forEach(function (pid) {
                   if (pid) {
+                    // Try PROTEINS first, then slot-specific options
                     var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0];
+                    if (!pr && item.promoSlots && item.promoSlots[si] && item.promoSlots[si].proteinOptions) {
+                      pr = item.promoSlots[si].proteinOptions.filter(function (x) { return x.id === pid; })[0];
+                    }
                     if (pr) allSlotProts.push(pr.name);
                     if (pid === 'p_camaron') shrimpInSlot++;
                     else if (pid) nonShrimpInSlot++;
@@ -3826,12 +3851,15 @@
             // Paquetes sin hasPromo (promo1, promo3, promo4): 1ª incluida, camarón +$15, extras +$15
             var specialPromoIds = ['promo1', 'promo3', 'promo4'];
             var isSpecialPromo = specialPromoIds.indexOf(item.id) >= 0;
-            m.slotMods.forEach(function (sm) {
+            m.slotMods.forEach(function (sm, si) {
               if (sm && sm.proteins && Array.isArray(sm.proteins)) {
                 var shrimpInSlot = 0;
                 sm.proteins.forEach(function (pid) {
                   if (pid) {
                     var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0];
+                    if (!pr && item.promoSlots && item.promoSlots[si] && item.promoSlots[si].proteinOptions) {
+                      pr = item.promoSlots[si].proteinOptions.filter(function (x) { return x.id === pid; })[0];
+                    }
                     if (pr) allSlotProts.push(pr.name);
                     if (pid === 'p_camaron') shrimpInSlot++;
                   }
@@ -4077,13 +4105,16 @@
 
               if (item.hasPromo) {
                 // Promociones: camarón +$15 cada uno, otras proteínas 1ª gratis POR SLOT · 2ª+ +$15
-                m.slotMods.forEach(function (sm) {
+                m.slotMods.forEach(function (sm, si) {
                   if (sm && sm.proteins && Array.isArray(sm.proteins)) {
                     var shrimpInSlot = 0;
                     var nonShrimpInSlot = 0;
                     sm.proteins.forEach(function (pid) {
                       if (pid) {
                         var pr = PROTEINS.find(function (x) { return x.id === pid; });
+                        if (!pr && item.promoSlots && item.promoSlots[si] && item.promoSlots[si].proteinOptions) {
+                          pr = item.promoSlots[si].proteinOptions.find(function (x) { return x.id === pid; });
+                        }
                         if (pr) allSlotProts.push(pr.name);
                         if (pid === 'p_camaron') shrimpInSlot++;
                         else if (pid) nonShrimpInSlot++;
@@ -4097,12 +4128,15 @@
                 // Paquetes sin hasPromo (promo1, promo3, promo4): 1ª incluida, camarón +$15, extras +$15
                 var specialPromoIds = ['promo1', 'promo3', 'promo4'];
                 var isSpecialPromo = specialPromoIds.indexOf(item.id) >= 0;
-                m.slotMods.forEach(function (sm) {
+                m.slotMods.forEach(function (sm, si) {
                   if (sm && sm.proteins && Array.isArray(sm.proteins)) {
                     var shrimpInSlot = 0;
                     sm.proteins.forEach(function (pid) {
                       if (pid) {
                         var pr = PROTEINS.find(function (x) { return x.id === pid; });
+                        if (!pr && item.promoSlots && item.promoSlots[si] && item.promoSlots[si].proteinOptions) {
+                          pr = item.promoSlots[si].proteinOptions.find(function (x) { return x.id === pid; });
+                        }
                         if (pr) allSlotProts.push(pr.name);
                         if (pid === 'p_camaron') shrimpInSlot++;
                       }
