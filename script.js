@@ -315,21 +315,23 @@ var MENU = {
     },
 
     {
-      id: 'esp8', dbId: 43, emoji: '&#x1F363;', name: 'Bolas — Mixta', price: 95, tag: null, hasProtein: true,
-      desc: 'Bolas de sushi con mix de proteínas a elegir.',
-      ingredients: [ing('b1', '&#x1F9C0;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b4', '&#x1F41F;', 'Tampico', 'Por fuera', true)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }]
+      id: 'esp8', dbId: 43, emoji: '&#x1F363;', name: 'Bolas — Mixta', price: 95, tag: null, hasProteinRemoval: true,
+      desc: 'Bolas de sushi con todas las proteínas incluidas. Puedes quitar las que no quieras sin costo.',
+      ingredients: [ing('b1', '&#x1F9C0;', 'Philadelphia', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b4', '&#x1F41F;', 'Tampico', 'Por fuera', true)],
+      proteinRemovableList: ['p_res', 'p_pollo', 'p_tocino', 'p_surimi', 'p_camaron'],
+      extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }]
     },
 
     {
       id: 'esp7', dbId: 44, emoji: '&#x1F363;', name: 'Bolas — Camarón', price: 85, tag: null,
       desc: 'Bolas de sushi con camarón.',
-      ingredients: [ing('b1', '&#x1F9C0;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b4', '&#x1F990;', 'Camarón', 'Proteína', false), ing('b5', '&#x1F41F;', 'Tampico', 'Por fuera', true)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }]
+      ingredients: [ing('b1', '&#x1F9C0;', 'Philadelphia', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b4', '&#x1F990;', 'Camarón', 'Proteína', false), ing('b5', '&#x1F41F;', 'Tampico', 'Por fuera', true)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }]
     },
 
     {
       id: 'esp6', dbId: 45, emoji: '&#x1F363;', name: 'Bolas — Básica', price: 75, tag: null, hasProtein: true,
       desc: '01 proteína a elegir: res, camarón, tocino, pollo o surimi.',
-      ingredients: [ing('b1', '&#x1F9C0;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b4', '&#x1F41F;', 'Tampico', 'Por fuera', true), ing('b5', '&#x1FAD9;', 'Anguila', 'Por fuera', true), ing('b6', '&#x26AB;', 'Ajonjolí', 'Por fuera', true)], extras: []
+      ingredients: [ing('b1', '&#x1F9C0;', 'Philadelphia', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b4', '&#x1F41F;', 'Tampico', 'Por fuera', true), ing('b5', '&#x1FAD9;', 'Anguila', 'Por fuera', true), ing('b6', '&#x26AB;', 'Ajonjolí', 'Por fuera', true)], extras: []
     }
   ],
 
@@ -361,27 +363,27 @@ var MENU = {
 /* ── PROMOCIONES ────────────────────────────── */
 var PROMOS = [
   {
-    id: 'promo4', dbId: 50, emoji: '&#x1F371;', num: 'Paquete 4', title: '1 Boneless + 1 California', price: 200, tag: 'popular', hasProtein: true, hasPromo: true, hasSauce: true,
-    desc: '1 Boneless (BBQ, Búfalo o mixtos) + 1 California con ingrediente a elegir (pollo, tocino, res o surimi).',
+    id: 'promo4', dbId: 50, emoji: '&#x1F371;', num: 'Paquete 4', title: '🍱 1 Boneless + 1 California', price: 200, tag: 'popular', hasProtein: true, hasSauce: true,
+    desc: '1 Boneless (BBQ, Búfalo o mixtos) + 1 California con ingrediente a elegir (pollo, tocino, res, surimi o camarón). Primera proteína incluida, extras +$15. Camarón como primera proteína +$15.',
     ingredients: [ing('b1', '&#x1F357;', 'Boneless', 'Con salsa', false), ing('b2', '&#x1F363;', 'California', 'Prot. a elegir', false)], extras: []
   },
 
   {
-    id: 'promo1', dbId: 51, emoji: '&#x1F363;', num: 'Paquete 1', title: '2 Californias + Tostitampico', price: 220, tag: 'popular', hasProtein: true, hasPromo: true,
-    desc: '2 Californias con ingrediente a elegir (pollo, tocino, res o surimi) + 1 Tostitampico.',
+    id: 'promo1', dbId: 51, emoji: '&#x1F363;', num: 'Paquete 1', title: '🍣 2 Californias + Tostitampico', price: 220, tag: 'popular', hasProtein: true,
+    desc: '2 Californias con ingrediente a elegir (pollo, tocino, res, surimi o camarón). Primera proteína incluida, extras +$15. Camarón como primera proteína +$15.',
     ingredients: [ing('b1', '&#x1F363;', '2 Californias', 'Prot. a elegir', false), ing('b2', '&#x1F32E;', 'Tostitampico', 'Incluido', false)], extras: []
   },
 
   {
-    id: 'promo2', dbId: 52, emoji: '&#x1F363;', num: 'Paquete 2', title: '2 Sonoras', price: 200, tag: null,
+    id: 'promo2', dbId: 52, emoji: '&#x1F363;', num: 'Paquete 2', title: '🍣 2 Sonoras', price: 200, tag: null,
     desc: '2 Sonoras (res, tocino, philadelphia y chile rescoldado).',
     ingredients: [ing('b1', '&#x1F363;', '2 Sonoras', 'Incluidas', false)], extras: []
   },
 
   {
-    id: 'promo3', dbId: 53, emoji: '&#x1F363;', num: 'Paquete 3', title: '3 Bolas', price: 200, tag: null, hasProtein: true, hasPromo: true,
-    desc: '3 Bolas con ingrediente a elegir (pollo, res, tocino o surimi).',
-    ingredients: [ing('b1', '&#x1F363;', '3 Bolas', 'Prot. a elegir', false), ing('b2', '&#x1F951;', 'Aguacate, pepino, philadelphia', 'Por fuera', true), ing('b3', '&#x1F41F;', 'Tampico, anguila, ajonjolí', 'Por fuera', true)], extras: []
+    id: 'promo3', dbId: 53, emoji: '&#x1F363;', num: 'Paquete 3', title: '🍣 3 Bolas', price: 200, tag: null, hasProtein: true,
+    desc: '3 Bolas con ingrediente a elegir (pollo, res, tocino, surimi o camarón). Primera proteína incluida, extras +$15. Camarón como primera proteína +$15. Sin pepino.',
+    ingredients: [ing('b1', '&#x1F363;', '3 Bolas', 'Prot. a elegir', false), ing('b2', '&#x1F951;', 'Aguacate, philadelphia', 'Por fuera', true), ing('b3', '&#x1F41F;', 'Tampico, anguila, ajonjolí', 'Por fuera', true)], extras: []
   }
 ];
 
@@ -578,7 +580,7 @@ function addNewInstance(itemId, e) {
   var iid = genId();
 
   // Pre-seleccionar sushis para La Caja y La Cajita
-  var initialMods = { removed: {}, extras: {}, sauces: {}, sauces2: {}, proteins: [], alga: null, extraIngs: [], sushiChoice: [] };
+  var initialMods = { removed: {}, extras: {}, sauces: {}, sauces2: {}, proteins: [], alga: null, extraIngs: [], sushiChoice: [], removedProteins: [] };
   if (item.hasSushiChoice) {
     // Pre-seleccionar California, Bombazo y Sonora
     initialMods.sushiChoice = ['s1', 's2', 's3'];
@@ -613,7 +615,8 @@ function openModalEdit(iid, e) {
     proteins: (sv.proteins || []).slice(),
     alga: sv.alga || null,
     extraIngs: (sv.extraIngs || []).slice(),
-    sushiChoice: (sv.sushiChoice || []).slice()
+    sushiChoice: (sv.sushiChoice || []).slice(),
+    removedProteins: (sv.removedProteins || []).slice()
   };
   var insts = getItemInstances(inst.itemId);
   var idx = insts.findIndex(function (o) { return o.instanceId === iid; }) + 1;
@@ -663,6 +666,20 @@ function buildModalBody(item) {
           + '</div>';
       });
       html += '</div><div class="protein-note">🦐 Camarón +$15 · Otras proteínas sin costo extra</div></div>';
+    } else if (item.id === 'promo1' || item.id === 'promo3' || item.id === 'promo4') {
+      // PAQUETE 1, 3 y 4: Primera proteína incluida, extras +$15, camarón +$15
+      html += '<div class="protein-section"><div class="protein-section-title">🥩 Elige tu(s) proteína(s)</div><div class="protein-grid">';
+      PROTEINS.forEach(function (p) {
+        var cnt = currentMods.proteins.filter(function (x) { return x === p.id; }).length;
+        var isSel = cnt > 0;
+        var extraLabel = p.id === 'p_camaron' ? ' (+$15)' : '';
+        html += '<div class="protein-btn' + (isSel ? ' sel' : '') + '" id="pb-' + p.id + '" onclick="togProt(\'' + p.id + '\')">'
+          + '<span class="p-emoji">' + p.emoji + '</span>'
+          + '<span class="p-name">' + p.name + extraLabel + '</span>'
+          + (cnt > 1 ? '<span class="p-count">' + cnt + '</span>' : '')
+          + '</div>';
+      });
+      html += '</div><div class="protein-note">Primera proteína incluida · 🦐 Camarón +$15 · Extras +$15 c/u</div></div>';
     } else {
       html += '<div class="protein-section"><div class="protein-section-title">🥩 Elige tu(s) proteína(s)</div><div class="protein-grid">';
       PROTEINS.forEach(function (p) {
@@ -676,6 +693,20 @@ function buildModalBody(item) {
       });
       html += '</div><div class="protein-note">Primera proteína incluida · Extras +$15 c/u</div></div>';
     }
+  }
+
+  // Protein removal (Bola Mixta: all included, can remove)
+  if (item.hasProteinRemoval) {
+    html += '<div class="protein-section"><div class="protein-section-title">🥩 Proteínas incluidas (quita las que NO quieras)</div><div class="protein-grid">';
+    PROTEINS.forEach(function (p) {
+      var isRemoved = currentMods.removedProteins && currentMods.removedProteins.indexOf(p.id) >= 0;
+      html += '<div class="protein-btn' + (isRemoved ? '' : ' sel') + '" id="pb-' + p.id + '" onclick="togProtRemoval(\'' + p.id + '\')">'
+        + '<span class="p-emoji">' + p.emoji + '</span>'
+        + '<span class="p-name">' + p.name + '</span>'
+        + (isRemoved ? '<span class="p-removed-label">❌ QUITADA</span>' : '')
+        + '</div>';
+    });
+    html += '</div><div class="protein-note">Todas incluidas · Sin costo extra al quitar</div></div>';
   }
 
   // Sushi choice (La Caja y La Cajita)
@@ -797,6 +828,32 @@ function togProt(pid) {
   });
 }
 
+function togProtRemoval(pid) {
+  if (!currentMods.removedProteins) currentMods.removedProteins = [];
+  var idx = currentMods.removedProteins.indexOf(pid);
+  if (idx >= 0) {
+    // Volver a incluir
+    currentMods.removedProteins.splice(idx, 1);
+  } else {
+    // Quitar
+    currentMods.removedProteins.push(pid);
+  }
+  PROTEINS.forEach(function (p) {
+    var isRemoved = currentMods.removedProteins.indexOf(p.id) >= 0;
+    var b = document.getElementById('pb-' + p.id);
+    if (!b) return;
+    b.className = 'protein-btn' + (isRemoved ? '' : ' sel');
+    // Add or remove the removed label
+    var label = b.querySelector('.p-removed-label');
+    if (isRemoved && !label) {
+      label = document.createElement('span'); label.className = 'p-removed-label'; label.textContent = '❌ QUITADA';
+      b.appendChild(label);
+    } else if (!isRemoved && label) {
+      label.remove();
+    }
+  });
+}
+
 function togSushiChoice(sushiId) {
   var idx = currentMods.sushiChoice.indexOf(sushiId);
   if (idx >= 0) {
@@ -870,12 +927,26 @@ function confirmMods() {
   var extraCost = 0;
   // 1. Proteínas extras en items normales: primera incluida, resto +$15 c/u
   // 2. En promociones (hasPromo): camarón siempre +$15, otras proteínas sin costo extra
+  // 3. Paquete 1 y Paquete 3: primera proteína incluida, pero si camarón es primero +$15, extras +$15
   if (inst.item.hasPromo) {
-    // Promociones: solo camarón cuesta extra (+$15)
+    // Promociones (Paquete 4): solo camarón cuesta extra (+$15)
     if (currentMods.proteins && currentMods.proteins.length) {
       currentMods.proteins.forEach(function (p) {
         if (p === 'p_camaron') extraCost += 15;
       });
+    }
+  } else if (inst.item.id === 'promo1' || inst.item.id === 'promo3' || inst.item.id === 'promo4') {
+    // Paquete 1, 3 y 4: lógica especial con camarón
+    if (currentMods.proteins && currentMods.proteins.length) {
+      var hasShrimp = currentMods.proteins.indexOf('p_camaron') >= 0;
+      var totalProteins = currentMods.proteins.length;
+      // Si hay camarón, cobra +$15 por el camarón
+      if (hasShrimp) extraCost += 15;
+      // Las proteínas extra (más de 1) cuestan +$15 cada una
+      if (totalProteins > 1) {
+        // Si hay camarón, ya se cobró, solo cobrar las demás extras
+        extraCost += (totalProteins - 1) * 15;
+      }
     }
   } else {
     // Items normales: primera proteína incluida, resto +$15 c/u
