@@ -4429,12 +4429,17 @@
         } catch (e) { document.getElementById('historial-loading').style.display = 'none'; document.getElementById('historial-buscar').style.display = 'block'; errEl.textContent = 'Error de conexión'; errEl.style.display = 'block'; }
       }
 
+      // Contador global para números temporales de pedidos
+      var _tempOrderNum = 0;
+      function getOrderNumber(p) {
+        if (p.id_pedido) return '#' + p.id_pedido;
+        // Si no hay ID de base de datos, usar número temporal secuencial
+        _tempOrderNum++;
+        return '#T' + _tempOrderNum;
+      }
+
       function mostrarHistorialDatos(data) {
-        console.log('Datos del historial:', data);
-        if (data.pedidos && data.pedidos.length > 0) {
-          console.log('Primer pedido:', data.pedidos[0]);
-          console.log('Keys del primer pedido:', Object.keys(data.pedidos[0]));
-        }
+        _tempOrderNum = 0; // Resetear contador temporal
         document.getElementById('historial-loading').style.display = 'none';
         document.getElementById('historial-contenido').style.display = 'block';
         document.getElementById('hist-nombre').textContent = data.cliente.nombre;
@@ -4443,14 +4448,6 @@
         document.getElementById('hist-total-pedidos').textContent = data.cliente.total_pedidos + ' pedidos en total';
         document.getElementById('historial-subtitle').textContent = data.pedidos.length + ' pedidos recientes';
         var ESTADO_LABEL = { pendiente: '🟡 Pendiente', preparando: '🔵 Preparando', listo: '🟢 Listo', entregado: '✅ Entregado', cancelado: '❌ Cancelado' };
-        // Generador de números temporales para pedidos sin ID
-        var _tempOrderNum = 1000;
-        function getOrderNumber(p) {
-          if (p.id_pedido) return '#' + p.id_pedido;
-          // Si no hay ID, usar número temporal basado en el timestamp para consistencia
-          var tempNum = p.fecha ? parseInt(new Date(p.fecha).getTime() % 10000) + 1000 : _tempOrderNum++;
-          return '#T' + tempNum;
-        }
         var html = data.pedidos.length === 0
           ? '<div style="text-align:center;padding:24px;color:#9E7080">Aún no tienes pedidos registrados</div>'
           : data.pedidos.map(function (p) {
