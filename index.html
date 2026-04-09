@@ -3964,6 +3964,7 @@
       }
 
       /* ══ WHATSAPP ══ */
+      var _tempPedidoCounter = 0;
       function doSendWhatsApp(clientName, clientPhone, clientAddress, pedidoId) {
         var notesEl = document.getElementById('order-notes');
         var notes = notesEl ? notesEl.value : '';
@@ -3971,9 +3972,12 @@
         // Solo agregar costo de envío si es domicilio
         var total = orderType === 'envio' ? subtotal + _costoEnvioActual : subtotal;
 
+        // Generar número de pedido: usa ID de BD o temporal secuencial
+        var orderNumber = pedidoId ? '#' + pedidoId : '#T' + (++_tempPedidoCounter);
+
         var msg = '🍣 *NUEVO PEDIDO — La Esquina del Sushi*\n';
         msg += '━━━━━━━━━━━━━━━━━━━━\n';
-        if (pedidoId) msg += '🧾 *Comanda número: ' + pedidoId + '*\n';
+        msg += '🧾 *Comanda número: ' + orderNumber + '*\n';
         msg += '👤 *Nombre:* ' + clientName + '\n';
         if (clientPhone) msg += '📱 *Teléfono:* ' + clientPhone + '\n';
         if (clientAddress) msg += '📍 *Dirección:* ' + clientAddress + '\n';
