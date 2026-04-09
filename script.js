@@ -1,4 +1,4 @@
-/* ═══════════════════════════════════════════════
+﻿/* ═══════════════════════════════════════════════
    La Esquina del Sushi — Lógica y datos del menú
    ═══════════════════════════════════════════════ */
 
@@ -1038,13 +1038,13 @@ function submitOrder() {
 
     if (!address) { alert('Por favor ingresa la dirección de entrega 📍'); document.getElementById('cl-address').focus(); return; }
     closeClientModal();
-    guardarPedidoBackend(name, validacion.completo, address).then(function () {
-      doSendWhatsApp(name, validacion.completo, address);
+    guardarPedidoBackend(name, validacion.completo, address).then(function (pedidoId) {
+      doSendWhatsApp(name, validacion.completo, address, pedidoId);
     });
   } else {
     closeClientModal();
-    guardarPedidoBackend(name, null, null).then(function () {
-      doSendWhatsApp(name, null, null);
+    guardarPedidoBackend(name, null, null).then(function (pedidoId) {
+      doSendWhatsApp(name, null, null, pedidoId);
     });
   }
 }
@@ -1216,12 +1216,12 @@ function clearOrder() {
    ENVÍO POR WHATSAPP
    ══════════════════════════��════════════════���══ */
 function doSendWhatsApp(clientName, clientPhone, clientAddress) {
-  var notes = document.getElementById('order-notes').value;
+function doSendWhatsApp(clientName, clientPhone, clientAddress, pedidoId) {
   var total = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
 
   var msg = '🍣 *NUEVO PEDIDO — La Esquina del Sushi*\n';
-  msg += '━━━━━━━━��━━━━━━━━━━━\n';
-  msg += '👤 *Nombre:* ' + clientName + '\n';
+  msg += '━━━━━━━━━━━━━━━━━━━━\n';
+  if (pedidoId) msg += '🧾 *Comanda número: ' + pedidoId + '*\n';
   if (clientPhone) msg += '📱 *Teléfono:* ' + clientPhone + '\n';
   if (clientAddress) msg += '📍 *Dirección:* ' + clientAddress + '\n';
   msg += '📦 *Tipo:* ' + (orderType === 'envio' ? 'Envío a domicilio' : 'Recoge en sucursal') + '\n';
