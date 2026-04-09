@@ -4430,6 +4430,11 @@
       }
 
       function mostrarHistorialDatos(data) {
+        console.log('Datos del historial:', data);
+        if (data.pedidos && data.pedidos.length > 0) {
+          console.log('Primer pedido:', data.pedidos[0]);
+          console.log('Keys del primer pedido:', Object.keys(data.pedidos[0]));
+        }
         document.getElementById('historial-loading').style.display = 'none';
         document.getElementById('historial-contenido').style.display = 'block';
         document.getElementById('hist-nombre').textContent = data.cliente.nombre;
