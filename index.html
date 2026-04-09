@@ -4063,30 +4063,47 @@
           // ══ La Caja, La Cajita, Paquetellenes, Botix y Charola ═══════════════════════════
           if (item.id === 'c7' || item.id === 'c6' || item.id === 'c3' || item.id === 'c2' || item.id === 'c4') {
             var sushisPorDefecto = ['California', 'Bombazo', 'Sonora'];
-            var totalSushis = (item.id === 'c7' || item.id === 'c6') ? 3 : 1;
-            var precioPorSushi = (itemPrice + ec) / totalSushis;
+            // Mostrar el item con su precio total
+            msg += '• ' + itemName + ' — $' + (itemPrice + ec) + '\n';
 
+            // Mostrar detalles de cada sushi
             if (m.slotMods && m.slotMods.length) {
               m.slotMods.forEach(function (sm, idx) {
                 var sushiName = sm && sm.sushiName ? sm.sushiName : sushisPorDefecto[idx];
-                msg += '• ' + itemName + ' — ' + sushiName + ' — $' + precioPorSushi.toFixed(0) + '\n';
 
                 // Alga
-                if (sm.alga) msg += '   Alga: ' + (sm.alga === 'con' ? 'Con alga' : 'Sin alga') + '\n';
+                var algaText = '';
+                if (sm.alga) algaText = (sm.alga === 'con' ? 'Con alga' : 'Sin alga');
+
                 // Estilo
-                if (sm.style) msg += '   Estilo: ' + (sm.style === 'natural' ? 'Natural' : 'Empanizado') + '\n';
+                var styleText = '';
+                if (sm.style) styleText = (sm.style === 'natural' ? 'Natural' : 'Empanizado');
+
                 // Proteínas
+                var pnames = [];
                 if (sm.proteins && sm.proteins.length) {
-                  var pnames = sm.proteins.map(function (pid) {
+                  pnames = sm.proteins.map(function (pid) {
                     var pr = PROTEINS.find(function (x) { return x.id === pid; });
                     return pr ? pr.name : '';
                   }).filter(Boolean);
-                  msg += '   Proteína(s): ' + pnames.join(', ') + '\n';
                 }
-                // Ingredientes removidos (usando mapeo especial para slotMods)
+
+                // Construir la línea de detalles del sushi
+                var sushiDetails = [];
+                if (algaText) sushiDetails.push('Alga: ' + algaText);
+                if (styleText) sushiDetails.push('Estilo: ' + styleText);
+                if (pnames.length) sushiDetails.push('Proteína(s): ' + pnames.join(', '));
+
+                if (sushiDetails.length) {
+                  msg += '   🍣 ' + sushiName + ' — ' + sushiDetails.join(' · ') + '\n';
+                } else {
+                  msg += '   🍣 ' + sushiName + '\n';
+                }
+
+                // Ingredientes removidos
                 if (sm.removed) {
                   var removedNames = getRemovedNames(sm.removed, ingredients);
-                  if (removedNames.length) msg += '   Sin: ' + removedNames.join(', ') + '\n';
+                  if (removedNames.length) msg += '      Sin: ' + removedNames.join(', ') + '\n';
                 }
               });
             }
