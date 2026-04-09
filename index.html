@@ -4438,6 +4438,14 @@
         document.getElementById('hist-total-pedidos').textContent = data.cliente.total_pedidos + ' pedidos en total';
         document.getElementById('historial-subtitle').textContent = data.pedidos.length + ' pedidos recientes';
         var ESTADO_LABEL = { pendiente: '🟡 Pendiente', preparando: '🔵 Preparando', listo: '🟢 Listo', entregado: '✅ Entregado', cancelado: '❌ Cancelado' };
+        // Generador de números temporales para pedidos sin ID
+        var _tempOrderNum = 1000;
+        function getOrderNumber(p) {
+          if (p.id_pedido) return '#' + p.id_pedido;
+          // Si no hay ID, usar número temporal basado en el timestamp para consistencia
+          var tempNum = p.fecha ? parseInt(new Date(p.fecha).getTime() % 10000) + 1000 : _tempOrderNum++;
+          return '#T' + tempNum;
+        }
         var html = data.pedidos.length === 0
           ? '<div style="text-align:center;padding:24px;color:#9E7080">Aún no tienes pedidos registrados</div>'
           : data.pedidos.map(function (p) {
@@ -4469,7 +4477,7 @@
             }).join('');
             return '<div style="background:#fff;border-radius:14px;padding:14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(232,84,122,0.08)">'
               + '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">'
-              + '<div><div style="font-weight:700;font-size:13px">' + fechaStr + ' · ' + horaStr + '</div>'
+              + '<div><div style="font-weight:700;font-size:13px">' + getOrderNumber(p) + ' · ' + fechaStr + ' · ' + horaStr + '</div>'
               + '<div style="font-size:12px;color:#9E7080">' + (p.tipo_entrega === 'domicilio' ? '🛵 Domicilio' + (p.direccion_entrega ? ' · 📍 ' + p.direccion_entrega : '') : '🏪 Sucursal') + '</div></div>'
               + '<div style="text-align:right"><div style="font-size:13px">' + (ESTADO_LABEL[p.estado] || p.estado) + '</div>'
               + '<div style="font-weight:700;font-size:16px;color:#E8547A">$' + parseFloat(p.total).toLocaleString('es-MX') + '</div></div>'
