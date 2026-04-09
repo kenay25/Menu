@@ -3750,8 +3750,8 @@
           _coloniaSeleccionada = coloniaParaGuardar;
           _costoEnvioActual = costoEnvioParaGuardar;
           document.getElementById('order-notes').value = notasParaGuardar;
-          guardarPedidoBackend(name, phone, address).then(function (pedidoId) {
-            doSendWhatsApp(name, phone, address, pedidoId);
+          guardarPedidoBackend(name, phone, address).then(function () {
+            doSendWhatsApp(name, phone, address);
             _coloniaSeleccionada = null;
             _costoEnvioActual = 0;
             document.getElementById('order-notes').value = '';
@@ -3760,8 +3760,8 @@
           var notasParaGuardar2 = document.getElementById('order-notes').value;
           closeClientModal();
           document.getElementById('order-notes').value = notasParaGuardar2;
-          guardarPedidoBackend(name, phone, null).then(function (pedidoId) {
-            doSendWhatsApp(name, phone, null, pedidoId);
+          guardarPedidoBackend(name, phone, null).then(function () {
+            doSendWhatsApp(name, phone, null);
             document.getElementById('order-notes').value = '';
           });
         }
@@ -3964,7 +3964,7 @@
       }
 
       /* ══ WHATSAPP ══ */
-      function doSendWhatsApp(clientName, clientPhone, clientAddress, pedidoId) {
+      function doSendWhatsApp(clientName, clientPhone, clientAddress) {
         var notesEl = document.getElementById('order-notes');
         var notes = notesEl ? notesEl.value : '';
         var subtotal = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
@@ -3973,7 +3973,6 @@
 
         var msg = '🍣 *NUEVO PEDIDO — La Esquina del Sushi*\n';
         msg += '━━━━━━━━━━━━━━━━━━━━\n';
-        if (pedidoId) msg += '🧾 *Comanda número: ' + pedidoId + '*\n';
         msg += '👤 *Nombre:* ' + clientName + '\n';
         if (clientPhone) msg += '📱 *Teléfono:* ' + clientPhone + '\n';
         if (clientAddress) msg += '📍 *Dirección:* ' + clientAddress + '\n';
@@ -4064,6 +4063,7 @@
           // ══ La Caja, La Cajita, Paquetellenes, Botix y Charola ═══════════════════════════
           if (item.id === 'c7' || item.id === 'c6' || item.id === 'c3' || item.id === 'c2' || item.id === 'c4') {
             var sushisPorDefecto = ['California', 'Bombazo', 'Sonora'];
+            // Mostrar el item con su precio total
             msg += '• ' + itemName + ' — $' + (itemPrice + ec) + '\n';
 
             // Mostrar detalles de cada sushi
