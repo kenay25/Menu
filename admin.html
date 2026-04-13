@@ -1192,6 +1192,11 @@
       }
     }
 
+    @keyframes bannerPulse {
+      0%, 100% { transform: scaleY(1); }
+      50% { transform: scaleY(1.05); background: linear-gradient(90deg, #27AE60, #2ECC71); }
+    }
+
     /* ── Empty state ── */
     .empty {
       text-align: center;
@@ -1510,6 +1515,10 @@
       }
 
       .topbar-right>a {
+        display: none;
+      }
+
+      #autoprint-toggle-label {
         display: none;
       }
 
@@ -1938,10 +1947,21 @@
           <span class="pedidos-toggle-label" id="pedidos-toggle-label">Pedidos activos</span>
           <div class="toggle on" id="pedidos-toggle" style="pointer-events:none"></div>
         </div>
+        <!-- Toggle Auto-Imprimir -->
+        <div class="pedidos-toggle-wrap off" id="autoprint-toggle-wrap" onclick="toggleAutoPrint()"
+          style="cursor:pointer" title="Auto-imprimir tickets de pedidos nuevos">
+          <div class="pedidos-toggle-dot" id="autoprint-toggle-dot"></div>
+          <span class="pedidos-toggle-label" id="autoprint-toggle-label">Auto-imprimir</span>
+          <div class="toggle" id="autoprint-toggle" style="pointer-events:none"></div>
+        </div>
         <div id="reloj" style="font-size:12px;color:var(--muted);font-weight:600;text-align:right"></div>
         <button class="btn-refresh" onclick="recargarPagina()">↻ Actualizar</button>
         <a href="index.html" style="font-size:12px;color:var(--muted);text-decoration:none;">← Ver menú</a>
       </div>
+    </div>
+    <!-- Banner de nuevo pedido -->
+    <div id="nuevo-pedido-banner" style="display:none;background:linear-gradient(90deg,#2ECC71,#27AE60);color:white;padding:10px 20px;font-weight:700;font-size:14px;text-align:center;animation:bannerPulse 1s ease 3;cursor:pointer" onclick="this.style.display='none'">
+      🔔 ¡Nuevo pedido recibido! — Imprimiendo tickets automáticamente...
     </div>
 
     <!-- ═══ DASHBOARD ═══════════════════════════════════════════ -->
@@ -2318,7 +2338,7 @@
 
   <!-- ═══ MODAL DETALLE PEDIDO ═════════════════════════════════ -->
   <div class="modal-overlay" id="modal-pedido" onclick="if(event.target===this)this.classList.remove('open')">
-    <div class="modal-box">
+    <div class="modal-box" style="max-width:560px">
       <div class="modal-head">
         <h3 id="modal-pedido-title">Detalle del pedido</h3>
         <button class="modal-close"
@@ -2327,6 +2347,9 @@
       <div class="modal-body" id="modal-pedido-body"></div>
     </div>
   </div>
+
+  <!-- ═══ PRINT AREA (hidden, only visible during @media print) ═══ -->
+  <div id="print-area"></div>
 
   <script>
     const API = 'https://web-production-97d4.up.railway.app';
@@ -2375,6 +2398,7 @@
       cargarDashboard();
       cargarEstadoPedidos();
       iniciarAutoRefresh();
+      iniciarAutoImpresion();
     }
 
     async function api(path, method = 'GET', body = null) {
@@ -2549,9 +2573,13 @@
       }
     }
 
+    // ── Variable para guardar el pedido actual del modal ──
+    let _pedidoActual = null;
+
     async function verDetallePedido(id) {
       const data = await api(`/admin/pedidos/${id}/detalle`);
       if (!data) return;
+      _pedidoActual = data; // Guardar para imprimir
       document.getElementById('modal-pedido-title').textContent = `Pedido #${data.id_pedido}`;
       const hora = new Date(data.fecha_pedido + 'Z').toLocaleString('es-MX', { timeZone: 'America/Hermosillo' });
       document.getElementById('modal-pedido-body').innerHTML = `
@@ -2574,8 +2602,245 @@
       </div>
     `).join('')}
     <div style="text-align:right;font-size:18px;font-weight:700;color:var(--pink);margin-top:12px">Total: $${parseFloat(data.total).toLocaleString()}</div>
+    <!-- ── Botones de impresión ── -->
+    <div class="print-buttons">
+      <button class="btn-print btn-print-cocina" onclick="imprimirTicket('cocina')">
+        <span>🍳</span> Comanda (Cocina)
+      </button>
+      <button class="btn-print btn-print-cliente" onclick="imprimirTicket('cliente')">
+        <span>🧾</span> Ticket (Cliente)
+      </button>
+      <button class="btn-print btn-print-ambos" onclick="imprimirAmbosTickets()">
+        <span>🖨️</span> Ambos
+      </button>
+    </div>
   `;
       document.getElementById('modal-pedido').classList.add('open');
+    }
+
+    /* ══ IMPRESIÓN DE TICKETS ═══════════════════════════════════ */
+
+    /**
+     * Formatea las modificaciones como texto plano para tickets impresos
+     */
+    function formatearModsTexto(mods) {
+      if (!mods) return '';
+      let m = typeof mods === 'string' ? JSON.parse(mods) : mods;
+      let lines = [];
+
+      if (m.alga) lines.push('> Alga: ' + (m.alga === 'con' ? 'CON alga' : 'SIN alga'));
+      if (m.estilo) lines.push('> Estilo: ' + (m.estilo === 'natural' ? 'Natural' : 'Empanizado'));
+      if (m.sushi_elegido) lines.push('> Sushi: ' + m.sushi_elegido);
+      if (m.hielo) lines.push('> Hielo: ' + (m.hielo === 'con' ? 'CON' : 'SIN'));
+
+      if (m.proteinas && m.proteinas.length)
+        lines.push('> Proteina: ' + m.proteinas.map(p => PROTEINAS_NOMBRES[p] || p).join(', '));
+
+      if (m.salsas && m.salsas.length)
+        lines.push('> Salsa: ' + m.salsas.map(s => SALSAS_NOMBRES[s] || s).join(', '));
+      if (m.salsas2 && m.salsas2.length)
+        lines.push('> Salsa 2a: ' + m.salsas2.map(s => SALSAS_NOMBRES[s] || s).join(', '));
+      if (m.salsas_alitas && m.salsas_alitas.length)
+        lines.push('> Salsa alitas: ' + m.salsas_alitas.map(s => SALSAS_NOMBRES[s] || s).join(', '));
+
+      if (m.sin_ingredientes && m.sin_ingredientes.length)
+        lines.push('> SIN: ' + m.sin_ingredientes.join(', '));
+      if (m.extras_ingredientes && m.extras_ingredientes.length)
+        lines.push('> EXTRA: ' + m.extras_ingredientes.join(', '));
+      if (m.extras_producto && m.extras_producto.length)
+        lines.push('> + Extra: ' + m.extras_producto.join(', '));
+
+      return lines.join('<br>');
+    }
+
+    /**
+     * Genera el HTML del ticket de cocina (comanda)
+     */
+    function generarTicketCocina(data) {
+      const hora = new Date(data.fecha_pedido + 'Z').toLocaleString('es-MX', {
+        hour: '2-digit', minute: '2-digit', hour12: true,
+        timeZone: 'America/Hermosillo'
+      });
+      const fecha = new Date(data.fecha_pedido + 'Z').toLocaleDateString('es-MX', {
+        day: 'numeric', month: 'short', year: 'numeric',
+        timeZone: 'America/Hermosillo'
+      });
+
+      let html = `
+        <div class="ticket-type-label">*** COMANDA ***</div>
+        <div class="ticket-info">
+          <p><strong>Pedido #${data.id_pedido}</strong></p>
+          <p>${fecha} — ${hora}</p>
+          <p>${data.tipo_entrega === 'domicilio' ? 'DOMICILIO' : 'SUCURSAL'}</p>
+          <p>Cliente: ${data.nombre_cliente}</p>
+          ${data.colonia_entrega ? `<p>Colonia: ${data.colonia_entrega}</p>` : ''}
+        </div>
+      `;
+
+      // Productos
+      html += '<div class="ticket-items">';
+      data.productos.forEach(p => {
+        const modsTexto = formatearModsTexto(p.modificaciones);
+        html += `
+          <div class="ticket-item">
+            <div class="ticket-item-name">
+              <span>${p.cantidad}x ${p.nombre_producto}</span>
+            </div>
+            ${modsTexto ? `<div class="ticket-item-mods">${modsTexto}</div>` : ''}
+          </div>
+        `;
+      });
+      html += '</div>';
+
+      // Notas especiales
+      if (data.notas) {
+        html += `
+          <div class="ticket-notas">
+            <strong>NOTAS:</strong><br>
+            ${data.notas}
+          </div>
+        `;
+      }
+
+      html += `
+        <div style="text-align:center;font-size:11px;margin-top:8px;">
+          --------------------------------<br>
+          Impreso: ${new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', second: '2-digit', timeZone: 'America/Hermosillo' })}
+        </div>
+      `;
+
+      return html;
+    }
+
+    /**
+     * Genera el HTML del ticket para el cliente (recibo)
+     */
+    function generarTicketCliente(data) {
+      const hora = new Date(data.fecha_pedido + 'Z').toLocaleString('es-MX', {
+        hour: '2-digit', minute: '2-digit', hour12: true,
+        timeZone: 'America/Hermosillo'
+      });
+      const fecha = new Date(data.fecha_pedido + 'Z').toLocaleDateString('es-MX', {
+        day: 'numeric', month: 'short', year: 'numeric',
+        timeZone: 'America/Hermosillo'
+      });
+
+      let subtotalProductos = 0;
+      data.productos.forEach(p => { subtotalProductos += parseFloat(p.subtotal); });
+      const envio = parseFloat(data.costo_envio) || 0;
+
+      let html = `
+        <div class="ticket-header">
+          <div class="ticket-logo">LA ESQUINA DEL SUSHI</div>
+          <div class="ticket-sub">
+            Blvd. Sonora #21<br>
+            Media Cuadra del Socum<br>
+            Tel: 642-134-2959 / 642-426-7244<br>
+            Navojoa, Sonora
+          </div>
+        </div>
+        <div class="ticket-info">
+          <p><strong>Pedido #${data.id_pedido}</strong></p>
+          <p>${fecha} — ${hora}</p>
+          <p>${data.tipo_entrega === 'domicilio' ? 'DOMICILIO' : 'EN SUCURSAL'}</p>
+          <p>Cliente: ${data.nombre_cliente}</p>
+          ${data.telefono_cliente ? `<p>Tel: ${data.telefono_cliente}</p>` : ''}
+          ${data.colonia_entrega ? `<p>Colonia: ${data.colonia_entrega}</p>` : ''}
+          ${data.direccion_entrega ? `<p>Dir: ${data.direccion_entrega}</p>` : ''}
+        </div>
+      `;
+
+      // Productos con precios
+      html += '<div class="ticket-items">';
+      data.productos.forEach(p => {
+        const modsTexto = formatearModsTexto(p.modificaciones);
+        html += `
+          <div class="ticket-item">
+            <div class="ticket-item-name">
+              <span>${p.cantidad}x ${p.nombre_producto}</span>
+              <span>$${parseFloat(p.subtotal).toLocaleString()}</span>
+            </div>
+            <div class="ticket-item-detail">
+              c/u $${parseFloat(p.precio_unitario).toLocaleString()}${p.costo_extra > 0 ? ' + extras $' + parseFloat(p.costo_extra).toLocaleString() : ''}
+            </div>
+            ${modsTexto ? `<div class="ticket-item-mods">${modsTexto}</div>` : ''}
+          </div>
+        `;
+      });
+      html += '</div>';
+
+      // Notas
+      if (data.notas) {
+        html += `
+          <div class="ticket-notas">
+            <strong>Notas:</strong> ${data.notas}
+          </div>
+        `;
+      }
+
+      // Totales
+      html += '<div class="ticket-totals">';
+      if (envio > 0) {
+        html += `
+          <p>Subtotal: $${subtotalProductos.toLocaleString()}</p>
+          <p>Envio: $${envio.toLocaleString()}</p>
+        `;
+      }
+      html += `
+        <div class="grand-total">TOTAL: $${parseFloat(data.total).toLocaleString()}</div>
+      </div>`;
+
+      html += `
+        <div class="ticket-footer">
+          Gracias por su preferencia!<br>
+          La Esquina del Sushi<br>
+          --------------------------------<br>
+          Horario: 5:30 - 11:30 pm<br>
+          (Descanso martes)<br>
+          WhatsApp: 662-206-7409
+        </div>
+      `;
+
+      return html;
+    }
+
+    /**
+     * Imprime un ticket (cocina o cliente)
+     */
+    function imprimirTicket(tipo) {
+      if (!_pedidoActual) { alert('No hay pedido cargado'); return; }
+
+      const printArea = document.getElementById('print-area');
+      if (tipo === 'cocina') {
+        printArea.innerHTML = generarTicketCocina(_pedidoActual);
+      } else {
+        printArea.innerHTML = generarTicketCliente(_pedidoActual);
+      }
+
+      // Pequeño delay para que el DOM se actualice
+      setTimeout(() => {
+        window.print();
+      }, 100);
+    }
+
+    /**
+     * Imprime ambos tickets secuencialmente
+     */
+    function imprimirAmbosTickets() {
+      if (!_pedidoActual) { alert('No hay pedido cargado'); return; }
+
+      const printArea = document.getElementById('print-area');
+
+      // Generar ambos tickets con separador de corte
+      printArea.innerHTML = `
+        ${generarTicketCocina(_pedidoActual)}
+        <div style="page-break-after: always;"></div>
+        ${generarTicketCliente(_pedidoActual)}
+      `;
+
+      setTimeout(() => {
+        window.print();
+      }, 100);
     }
 
     /* ══ CATEGORÍAS ═════════════════════════════════════════════ */
@@ -2643,6 +2908,220 @@
         else if (name === 'pedidos') cargarPedidosHoy(pedidosHoyFiltro);
         else if (name === 'menu') cargarMenu();
       }, 30000);
+    }
+
+    /* ══ AUTO-IMPRESIÓN DE PEDIDOS NUEVOS ═══════════════════════ */
+    let autoPrintEnabled = false;
+    let autoPrintInterval = null;
+    let pedidosVistos = new Set(); // IDs de pedidos ya vistos/impresos
+    let primeraRevision = true; // Para no imprimir todos los pedidos existentes al cargar
+    let autoPrintCola = []; // Cola de pedidos pendientes de imprimir
+    let imprimiendo = false; // Flag para evitar impresiones simultáneas
+
+    /**
+     * Toggle auto-impresión on/off
+     */
+    function toggleAutoPrint() {
+      autoPrintEnabled = !autoPrintEnabled;
+      const wrap = document.getElementById('autoprint-toggle-wrap');
+      const toggle = document.getElementById('autoprint-toggle');
+      const label = document.getElementById('autoprint-toggle-label');
+
+      if (autoPrintEnabled) {
+        wrap.classList.remove('off');
+        toggle.classList.add('on');
+        label.textContent = 'Auto-imprimir ✓';
+        label.style.color = 'var(--green)';
+        localStorage.setItem('autoprint_enabled', 'true');
+        // Iniciar monitoreo
+        iniciarAutoImpresion();
+      } else {
+        wrap.classList.add('off');
+        toggle.classList.remove('on');
+        label.textContent = 'Auto-imprimir';
+        label.style.color = '';
+        localStorage.removeItem('autoprint_enabled');
+        if (autoPrintInterval) {
+          clearInterval(autoPrintInterval);
+          autoPrintInterval = null;
+        }
+      }
+    }
+
+    /**
+     * Iniciar el monitoreo de pedidos nuevos para auto-impresión
+     */
+    function iniciarAutoImpresion() {
+      // Restaurar estado del toggle desde localStorage
+      if (localStorage.getItem('autoprint_enabled') === 'true') {
+        autoPrintEnabled = true;
+        const wrap = document.getElementById('autoprint-toggle-wrap');
+        const toggle = document.getElementById('autoprint-toggle');
+        const label = document.getElementById('autoprint-toggle-label');
+        if (wrap) wrap.classList.remove('off');
+        if (toggle) toggle.classList.add('on');
+        if (label) { label.textContent = 'Auto-imprimir ✓'; label.style.color = 'var(--green)'; }
+      }
+
+      if (!autoPrintEnabled) return;
+      if (autoPrintInterval) clearInterval(autoPrintInterval);
+
+      // Primera carga: marcar todos los pedidos existentes como "vistos"
+      primeraRevision = true;
+      revisarPedidosNuevos();
+
+      // Revisar cada 10 segundos
+      autoPrintInterval = setInterval(revisarPedidosNuevos, 10000);
+    }
+
+    /**
+     * Revisa si hay pedidos nuevos comparando con los IDs ya vistos
+     */
+    async function revisarPedidosNuevos() {
+      if (!autoPrintEnabled || !TOKEN) return;
+
+      const hoy = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Hermosillo' });
+      const data = await api(`/admin/pedidos?fecha=${hoy}&limite=50`);
+
+      if (!data || !data.length) {
+        primeraRevision = false;
+        return;
+      }
+
+      if (primeraRevision) {
+        // Primera vez: solo marcar como vistos, no imprimir
+        data.forEach(p => pedidosVistos.add(p.id_pedido));
+        primeraRevision = false;
+        console.log('🖨️ Auto-imprimir activo. Pedidos existentes:', pedidosVistos.size);
+        return;
+      }
+
+      // Buscar pedidos que no hayamos visto
+      const nuevos = data.filter(p => !pedidosVistos.has(p.id_pedido));
+
+      if (nuevos.length > 0) {
+        console.log('🆕 Nuevos pedidos detectados:', nuevos.map(p => p.id_pedido));
+        nuevos.forEach(p => {
+          pedidosVistos.add(p.id_pedido);
+          autoPrintCola.push(p.id_pedido);
+        });
+        // Procesar cola de impresión
+        procesarColaImpresion();
+      }
+    }
+
+    /**
+     * Procesa la cola de impresión uno por uno
+     */
+    async function procesarColaImpresion() {
+      if (imprimiendo || !autoPrintCola.length) return;
+      imprimiendo = true;
+
+      while (autoPrintCola.length > 0) {
+        const id = autoPrintCola.shift();
+        await autoImprimirPedido(id);
+        // Esperar 2 segundos entre impresiones
+        if (autoPrintCola.length > 0) {
+          await new Promise(r => setTimeout(r, 2000));
+        }
+      }
+
+      imprimiendo = false;
+    }
+
+    /**
+     * Obtiene el detalle de un pedido y lanza la impresión automática
+     */
+    async function autoImprimirPedido(idPedido) {
+      try {
+        const data = await api(`/admin/pedidos/${idPedido}/detalle`);
+        if (!data) {
+          console.error('No se pudo obtener detalle del pedido #' + idPedido);
+          return;
+        }
+
+        // Mostrar banner de notificación
+        const banner = document.getElementById('nuevo-pedido-banner');
+        banner.innerHTML = `🔔 ¡Nuevo pedido #${idPedido} de ${data.nombre_cliente}! — Imprimiendo tickets...`;
+        banner.style.display = 'block';
+        setTimeout(() => { banner.style.display = 'none'; }, 8000);
+
+        // Sonar notificación
+        reproducirSonidoNotificacion();
+
+        // Generar ambos tickets
+        const printArea = document.getElementById('print-area');
+        printArea.innerHTML = `
+          ${generarTicketCocina(data)}
+          <div style="page-break-after: always;"></div>
+          ${generarTicketCliente(data)}
+        `;
+
+        // Esperar a que el DOM actualice y lanzar impresión
+        await new Promise(r => setTimeout(r, 300));
+        window.print();
+
+        console.log('✅ Tickets impresos para pedido #' + idPedido);
+
+        // Refrescar la tabla de pedidos si estamos en esa página
+        const active = document.querySelector('.page.active');
+        if (active) {
+          const name = active.id.replace('page-', '');
+          if (name === 'pedidos') cargarPedidosHoy(pedidosHoyFiltro);
+          else if (name === 'dashboard') cargarDashboard();
+        }
+
+      } catch (e) {
+        console.error('Error al auto-imprimir pedido #' + idPedido, e);
+      }
+    }
+
+    /**
+     * Genera un beep de notificación usando Web Audio API
+     */
+    function reproducirSonidoNotificacion() {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        const ctx = new AudioCtx();
+
+        // Beep 1
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        osc1.frequency.value = 880;
+        osc1.type = 'sine';
+        gain1.gain.value = 0.3;
+        osc1.start(ctx.currentTime);
+        osc1.stop(ctx.currentTime + 0.15);
+
+        // Beep 2 (más agudo)
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        osc2.frequency.value = 1100;
+        osc2.type = 'sine';
+        gain2.gain.value = 0.3;
+        osc2.start(ctx.currentTime + 0.2);
+        osc2.stop(ctx.currentTime + 0.35);
+
+        // Beep 3 (aún más agudo)
+        const osc3 = ctx.createOscillator();
+        const gain3 = ctx.createGain();
+        osc3.connect(gain3);
+        gain3.connect(ctx.destination);
+        osc3.frequency.value = 1320;
+        osc3.type = 'sine';
+        gain3.gain.value = 0.3;
+        osc3.start(ctx.currentTime + 0.4);
+        osc3.stop(ctx.currentTime + 0.55);
+
+        // Cerrar contexto
+        setTimeout(() => ctx.close(), 1000);
+      } catch (e) {
+        console.log('Audio no disponible');
+      }
     }
 
     /* ══ MENÚ ═══════════════════════════════════════════════════ */
@@ -3632,6 +4111,212 @@
     .metric-icon img.emoji {
       height: 1.4em;
       width: 1.4em;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       PRINT STYLES — Tickets para impresora térmica 80mm
+    ══════════════════════════════════════════════════════════ */
+    #print-area {
+      display: none;
+    }
+
+    @media print {
+      /* Ocultar todo excepto el área de impresión */
+      body > *:not(#print-area) {
+        display: none !important;
+      }
+
+      #print-area {
+        display: block !important;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 80mm;
+        margin: 0;
+        padding: 2mm;
+        font-family: 'Courier New', Courier, monospace;
+        font-size: 12px;
+        color: #000;
+        background: #fff;
+        line-height: 1.4;
+      }
+
+      @page {
+        size: 80mm auto;
+        margin: 0;
+      }
+
+      /* Ticket styles */
+      .ticket-header {
+        text-align: center;
+        border-bottom: 2px dashed #000;
+        padding-bottom: 6px;
+        margin-bottom: 6px;
+      }
+
+      .ticket-header .ticket-logo {
+        font-size: 20px;
+        font-weight: bold;
+        letter-spacing: 1px;
+      }
+
+      .ticket-header .ticket-sub {
+        font-size: 10px;
+        color: #333;
+      }
+
+      .ticket-type-label {
+        text-align: center;
+        font-size: 16px;
+        font-weight: bold;
+        padding: 4px 0;
+        border: 2px solid #000;
+        margin-bottom: 6px;
+        letter-spacing: 2px;
+      }
+
+      .ticket-info {
+        border-bottom: 1px dashed #000;
+        padding-bottom: 6px;
+        margin-bottom: 6px;
+        font-size: 11px;
+      }
+
+      .ticket-info p {
+        margin: 2px 0;
+      }
+
+      .ticket-items {
+        border-bottom: 1px dashed #000;
+        padding-bottom: 6px;
+        margin-bottom: 6px;
+      }
+
+      .ticket-item {
+        margin-bottom: 6px;
+        page-break-inside: avoid;
+      }
+
+      .ticket-item-name {
+        font-weight: bold;
+        font-size: 13px;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .ticket-item-detail {
+        font-size: 10px;
+        color: #333;
+        padding-left: 4px;
+      }
+
+      .ticket-item-mods {
+        font-size: 10px;
+        padding-left: 4px;
+        font-style: italic;
+      }
+
+      .ticket-totals {
+        text-align: right;
+        font-size: 12px;
+        margin-bottom: 6px;
+      }
+
+      .ticket-totals .grand-total {
+        font-size: 16px;
+        font-weight: bold;
+        border-top: 2px solid #000;
+        padding-top: 4px;
+        margin-top: 4px;
+      }
+
+      .ticket-footer {
+        text-align: center;
+        font-size: 10px;
+        border-top: 2px dashed #000;
+        padding-top: 6px;
+        margin-top: 6px;
+      }
+
+      .ticket-notas {
+        border: 1px solid #000;
+        padding: 4px 6px;
+        margin-bottom: 6px;
+        font-size: 11px;
+      }
+
+      .ticket-notas strong {
+        font-size: 12px;
+      }
+
+      /* Ocultar imágenes emoji en impresión */
+      #print-area img.emoji {
+        display: none !important;
+      }
+    }
+
+    /* ── Botones de impresión en el modal ── */
+    .print-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .btn-print {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1.5px solid;
+    }
+
+    .btn-print-cocina {
+      background: rgba(243, 156, 18, 0.1);
+      border-color: rgba(243, 156, 18, 0.3);
+      color: #D68910;
+    }
+
+    .btn-print-cocina:hover {
+      background: rgba(243, 156, 18, 0.2);
+      border-color: #F39C12;
+    }
+
+    .btn-print-cliente {
+      background: rgba(46, 204, 113, 0.1);
+      border-color: rgba(46, 204, 113, 0.3);
+      color: #1E8449;
+    }
+
+    .btn-print-cliente:hover {
+      background: rgba(46, 204, 113, 0.2);
+      border-color: #2ECC71;
+    }
+
+    .btn-print-ambos {
+      background: rgba(232, 84, 122, 0.1);
+      border-color: rgba(232, 84, 122, 0.3);
+      color: var(--pink-deep);
+    }
+
+    .btn-print-ambos:hover {
+      background: rgba(232, 84, 122, 0.2);
+      border-color: var(--pink);
+    }
+
+    @media (max-width: 768px) {
+      .print-buttons {
+        flex-direction: column;
+      }
     }
   </style>
 </body>
