@@ -62,6 +62,92 @@
       position: relative;
     }
 
+    .sidebar-desktop-toggle {
+      display: none;
+    }
+    @media (min-width: 1025px) {
+      .sidebar-desktop-toggle {
+        display: flex;
+        position: absolute;
+        top: 16px;
+        right: -15px;
+        background: var(--pink);
+        color: white;
+        border: 2px solid #F5EEF0;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+        cursor: pointer;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        z-index: 101;
+      }
+      .sidebar-desktop-toggle:hover {
+        background: var(--pink-deep);
+        transform: scale(1.1);
+      }
+      body.sidebar-collapsed {
+        --sidebar-w: 64px;
+      }
+      body.sidebar-collapsed .sidebar-logo h2,
+      body.sidebar-collapsed .sidebar-logo small,
+      body.sidebar-collapsed .nav-section-label,
+      body.sidebar-collapsed .admin-chip .admin-name,
+      body.sidebar-collapsed .admin-chip .admin-role {
+        display: none !important;
+      }
+      body.sidebar-collapsed .sidebar-logo {
+        padding: 20px 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      body.sidebar-collapsed .nav-item {
+        justify-content: center;
+        padding: 13px 0;
+      }
+      body.sidebar-collapsed .nav-item span:last-child {
+        display: none;
+      }
+      body.sidebar-collapsed .nav-item .icon {
+        width: auto;
+        font-size: 20px;
+      }
+      body.sidebar-collapsed .sidebar-footer {
+        padding: 12px 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+      body.sidebar-collapsed .btn-logout-sidebar {
+        font-size: 0;
+        padding: 0;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      body.sidebar-collapsed .btn-logout-sidebar::before {
+        content: '\1F6AA'; /* 🚪 */
+        font-size: 16px;
+      }
+      body.sidebar-collapsed .admin-chip {
+        margin-bottom: 0;
+        justify-content: center;
+      }
+      body.sidebar-collapsed .sidebar-desktop-toggle {
+        transform: rotate(180deg);
+      }
+      body.sidebar-collapsed .sidebar-desktop-toggle:hover {
+        transform: rotate(180deg) scale(1.1);
+      }
+    }
+
     .sidebar-close-btn {
       display: none;
       position: absolute;
@@ -1891,6 +1977,7 @@
       <h2>La Esquina<br>del Sushi</h2>
       <small>Panel Admin</small>
       <button class="sidebar-close-btn" onclick="closeSidebar()" aria-label="Cerrar menú">✕</button>
+      <button class="sidebar-desktop-toggle" onclick="toggleSidebarDesktop()" aria-label="Colapsar menú">⬅</button>
     </div>
     <nav class="sidebar-nav">
       <div class="nav-section-label">Principal</div>
@@ -3524,6 +3611,12 @@
       document.getElementById('sidebar').classList.remove('open');
       document.getElementById('sidebar-overlay').classList.remove('open');
       document.body.style.overflow = '';
+    }
+    
+    function toggleSidebarDesktop() {
+      document.body.classList.toggle('sidebar-collapsed');
+      const expanded = !document.body.classList.contains('sidebar-collapsed');
+      document.getElementById('main-content').classList.toggle('desktop-expanded', !expanded);
     }
 
     /* ══ TOGGLE PEDIDOS HABILITADOS ═════════════════════════════ */

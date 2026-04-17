@@ -38,6 +38,8 @@
       color: var(--dark);
       min-height: 100vh;
       overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
     }
 
     /* ── Header ────────────────────────────────── */
@@ -1743,9 +1745,13 @@
       text-align: center;
       padding: 28px 20px;
       border-top: 1px solid var(--border);
-      margin-top: 40px;
+      margin-top: auto;
       padding-bottom: calc(70px + 28px);
       /* Espacio para la barra flotante */
+    }
+
+    .modal-overlay.open~.site-footer {
+      display: none !important;
     }
 
     .site-footer p {
