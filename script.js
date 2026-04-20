@@ -1705,7 +1705,7 @@ function validarYBuscarTelefono() {
   console.log('Teléfono válido:', completo);
 
   // Buscar cliente si hay sesión
-  if (longitud >= 10 && sesionActual) {
+  if (longitud >= 10) {
     buscarClientePorTelefono(completo);
   }
 
