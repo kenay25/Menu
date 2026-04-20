@@ -1615,10 +1615,10 @@ function formatarTelefono(input) {
   if (val.length > 10) {
     val = val.substring(0, 10);
   }
-  // Formatear con guiones: 642-123-4567
-  if (val.length >= 6) {
+  // Formatear con guiones solo cuando hay suficientes dígitos (evita bloquear borrado)
+  if (val.length >= 7) {
     val = val.substring(0, 3) + '-' + val.substring(3, 6) + '-' + val.substring(6);
-  } else if (val.length >= 3) {
+  } else if (val.length >= 4) {
     val = val.substring(0, 3) + '-' + val.substring(3);
   }
   input.value = val;
@@ -1704,9 +1704,10 @@ function validarYBuscarTelefono() {
 
   console.log('Teléfono válido:', completo);
 
-  // Buscar cliente — la función maneja el token (sesión o token de menú)
+  // Disparar evento para que index.html busque el cliente con su token
   if (longitud >= 10) {
-    buscarClientePorTelefono(completo);
+    var evt = new CustomEvent('telefonoCompleto', { detail: { telefono: completo } });
+    document.dispatchEvent(evt);
   }
 
   return { valido: true, completo: completo };
