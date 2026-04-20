@@ -10,7 +10,6 @@ router = APIRouter(prefix="/clientes", tags=["Clientes"])
 
 @router.get("/buscar/{telefono}")
 def buscar_cliente(telefono: str, db: Session = Depends(get_db), usuario=Depends(get_usuario_actual)):
-    # Buscar con y sin código de país
     tel_limpio = telefono.lstrip('52') if telefono.startswith('52') and len(telefono) > 10 else telefono
     tel_con_codigo = '52' + tel_limpio if not tel_limpio.startswith('52') else tel_limpio
     

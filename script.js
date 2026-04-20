@@ -1852,5 +1852,43 @@ function cargarSesionGuardada() {
     localStorage.removeItem('sushi_sesion');
   }
 }
+
+document.addEventListener('telefonoCompleto', function (e) {
+  var telefono = e.detail.telefono;
+  buscarClientePorTelefono(telefono);
+});
+
+var _sendWhatsAppOriginal = sendWhatsApp;
+sendWhatsApp = async function () {
+  _sendWhatsAppOriginal();
+
+  if (sesionActual && sesionActual.usuario.telefono) {
+    var tel = sesionActual.usuario.telefono.replace(/\D/g, '');
+    if (tel.startsWith('52') && tel.length > 10) tel = tel.slice(2);
+    await buscarClientePorTelefono(tel);
+  }
+};
+
+document.addEventListener('DOMContentLoaded', function () {
+  ['cl-phone', 'reg-telefono', 'historial-tel'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+
+    el.addEventListener('keydown', function (e) {
+      if (e.key === 'Backspace' || e.key === 'Delete') {
+        el._deletando = true;
+      }
+    });
+
+    el.addEventListener('input', function () {
+      if (el._deletando) {
+        var pos = el.selectionStart;
+        el._deletando = false;
+        setTimeout(function () { el.setSelectionRange(pos, pos); }, 0);
+      }
+    });
+  });
+});
+
 /* ── Arranque ───────────────────────────────── */
 document.addEventListener('DOMContentLoaded', init);
