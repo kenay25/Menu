@@ -13,13 +13,13 @@
 
 :: Intentar ruta estándar de Chrome
 if exist "C:\Program Files\Google\Chrome\Application\chrome.exe" (
-    start "" "C:\Program Files\Google\Chrome\Application\chrome.exe" --kiosk-printing --autoplay-policy=no-user-gesture-required "https://laesquinadelsushi.vercel.app"
+    start "" "C:\Program Files\Google\Chrome\Application\chrome.exe" --kiosk-printing --autoplay-policy=no-user-gesture-required "https://laesquinadelsushi.vercel.app/admin.html"
     exit
 )
 
 :: Intentar ruta x86
 if exist "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" (
-    start "" "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --kiosk-printing --autoplay-policy=no-user-gesture-required "https://laesquinadelsushi.vercel.app"
+    start "" "C:\Program Files (x86)\Google\Chrome\Application\chrome.exe" --kiosk-printing --autoplay-policy=no-user-gesture-required "https://laesquinadelsushi.vercel.app/admin.html"
     exit
 )
 
