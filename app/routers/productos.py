@@ -176,3 +176,14 @@ def eliminar_producto(
     db.delete(p)
     db.commit()
     return {"ok": True}
+
+@router.get("/publicos")
+def listar_productos_publicos(
+    db: Session = Depends(get_db)
+):
+    """Lista productos disponibles — sin autenticación, para el menú."""
+    productos = db.query(Producto).filter(
+        Producto.id_restaurante == 1,
+        Producto.disponible == True
+    ).order_by(Producto.id_categoria, Producto.nombre).all()
+    return [_serializar(p) for p in productos]
