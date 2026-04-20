@@ -18,7 +18,6 @@ def crear_pedido(
     usuario=Depends(get_usuario_actual)
 ):
     """Crea un nuevo pedido con todos sus productos."""
-    # Verificar si los pedidos están habilitados
     from app.routers.admin import pedidos_habilitados
     if not pedidos_habilitados:
         raise HTTPException(
@@ -26,13 +25,13 @@ def crear_pedido(
             detail="Los pedidos están temporalmente deshabilitados. Intenta más tarde."
         )
 
-    # Crear el pedido
     nuevo_pedido = Pedido(
         id_restaurante=usuario.id_restaurante,
         nombre_cliente=datos.nombre_cliente,
         telefono_cliente=datos.telefono_cliente,
         tipo_entrega=datos.tipo_entrega,
         direccion_entrega=datos.direccion_entrega,
+        entre_calles=datos.entre_calles,
         colonia_entrega=datos.colonia_entrega,
         costo_envio=datos.costo_envio,
         notas=datos.notas,
@@ -40,7 +39,6 @@ def crear_pedido(
         estado="recibido"
     )
 
-    # Buscar si el cliente ya existe por teléfono
     if datos.telefono_cliente:
         cliente = db.query(Cliente).filter(
             Cliente.telefono == datos.telefono_cliente,
@@ -48,13 +46,11 @@ def crear_pedido(
         ).first()
 
         if cliente:
-            # Cliente existe — actualizar sus estadísticas
             cliente.total_pedidos += 1
             cliente.total_gastado += Decimal(str(datos.total))
             cliente.ultima_visita = datetime.utcnow()
             nuevo_pedido.id_cliente = cliente.id_cliente
         else:
-            # Cliente nuevo — registrarlo automáticamente
             nuevo_cliente = Cliente(
                 id_restaurante=usuario.id_restaurante,
                 nombre=datos.nombre_cliente,
@@ -65,13 +61,12 @@ def crear_pedido(
                 ultima_visita=datetime.utcnow()
             )
             db.add(nuevo_cliente)
-            db.flush()  # Para obtener el id_cliente sin hacer commit aún
+            db.flush()
             nuevo_pedido.id_cliente = nuevo_cliente.id_cliente
 
     db.add(nuevo_pedido)
-    db.flush()  # Para obtener el id_pedido
+    db.flush()
 
-    # Agregar el detalle de cada producto
     for producto in datos.productos:
         detalle = DetallePedido(
             id_pedido=nuevo_pedido.id_pedido,

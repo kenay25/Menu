@@ -1967,10 +1967,22 @@
               Privacidad</a></div>
         </div>
         <div class="cf cf-hidden" id="cf-address-wrap">
-          <label>📍 Dirección de entrega <span class="cf-required">*</span></label>
-          <textarea id="cl-address" placeholder="Calle, número, colonia, referencias..."
-            oninput="revisarCambioDir()"></textarea>
-          <div id="cf-addr-hint" style="display:none;font-size:11px;color:var(--pink);margin-top:4px">📝 ¿Quieres
+          <label>📍 Dirección de entrega</label>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+            <div>
+              <label style="font-size:12px;color:var(--muted);margin-bottom:4px;display:block">Calle y número <span class="cf-required">*</span></label>
+              <input type="text" id="cl-calle-num" placeholder="Ej. Calle Nogal #47" oninput="revisarCambioDir()" autocomplete="street-address">
+            </div>
+            <div>
+              <label style="font-size:12px;color:var(--muted);margin-bottom:4px;display:block">Entre calles <span class="cf-required">*</span></label>
+              <input type="text" id="cl-entre-calles" placeholder="Ej. Entre Álamo y Cedro">
+            </div>
+            <div>
+              <label style="font-size:12px;color:var(--muted);margin-bottom:4px;display:block">Referencias adicionales</label>
+              <input type="text" id="cl-referencias" placeholder="Ej. Casa azul, portón negro, tocar timbre">
+            </div>
+          </div>
+          <div id="cf-addr-hint" style="display:none;font-size:11px;color:var(--pink);margin-top:8px">📝 ¿Quieres
             guardar esta como tu nueva dirección?
             <button onclick="confirmarCambioDir()"
               style="margin-left:6px;background:var(--pink);color:white;border:none;border-radius:8px;padding:2px 10px;font-size:11px;cursor:pointer">Sí,
@@ -2669,9 +2681,9 @@
         if (lbl) lbl.innerHTML = (type === 'envio' ? '📱 Teléfono' : '📱 Tu número de celular') + ' <span class="cf-required">*</span>';
         document.getElementById('cf-address-wrap').classList.toggle('cf-hidden', type !== 'envio');
         document.getElementById('cf-envio-wrap').classList.toggle('cf-hidden', type !== 'envio');
-        // Si cambia a envío y hay dir guardada, rellenar
-        if (type === 'envio' && _dirGuardada && !document.getElementById('cl-address').value.trim()) {
-          document.getElementById('cl-address').value = _dirGuardada;
+        // Si cambia a envío y hay dir guardada, rellenar en calle-num
+        if (type === 'envio' && _dirGuardada && !document.getElementById('cl-calle-num').value.trim()) {
+          document.getElementById('cl-calle-num').value = _dirGuardada;
         }
         // Actualizar card según modo
         var nombre = document.getElementById('cl-name').value;
@@ -3627,7 +3639,7 @@
           if (c.nombre) document.getElementById('cl-name').value = c.nombre;
           if (c.direccion) {
             _dirGuardada = c.direccion;
-            if (orderType === 'envio') document.getElementById('cl-address').value = c.direccion;
+            if (orderType === 'envio') document.getElementById('cl-calle-num').value = c.direccion;
           }
           mostrarSavedCard(
             document.getElementById('cl-name').value || c.nombre || telefono,
@@ -3662,7 +3674,7 @@
           // Llenar dirección
           if (c.direccion) {
             _dirGuardada = c.direccion;
-            var addrEl = document.getElementById('cl-address');
+            var addrEl = document.getElementById('cl-calle-num');
             if (addrEl && orderType === 'envio' && !addrEl.value) addrEl.value = c.direccion;
           }
 
@@ -3697,7 +3709,7 @@
       }
 
       function revisarCambioDir() {
-        var nueva = document.getElementById('cl-address').value.trim();
+        var nueva = document.getElementById('cl-calle-num').value.trim();
         var hint = document.getElementById('cf-addr-hint');
         if (sesionActual && _dirGuardada && nueva && nueva !== _dirGuardada) { hint.style.display = 'block'; }
         else { hint.style.display = 'none'; }
@@ -3705,7 +3717,10 @@
 
       async function confirmarCambioDir() {
         if (!sesionActual) return;
-        var nuevaDir = document.getElementById('cl-address').value.trim();
+        var calleNum = document.getElementById('cl-calle-num').value.trim();
+        var entreCalles = document.getElementById('cl-entre-calles').value.trim();
+        var referencias = document.getElementById('cl-referencias').value.trim();
+        var nuevaDir = calleNum + (entreCalles ? ', entre ' + entreCalles : '') + (referencias ? ', ' + referencias : '');
         try {
           await fetch(API_URL + '/clientes/actualizar-direccion', {
             method: 'PATCH',
@@ -3746,20 +3761,19 @@
         var phone = validacion.completo;
 
         if (orderType === 'envio') {
-          var address = document.getElementById('cl-address').value.trim() || _dirGuardada;
-          if (!address) { alert('Por favor ingresa la dirección de entrega 📍'); document.getElementById('cl-address').focus(); return; }
+          var calleNum = document.getElementById('cl-calle-num').value.trim();
+          var entreCalles = document.getElementById('cl-entre-calles').value.trim();
+          var referencias = document.getElementById('cl-referencias').value.trim();
+          if (!calleNum) { alert('Por favor ingresa la calle y número 🏠'); document.getElementById('cl-calle-num').focus(); return; }
+          if (!entreCalles) { alert('Por favor ingresa las entre calles 📍'); document.getElementById('cl-entre-calles').focus(); return; }
           if (!_coloniaSeleccionada) { alert('Por favor selecciona tu colonia para calcular el envío 🛵'); document.getElementById('envio-colonia').focus(); return; }
-
-          var coloniaParaGuardar = _coloniaSeleccionada;
-          var costoEnvioParaGuardar = _costoEnvioActual;
+          var address = calleNum + (entreCalles ? ', entre ' + entreCalles : '') + (referencias ? ', ' + referencias : '');
           var notasParaGuardar = document.getElementById('order-notes').value;
-          document.getElementById('cl-address').value = address;
           closeClientModal();
-
-          _coloniaSeleccionada = coloniaParaGuardar;
-          _costoEnvioActual = costoEnvioParaGuardar;
+          _coloniaSeleccionada = _coloniaSeleccionada;
+          _costoEnvioActual = _costoEnvioActual;
           document.getElementById('order-notes').value = notasParaGuardar;
-          guardarPedidoBackend(name, phone, address).then(function (pedidoId) {
+          guardarPedidoBackend(name, phone, address, calleNum, entreCalles, referencias).then(function (pedidoId) {
             doSendWhatsApp(name, phone, address, pedidoId);
             _coloniaSeleccionada = null;
             _costoEnvioActual = 0;
@@ -3790,7 +3804,7 @@
           return API_TOKEN;
         } catch (e) { console.warn('Token menu: sin conexión', e); return null; }
       }
-      async function guardarPedidoBackend(clientName, clientPhone, clientAddress) {
+      async function guardarPedidoBackend(clientName, clientPhone, clientAddress, calleNum, entreCalles, referencias) {
         // Si no hay conexión el pedido igual se manda por WhatsApp — nunca bloqueamos al usuario
         try {
           var token = await obtenerToken();
@@ -3821,6 +3835,7 @@
             telefono_cliente: clientPhone || null,
             tipo_entrega: tipo,
             direccion_entrega: clientAddress || null,
+            entre_calles: entreCalles || null,
             colonia_entrega: _coloniaSeleccionada || null,
             costo_envio: _costoEnvioActual || 0,
             notas: notes.trim() || null,

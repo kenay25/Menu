@@ -65,6 +65,7 @@
     .sidebar-desktop-toggle {
       display: none;
     }
+
     @media (min-width: 1025px) {
       .sidebar-desktop-toggle {
         display: flex;
@@ -84,13 +85,16 @@
         transition: all 0.2s;
         z-index: 101;
       }
+
       .sidebar-desktop-toggle:hover {
         background: var(--pink-deep);
         transform: scale(1.1);
       }
+
       body.sidebar-collapsed {
         --sidebar-w: 64px;
       }
+
       body.sidebar-collapsed .sidebar-logo h2,
       body.sidebar-collapsed .sidebar-logo small,
       body.sidebar-collapsed .nav-section-label,
@@ -98,23 +102,28 @@
       body.sidebar-collapsed .admin-chip .admin-role {
         display: none !important;
       }
+
       body.sidebar-collapsed .sidebar-logo {
         padding: 20px 0;
         display: flex;
         align-items: center;
         justify-content: center;
       }
+
       body.sidebar-collapsed .nav-item {
         justify-content: center;
         padding: 13px 0;
       }
+
       body.sidebar-collapsed .nav-item span:last-child {
         display: none;
       }
+
       body.sidebar-collapsed .nav-item .icon {
         width: auto;
         font-size: 20px;
       }
+
       body.sidebar-collapsed .sidebar-footer {
         padding: 12px 0;
         display: flex;
@@ -122,6 +131,7 @@
         align-items: center;
         gap: 8px;
       }
+
       body.sidebar-collapsed .btn-logout-sidebar {
         font-size: 0;
         padding: 0;
@@ -132,17 +142,22 @@
         align-items: center;
         justify-content: center;
       }
+
       body.sidebar-collapsed .btn-logout-sidebar::before {
-        content: '\1F6AA'; /* 🚪 */
+        content: '\1F6AA';
+        /* 🚪 */
         font-size: 16px;
       }
+
       body.sidebar-collapsed .admin-chip {
         margin-bottom: 0;
         justify-content: center;
       }
+
       body.sidebar-collapsed .sidebar-desktop-toggle {
         transform: rotate(180deg);
       }
+
       body.sidebar-collapsed .sidebar-desktop-toggle:hover {
         transform: rotate(180deg) scale(1.1);
       }
@@ -1279,8 +1294,16 @@
     }
 
     @keyframes bannerPulse {
-      0%, 100% { transform: scaleY(1); }
-      50% { transform: scaleY(1.05); background: linear-gradient(90deg, #27AE60, #2ECC71); }
+
+      0%,
+      100% {
+        transform: scaleY(1);
+      }
+
+      50% {
+        transform: scaleY(1.05);
+        background: linear-gradient(90deg, #27AE60, #2ECC71);
+      }
     }
 
     /* ── Empty state ── */
@@ -2042,12 +2065,17 @@
           <div class="toggle" id="autoprint-toggle" style="pointer-events:none"></div>
         </div>
         <div id="reloj" style="font-size:12px;color:var(--muted);font-weight:600;text-align:right"></div>
+        <button class="btn-refresh" onclick="abrirModalDemo()" title="Imprimir ticket de pedido de ejemplo"
+          style="background:rgba(46,204,113,0.12);border-color:rgba(46,204,113,0.3);color:#1E8449;">🧾 Imprimir
+          demo</button>
         <button class="btn-refresh" onclick="recargarPagina()">↻ Actualizar</button>
         <a href="index.html" style="font-size:12px;color:var(--muted);text-decoration:none;">← Ver menú</a>
       </div>
     </div>
     <!-- Banner de nuevo pedido -->
-    <div id="nuevo-pedido-banner" style="display:none;background:linear-gradient(90deg,#2ECC71,#27AE60);color:white;padding:10px 20px;font-weight:700;font-size:14px;text-align:center;animation:bannerPulse 1s ease 3;cursor:pointer" onclick="this.style.display='none'">
+    <div id="nuevo-pedido-banner"
+      style="display:none;background:linear-gradient(90deg,#2ECC71,#27AE60);color:white;padding:10px 20px;font-weight:700;font-size:14px;text-align:center;animation:bannerPulse 1s ease 3;cursor:pointer"
+      onclick="this.style.display='none'">
       🔔 ¡Nuevo pedido recibido! — Imprimiendo tickets automáticamente...
     </div>
 
@@ -2435,6 +2463,33 @@
     </div>
   </div>
 
+  <!-- ═══ MODAL DEMO ═══════════════════════════════════════════ -->
+  <div class="modal-overlay" id="modal-demo" onclick="if(event.target===this)this.classList.remove('open')">
+    <div class="modal-box" style="max-width:400px">
+      <div class="modal-head">
+        <h3>🧾 Imprimir demo</h3>
+        <button class="modal-close" onclick="document.getElementById('modal-demo').classList.remove('open')">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px">¿Qué tipo de pedido quieres probar?</p>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <button class="btn-primary" style="display:flex;align-items:center;gap:10px;font-size:14px" onclick="imprimirPedidoDemo('domicilio')">
+            🛵 <span>Domicilio — con dirección y colonia</span>
+          </button>
+          <button class="btn-primary" style="display:flex;align-items:center;gap:10px;font-size:14px;background:var(--blue)" onclick="imprimirPedidoDemo('sucursal')">
+            🏪 <span>Recoge en sucursal</span>
+          </button>
+        </div>
+        <div style="margin-top:18px;border-top:1px solid var(--border);padding-top:14px">
+          <label style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:600;display:block;margin-bottom:6px">📝 Notas del pedido (opcional)</label>
+          <textarea id="demo-notas" placeholder="Ej: Sin cebolla, tocar el timbre, etc."
+            style="width:100%;min-height:70px;resize:vertical;background:#FFF8F9;border:1.5px solid var(--border);border-radius:10px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--dark);outline:none"
+            onfocus="this.style.borderColor='var(--pink)'" onblur="this.style.borderColor='var(--border)'"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ═══ PRINT AREA (hidden, only visible during @media print) ═══ -->
   <div id="print-area"></div>
 
@@ -2676,6 +2731,7 @@
       <p><strong>Tipo:</strong> ${data.tipo_entrega === 'domicilio' ? '🛵 Domicilio' : '🏪 Sucursal'}</p>
       ${data.colonia_entrega ? `<p><strong>Colonia:</strong> ${data.colonia_entrega}</p>` : ''}
       ${data.direccion_entrega ? `<p><strong>Dirección:</strong> ${data.direccion_entrega}</p>` : ''}
+      ${data.entre_calles ? `<p><strong>Entre calles:</strong> ${data.entre_calles}</p>` : ''}
       ${data.costo_envio > 0 ? `<p><strong>Envío:</strong> $${parseFloat(data.costo_envio).toLocaleString()}</p>` : ''}
       <p><strong>Fecha:</strong> ${hora}</p>
       ${data.notas ? `<p><strong>Notas:</strong> ${data.notas}</p>` : ''}
@@ -2761,6 +2817,8 @@
           <p>${data.tipo_entrega === 'domicilio' ? 'DOMICILIO' : 'SUCURSAL'}</p>
           <p>Cliente: ${data.nombre_cliente}</p>
           ${data.colonia_entrega ? `<p>Colonia: ${data.colonia_entrega}</p>` : ''}
+          ${data.direccion_entrega ? `<p>Dir: ${data.direccion_entrega}</p>` : ''}
+          ${data.entre_calles ? `<p>Entre: ${data.entre_calles}</p>` : ''}
         </div>
       `;
 
@@ -2803,41 +2861,23 @@
      * Genera el HTML del ticket para el cliente (recibo)
      */
     function generarTicketCliente(data) {
-      const hora = new Date(data.fecha_pedido + 'Z').toLocaleString('es-MX', {
-        hour: '2-digit', minute: '2-digit', hour12: true,
-        timeZone: 'America/Hermosillo'
-      });
-      const fecha = new Date(data.fecha_pedido + 'Z').toLocaleDateString('es-MX', {
-        day: 'numeric', month: 'short', year: 'numeric',
-        timeZone: 'America/Hermosillo'
-      });
-
+      const envio = parseFloat(data.costo_envio) || 0;
       let subtotalProductos = 0;
       data.productos.forEach(p => { subtotalProductos += parseFloat(p.subtotal); });
-      const envio = parseFloat(data.costo_envio) || 0;
 
       let html = `
-        <div class="ticket-header">
-          <div class="ticket-logo">LA ESQUINA DEL SUSHI</div>
-          <div class="ticket-sub">
-            Blvd. Sonora #21<br>
-            Media Cuadra del Socum<br>
-            Tel: 642-134-2959 / 642-426-7244<br>
-            Navojoa, Sonora
-          </div>
-        </div>
         <div class="ticket-info">
-          <p><strong>Pedido #${data.id_pedido}</strong></p>
-          <p>${fecha} — ${hora}</p>
-          <p>${data.tipo_entrega === 'domicilio' ? 'DOMICILIO' : 'EN SUCURSAL'}</p>
-          <p>Cliente: ${data.nombre_cliente}</p>
+          <p><strong>PEDIDO #${data.id_pedido}</strong></p>
+          <p>${data.tipo_entrega === 'domicilio' ? 'DOMICILIO' : 'RECOGE EN SUCURSAL'}</p>
+          <p>${data.nombre_cliente}</p>
           ${data.telefono_cliente ? `<p>Tel: ${data.telefono_cliente}</p>` : ''}
-          ${data.colonia_entrega ? `<p>Colonia: ${data.colonia_entrega}</p>` : ''}
+          ${data.colonia_entrega ? `<p>Col: ${data.colonia_entrega}</p>` : ''}
           ${data.direccion_entrega ? `<p>Dir: ${data.direccion_entrega}</p>` : ''}
+          ${data.entre_calles ? `<p>Entre: ${data.entre_calles}</p>` : ''}
         </div>
       `;
 
-      // Productos con precios
+      // Productos
       html += '<div class="ticket-items">';
       data.productos.forEach(p => {
         const modsTexto = formatearModsTexto(p.modificaciones);
@@ -2845,10 +2885,7 @@
           <div class="ticket-item">
             <div class="ticket-item-name">
               <span>${p.cantidad}x ${p.nombre_producto}</span>
-              <span>$${parseFloat(p.subtotal).toLocaleString()}</span>
-            </div>
-            <div class="ticket-item-detail">
-              c/u $${parseFloat(p.precio_unitario).toLocaleString()}${p.costo_extra > 0 ? ' + extras $' + parseFloat(p.costo_extra).toLocaleString() : ''}
+              ${parseFloat(p.subtotal) > 0 ? `<span>$${parseFloat(p.subtotal).toLocaleString()}</span>` : ''}
             </div>
             ${modsTexto ? `<div class="ticket-item-mods">${modsTexto}</div>` : ''}
           </div>
@@ -2860,12 +2897,12 @@
       if (data.notas) {
         html += `
           <div class="ticket-notas">
-            <strong>Notas:</strong> ${data.notas}
+            <strong>NOTAS:</strong> ${data.notas}
           </div>
         `;
       }
 
-      // Totales
+      // Total
       html += '<div class="ticket-totals">';
       if (envio > 0) {
         html += `
@@ -2873,20 +2910,7 @@
           <p>Envio: $${envio.toLocaleString()}</p>
         `;
       }
-      html += `
-        <div class="grand-total">TOTAL: $${parseFloat(data.total).toLocaleString()}</div>
-      </div>`;
-
-      html += `
-        <div class="ticket-footer">
-          Gracias por su preferencia!<br>
-          La Esquina del Sushi<br>
-          --------------------------------<br>
-          Horario: 5:30 - 11:30 pm<br>
-          (Descanso martes)<br>
-          WhatsApp: 662-206-7409
-        </div>
-      `;
+      html += `<div class="grand-total">TOTAL: $${parseFloat(data.total).toLocaleString()}</div></div>`;
 
       return html;
     }
@@ -2928,6 +2952,69 @@
       setTimeout(() => {
         window.print();
       }, 100);
+    }
+
+    function abrirModalDemo() {
+      document.getElementById('demo-notas').value = '';
+      document.getElementById('modal-demo').classList.add('open');
+    }
+
+    /**
+     * Imprime un ticket de demostración
+     */
+    function imprimirPedidoDemo(tipo) {
+      document.getElementById('modal-demo').classList.remove('open');
+      const notas = document.getElementById('demo-notas').value.trim();
+      const pedidoDemo = {
+        id_pedido: 'T1',
+        fecha_pedido: new Date().toISOString().replace('Z', ''),
+        tipo_entrega: tipo,
+        nombre_cliente: 'Brenda Iribe',
+        telefono_cliente: '5555555555',
+        colonia_entrega: tipo === 'domicilio' ? 'Col. Prados del Sur' : '',
+        direccion_entrega: tipo === 'domicilio' ? 'Calle Nogal #47' : '',
+        entre_calles: tipo === 'domicilio' ? 'Entre Álamo y Cedro' : '',
+        notas: notas,
+        costo_envio: tipo === 'domicilio' ? 30 : 0,
+        total: tipo === 'domicilio' ? 680 : 650,
+        productos: [
+          {
+            cantidad: 1,
+            nombre_producto: 'La Caja',
+            precio_unitario: 650,
+            costo_extra: 0,
+            subtotal: 650,
+            modificaciones: { salsas: ['sc6', 'sc9'] }
+          },
+          {
+            cantidad: 1,
+            nombre_producto: 'California',
+            precio_unitario: 0,
+            costo_extra: 0,
+            subtotal: 0,
+            modificaciones: { alga: 'con', estilo: 'empanizado', proteinas: ['p_pollo'] }
+          },
+          {
+            cantidad: 1,
+            nombre_producto: 'Bombazo',
+            precio_unitario: 0,
+            costo_extra: 0,
+            subtotal: 0,
+            modificaciones: { alga: 'sin', estilo: 'empanizado', proteinas: ['p_pollo'] }
+          },
+          {
+            cantidad: 1,
+            nombre_producto: 'Sonora',
+            precio_unitario: 0,
+            costo_extra: 0,
+            subtotal: 0,
+            modificaciones: { alga: 'sin', estilo: 'empanizado', proteinas: ['p_camaron'] }
+          }
+        ]
+      };
+
+      _pedidoActual = pedidoDemo;
+      imprimirTicket('cliente');
     }
 
     /* ══ CATEGORÍAS ═════════════════════════════════════════════ */
@@ -3612,7 +3699,7 @@
       document.getElementById('sidebar-overlay').classList.remove('open');
       document.body.style.overflow = '';
     }
-    
+
     function toggleSidebarDesktop() {
       document.body.classList.toggle('sidebar-collapsed');
       const expanded = !document.body.classList.contains('sidebar-collapsed');
@@ -3687,8 +3774,12 @@
       const u = localStorage.getItem('admin_usuario');
       if (t && u) {
         TOKEN = t; USUARIO = JSON.parse(u);
-        mostrarPanel();
+      } else {
+        // LOGIN TEMPORALMENTE DESACTIVADO — entra directo
+        TOKEN = 'bypass';
+        USUARIO = { nombre: 'Admin', rol: 'admin' };
       }
+      mostrarPanel();
       iniciarReloj();
     });
 
@@ -4197,10 +4288,12 @@
       vertical-align: -0.15em;
       display: inline-block;
     }
+
     .nav-item .icon img.emoji {
       height: 1.1em;
       width: 1.1em;
     }
+
     .metric-icon img.emoji {
       height: 1.4em;
       width: 1.4em;
@@ -4214,8 +4307,9 @@
     }
 
     @media print {
+
       /* Ocultar todo excepto el área de impresión */
-      body > *:not(#print-area) {
+      body>*:not(#print-area) {
         display: none !important;
       }
 
@@ -4224,14 +4318,38 @@
         position: absolute;
         top: 0;
         left: 0;
-        width: 80mm;
+        /* Ancho compensado: 80mm / 0.76 ≈ 105mm para que al comprimir quede en 80mm */
+        width: 105mm;
         margin: 0;
-        padding: 2mm;
-        font-family: 'Courier New', Courier, monospace;
-        font-size: 12px;
+        padding: 2mm 9mm 2mm 0;
+        font-family: 'Arial Black', 'Arial Bold', Arial, sans-serif;
+        font-size: 22px;
+        font-weight: 900;
         color: #000;
         background: #fff;
-        line-height: 1.4;
+        line-height: 1.45;
+        text-shadow: 0.4px 0 0 #000, -0.4px 0 0 #000, 0 0.4px 0 #000, 0 -0.4px 0 #000;
+        /* Efecto condensed: comprime horizontalmente las letras */
+        transform: scaleX(0.76);
+        transform-origin: top left;
+        -webkit-transform: scaleX(0.76);
+        -webkit-transform-origin: top left;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      #print-area * {
+        color: #000 !important;
+        text-shadow: 0.4px 0 0 #000, -0.4px 0 0 #000, 0 0.4px 0 #000, 0 -0.4px 0 #000;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      #print-area .ticket-header,
+      #print-area .ticket-type-label,
+      #print-area .ticket-item-name,
+      #print-area .ticket-totals .grand-total {
+        text-shadow: 0.7px 0 0 #000, -0.7px 0 0 #000, 0 0.7px 0 #000, 0 -0.7px 0 #000;
       }
 
       @page {
@@ -4242,104 +4360,110 @@
       /* Ticket styles */
       .ticket-header {
         text-align: center;
-        border-bottom: 2px dashed #000;
-        padding-bottom: 6px;
-        margin-bottom: 6px;
+        border-bottom: 3px dashed #000;
+        padding-bottom: 8px;
+        margin-bottom: 8px;
       }
 
       .ticket-header .ticket-logo {
-        font-size: 20px;
-        font-weight: bold;
+        font-size: 26px;
+        font-weight: 900;
         letter-spacing: 1px;
       }
 
       .ticket-header .ticket-sub {
-        font-size: 10px;
-        color: #333;
+        font-size: 20px;
+        font-weight: 700;
       }
 
       .ticket-type-label {
         text-align: center;
-        font-size: 16px;
-        font-weight: bold;
-        padding: 4px 0;
+        font-size: 22px;
+        font-weight: 800;
+        padding: 5px 0;
         border: 2px solid #000;
-        margin-bottom: 6px;
+        margin-bottom: 8px;
         letter-spacing: 2px;
       }
 
       .ticket-info {
-        border-bottom: 1px dashed #000;
-        padding-bottom: 6px;
-        margin-bottom: 6px;
-        font-size: 11px;
+        border-bottom: 2px dashed #000;
+        padding-bottom: 8px;
+        margin-bottom: 8px;
+        font-size: 20px;
+        font-weight: 700;
       }
 
       .ticket-info p {
-        margin: 2px 0;
+        margin: 3px 0;
       }
 
       .ticket-items {
-        border-bottom: 1px dashed #000;
-        padding-bottom: 6px;
-        margin-bottom: 6px;
+        border-bottom: 2px dashed #000;
+        padding-bottom: 8px;
+        margin-bottom: 8px;
       }
 
       .ticket-item {
-        margin-bottom: 6px;
+        margin-bottom: 8px;
         page-break-inside: avoid;
       }
 
       .ticket-item-name {
-        font-weight: bold;
-        font-size: 13px;
+        font-weight: 800;
+        font-size: 22px;
         display: flex;
         justify-content: space-between;
       }
 
       .ticket-item-detail {
-        font-size: 10px;
-        color: #333;
+        font-size: 19px;
+        font-weight: 700;
         padding-left: 4px;
       }
 
       .ticket-item-mods {
-        font-size: 10px;
+        font-size: 19px;
+        font-weight: 700;
         padding-left: 4px;
         font-style: italic;
       }
 
       .ticket-totals {
         text-align: right;
-        font-size: 12px;
-        margin-bottom: 6px;
+        font-size: 21px;
+        font-weight: 700;
+        margin-bottom: 8px;
       }
 
       .ticket-totals .grand-total {
-        font-size: 16px;
-        font-weight: bold;
+        font-size: 24px;
+        font-weight: 900;
         border-top: 2px solid #000;
-        padding-top: 4px;
-        margin-top: 4px;
+        padding-top: 5px;
+        margin-top: 5px;
       }
 
       .ticket-footer {
         text-align: center;
-        font-size: 10px;
+        font-size: 19px;
+        font-weight: 700;
         border-top: 2px dashed #000;
-        padding-top: 6px;
-        margin-top: 6px;
+        padding-top: 8px;
+        margin-top: 8px;
       }
 
       .ticket-notas {
         border: 1px solid #000;
-        padding: 4px 6px;
-        margin-bottom: 6px;
-        font-size: 11px;
+        padding: 5px 7px;
+        margin-bottom: 8px;
+        font-size: 20px;
+        font-weight: 700;
       }
 
       .ticket-notas strong {
-        font-size: 12px;
+        font-size: 22px;
+        font-weight: 900;
       }
 
       /* Ocultar imágenes emoji en impresión */
