@@ -2794,9 +2794,9 @@
       if (m.sin_ingredientes && m.sin_ingredientes.length)
         lines.push('> SIN: ' + m.sin_ingredientes.join(', '));
       if (m.extras_ingredientes && m.extras_ingredientes.length)
-        lines.push('> EXTRA: ' + m.extras_ingredientes.join(', '));
+        lines.push('> EXTRA ing: ' + m.extras_ingredientes.join(', '));
       if (m.extras_producto && m.extras_producto.length)
-        lines.push('> + Extra: ' + m.extras_producto.join(', '));
+        lines.push('> EXTRA: ' + m.extras_producto.join(', '));
 
       return lines.join('<br>');
     }

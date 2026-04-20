@@ -1156,9 +1156,6 @@
       border-radius: 22px;
       width: 100%;
       max-width: 420px;
-      max-height: 92vh;
-      display: flex;
-      flex-direction: column;
       box-shadow: 0 28px 90px rgba(0, 0, 0, 0.5);
       animation: modalIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
@@ -1167,7 +1164,6 @@
       background: var(--dark);
       padding: 20px 22px 16px;
       border-radius: 22px 22px 0 0;
-      flex-shrink: 0;
     }
 
     .client-head h3 {
@@ -1188,8 +1184,6 @@
       display: flex;
       flex-direction: column;
       gap: 14px;
-      overflow-y: auto;
-      flex: 1;
     }
 
     .order-type-toggle {
@@ -3831,13 +3825,29 @@
           if (m.style) mods.estilo = m.style;
           if (m.sushiChoice) mods.sushi_elegido = m.sushiChoice;
           if (m.ice) mods.hielo = m.ice;
-          if (m.proteins && m.proteins.length) mods.proteinas = m.proteins;
-          if (m.sauces) mods.salsas = Object.keys(m.sauces).filter(function (k) { return m.sauces[k]; });
-          if (m.sauces2) mods.salsas2 = Object.keys(m.sauces2).filter(function (k) { return m.sauces2[k]; });
-          if (m.saucesAlitas) mods.salsas_alitas = Object.keys(m.saucesAlitas).filter(function (k) { return m.saucesAlitas[k]; });
+          if (m.proteins && m.proteins.length) mods.proteinas = m.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : pid; });
+          if (m.sauces) mods.salsas = Object.keys(m.sauces).filter(function (k) { return m.sauces[k]; }).map(function (k) { var sc = SAUCES.filter(function (x) { return x.id === k; })[0]; return sc ? sc.name : k; });
+          if (m.sauces2) mods.salsas2 = Object.keys(m.sauces2).filter(function (k) { return m.sauces2[k]; }).map(function (k) { var sc = SAUCES.filter(function (x) { return x.id === k; })[0]; return sc ? sc.name : k; });
+          if (m.saucesAlitas) mods.salsas_alitas = Object.keys(m.saucesAlitas).filter(function (k) { return m.saucesAlitas[k]; }).map(function (k) { var sc = SAUCES.filter(function (x) { return x.id === k; })[0]; return sc ? sc.name : k; });
           if (m.removed) { mods.sin_ingredientes = Object.keys(m.removed).filter(function (k) { return m.removed[k]; }).map(function (k) { var ing = (item.ingredients || []).filter(function (i) { return i.id === k; })[0]; return ing ? ing.name : k; }); }
           if (m.extraIngs && m.extraIngs.length) mods.extras_ingredientes = m.extraIngs;
-          if (m.extras) mods.extras_producto = Object.keys(m.extras).filter(function (k) { return m.extras[k]; });
+          if (m.extras) mods.extras_producto = Object.keys(m.extras).filter(function (k) { return m.extras[k]; }).map(function (k) {
+            // Extra normal del item
+            var exNormal = (item.extras || []).filter(function (e) { return e.id === k; })[0];
+            if (exNormal) return exNormal.name;
+            // Extra de slot: key = slot_{si}_{ex.id}
+            if (k.startsWith('slot_') && item.promoSlots) {
+              var parts = k.split('_'); // ['slot','0','cha','queso',...]
+              var si = parseInt(parts[1]);
+              var exId = parts.slice(2).join('_');
+              var slot = item.promoSlots[si];
+              if (slot && slot.extras) {
+                var exSlot = slot.extras.filter(function (e) { return e.id === exId; })[0];
+                if (exSlot) return exSlot.name;
+              }
+            }
+            return k; // fallback: mostrar la key si no se encuentra
+          });
           return { id_producto: item.dbId || 0, nombre_producto: item.name || item.title, precio_unitario: item.price, cantidad: 1, modificaciones: mods, costo_extra: ec, subtotal: item.price + ec };
         });
         var payload = {
