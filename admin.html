@@ -2603,7 +2603,7 @@
         api('/admin/estadisticas/hoy?fecha=' + _hoyHermosillo()),
         api('/admin/estadisticas/semana?fecha=' + _hoyHermosillo()),
         api('/admin/estadisticas/horas-pico?fecha=' + _hoyHermosillo()),
-        api('/admin/productos/publicos/mas-vendidos')
+        api('/admin/productos/mas-vendidos')
       ]);
 
       if (hoy) {
@@ -3313,7 +3313,7 @@
     };
 
     async function cargarMenu() {
-      const data = await api('/productos/publicos/');
+      const data = await api('/productos/');
       const tbody = document.getElementById('tbody-menu');
       if (!data || !data.length) { tbody.innerHTML = '<tr><td colspan="9" class="empty">Sin productos</td></tr>'; return; }
       tbody.innerHTML = data.map(p => {
@@ -3408,7 +3408,7 @@
     }
 
     async function editarProducto(id) {
-      const p = await api('/productos/publicos/' + id);
+      const p = await api('/productos/' + id);
       if (!p) return;
       document.getElementById('prod-id').value = id;
       document.getElementById('prod-nombre').value = p.nombre;
@@ -3498,9 +3498,9 @@
 
       let _savedId = id;
       if (id) {
-        await api(`/productos/publicos/${id}`, 'PUT', body);
+        await api(`/productos/${id}`, 'PUT', body);
       } else {
-        const _resp = await api('/productos/publicos/', 'POST', body);
+        const _resp = await api('/productos/', 'POST', body);
         if (_resp && _resp.id_producto) _savedId = String(_resp.id_producto);
       }
       // Guardar imagen en localStorage mientras la DB no tenga imagen_url
@@ -3514,12 +3514,12 @@
     async function toggleDisponible(id, nuevoVal, el) {
       el.classList.toggle('on');
       el.nextElementSibling.textContent = nuevoVal ? 'Disponible' : 'Agotado';
-      await api(`/productos/publicos/${id}/disponibilidad`, 'PATCH', { disponible: nuevoVal });
+      await api(`/productos/${id}/disponibilidad`, 'PATCH', { disponible: nuevoVal });
     }
 
     async function eliminarProducto(id, nombre) {
       if (!confirm(`¿Eliminar "${nombre}"? Esta acción no se puede deshacer.`)) return;
-      await api(`/productos/publicos/${id}`, 'DELETE');
+      await api(`/productos/${id}`, 'DELETE');
       cargarMenu();
     }
 
@@ -3527,7 +3527,7 @@
     async function cargarEstadisticas() {
       const [mes, topProds, horas] = await Promise.all([
         api('/admin/estadisticas/mes?fecha=' + _hoyHermosillo()),
-        api('/admin/productos/publicos/mas-vendidos'),
+        api('/admin/productos/mas-vendidos'),
         api('/admin/estadisticas/horas-pico?fecha=' + _hoyHermosillo())
       ]);
 
