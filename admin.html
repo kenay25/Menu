@@ -3228,13 +3228,9 @@
         // Sonar notificación
         reproducirSonidoNotificacion();
 
-        // Generar ambos tickets
+        // Generar un solo ticket
         const printArea = document.getElementById('print-area');
-        printArea.innerHTML = `
-          ${generarTicketCocina(data)}
-          <div style="page-break-after: always;"></div>
-          ${generarTicketCliente(data)}
-        `;
+        printArea.innerHTML = generarTicketCliente(data);
 
         // Esperar a que el DOM actualice y lanzar impresión
         await new Promise(r => setTimeout(r, 300));
