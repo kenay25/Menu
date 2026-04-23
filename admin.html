@@ -2852,6 +2852,26 @@
         `;
       }
 
+      // Total (incluyendo envío si aplica)
+      const envio = parseFloat(data.costo_envio) || 0;
+      if (envio > 0) {
+        let subtotalProductos = 0;
+        data.productos.forEach(p => { subtotalProductos += parseFloat(p.subtotal); });
+        html += `
+          <div class="ticket-totals" style="margin-top:8px;">
+            <p>Subtotal: $${subtotalProductos.toLocaleString()}</p>
+            <p>Envio domicilio: $${envio.toLocaleString()}</p>
+            <div class="grand-total">TOTAL: $${parseFloat(data.total).toLocaleString()}</div>
+          </div>
+        `;
+      } else {
+        html += `
+          <div class="ticket-totals" style="margin-top:8px;">
+            <div class="grand-total">TOTAL: $${parseFloat(data.total).toLocaleString()}</div>
+          </div>
+        `;
+      }
+
       html += `
         <div style="text-align:center;font-size:11px;margin-top:8px;">
           --------------------------------<br>
