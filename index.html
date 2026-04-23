@@ -3145,7 +3145,10 @@
           html += '</div></div>';
         }
         if (item.hasProtein) {
-          html += '<div class="protein-section"><div class="protein-section-title">🥩 Elige tu(s) proteína(s)</div><div class="protein-grid">';
+          var isSonora = item.id === 's3';
+          var protTitle = '🥩 Elige tu(s) proteína(s)';
+          var protNote  = isSonora ? 'Res y Tocino ya incluidos · Proteína extra +$15 c/u' : 'Primera proteína incluida · Extras +$15 c/u';
+          html += '<div class="protein-section"><div class="protein-section-title">' + protTitle + '</div><div class="protein-grid">';
           PROTEINS.filter(function (p) { return p.id !== 'p_camaron'; }).forEach(function (p) {
             var cnt = currentMods.proteins.filter(function (x) { return x === p.id; }).length;
             html += '<div class="protein-btn' + (cnt > 0 ? ' sel' : '') + '" id="pb-' + p.id + '" onclick="togProt(\'' + p.id + '\')">'
@@ -3157,7 +3160,7 @@
           html += '<div class="protein-btn' + (cntCam > 0 ? ' sel' : '') + '" id="pb-p_camaron" onclick="togProt(\'p_camaron\')">'
             + '<span class="p-emoji">🦐</span><span class="p-name">Camarón</span>'
             + (cntCam > 1 ? '<span class="p-count">' + cntCam + '</span>' : '') + '</div>';
-          html += '</div><div class="protein-note">Primera proteína incluida · Extras +$15 c/u</div></div>';
+          html += '</div><div class="protein-note">' + protNote + '</div></div>';
         }
         // Protein removal (Bola Mixta: all included, can remove)
         if (item.hasProteinRemoval) {
