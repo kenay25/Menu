@@ -3137,7 +3137,7 @@
         if (item.hasProtein) {
           var isSonora = item.id === 's3';
           var protTitle = '🥩 Elige tu(s) proteína(s)';
-          var protNote  = isSonora ? 'Res y Tocino ya incluidos · Proteína extra +$15 c/u' : 'Primera proteína incluida · Extras +$15 c/u';
+          var protNote = isSonora ? 'Res y Tocino ya incluidos · Proteína extra +$15 c/u' : 'Primera proteína incluida · Extras +$15 c/u';
           html += '<div class="protein-section"><div class="protein-section-title">' + protTitle + '</div><div class="protein-grid">';
           PROTEINS.filter(function (p) { return p.id !== 'p_camaron'; }).forEach(function (p) {
             var cnt = currentMods.proteins.filter(function (x) { return x === p.id; }).length;
@@ -3858,6 +3858,29 @@
           if (m.sushiChoice) mods.sushi_elegido = m.sushiChoice;
           if (m.ice) mods.hielo = m.ice;
           if (m.proteins && m.proteins.length) mods.proteinas = m.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : pid; });
+          // Serializar slotMods (La Caja, La Cajita, Paquetellenes, Botix, Charola, Paquete 2/3/4)
+          if (m.slotMods && m.slotMods.length) {
+            var _ingAliases = { 'pepino': 'Pepino', 'philly': 'Philadelphia', 'aguacate': 'Aguacate', 'tampico': 'Tampico', 'anguila': 'Anguila', 'ajonjoli': 'Ajonjolí', 'res': 'Res', 'tocino': 'Tocino', 'chile': 'Chile verde', 'surimi': 'Surimi', 'pollo': 'Pollo', 'camaron': 'Camarón', 'mozza': 'Mozzarella', 'serrano': 'Chile serrano', 'cebollin': 'Cebollín', 'caribe': 'Caribe' };
+            mods.slots = m.slotMods.map(function (sm, si) {
+              var slotDef = item.promoSlots && item.promoSlots[si];
+              var slotInfo = {};
+              if (slotDef && slotDef.label) slotInfo.label = slotDef.label;
+              if (sm.sushiName) slotInfo.sushi = sm.sushiName;
+              if (sm.alga) slotInfo.alga = sm.alga;
+              if (sm.style) slotInfo.estilo = sm.style;
+              if (sm.proteins && sm.proteins.length) {
+                slotInfo.proteinas = sm.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : pid; });
+              }
+              if (sm.removed) {
+                var sinLista = Object.keys(sm.removed).filter(function (k) { return sm.removed[k]; }).map(function (k) {
+                  var cleanId = k.replace(/^[a-z0-9]+_/i, '').toLowerCase();
+                  return _ingAliases[cleanId] || (cleanId.charAt(0).toUpperCase() + cleanId.slice(1));
+                });
+                if (sinLista.length) slotInfo.sin_ingredientes = sinLista;
+              }
+              return slotInfo;
+            });
+          }
           if (m.sauces) mods.salsas = Object.keys(m.sauces).filter(function (k) { return m.sauces[k]; }).map(function (k) { var sc = SAUCES.filter(function (x) { return x.id === k; })[0]; return sc ? sc.name : k; });
           if (m.sauces2) mods.salsas2 = Object.keys(m.sauces2).filter(function (k) { return m.sauces2[k]; }).map(function (k) { var sc = SAUCES.filter(function (x) { return x.id === k; })[0]; return sc ? sc.name : k; });
           if (m.saucesAlitas) mods.salsas_alitas = Object.keys(m.saucesAlitas).filter(function (k) { return m.saucesAlitas[k]; }).map(function (k) { var sc = SAUCES.filter(function (x) { return x.id === k; })[0]; return sc ? sc.name : k; });

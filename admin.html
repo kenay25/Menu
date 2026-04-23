@@ -2776,13 +2776,27 @@
       let m = typeof mods === 'string' ? JSON.parse(mods) : mods;
       let lines = [];
 
-      if (m.alga) lines.push('> Alga: ' + (m.alga === 'con' ? 'CON alga' : 'SIN alga'));
-      if (m.estilo) lines.push('> Estilo: ' + (m.estilo === 'natural' ? 'Natural' : 'Empanizado'));
-      if (m.sushi_elegido) lines.push('> Sushi: ' + m.sushi_elegido);
-      if (m.hielo) lines.push('> Hielo: ' + (m.hielo === 'con' ? 'CON' : 'SIN'));
-
-      if (m.proteinas && m.proteinas.length)
-        lines.push('> Proteina: ' + m.proteinas.map(p => PROTEINAS_NOMBRES[p] || p).join(', '));
+      // ── Slots: La Caja, La Cajita, Paquetellenes, Botix, Charola, Paquete 2/3/4 ──
+      if (m.slots && m.slots.length) {
+        m.slots.forEach(slot => {
+          let parts = [];
+          if (slot.alga) parts.push(slot.alga === 'con' ? 'CON alga' : 'SIN alga');
+          if (slot.estilo) parts.push(slot.estilo === 'natural' ? 'Natural' : 'Empanizado');
+          if (slot.proteinas && slot.proteinas.length)
+            parts.push('Prot: ' + slot.proteinas.map(p => PROTEINAS_NOMBRES[p] || p).join(', '));
+          if (slot.sin_ingredientes && slot.sin_ingredientes.length)
+            parts.push('SIN: ' + slot.sin_ingredientes.join(', '));
+          const sushiLabel = slot.sushi || slot.label || 'Sushi';
+          lines.push('  > ' + sushiLabel + (parts.length ? ': ' + parts.join(' · ') : ''));
+        });
+      } else {
+        if (m.alga) lines.push('> Alga: ' + (m.alga === 'con' ? 'CON alga' : 'SIN alga'));
+        if (m.estilo) lines.push('> Estilo: ' + (m.estilo === 'natural' ? 'Natural' : 'Empanizado'));
+        if (m.sushi_elegido) lines.push('> Sushi: ' + m.sushi_elegido);
+        if (m.hielo) lines.push('> Hielo: ' + (m.hielo === 'con' ? 'CON' : 'SIN'));
+        if (m.proteinas && m.proteinas.length)
+          lines.push('> Proteina: ' + m.proteinas.map(p => PROTEINAS_NOMBRES[p] || p).join(', '));
+      }
 
       if (m.salsas && m.salsas.length)
         lines.push('> Salsa: ' + m.salsas.map(s => SALSAS_NOMBRES[s] || s).join(', '));
@@ -2790,7 +2804,6 @@
         lines.push('> Salsa 2a: ' + m.salsas2.map(s => SALSAS_NOMBRES[s] || s).join(', '));
       if (m.salsas_alitas && m.salsas_alitas.length)
         lines.push('> Salsa alitas: ' + m.salsas_alitas.map(s => SALSAS_NOMBRES[s] || s).join(', '));
-
       if (m.sin_ingredientes && m.sin_ingredientes.length)
         lines.push('> SIN: ' + m.sin_ingredientes.join(', '));
       if (m.extras_ingredientes && m.extras_ingredientes.length)
@@ -3065,31 +3078,52 @@
     function formatearMods(mods) {
       if (!mods) return '';
       let m = typeof mods === 'string' ? JSON.parse(mods) : mods;
-      let lines = [];
+      let html = '';
 
-      if (m.alga) lines.push('🌿 Alga: ' + (m.alga === 'con' ? 'Con alga' : 'Sin alga'));
-      if (m.estilo) lines.push('🍳 Estilo: ' + (m.estilo === 'natural' ? 'Natural' : 'Empanizado'));
-      if (m.sushi_elegido) lines.push('🍣 Sushi: ' + m.sushi_elegido);
-      if (m.hielo) lines.push('🧊 Hielo: ' + (m.hielo === 'con' ? 'Con hielo' : 'Sin hielo'));
+      // ── Slots: La Caja, La Cajita, Paquetellenes, Botix, Charola, Paquete 2/3/4 ──
+      if (m.slots && m.slots.length) {
+        m.slots.forEach(slot => {
+          let parts = [];
+          if (slot.alga) parts.push('Alga: ' + (slot.alga === 'con' ? 'Con alga' : 'Sin alga'));
+          if (slot.estilo) parts.push('Estilo: ' + (slot.estilo === 'natural' ? 'Natural' : 'Empanizado'));
+          if (slot.proteinas && slot.proteinas.length)
+            parts.push('Proteína(s): ' + slot.proteinas.map(p => PROTEINAS_NOMBRES[p] || p).join(', '));
+          if (slot.sin_ingredientes && slot.sin_ingredientes.length)
+            parts.push('<span style="color:#C0392B">Sin: ' + slot.sin_ingredientes.join(', ') + '</span>');
+          const sushiLabel = slot.sushi || slot.label || 'Sushi';
+          html += `<div style="margin-top:3px;padding-left:8px;border-left:2px solid rgba(232,84,122,0.3)">
+            <span style="color:#C23060;font-weight:600">🍣 ${sushiLabel}</span>${parts.length ? ' <span style="color:#555">— ' + parts.join(' · ') + '</span>' : ''}
+          </div>`;
+        });
+      } else {
+        // ── Item simple (sin slots) ──
+        let lines = [];
+        if (m.alga) lines.push('🌿 Alga: ' + (m.alga === 'con' ? 'Con alga' : 'Sin alga'));
+        if (m.estilo) lines.push('🍳 Estilo: ' + (m.estilo === 'natural' ? 'Natural' : 'Empanizado'));
+        if (m.sushi_elegido) lines.push('🍣 Sushi: ' + m.sushi_elegido);
+        if (m.hielo) lines.push('🧊 Hielo: ' + (m.hielo === 'con' ? 'Con hielo' : 'Sin hielo'));
+        if (m.proteinas && m.proteinas.length)
+          lines.push('🥩 Proteína: ' + m.proteinas.map(p => PROTEINAS_NOMBRES[p] || p).join(', '));
+        if (lines.length) html += '<div>' + lines.join(' · ') + '</div>';
+      }
 
-      if (m.proteinas && m.proteinas.length)
-        lines.push('🥩 Proteína: ' + m.proteinas.map(p => PROTEINAS_NOMBRES[p] || p).join(', '));
-
+      // Salsas y extras — siempre al final, aplican al producto completo
+      let footer = [];
       if (m.salsas && m.salsas.length)
-        lines.push('🫙 Salsa boneles: ' + m.salsas.map(s => SALSAS_NOMBRES[s] || s).join(', '));
+        footer.push('🫙 Salsa boneles: ' + m.salsas.map(s => SALSAS_NOMBRES[s] || s).join(', '));
       if (m.salsas2 && m.salsas2.length)
-        lines.push('🫙 Salsa 2ª orden: ' + m.salsas2.map(s => SALSAS_NOMBRES[s] || s).join(', '));
+        footer.push('🫙 Salsa 2ª orden: ' + m.salsas2.map(s => SALSAS_NOMBRES[s] || s).join(', '));
       if (m.salsas_alitas && m.salsas_alitas.length)
-        lines.push('🫙 Salsa alitas: ' + m.salsas_alitas.map(s => SALSAS_NOMBRES[s] || s).join(', '));
-
+        footer.push('🫙 Salsa alitas: ' + m.salsas_alitas.map(s => SALSAS_NOMBRES[s] || s).join(', '));
       if (m.sin_ingredientes && m.sin_ingredientes.length)
-        lines.push('🚫 Sin: ' + m.sin_ingredientes.join(', '));
+        footer.push('🚫 Sin: ' + m.sin_ingredientes.join(', '));
       if (m.extras_ingredientes && m.extras_ingredientes.length)
-        lines.push('➕ Extra ingrediente: ' + m.extras_ingredientes.join(', '));
+        footer.push('➕ Extra ingrediente: ' + m.extras_ingredientes.join(', '));
       if (m.extras_producto && m.extras_producto.length)
-        lines.push('✅ Extra producto: ' + m.extras_producto.join(', '));
+        footer.push('✅ Extra producto: ' + m.extras_producto.join(', '));
+      if (footer.length) html += '<div style="margin-top:4px">' + footer.join('<br>') + '</div>';
 
-      return lines.length ? lines.join(' · ') : '';
+      return html;
     }
 
     /* ══ AUTO-REFRESH ═══════════════════════════════════════════ */
