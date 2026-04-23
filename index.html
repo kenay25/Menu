@@ -3525,8 +3525,12 @@
             // Camarón: siempre +$15 cada uno
             extraCost += shrimpInSlot * 15;
             // Otras proteínas: 1ª gratis en este slot, 2ª+ +$15
-            if (nonShrimpInSlot > 1) {
-              extraCost += (nonShrimpInSlot - 1) * 15;
+            var extraProts = Math.max(0, nonShrimpInSlot - 1);
+            if (sm.sushiName === 'Sonora' && sm.proteins.indexOf('p_res') >= 0 && sm.proteins.indexOf('p_tocino') >= 0) {
+              extraProts = Math.max(0, nonShrimpInSlot - 2);
+            }
+            if (extraProts > 0) {
+              extraCost += extraProts * 15;
             }
           }
         });
@@ -3546,8 +3550,12 @@
               // Camarón: siempre +$15 por cada uno (nunca es "primera gratis")
               extraCost += shrimpCount * 15;
               // No-camarón: primera gratis, extras +$15 c/u
-              if (nonShrimpCount > 1) {
-                extraCost += (nonShrimpCount - 1) * 15;
+              var extraProts = Math.max(0, nonShrimpCount - 1);
+              if (sm.sushiName === 'Sonora' && sm.proteins.indexOf('p_res') >= 0 && sm.proteins.indexOf('p_tocino') >= 0) {
+                extraProts = Math.max(0, nonShrimpCount - 2);
+              }
+              if (extraProts > 0) {
+                extraCost += extraProts * 15;
               }
             }
           });
@@ -3561,8 +3569,12 @@
           currentMods.slotMods.forEach(function (sm, si) {
             if (sm && sm.proteins && Array.isArray(sm.proteins)) {
               // 1ª proteína gratis en este slot, 2ª+ +$15
-              if (sm.proteins.length > 1) {
-                extraCost += (sm.proteins.length - 1) * 15;
+              var extraProts = Math.max(0, sm.proteins.length - 1);
+              if (sm.sushiName === 'Sonora' && sm.proteins.indexOf('p_res') >= 0 && sm.proteins.indexOf('p_tocino') >= 0) {
+                extraProts = Math.max(0, sm.proteins.length - 2);
+              }
+              if (extraProts > 0) {
+                extraCost += extraProts * 15;
               }
             }
           });
@@ -3965,7 +3977,11 @@
                 }
               });
               totalExtra += shrimpInSlot * 15;
-              if (nonShrimpInSlot > 1) totalExtra += (nonShrimpInSlot - 1) * 15;
+              var extraProts = Math.max(0, nonShrimpInSlot - 1);
+              if (sm.sushiName === 'Sonora' && sm.proteins.indexOf('p_res') >= 0 && sm.proteins.indexOf('p_tocino') >= 0) {
+                extraProts = Math.max(0, nonShrimpInSlot - 2);
+              }
+              if (extraProts > 0) totalExtra += extraProts * 15;
             }
           });
         } else {
@@ -3987,13 +4003,20 @@
               });
               if (isSpecialPromo) {
                 // Lógica especial: camarón +$15, extras +$15
-                if (shrimpInSlot > 0) totalExtra += 15;
-                if (sm.proteins.length > 1) totalExtra += (sm.proteins.length - 1) * 15;
+                var nonShrimpCount = sm.proteins.length - shrimpInSlot;
+                if (shrimpInSlot > 0) totalExtra += shrimpInSlot * 15;
+                var extraProts = Math.max(0, nonShrimpCount - 1);
+                if (sm.sushiName === 'Sonora' && sm.proteins.indexOf('p_res') >= 0 && sm.proteins.indexOf('p_tocino') >= 0) {
+                  extraProts = Math.max(0, nonShrimpCount - 2);
+                }
+                if (extraProts > 0) totalExtra += extraProts * 15;
               } else {
                 // Combos normales: 1ª incluida POR SLOT · 2ª+ +$15
-                if (sm.proteins.length > 1) {
-                  totalExtra += (sm.proteins.length - 1) * 15;
+                var extraProts = Math.max(0, sm.proteins.length - 1);
+                if (sm.sushiName === 'Sonora' && sm.proteins.indexOf('p_res') >= 0 && sm.proteins.indexOf('p_tocino') >= 0) {
+                  extraProts = Math.max(0, sm.proteins.length - 2);
                 }
+                if (extraProts > 0) totalExtra += extraProts * 15;
               }
             }
           });
@@ -4271,7 +4294,11 @@
                     }
                   });
                   totalExtra += shrimpInSlot * 15;
-                  if (nonShrimpInSlot > 1) totalExtra += (nonShrimpInSlot - 1) * 15;
+                  var extraProts = Math.max(0, nonShrimpInSlot - 1);
+                  if (sm.sushiName === 'Sonora' && sm.proteins.indexOf('p_res') >= 0 && sm.proteins.indexOf('p_tocino') >= 0) {
+                    extraProts = Math.max(0, nonShrimpInSlot - 2);
+                  }
+                  if (extraProts > 0) totalExtra += extraProts * 15;
                 }
               });
             } else {
@@ -4292,13 +4319,21 @@
                     }
                   });
                   if (isSpecialPromo) {
-                    if (shrimpInSlot > 0) totalExtra += 15;
-                    if (sm.proteins.length > 1) totalExtra += (sm.proteins.length - 1) * 15;
+                    // Lógica especial: camarón +$15, extras +$15
+                    var nonShrimpCount = sm.proteins.length - shrimpInSlot;
+                    if (shrimpInSlot > 0) totalExtra += shrimpInSlot * 15;
+                    var extraProts = Math.max(0, nonShrimpCount - 1);
+                    if (sm.sushiName === 'Sonora' && sm.proteins.indexOf('p_res') >= 0 && sm.proteins.indexOf('p_tocino') >= 0) {
+                      extraProts = Math.max(0, nonShrimpCount - 2);
+                    }
+                    if (extraProts > 0) totalExtra += extraProts * 15;
                   } else {
                     // Combos normales: 1ª incluida POR SLOT · 2ª+ +$15
-                    if (sm.proteins.length > 1) {
-                      totalExtra += (sm.proteins.length - 1) * 15;
+                    var extraProts = Math.max(0, sm.proteins.length - 1);
+                    if (sm.sushiName === 'Sonora' && sm.proteins.indexOf('p_res') >= 0 && sm.proteins.indexOf('p_tocino') >= 0) {
+                      extraProts = Math.max(0, sm.proteins.length - 2);
                     }
+                    if (extraProts > 0) totalExtra += extraProts * 15;
                   }
                 }
               });
