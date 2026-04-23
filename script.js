@@ -201,8 +201,8 @@ var MENU = {
     },
 
     {
-      id: 's3', dbId: 25, emoji: '&#x1F363;', name: 'Sonora', price: 110, tag: null, hasAlga: true,
-      desc: 'Relleno res y tocino. Queso philadelphia y chile verde. Puedes pedir solo res, solo tocino, o ambos — sin costo extra.',
+      id: 's3', dbId: 25, emoji: '&#x1F363;', name: 'Sonora', price: 110, tag: null, hasAlga: true, hasStyle: true, hasProtein: true,
+      desc: 'Relleno res y tocino. Queso philadelphia y chile verde. Res y Tocino ya incluidos, puedes agregar más proteínas (+$15 c/u).',
       ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b5', '&#x1F969;', 'Res', 'Relleno', true), ing('b6', '&#x1F953;', 'Tocino', 'Relleno', true), ing('b7', '&#x1F336;&#xFE0F;', 'Chile verde', 'Queso', true)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }]
     },
 
@@ -947,6 +947,12 @@ function confirmMods() {
         // Si hay camarón, ya se cobró, solo cobrar las demás extras
         extraCost += (totalProteins - 1) * 15;
       }
+    }
+  } else if (inst.item.id === 's3') {
+    // Sonora: Res y Tocino ya incluidos como ingredientes base.
+    // Cada proteína extra seleccionada desde el picker = +$15
+    if (currentMods.proteins && currentMods.proteins.length > 0) {
+      extraCost += currentMods.proteins.length * 15;
     }
   } else {
     // Items normales: primera proteína incluida, resto +$15 c/u
