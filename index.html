@@ -2569,18 +2569,12 @@
       {
         id: 'promo2', dbId: 52, img: 'img/p2.jpg', emoji: '&#x1F363;', num: 'Paquete 2',
         title: 'Paquete 2', price: 200, tag: null,
-        desc: '2 Sonoras. Elige proteína para cada una: Res, Tocino, Philadelphia o Chile rescoldado.',
+        desc: '2 Sonoras. Res y Tocino ya incluidos en cada uno, puedes agregar más proteínas (+$15 c/u).',
         ingredients: [ing('b1', '&#x1F363;', '2 Sonoras', 'Incluidas', false)],
         extras: [],
         promoSlots: [
           {
             label: 'Sonora 1', hasProtein: true, hasAlga: true, hasStyle: true, sushiName: 'Sonora',
-            proteinOptions: [
-              { id: 'p_res', emoji: '&#x1F969;', name: 'Res' },
-              { id: 'p_tocino', emoji: '&#x1F953;', name: 'Tocino' },
-              { id: 'p_philly', emoji: '&#x1F9C0;', name: 'Philadelphia' },
-              { id: 'p_chile', emoji: '&#x1F336;&#xFE0F;', name: 'Chile rescoldado' }
-            ],
             removable: [
               { id: 'rp1_pepino', name: 'Pepino', emoji: '&#x1F952;' },
               { id: 'rp1_aguacate', name: 'Aguacate', emoji: '&#x1F951;' }
@@ -2588,12 +2582,6 @@
           },
           {
             label: 'Sonora 2', hasProtein: true, hasAlga: true, hasStyle: true, sushiName: 'Sonora',
-            proteinOptions: [
-              { id: 'p_res', emoji: '&#x1F969;', name: 'Res' },
-              { id: 'p_tocino', emoji: '&#x1F953;', name: 'Tocino' },
-              { id: 'p_philly', emoji: '&#x1F9C0;', name: 'Philadelphia' },
-              { id: 'p_chile', emoji: '&#x1F336;&#xFE0F;', name: 'Chile rescoldado' }
-            ],
             removable: [
               { id: 'rp2_pepino', name: 'Pepino', emoji: '&#x1F952;' },
               { id: 'rp2_aguacate', name: 'Aguacate', emoji: '&#x1F951;' }
@@ -2920,15 +2908,15 @@
         if (item.id === 'c7' || item.id === 'c6') {
           var sushisPorDefecto = ['California', 'Bombazo', 'Sonora'];
           initialMods.slotMods = item.promoSlots.map(function (slot, idx) {
-            return { proteins: [], alga: null, style: null, removed: {}, sushiName: sushisPorDefecto[idx] || null };
+            return { proteins: sushisPorDefecto[idx] === 'Sonora' ? ['p_res', 'p_tocino'] : [], alga: null, style: null, removed: {}, sushiName: sushisPorDefecto[idx] || null };
           });
         } else if (item.id === 'c4') {
           // Charola - solo 1 sushi (California)
           initialMods.slotMods = item.promoSlots.map(function (slot) {
-            return { proteins: [], alga: null, style: null, removed: {}, sushiName: slot.sushiName || null };
+            return { proteins: slot.sushiName === 'Sonora' ? ['p_res', 'p_tocino'] : [], alga: null, style: null, removed: {}, sushiName: slot.sushiName || null };
           });
         } else {
-          initialMods.slotMods = item.promoSlots.map(function (slot) { return { proteins: [], alga: null, style: null, removed: {}, sushiName: slot.sushiName || null }; });
+          initialMods.slotMods = item.promoSlots.map(function (slot) { return { proteins: slot.sushiName === 'Sonora' ? ['p_res', 'p_tocino'] : [], alga: null, style: null, removed: {}, sushiName: slot.sushiName || null }; });
         }
       } else if (itemId === 's3') {
         initialMods.proteins = ['p_res', 'p_tocino'];
@@ -3277,9 +3265,13 @@
         currentMods.slotMods[si].proteins = [];
       }
 
-      // Reset proteins if new sushi doesn't have it (Sonora no lleva proteína selectable)
+      // Reset proteins if new sushi doesn't have it
       var sushisConProt = ['California', 'Bombazo', 'Mix Roll', 'Tres Quesos', 'Aguacate', 'Mayito', 'Bola', 'Sonora'];
       if (sushisConProt.indexOf(name) < 0) {
+        currentMods.slotMods[si].proteins = [];
+      } else if (name === 'Sonora') {
+        currentMods.slotMods[si].proteins = ['p_res', 'p_tocino'];
+      } else {
         currentMods.slotMods[si].proteins = [];
       }
 
@@ -3371,7 +3363,7 @@
 
       // Para Sonora, mostrar solo sus ingredientes específicos
       if (sushiName === 'Sonora') {
-        var sonoraIngs = ['philly', 'pepino', 'aguacate', 'res', 'tocino', 'chile'];
+        var sonoraIngs = ['philly', 'pepino', 'aguacate', 'chile'];
         return allRemovable.filter(function (ing) {
           // Extraer tipo de ingrediente del ID (después del prefijo como 'c7s1_', 'pq_', etc.)
           var ingType = ing.id.replace(/^[a-z0-9]+_/i, '');
