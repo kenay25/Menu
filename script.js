@@ -33,6 +33,21 @@ var EXTRA_INGS = [
   'Tampico', 'Soya', 'Anguila', 'Chipotle', 'Ranch'
 ];
 
+/* ── Extras globales reutilizables ──────────── */
+var EXTRAS_SUSHI = [
+  { id: 'ex_anguila', emoji: '&#x1FAD9;', name: 'Anguila', note: '+$15', price: 15 },
+  { id: 'ex_aderezo', emoji: '&#x1FAD9;', name: 'Aderezo', note: '+$15', price: 15 },
+  { id: 'ex_ranch', emoji: '&#x1FAD9;', name: 'Ranch', note: '+$15', price: 15 },
+  { id: 'ex_soya', emoji: '&#x1FAD9;', name: 'Soya', note: '+$15', price: 15 },
+  { id: 'ex_grat', emoji: '&#x1F9C0;', name: 'Gratinado', note: '+$25', price: 25 }
+];
+var EXTRAS_CAJA = [
+  { id: 'ex_ranch', emoji: '&#x1FAD9;', name: 'Ranch', note: '+$25', price: 25 },
+  { id: 'ex_aderezo', emoji: '&#x1FAD9;', name: 'Aderezo', note: '+$25', price: 25 },
+  { id: 'ex_soya', emoji: '&#x1FAD9;', name: 'Soya', note: '+$25', price: 25 },
+  { id: 'ex_anguila', emoji: '&#x1FAD9;', name: 'Anguila', note: '+$25', price: 25 }
+];
+
 /* ── Helper builders ────────────────────────── */
 function ing(id, em, nm, nt, rm) {
   return { id: id, emoji: em, name: nm, note: nt, removable: rm };
@@ -80,34 +95,34 @@ var MENU = {
     {
       id: 'c4', dbId: 5, emoji: '&#x1F371;', name: 'Charola', price: 220, tag: 'popular', hasSauce: true,
       desc: '1/2 California, 1/2 boneless, 1/2 papas sazonadas, dedos de queso y tampico.',
-      ingredients: [ing('b1', '&#x1F363;', '1/2 California', 'Sushi', false), ing('b2', '&#x1F357;', 'Boneless', 'Mitad', false), ing('b3', '&#x1F35F;', 'Papas sazonadas', 'Mitad', false), ing('b4', '&#x1F9C0;', 'Dedos de queso', 'Incluidos', true), ing('b5', '&#x1F41F;', 'Tampico', 'Incluido', true)], extras: []
+      ingredients: [ing('b1', '&#x1F363;', '1/2 California', 'Sushi', false), ing('b2', '&#x1F357;', 'Boneless', 'Mitad', false), ing('b3', '&#x1F35F;', 'Papas sazonadas', 'Mitad', false), ing('b4', '&#x1F9C0;', 'Dedos de queso', 'Incluidos', true), ing('b5', '&#x1F41F;', 'Tampico', 'Incluido', true)], extras: EXTRAS_CAJA
     },
 
     {
-      id: 'c3', dbId: 6, emoji: '&#x1F371;', name: 'Paquetellenes', price: 150, tag: null, hasSauce: true,
+      id: 'c3', dbId: 6, emoji: '&#x1F371;', name: 'Paquetellenes', price: 150, tag: null, hasSauce: true, maxSauces: 1,
       desc: '1/2 sushi (bombazo, sonora o california), 1/2 boneless, 1/2 papas sazonadas.',
-      ingredients: [ing('b1', '&#x1F363;', '1/2 sushi a elegir', 'Bombazo/Sonora/California', false), ing('b2', '&#x1F357;', 'Boneless', 'Mitad', false), ing('b3', '&#x1F35F;', 'Papas sazonadas', 'Mitad porción', false)], extras: []
+      ingredients: [ing('b1', '&#x1F363;', '1/2 sushi a elegir', 'Bombazo/Sonora/California', false), ing('b2', '&#x1F357;', 'Boneless', 'Mitad', false), ing('b3', '&#x1F35F;', 'Papas sazonadas', 'Mitad porción', false)], extras: EXTRAS_CAJA
     },
 
     {
-      id: 'c2', dbId: 7, emoji: '&#x1F371;', name: 'Botix', price: 120, tag: null, hasSauce: true,
+      id: 'c2', dbId: 7, emoji: '&#x1F371;', name: 'Botix', price: 120, tag: null, hasSauce: true, maxSauces: 1,
       desc: 'Mitad sushi (bombazo, sonora o california) mitad boneless. Salsa a elegir.',
-      ingredients: [ing('b1', '&#x1F363;', '1/2 sushi a elegir', 'Bombazo/Sonora/California', false), ing('b2', '&#x1F357;', 'Boneless', 'Mitad', false)], extras: []
+      ingredients: [ing('b1', '&#x1F363;', '1/2 sushi a elegir', 'Bombazo/Sonora/California', false), ing('b2', '&#x1F357;', 'Boneless', 'Mitad', false)], extras: EXTRAS_CAJA
     }
   ],
 
   /* ── SUSHIS (de $220 a $80) ───────────────── */
   sushis: [
     {
-      id: 's22', dbId: 8, emoji: '&#x1F363;', name: 'Borbon', price: 220, tag: 'popular', hasSauce: true, hasAlga: true,
+      id: 's22', dbId: 8, emoji: '&#x1F363;', name: 'Borbon', price: 220, tag: 'popular', hasSauce: true, maxSauces: 1, hasAlga: true,
       desc: 'Por dentro: surimi empanizado, pollo, res, tocino y camarón. Por fuera: queso gratinado con chile serrano. Boneles en salsa a elección.',
-      ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b5', '&#x1F980;', 'Surimi empanizado', 'Relleno', true), ing('b6', '&#x1F357;', 'Pollo', 'Relleno', true), ing('b7', '&#x1F969;', 'Res', 'Relleno', true), ing('b8', '&#x1F953;', 'Tocino', 'Relleno', true), ing('b9', '&#x1F990;', 'Camarón', 'Relleno', true), ing('b10', '&#x1F9C0;', 'Queso gratinado', 'Cubierta', false), ing('b11', '&#x1F336;&#xFE0F;', 'Chile serrano', 'Cubierta', true)], extras: []
+      ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b5', '&#x1F980;', 'Surimi empanizado', 'Relleno', true), ing('b6', '&#x1F357;', 'Pollo', 'Relleno', true), ing('b7', '&#x1F969;', 'Res', 'Relleno', true), ing('b8', '&#x1F953;', 'Tocino', 'Relleno', true), ing('b9', '&#x1F990;', 'Camarón', 'Relleno', true), ing('b10', '&#x1F9C0;', 'Queso gratinado', 'Cubierta', false), ing('b11', '&#x1F336;&#xFE0F;', 'Chile serrano', 'Cubierta', true)], extras: EXTRAS_SUSHI
     },
 
     {
       id: 's17', dbId: 9, emoji: '&#x1F363;', name: 'Monster', price: 165, tag: 'hot', hasAlga: true,
       desc: 'Por dentro: surimi empanizado, pollo, res, tocino y camarón. Por fuera: queso gratinado con chile serrano.',
-      ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b5', '&#x1F980;', 'Surimi empanizado', 'Relleno', true), ing('b6', '&#x1F357;', 'Pollo', 'Relleno', true), ing('b7', '&#x1F969;', 'Res', 'Relleno', true), ing('b8', '&#x1F953;', 'Tocino', 'Relleno', true), ing('b9', '&#x1F990;', 'Camarón', 'Relleno', true), ing('b10', '&#x1F9C0;', 'Queso gratinado', 'Cubierta', false), ing('b11', '&#x1F336;&#xFE0F;', 'Chile serrano', 'Cubierta', true)], extras: []
+      ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b5', '&#x1F980;', 'Surimi empanizado', 'Relleno', true), ing('b6', '&#x1F357;', 'Pollo', 'Relleno', true), ing('b7', '&#x1F969;', 'Res', 'Relleno', true), ing('b8', '&#x1F953;', 'Tocino', 'Relleno', true), ing('b9', '&#x1F990;', 'Camarón', 'Relleno', true), ing('b10', '&#x1F9C0;', 'Queso gratinado', 'Cubierta', false), ing('b11', '&#x1F336;&#xFE0F;', 'Chile serrano', 'Cubierta', true)], extras: EXTRAS_SUSHI
     },
 
     {
@@ -119,7 +134,7 @@ var MENU = {
     {
       id: 's19', dbId: 11, emoji: '&#x1F363;', name: 'La Chuyita', price: 165, tag: 'popular', hasAlga: true,
       desc: 'Por dentro: philadelphia, aguacate, pepino, tampico. Por fuera: camarón frito aderezado, tocino, gratinado con mozzarella, chipotle y cebollín.',
-      ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Relleno', true), ing('b2', '&#x1F951;', 'Aguacate', 'Relleno', true), ing('b3', '&#x1F952;', 'Pepino', 'Relleno', true), ing('b4', '&#x1F41F;', 'Tampico', 'Relleno', true), ing('b6', '&#x1F990;', 'Camarón frito aderezado', 'Cubierta', false), ing('b7', '&#x1F953;', 'Tocino', 'Cubierta', true), ing('b8', '&#x1F9C0;', 'Mozzarella gratinada', 'Cubierta', true), ing('b9', '&#x1FAD9;', 'Chipotle', 'Cubierta', true), ing('b10', '&#x1F331;', 'Cebollín', 'Cubierta', true)], extras: []
+      ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Relleno', true), ing('b2', '&#x1F951;', 'Aguacate', 'Relleno', true), ing('b3', '&#x1F952;', 'Pepino', 'Relleno', true), ing('b4', '&#x1F41F;', 'Tampico', 'Relleno', true), ing('b6', '&#x1F990;', 'Camarón frito aderezado', 'Cubierta', false), ing('b7', '&#x1F953;', 'Tocino', 'Cubierta', true), ing('b8', '&#x1F9C0;', 'Mozzarella gratinada', 'Cubierta', true), ing('b9', '&#x1FAD9;', 'Chipotle', 'Cubierta', true), ing('b10', '&#x1F331;', 'Cebollín', 'Cubierta', true)], extras: EXTRAS_SUSHI
     },
 
     {
@@ -129,15 +144,15 @@ var MENU = {
     },
 
     {
-      id: 's_mayito', dbId: 13, emoji: '&#x1F371;', name: 'Mayito', price: 145, tag: 'popular', hasProtein: true, hasSauce: true,
+      id: 's_mayito', dbId: 13, emoji: '&#x1F371;', name: 'Mayito', price: 145, tag: 'popular', hasProtein: true, hasSauce: true, maxSauces: 1,
       desc: 'Proteína a elegir. Arriba tampico con boneless bañados en salsa de elección.',
-      ingredients: [ing('b1', '&#x1F363;', 'Sushi (prot. elegida)', 'Base', false), ing('b2', '&#x1F41F;', 'Tampico', 'Arriba', true), ing('b3', '&#x1F357;', 'Boneless', 'Con salsa', false)], extras: []
+      ingredients: [ing('b1', '&#x1F363;', 'Sushi (prot. elegida)', 'Base', false), ing('b2', '&#x1F41F;', 'Tampico', 'Arriba', true), ing('b3', '&#x1F357;', 'Boneless', 'Con salsa', false)], extras: EXTRAS_SUSHI
     },
 
     {
       id: 's13', dbId: 14, emoji: '&#x1F363;', name: 'Mix Roll', price: 145, tag: null, hasProtein: true, hasAlga: true,
       desc: 'Por dentro: proteína a elegir. Por fuera: mix de tocino y queso gratinado.',
-      ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b5', '&#x1F953;', 'Tocino', 'Mix cubierta', true), ing('b6', '&#x1F9C0;', 'Queso gratinado', 'Mix cubierta', false)], extras: []
+      ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b5', '&#x1F953;', 'Tocino', 'Mix cubierta', true), ing('b6', '&#x1F9C0;', 'Queso gratinado', 'Mix cubierta', false)], extras: EXTRAS_SUSHI
     },
 
     {
@@ -155,7 +170,7 @@ var MENU = {
     {
       id: 's16', dbId: 17, emoji: '&#x1F363;', name: 'Hot', price: 145, tag: 'hot', hasAlga: true,
       desc: 'Por dentro: relleno de res. Por fuera: cubierto de queso gratinado picante con camarón y tocino.',
-      ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b5', '&#x1F969;', 'Res', 'Relleno', false), ing('b6', '&#x1F9C0;', 'Queso gratinado picante', 'Cubierta', false), ing('b7', '&#x1F990;', 'Camarón', 'Cubierta', true), ing('b8', '&#x1F953;', 'Tocino', 'Cubierta', true)], extras: []
+      ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b5', '&#x1F969;', 'Res', 'Relleno', false), ing('b6', '&#x1F9C0;', 'Queso gratinado picante', 'Cubierta', false), ing('b7', '&#x1F990;', 'Camarón', 'Cubierta', true), ing('b8', '&#x1F953;', 'Tocino', 'Cubierta', true)], extras: EXTRAS_SUSHI
     },
 
     {
@@ -167,7 +182,7 @@ var MENU = {
     {
       id: 's5', dbId: 19, emoji: '&#x1F363;', name: 'Tres Quesos', price: 135, tag: null, hasProtein: true, hasAlga: true,
       desc: '01 proteína a elegir, cubierta de queso gratinado, manchego y cebollín.',
-      ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b5', '&#x1F9C0;', 'Queso gratinado', 'Cubierta', false), ing('b6', '&#x1F9C0;', 'Manchego', 'Cubierta', true), ing('b7', '&#x1F331;', 'Cebollín', 'Cubierta', true)], extras: []
+      ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b5', '&#x1F9C0;', 'Queso gratinado', 'Cubierta', false), ing('b6', '&#x1F9C0;', 'Manchego', 'Cubierta', true), ing('b7', '&#x1F331;', 'Cebollín', 'Cubierta', true)], extras: EXTRAS_SUSHI
     },
 
     {
@@ -240,13 +255,13 @@ var MENU = {
   /* ── ENTRADAS (de $150 a $30) ─────────────── */
   entradas: [
     {
-      id: 'en1', dbId: 31, emoji: '&#x1F9C6;', name: 'Tostiboneles', price: 150, tag: null, hasSauce: true,
+      id: 'en1', dbId: 31, emoji: '&#x1F9C6;', name: 'Tostiboneles', price: 150, tag: null, hasSauce: true, maxSauces: 1,
       desc: 'Tostitos bañados en queso amarillo y boneles en salsa a elegir.',
       ingredients: [ing('b1', '&#x1F96B;', 'Tostitos', 'Base', false), ing('b2', '&#x1F9C0;', 'Queso amarillo', 'Bañados', false), ing('b3', '&#x1F357;', 'Boneles', 'Con salsa', false)], extras: []
     },
 
     {
-      id: 'en7', dbId: 32, emoji: '&#x1F35F;', name: 'Papiboneles', price: 130, tag: 'new', hasSauce: true,
+      id: 'en7', dbId: 32, emoji: '&#x1F35F;', name: 'Papiboneles', price: 130, tag: 'new', hasSauce: true, maxSauces: 1,
       desc: 'Cama de papa sazonada con boneles en salsa a elección, acompañados de queso amarillo preparado.',
       ingredients: [ing('b1', '&#x1F954;', 'Papa sazonada', 'Cama base', false), ing('b2', '&#x1F357;', 'Boneles', 'Con salsa', false), ing('b3', '&#x1F9C0;', 'Queso amarillo preparado', 'Encima', false)], extras: []
     },
@@ -287,13 +302,13 @@ var MENU = {
     {
       id: 'esp4', dbId: 38, emoji: '&#x1F35A;', name: 'Yakimeshi', price: 135, tag: null,
       desc: 'Arroz frito con pollo, res, tocino y camarón decorada con aguacate y tampico.',
-      ingredients: [ing('b1', '&#x1F35A;', 'Arroz frito', 'Base', false), ing('b2', '&#x1F357;', 'Pollo', 'Mix', true), ing('b3', '&#x1F969;', 'Res', 'Mix', true), ing('b4', '&#x1F953;', 'Tocino', 'Mix', true), ing('b5', '&#x1F990;', 'Camarón', 'Mix', true), ing('b6', '&#x1F951;', 'Aguacate', 'Decorado', true), ing('b7', '&#x1F41F;', 'Tampico', 'Decorado', true)], extras: [{ id: 'x1', emoji: '&#x1F969;', name: 'Proteína extra', note: '+$15', price: 15 }]
+      ingredients: [ing('b1', '&#x1F35A;', 'Arroz frito', 'Base', false), ing('b2', '&#x1F357;', 'Pollo', 'Mix', true), ing('b3', '&#x1F969;', 'Res', 'Mix', true), ing('b4', '&#x1F953;', 'Tocino', 'Mix', true), ing('b5', '&#x1F990;', 'Camarón', 'Mix', true), ing('b6', '&#x1F951;', 'Aguacate', 'Decorado', true), ing('b7', '&#x1F41F;', 'Tampico', 'Decorado', true)], extras: [{ id: 'x_pollo', emoji: '&#x1F357;', name: 'Proteína extra — Pollo', note: '+$15', price: 15 }, { id: 'x_res', emoji: '&#x1F969;', name: 'Proteína extra — Res', note: '+$15', price: 15 }, { id: 'x_tocino', emoji: '&#x1F953;', name: 'Proteína extra — Tocino', note: '+$15', price: 15 }, { id: 'x_cam', emoji: '&#x1F990;', name: 'Proteína extra — Camarón', note: '+$15', price: 15 }]
     },
 
     {
       id: 'esp5', dbId: 39, emoji: '&#x1F35A;', name: 'Gohan', price: 135, tag: 'popular',
       desc: 'Plancha de arroz natural o empanizado, philadelphia, tampico, res, pollo, tocino, aguacate, camarón, serrano y cebollín.',
-      ingredients: [ing('b1', '&#x1F35A;', 'Arroz (nat. o empanizado)', 'Base', false), ing('b2', '&#x1F9C0;', 'Philadelphia', 'Encima', true), ing('b3', '&#x1F41F;', 'Tampico', 'Encima', true), ing('b4', '&#x1F969;', 'Res', 'Mix prot.', true), ing('b5', '&#x1F357;', 'Pollo', 'Mix prot.', true), ing('b6', '&#x1F953;', 'Tocino', 'Mix prot.', true), ing('b7', '&#x1F990;', 'Camarón', 'Mix prot.', true), ing('b8', '&#x1F951;', 'Aguacate', 'Decorado', true), ing('b9', '&#x1F336;&#xFE0F;', 'Serrano', 'Decorado', true), ing('b10', '&#x1F331;', 'Cebollín', 'Decorado', true)], extras: [{ id: 'x1', emoji: '&#x1F969;', name: 'Proteína extra', note: '+$15', price: 15 }]
+      ingredients: [ing('b1', '&#x1F35A;', 'Arroz (nat. o empanizado)', 'Base', false), ing('b2', '&#x1F9C0;', 'Philadelphia', 'Encima', true), ing('b3', '&#x1F41F;', 'Tampico', 'Encima', true), ing('b4', '&#x1F969;', 'Res', 'Mix prot.', true), ing('b5', '&#x1F357;', 'Pollo', 'Mix prot.', true), ing('b6', '&#x1F953;', 'Tocino', 'Mix prot.', true), ing('b7', '&#x1F990;', 'Camarón', 'Mix prot.', true), ing('b8', '&#x1F951;', 'Aguacate', 'Decorado', true), ing('b9', '&#x1F336;&#xFE0F;', 'Serrano', 'Decorado', true), ing('b10', '&#x1F331;', 'Cebollín', 'Decorado', true)], extras: [{ id: 'x_pollo', emoji: '&#x1F357;', name: 'Proteína extra — Pollo', note: '+$15', price: 15 }, { id: 'x_res', emoji: '&#x1F969;', name: 'Proteína extra — Res', note: '+$15', price: 15 }, { id: 'x_tocino', emoji: '&#x1F953;', name: 'Proteína extra — Tocino', note: '+$15', price: 15 }, { id: 'x_cam', emoji: '&#x1F990;', name: 'Proteína extra — Camarón', note: '+$15', price: 15 }]
     },
 
     {
@@ -303,13 +318,13 @@ var MENU = {
     },
 
     {
-      id: 'esp2', dbId: 41, emoji: '&#x1F357;', name: 'Boneless', price: 120, tag: 'popular', hasSauce: true,
+      id: 'esp2', dbId: 41, emoji: '&#x1F357;', name: 'Boneless', price: 120, tag: 'popular', hasSauce: true, maxSauces: 1,
       desc: 'Tiras de pollo empanizadas y bañadas en salsa a elección. Con apio, zanahoria y aderezo.',
       ingredients: [ing('b1', '&#x1F357;', 'Pollo empanizado', 'Tiras', false), ing('b2', '&#x1F96C;', 'Apio', 'Guarnición', true), ing('b3', '&#x1F955;', 'Zanahoria', 'Guarnición', true), ing('b4', '&#x1FAD9;', 'Aderezo', 'Al lado', true)], extras: []
     },
 
     {
-      id: 'esp3', dbId: 42, emoji: '&#x1F357;', name: 'Boneless con Papas', price: 120, tag: null, hasSauce: true,
+      id: 'esp3', dbId: 42, emoji: '&#x1F357;', name: 'Boneless con Papas', price: 120, tag: null, hasSauce: true, maxSauces: 1,
       desc: 'Boneless + papas sazonadas.',
       ingredients: [ing('b1', '&#x1F357;', 'Pollo empanizado', 'Tiras', false), ing('b2', '&#x1F35F;', 'Papas sazonadas', 'Incluidas', false), ing('b3', '&#x1F96C;', 'Apio', 'Guarnición', true), ing('b4', '&#x1F955;', 'Zanahoria', 'Guarnición', true)], extras: []
     },
@@ -363,7 +378,7 @@ var MENU = {
 /* ── PROMOCIONES ────────────────────────────── */
 var PROMOS = [
   {
-    id: 'promo4', dbId: 50, emoji: '&#x1F371;', num: 'Paquete 4', title: '🍱 1 Boneless + 1 California', price: 200, tag: 'popular', hasProtein: true, hasSauce: true,
+    id: 'promo4', dbId: 50, emoji: '&#x1F371;', num: 'Paquete 4', title: '🍱 1 Boneless + 1 California', price: 200, tag: 'popular', hasProtein: true, hasSauce: true, maxSauces: 1,
     desc: '1 Boneless (BBQ, Búfalo o mixtos) + 1 California con ingrediente a elegir (pollo, tocino, res, surimi o camarón). Primera proteína incluida, extras +$15. Camarón como primera proteína +$15.',
     ingredients: [ing('b1', '&#x1F357;', 'Boneless', 'Con salsa', false), ing('b2', '&#x1F363;', 'California', 'Prot. a elegir', false)], extras: []
   },
@@ -729,11 +744,14 @@ function buildModalBody(item) {
 
   // Sauce 1
   if (item.hasSauce) {
-    html += '<div class="sauce-section"><div class="sauce-section-title">🫙 Salsa para los boneles (hasta 2)</div><div class="sauce-grid">';
+    var maxS = item.maxSauces || 2;
+    var sauceLabel = maxS === 1 ? 'Salsa para los boneles (elige 1)' : 'Salsa para los boneles (hasta 2)';
+    var sauceNote = maxS === 1 ? 'Solo puedes elegir 1 salsa' : 'Puedes elegir hasta 2 salsas';
+    html += '<div class="sauce-section"><div class="sauce-section-title">🫙 ' + sauceLabel + '</div><div class="sauce-grid">';
     SAUCES.forEach(function (s) {
-      html += '<div class="sauce-btn' + (currentMods.sauces[s.id] ? ' sel' : '') + '" id="sb-' + s.id + '" onclick="togSauce(\'' + s.id + '\',2,\'sauces\',\'sb-\')">' + s.name + '</div>';
+      html += '<div class="sauce-btn' + (currentMods.sauces[s.id] ? ' sel' : '') + '" id="sb-' + s.id + '" onclick="togSauce(\'' + s.id + '\',' + maxS + ',\'sauces\',\'sb-\')">' + s.name + '</div>';
     });
-    html += '</div><div class="sauce-note">Puedes elegir hasta 2 salsas</div></div>';
+    html += '</div><div class="sauce-note">' + sauceNote + '</div></div>';
   }
 
   // Sauce 2 (La Caja)
@@ -960,15 +978,16 @@ function confirmMods() {
       extraCost += (currentMods.proteins.length - 1) * 15;
     }
   }
-  // 3. Extras de slots (Queso gratinado, Tampico, etc.)
+  // 3. Extras de slots (Queso gratinado, Tampico, extras globales, etc.)
   if (currentMods.extras) {
     Object.keys(currentMods.extras).forEach(function (key) {
-      var val = currentMods.extras[key];
-      if (val && typeof val === 'number') extraCost += val;
+      if (!currentMods.extras[key]) return;
+      var exDef = (inst.item.extras || []).filter(function (e) { return e.id === key; })[0];
+      if (exDef && exDef.price > 0) extraCost += exDef.price;
     });
   }
   inst.extraCost = extraCost;
-  inst.mods = JSON.stringify(currentMods);
+  inst.mods = JSON.parse(JSON.stringify(currentMods));
   refreshCardState(inst.itemId);
   updateBar();
   closeModal();
