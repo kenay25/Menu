@@ -3123,6 +3123,19 @@
         footer.push('✅ Extra producto: ' + m.extras_producto.join(', '));
       if (footer.length) html += '<div style="margin-top:4px">' + footer.join('<br>') + '</div>';
 
+      if (m.extras_ingredientes_detalle && m.extras_ingredientes_detalle.length) {
+        footer.push('➕ Ingredientes extra: ' + m.extras_ingredientes_detalle.map(function (e) { return e.cantidad + '× ' + e.nombre + ' ($' + (e.cantidad * e.precio_unitario) + ')'; }).join(', '));
+      }
+      if (m.extras_universales && m.extras_universales.length) {
+        footer.push('➕ Extras: ' + m.extras_universales.map(function (e) { return e.cantidad + '× ' + e.nombre + ' ($' + (e.cantidad * e.precio_unitario) + ')'; }).join(', '));
+      }
+      if (footer.length) html += '<div style="margin-top:4px">' + footer.join('<br>') + '</div>';
+
+      if (m.extras_ingredientes_detalle && m.extras_ingredientes_detalle.length)
+        html.push('➕ Ingredientes extra: ' + m.extras_ingredientes_detalle.map(function (e) { return e.cantidad + '× ' + e.nombre; }).join(', '));
+      if (m.extras_universales && m.extras_universales.length)
+        html.push('➕ Extras: ' + m.extras_universales.map(function (e) { return e.cantidad + '× ' + e.nombre + ' ($' + (e.cantidad * e.precio_unitario) + ')'; }).join(', '));
+
       return html;
     }
 

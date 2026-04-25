@@ -2205,6 +2205,21 @@
     ];
     var EXTRA_INGS = ['Camarón', 'Pollo', 'Res', 'Tocino', 'Surimi', 'Tampico', 'Soya', 'Anguila', 'Chipotle', 'Ranch'];
 
+    /* ═══════ EXTRAS UNIVERSALES ═══════════════════════════════════ */
+    var UNIVERSAL_EXTRAS_SUSHI = [
+      { id: 'ux_anguila', name: 'Anguila', price: 15, emoji: '🍣' },
+      { id: 'ux_aderezo', name: 'Aderezo', price: 15, emoji: '🫙' },
+      { id: 'ux_ranch', name: 'Ranch', price: 15, emoji: '🥗' },
+      { id: 'ux_soya', name: 'Soya', price: 15, emoji: '🍶' },
+      { id: 'ux_gratinado', name: 'Gratinado', price: 25, emoji: '🧀' }
+    ];
+    var UNIVERSAL_EXTRAS_CAJA = [
+      { id: 'ux_ranch', name: 'Ranch', price: 25, emoji: '🥗' },
+      { id: 'ux_aderezo', name: 'Aderezo', price: 25, emoji: '🫙' },
+      { id: 'ux_soya', name: 'Soya', price: 25, emoji: '🍶' },
+      { id: 'ux_anguila', name: 'Anguila', price: 25, emoji: '🍣' }
+    ];
+
     /* ═══════ COLONIAS DE NAVOJOA - TARIFAS DE ENVÍO ═══════════════════════ */
     var COLONIAS_ENVIO = {
       '16_de_junio': { nombre: '16 de Junio', tarifa: 35 },
@@ -2482,7 +2497,7 @@
         { id: 's18', dbId: 10, img: 'img/franco.jpg', emoji: '&#x1F363;', name: 'Franco Roll', price: 165, tag: 'new', hasAlga: true, hasStyle: true, desc: 'Por dentro: philadelphia, pepino, camarón frito, carne asada, mozzarella. Por fuera: aderezo serrano, gratinado c/mozzarella, tocino y cebollín.', ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Relleno', true), ing('b2', '&#x1F952;', 'Pepino', 'Relleno', true), ing('b3', '&#x1F990;', 'Camarón frito', 'Relleno', false), ing('b4', '&#x1F969;', 'Carne asada', 'Relleno', false), ing('b5', '&#x1F9C0;', 'Mozzarella', 'Relleno y cubierta', true), ing('b7', '&#x1F336;&#xFE0F;', 'Aderezo serrano', 'Cubierta', true), ing('b8', '&#x1F953;', 'Tocino', 'Cubierta', true), ing('b9', '&#x1F331;', 'Cebollín', 'Cubierta', true)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Más mozzarella / gratinado extra', note: '+$25', price: 25 }] },
         { id: 's19', dbId: 11, img: 'img/chuyita.jpg', emoji: '&#x1F363;', name: 'La Chuyita', price: 165, tag: 'popular', hasAlga: true, hasStyle: true, desc: 'Por dentro: philadelphia, aguacate, pepino, tampico. Por fuera: camarón frito aderezado, tocino, gratinado con mozzarella, chipotle y cebollín.', ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Relleno', true), ing('b2', '&#x1F951;', 'Aguacate', 'Relleno', true), ing('b3', '&#x1F952;', 'Pepino', 'Relleno', true), ing('b4', '&#x1F41F;', 'Tampico', 'Relleno', true), ing('b6', '&#x1F990;', 'Camarón frito aderezado', 'Cubierta', false), ing('b7', '&#x1F953;', 'Tocino', 'Cubierta', true), ing('b8', '&#x1F9C0;', 'Mozzarella gratinada', 'Cubierta', true), ing('b9', '&#x1FAD9;', 'Chipotle', 'Cubierta', true), ing('b10', '&#x1F331;', 'Cebollín', 'Cubierta', true)], extras: [] },
         { id: 's21', dbId: 12, img: 'img/mexicano2.jpg', emoji: '&#x1F363;', name: 'Mexicano Gratinado', price: 165, tag: null, hasAlga: true, hasStyle: true, desc: 'Por dentro: relleno tampico. Por fuera: carne asada, aguacate, serrano y cebollín. Gratinado.', ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Cubierta', true), ing('b5', '&#x1F41F;', 'Tampico', 'Relleno', false), ing('b6', '&#x1F969;', 'Carne asada', 'Cubierta', false), ing('b7', '&#x1F336;&#xFE0F;', 'Serrano', 'Cubierta', true), ing('b8', '&#x1F331;', 'Cebollín', 'Cubierta', true), ing('b9', '&#x1F9C0;', 'Gratinado', 'Cubierta', false)], extras: [{ id: 'x1', emoji: '&#x1F953;', name: 'Tocino extra', note: '+$15', price: 15 }] },
-        { id: 's_mayito', dbId: 13, img: 'img/mayito.jpg', emoji: '&#x1F371;', name: 'Mayito', price: 145, tag: 'popular', hasProtein: true, hasAlga: true, hasStyle: true, hasSauce: true, desc: 'Proteína a elegir. Arriba tampico con boneless bañados en salsa de elección.', ingredients: [ing('b1', '&#x1F363;', 'Sushi (prot. elegida)', 'Base', false), ing('b2', '&#x1F41F;', 'Tampico', 'Arriba', true), ing('b3', '&#x1F357;', 'Boneless', 'Con salsa', false)], extras: [] },
+        { id: 's_mayito', dbId: 13, img: 'img/mayito.jpg', emoji: '&#x1F371;', name: 'Mayito', price: 145, tag: 'popular', hasProtein: true, hasAlga: true, hasStyle: true, hasSauce: true, hasSauce1Only: true, desc: 'Proteína a elegir. Arriba tampico con boneless bañados en salsa de elección.', ingredients: [ing('b1', '&#x1F363;', 'Sushi (prot. elegida)', 'Base', false), ing('b2', '&#x1F41F;', 'Tampico', 'Arriba', true), ing('b3', '&#x1F357;', 'Boneless', 'Con salsa', false)], extras: [] },
         { id: 's13', dbId: 14, img: 'img/mix.jpg', emoji: '&#x1F363;', name: 'Mix Roll', price: 145, tag: null, hasProtein: true, hasAlga: true, hasStyle: true, desc: 'Por dentro: proteína a elegir. Por fuera: mix de tocino y queso gratinado.', ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b5', '&#x1F953;', 'Tocino', 'Mix cubierta', true), ing('b6', '&#x1F9C0;', 'Queso gratinado', 'Mix cubierta', false)], extras: [] },
         { id: 's14', dbId: 15, img: 'img/baked.jpg', emoji: '&#x1F363;', name: 'Baked', price: 145, tag: 'hot', hasAlga: true, hasStyle: true, desc: 'Por dentro: relleno de pollo. Por fuera: mix tocino y camarón con queso gratinado.', ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b5', '&#x1F357;', 'Pollo', 'Relleno', false), ing('b6', '&#x1F953;', 'Tocino', 'Cubierta', true), ing('b7', '&#x1F990;', 'Camarón', 'Cubierta', true), ing('b8', '&#x1F9C0;', 'Queso gratinado', 'Cubierta', false)], extras: [{ id: 'x1', emoji: '&#x1F336;&#xFE0F;', name: 'Chile serrano', note: 'Gratis', price: 0 }] },
         { id: 's15', dbId: 16, img: 'img/fernanda.jpg', emoji: '&#x1F363;', name: 'Fernanda', price: 145, tag: null, hasAlga: true, hasStyle: true, desc: 'Por dentro: pollo y res. Por fuera: mix de caribe y chile verde con camarón empanizado.', ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b5', '&#x1F357;', 'Pollo', 'Relleno', false), ing('b6', '&#x1F969;', 'Res', 'Relleno', true), ing('b7', '&#x1F336;&#xFE0F;', 'Caribe y chile verde', 'Cubierta', true), ing('b8', '&#x1F990;', 'Camarón empanizado', 'Cubierta', false)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }] },
@@ -2902,7 +2917,12 @@
       if (e) e.stopPropagation();
       var item = findItem(itemId); if (!item) return;
       var iid = genId();
-      var initialMods = { removed: {}, extras: {}, sauces: {}, sauces2: {}, saucesAlitas: {}, proteins: [], alga: null, style: null, ice: null, extraIngs: [], removedProteins: [] };
+      var initialMods = {
+        removed: {}, extras: {}, sauces: {}, sauces2: {}, saucesAlitas: {},
+        proteins: [], alga: null, style: null, ice: null,
+        extraIngs: [], extraIngQtys: {}, universalExtras: {},
+        removedProteins: [], slotMods: []
+      };
       if (item.promoSlots) {
         // Para La Caja, La Cajita y Charola, pre-seleccionar los sushis
         if (item.id === 'c7' || item.id === 'c6') {
@@ -2952,6 +2972,8 @@
         style: sv.style || null,
         ice: sv.ice || null,
         extraIngs: (sv.extraIngs || []).slice(),
+        extraIngQtys: sv.extraIngQtys ? JSON.parse(JSON.stringify(sv.extraIngQtys)) : {},
+        universalExtras: sv.universalExtras ? JSON.parse(JSON.stringify(sv.universalExtras)) : {},
         slotMods: sv.slotMods ? JSON.parse(JSON.stringify(sv.slotMods)) : [],
         removedProteins: (sv.removedProteins || []).slice()
       };
@@ -3110,11 +3132,20 @@
         var removable = (item.ingredients || []).filter(function (i) { return i.removable; });
 
         if (item.isExtraIng) {
-          html += '<div class="extra-picker"><div class="extra-picker-title">➕ ¿Qué ingrediente(s) deseas?</div><div class="extra-picker-grid">';
+          html += '<div class="extra-picker"><div class="extra-picker-title">➕ ¿Qué ingrediente(s) deseas? ($15 c/u)</div><div class="extra-picker-grid">';
           EXTRA_INGS.forEach(function (nm) {
-            html += '<div class="extra-chip' + (currentMods.extraIngs.indexOf(nm) >= 0 ? ' sel' : '') + '" onclick="togExtraIng(\'' + nm + '\')">' + nm + '</div>';
+            var qty = (currentMods.extraIngQtys && currentMods.extraIngQtys[nm]) || 0;
+            var selClass = qty > 0 ? ' sel' : '';
+            html += '<div class="extra-chip' + selClass + '" style="display:flex;align-items:center;gap:6px;padding:7px 10px">'
+              + '<span style="font-weight:600;min-width:70px;text-align:center">' + nm + '</span>'
+              + '<div style="display:flex;align-items:center;gap:4px;background:rgba(232,84,122,0.08);border-radius:8px;padding:2px 4px">'
+              + '<button type="button" onclick="event.stopPropagation();changeExtraIngQty(\'' + nm + '\',-1)" style="background:var(--white);border:1px solid var(--border);border-radius:6px;width:24px;height:24px;cursor:pointer;font-size:14px;font-weight:700;color:var(--pink)">−</button>'
+              + '<input type="text" value="' + qty + '" onchange="event.stopPropagation();setExtraIngQty(\'' + nm + '\',parseInt(this.value)||0)" style="width:32px;text-align:center;border:none;background:transparent;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:700;color:var(--dark);outline:none" onclick="event.stopPropagation()">'
+              + '<button type="button" onclick="event.stopPropagation();changeExtraIngQty(\'' + nm + '\',1)" style="background:var(--white);border:1px solid var(--border);border-radius:6px;width:24px;height:24px;cursor:pointer;font-size:14px;font-weight:700;color:var(--pink)">+</button>'
+              + '</div>'
+              + '</div>';
           });
-          html += '</div><div class="sauce-note">$15 por ingrediente</div></div>';
+          html += '</div><div class="sauce-note">$15 por cada unidad · Usa + / − para indicar cantidad</div></div>';
         }
         if (item.hasAlga) {
           html += '<div class="alga-section"><div class="alga-section-title">🌿 ¿Con o sin alga?</div><div class="alga-grid">';
@@ -3210,6 +3241,30 @@
         }
       }
 
+      /* ── Extras universales (todos excepto bebidas y el propio extra) ── */
+      if (!item.isExtraIng && item.id !== 'b1' && item.id !== 'b2' && item.id !== 'ex1' && item.id !== 'ex2') {
+        var isCaja = item.id.match(/^(c|promo)/);
+        var uExtras = isCaja ? UNIVERSAL_EXTRAS_CAJA : UNIVERSAL_EXTRAS_SUSHI;
+        if (uExtras && uExtras.length) {
+          html += '<div class="extra-picker" style="margin-top:18px;border-top:1.5px solid var(--border);padding-top:18px"><div class="extra-picker-title">➕ Extras adicionales</div><div class="extra-picker-grid">';
+          uExtras.forEach(function (ex) {
+            var qty = (currentMods.universalExtras && currentMods.universalExtras[ex.id]) || 0;
+            var selClass = qty > 0 ? ' sel' : '';
+            html += '<div class="extra-chip' + selClass + '" style="display:flex;align-items:center;gap:6px;padding:7px 10px">'
+              + '<span style="font-size:18px">' + ex.emoji + '</span>'
+              + '<span style="font-weight:600;min-width:55px;text-align:center">' + ex.name + '</span>'
+              + '<span style="font-size:11px;color:var(--muted)">+$' + ex.price + '</span>'
+              + '<div style="display:flex;align-items:center;gap:4px;background:rgba(232,84,122,0.08);border-radius:8px;padding:2px 4px;margin-left:auto">'
+              + '<button type="button" onclick="event.stopPropagation();changeUniversalExtra(\'' + ex.id + '\',-1)" style="background:var(--white);border:1px solid var(--border);border-radius:6px;width:24px;height:24px;cursor:pointer;font-size:14px;font-weight:700;color:var(--pink)">−</button>'
+              + '<input type="text" value="' + qty + '" onchange="event.stopPropagation();setUniversalExtra(\'' + ex.id + '\',parseInt(this.value)||0)" style="width:32px;text-align:center;border:none;background:transparent;font-family:\'DM Sans\',sans-serif;font-size:13px;font-weight:700;color:var(--dark);outline:none" onclick="event.stopPropagation()">'
+              + '<button type="button" onclick="event.stopPropagation();changeUniversalExtra(\'' + ex.id + '\',1)" style="background:var(--white);border:1px solid var(--border);border-radius:6px;width:24px;height:24px;cursor:pointer;font-size:14px;font-weight:700;color:var(--pink)">+</button>'
+              + '</div>'
+              + '</div>';
+          });
+          html += '</div></div>';
+        }
+      }
+
       html += '<div class="modal-actions">'
         + '<button class="btn-modal-cancel" onclick="cancelModal()">Cancelar</button>'
         + '<button class="btn-modal-confirm" onclick="confirmMods()">✓ Listo</button>'
@@ -3219,6 +3274,39 @@
 
     /* ══ INTERACCIONES MODAL ══ */
     function togExtraIng(nm) { var idx = currentMods.extraIngs.indexOf(nm); if (idx >= 0) currentMods.extraIngs.splice(idx, 1); else currentMods.extraIngs.push(nm); document.querySelectorAll('.extra-chip').forEach(function (el) { el.className = 'extra-chip' + (currentMods.extraIngs.indexOf(el.textContent.trim()) >= 0 ? ' sel' : ''); }); }
+    /* ══ CONTROLES DE CANTIDAD: Extra — Ingrediente ══ */
+    function changeExtraIngQty(nm, delta) {
+      if (!currentMods.extraIngQtys) currentMods.extraIngQtys = {};
+      var curr = currentMods.extraIngQtys[nm] || 0;
+      var next = Math.max(0, curr + delta);
+      if (next > 0) currentMods.extraIngQtys[nm] = next;
+      else delete currentMods.extraIngQtys[nm];
+      buildModalBody(currentItem);
+    }
+    function setExtraIngQty(nm, val) {
+      if (!currentMods.extraIngQtys) currentMods.extraIngQtys = {};
+      val = Math.max(0, parseInt(val) || 0);
+      if (val > 0) currentMods.extraIngQtys[nm] = val;
+      else delete currentMods.extraIngQtys[nm];
+      buildModalBody(currentItem);
+    }
+
+    /* ══ CONTROLES DE CANTIDAD: Extras universales ══ */
+    function changeUniversalExtra(id, delta) {
+      if (!currentMods.universalExtras) currentMods.universalExtras = {};
+      var curr = currentMods.universalExtras[id] || 0;
+      var next = Math.max(0, curr + delta);
+      if (next > 0) currentMods.universalExtras[id] = next;
+      else delete currentMods.universalExtras[id];
+      buildModalBody(currentItem);
+    }
+    function setUniversalExtra(id, val) {
+      if (!currentMods.universalExtras) currentMods.universalExtras = {};
+      val = Math.max(0, parseInt(val) || 0);
+      if (val > 0) currentMods.universalExtras[id] = val;
+      else delete currentMods.universalExtras[id];
+      buildModalBody(currentItem);
+    }
     function selAlga(val) { currentMods.alga = val;['con', 'sin'].forEach(function (v) { var b = document.getElementById('alga-' + v); if (b) b.className = 'alga-btn' + (currentMods.alga === v ? ' sel' : ''); }); }
     function togProt(pid) {
       var idx = currentMods.proteins.indexOf(pid);
@@ -3509,6 +3597,24 @@
             if (ex && ex.price) extraCost += ex.price;
           } else if (typeof val === 'number') {
             extraCost += val;
+          }
+        });
+      }
+
+      // Extra - Ingrediente: $15 por cada unidad total
+      if (currentMods.extraIngQtys) {
+        var totalExtraIngs = Object.keys(currentMods.extraIngQtys).reduce(function (s, k) { return s + (currentMods.extraIngQtys[k] || 0); }, 0);
+        extraCost += totalExtraIngs * 15;
+      }
+      // Extras universales
+      if (currentMods.universalExtras) {
+        var allUx = [].concat(UNIVERSAL_EXTRAS_SUSHI, UNIVERSAL_EXTRAS_CAJA);
+        Object.keys(currentMods.universalExtras).forEach(function (key) {
+          var qty = currentMods.universalExtras[key];
+          if (qty > 0) {
+            var exDef = null;
+            for (var i = 0; i < allUx.length; i++) { if (allUx[i].id === key) { exDef = allUx[i]; break; } }
+            if (exDef) extraCost += exDef.price * qty;
           }
         });
       }
@@ -3886,6 +3992,29 @@
           if (m.saucesAlitas) mods.salsas_alitas = Object.keys(m.saucesAlitas).filter(function (k) { return m.saucesAlitas[k]; }).map(function (k) { var sc = SAUCES.filter(function (x) { return x.id === k; })[0]; return sc ? sc.name : k; });
           if (m.removed) { mods.sin_ingredientes = Object.keys(m.removed).filter(function (k) { return m.removed[k]; }).map(function (k) { var ing = (item.ingredients || []).filter(function (i) { return i.id === k; })[0]; return ing ? ing.name : k; }); }
           if (m.extraIngs && m.extraIngs.length) mods.extras_ingredientes = m.extraIngs;
+
+          // Extra - Ingredientes con cantidad
+          if (m.extraIngQtys && Object.keys(m.extraIngQtys).length) {
+            mods.extras_ingredientes_detalle = [];
+            Object.keys(m.extraIngQtys).forEach(function (k) {
+              var q = m.extraIngQtys[k];
+              if (q > 0) mods.extras_ingredientes_detalle.push({ nombre: k, cantidad: q, precio_unitario: 15 });
+            });
+          }
+          // Extras universales con cantidad
+          if (m.universalExtras && Object.keys(m.universalExtras).length) {
+            mods.extras_universales = [];
+            var allUx = [].concat(UNIVERSAL_EXTRAS_SUSHI, UNIVERSAL_EXTRAS_CAJA);
+            Object.keys(m.universalExtras).forEach(function (k) {
+              var q = m.universalExtras[k];
+              if (q > 0) {
+                var exDef = null;
+                for (var i = 0; i < allUx.length; i++) { if (allUx[i].id === k) { exDef = allUx[i]; break; } }
+                if (exDef) mods.extras_universales.push({ nombre: exDef.name, cantidad: q, precio_unitario: exDef.price });
+              }
+            });
+          }
+
           if (m.extras) mods.extras_producto = Object.keys(m.extras).filter(function (k) { return m.extras[k]; }).map(function (k) {
             // Extra normal del item
             var exNormal = (item.extras || []).filter(function (e) { return e.id === k; })[0];
@@ -3954,7 +4083,30 @@
         }
       }
 
-      if (m.extraIngs && m.extraIngs.length) lines += '<div class="oi-mod-added">➕ Ingrediente(s): ' + m.extraIngs.join(', ') + (m.extraIngs.length > 1 ? ' ($' + m.extraIngs.length * 15 + ')' : '') + '</div>';
+      // Extra - Ingrediente (con cantidades)
+      if (m.extraIngQtys && Object.keys(m.extraIngQtys).length) {
+        var ingLines = [];
+        var ingTotal = 0;
+        Object.keys(m.extraIngQtys).forEach(function (k) {
+          var q = m.extraIngQtys[k];
+          if (q > 0) { ingLines.push(q + '× ' + k); ingTotal += q; }
+        });
+        if (ingLines.length) lines += '<div class="oi-mod-added">➕ Ingrediente(s): ' + ingLines.join(', ') + ' ($' + (ingTotal * 15) + ')</div>';
+      }
+      // Extras universales
+      if (m.universalExtras && Object.keys(m.universalExtras).length) {
+        var uxLines = [];
+        var allUx = [].concat(UNIVERSAL_EXTRAS_SUSHI, UNIVERSAL_EXTRAS_CAJA);
+        Object.keys(m.universalExtras).forEach(function (k) {
+          var q = m.universalExtras[k];
+          if (q > 0) {
+            var exDef = null;
+            for (var i = 0; i < allUx.length; i++) { if (allUx[i].id === k) { exDef = allUx[i]; break; } }
+            if (exDef) uxLines.push(q + '× ' + exDef.name + ' (+$' + (exDef.price * q) + ')');
+          }
+        });
+        if (uxLines.length) lines += '<div class="oi-mod-added">➕ Extras: ' + uxLines.join(' · ') + '</div>';
+      }
       if (m.alga) lines += '<div class="oi-mod-added">🌿 Alga: ' + (m.alga === 'con' ? 'Con alga' : 'Sin alga') + '</div>';
       if (m.style) lines += '<div class="oi-mod-added">🍳 Estilo: ' + (m.style === 'natural' ? 'Natural' : 'Empanizado') + '</div>';
       if (m.ice) lines += '<div class="oi-mod-added">🧊 Hielo: ' + (m.ice === 'con' ? 'Con hielo' : 'Sin hielo') + '</div>';
@@ -4238,15 +4390,70 @@
             msg += '   Salsa 2ª orden: ' + getSauceNames(m.sauces2).join(', ') + '\n';
           }
 
+          // Extras del producto (nivel general, no de slot)
+          var ax = (item.extras || []).filter(function (ex) { return m.extras && m.extras[ex.id]; });
+          if (ax.length) {
+            msg += '   Extra: ' + ax.map(function (ex) { return ex.name + (ex.price > 0 ? ' (+$' + ex.price + ')' : ''); }).join(', ') + '\n';
+          }
+          // Extras universales (combos/cajas)
+          if (m.universalExtras && Object.keys(m.universalExtras).length) {
+            var allUx = [].concat(UNIVERSAL_EXTRAS_SUSHI, UNIVERSAL_EXTRAS_CAJA);
+            Object.keys(m.universalExtras).forEach(function (k) {
+              var q = m.universalExtras[k];
+              if (q > 0) {
+                var exDef = null;
+                for (var i = 0; i < allUx.length; i++) { if (allUx[i].id === k) { exDef = allUx[i]; break; } }
+                if (exDef) msg += '   + Extra: ' + q + '× ' + exDef.name + ' (+$' + (exDef.price * q) + ')\n';
+              }
+            });
+          }
+
+          // Extras del item (nivel general)
+          var ax = (item.extras || []).filter(function (ex) { return m.extras && m.extras[ex.id]; });
+          if (ax.length) {
+            lines += '<div class="oi-mod-added">✅ Extra: ' + ax.map(function (ex) { return ex.name + (ex.price > 0 ? ' (+$' + ex.price + ')' : ' (gratis)'); }).join(' · ') + '</div>';
+          }
+          // Extras universales
+          if (m.universalExtras && Object.keys(m.universalExtras).length) {
+            var uxLines = [];
+            var allUx = [].concat(UNIVERSAL_EXTRAS_SUSHI, UNIVERSAL_EXTRAS_CAJA);
+            Object.keys(m.universalExtras).forEach(function (k) {
+              var q = m.universalExtras[k];
+              if (q > 0) {
+                var exDef = null;
+                for (var i = 0; i < allUx.length; i++) { if (allUx[i].id === k) { exDef = allUx[i]; break; } }
+                if (exDef) uxLines.push(q + '× ' + exDef.name + ' (+$' + (exDef.price * q) + ')');
+              }
+            });
+            if (uxLines.length) lines += '<div class="oi-mod-added">➕ Extras: ' + uxLines.join(' · ') + '</div>';
+          }
+
           // ══ Todos los demás productos ═══════════════════════════════════════════
         } else {
           msg += '• ' + itemName + ' — $' + (itemPrice + ec) + '\n';
 
-          // Ingredientes extra
-          if (m.extraIngs && m.extraIngs.length) {
-            msg += '   + Ingrediente(s): ' + m.extraIngs.join(', ') + '\n';
+          // Ingredientes extra (producto ex1) con cantidad
+          if (m.extraIngQtys && Object.keys(m.extraIngQtys).length) {
+            var ingLines = [];
+            var ingTotal = 0;
+            Object.keys(m.extraIngQtys).forEach(function (k) {
+              var q = m.extraIngQtys[k];
+              if (q > 0) { ingLines.push(q + '× ' + k); ingTotal += q; }
+            });
+            if (ingLines.length) msg += '   + Ingrediente(s): ' + ingLines.join(', ') + ' ($' + (ingTotal * 15) + ')\n';
           }
-
+          // Extras universales
+          if (m.universalExtras && Object.keys(m.universalExtras).length) {
+            var allUx = [].concat(UNIVERSAL_EXTRAS_SUSHI, UNIVERSAL_EXTRAS_CAJA);
+            Object.keys(m.universalExtras).forEach(function (k) {
+              var q = m.universalExtras[k];
+              if (q > 0) {
+                var exDef = null;
+                for (var i = 0; i < allUx.length; i++) { if (allUx[i].id === k) { exDef = allUx[i]; break; } }
+                if (exDef) msg += '   + Extra: ' + q + '× ' + exDef.name + ' (+$' + (exDef.price * q) + ')\n';
+              }
+            });
+          }
           // Alga
           if (m.alga) {
             msg += '   Alga: ' + (m.alga === 'con' ? 'Con alga' : 'Sin alga') + '\n';
