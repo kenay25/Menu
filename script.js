@@ -210,7 +210,7 @@ var MENU = {
     },
 
     {
-      id: 's2', dbId: 24, emoji: '&#x1F363;', name: 'Bombazo', price: 110, tag: 'popular', hasProtein: true, hasAlga: true,
+      id: 's2', dbId: 24, emoji: '&#x1F363;', name: 'Bombazo', price: 110, tag: 'popular', hasProtein: true, hasAlga: true, hasStyle: true,
       desc: 'Proteína a elegir, cubierto con tampico, salsa de anguila y ajonjolí.',
       ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b5', '&#x1F41F;', 'Tampico', 'Por fuera', true), ing('b6', '&#x1FAD9;', 'Anguila', 'Por fuera', true), ing('b7', '&#x26AB;', 'Ajonjolí', 'Por fuera', true)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }]
     },
@@ -222,7 +222,7 @@ var MENU = {
     },
 
     {
-      id: 's8', dbId: 26, emoji: '&#x1F363;', name: 'Daishi', price: 100, tag: null, hasAlga: true,
+      id: 's8', dbId: 26, emoji: '&#x1F363;', name: 'Daishi', price: 100, tag: null, hasAlga: true, hasStyle: true,
       desc: 'Relleno de tampico y tocino.',
       ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Base', true), ing('b2', '&#x1F952;', 'Pepino', 'Base', true), ing('b3', '&#x1F951;', 'Aguacate', 'Base', true), ing('b5', '&#x1F41F;', 'Tampico', 'Relleno', false), ing('b6', '&#x1F953;', 'Tocino', 'Relleno', true)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }, { id: 'x2', emoji: '&#x1FAD9;', name: 'Anguila', note: '+$15', price: 15 }]
     },
@@ -234,7 +234,7 @@ var MENU = {
     },
 
     {
-      id: 's1', dbId: 28, emoji: '&#x1F363;', name: 'California', price: 95, tag: null, hasProtein: true, hasAlga: true,
+      id: 's1', dbId: 28, emoji: '&#x1F363;', name: 'California', price: 95, tag: null, hasProtein: true, hasAlga: true, hasStyle: true,
       desc: '01 proteína a elegir: res, camarón, tocino, pollo o surimi.',
       ingredients: base(), extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }, { id: 'x2', emoji: '&#x1F41F;', name: 'Tampico por fuera', note: '+$15', price: 15 }]
     },
@@ -246,7 +246,7 @@ var MENU = {
     },
 
     {
-      id: 's7', dbId: 30, emoji: '&#x1F363;', name: 'Misil', price: 80, tag: null, hasAlga: false,
+      id: 's7', dbId: 30, emoji: '&#x1F363;', name: 'Misil', price: 80, tag: null, hasAlga: true, hasStyle: true,
       desc: 'Por dentro: relleno de philadelphia, tampico, tocino y res. Por fuera: chile verde empanizado.',
       ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Relleno', true), ing('b2', '&#x1F41F;', 'Tampico', 'Relleno', true), ing('b3', '&#x1F953;', 'Tocino', 'Relleno', true), ing('b4', '&#x1F969;', 'Res', 'Relleno', true), ing('b5', '&#x1F336;&#xFE0F;', 'Chile verde empanizado', 'Cubierta', false)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }]
     }
@@ -302,13 +302,13 @@ var MENU = {
     {
       id: 'esp4', dbId: 38, emoji: '&#x1F35A;', name: 'Yakimeshi', price: 135, tag: null,
       desc: 'Arroz frito con pollo, res, tocino y camarón decorada con aguacate y tampico.',
-      ingredients: [ing('b1', '&#x1F35A;', 'Arroz frito', 'Base', false), ing('b2', '&#x1F357;', 'Pollo', 'Mix', true), ing('b3', '&#x1F969;', 'Res', 'Mix', true), ing('b4', '&#x1F953;', 'Tocino', 'Mix', true), ing('b5', '&#x1F990;', 'Camarón', 'Mix', true), ing('b6', '&#x1F951;', 'Aguacate', 'Decorado', true), ing('b7', '&#x1F41F;', 'Tampico', 'Decorado', true)], extras: [{ id: 'x_pollo', emoji: '&#x1F357;', name: 'Proteína extra — Pollo', note: '+$15', price: 15 }, { id: 'x_res', emoji: '&#x1F969;', name: 'Proteína extra — Res', note: '+$15', price: 15 }, { id: 'x_tocino', emoji: '&#x1F953;', name: 'Proteína extra — Tocino', note: '+$15', price: 15 }, { id: 'x_cam', emoji: '&#x1F990;', name: 'Proteína extra — Camarón', note: '+$15', price: 15 }]
+      ingredients: [ing('b1', '&#x1F35A;', 'Arroz frito', 'Base', false), ing('b2', '&#x1F357;', 'Pollo', 'Mix', true), ing('b3', '&#x1F969;', 'Res', 'Mix', true), ing('b4', '&#x1F953;', 'Tocino', 'Mix', true), ing('b5', '&#x1F990;', 'Camarón', 'Mix', true), ing('b6', '&#x1F951;', 'Aguacate', 'Decorado', true), ing('b7', '&#x1F41F;', 'Tampico', 'Decorado', true)], extras: [{ id: 'x_pollo', emoji: '&#x1F357;', name: 'Proteína extra — Pollo', note: '+$15', price: 15 }, { id: 'x_res', emoji: '&#x1F969;', name: 'Proteína extra — Res', note: '+$15', price: 15 }, { id: 'x_tocino', emoji: '&#x1F953;', name: 'Proteína extra — Tocino', note: '+$15', price: 15 }, { id: 'x_cam', emoji: '&#x1F990;', name: 'Proteína extra — Camarón', note: '+$15', price: 15 }, { id: 'x_surimi', emoji: '&#x1F980;', name: 'Proteína extra — Surimi', note: '+$15', price: 15 }]
     },
 
     {
       id: 'esp5', dbId: 39, emoji: '&#x1F35A;', name: 'Gohan', price: 135, tag: 'popular',
       desc: 'Plancha de arroz natural o empanizado, philadelphia, tampico, res, pollo, tocino, aguacate, camarón, serrano y cebollín.',
-      ingredients: [ing('b1', '&#x1F35A;', 'Arroz (nat. o empanizado)', 'Base', false), ing('b2', '&#x1F9C0;', 'Philadelphia', 'Encima', true), ing('b3', '&#x1F41F;', 'Tampico', 'Encima', true), ing('b4', '&#x1F969;', 'Res', 'Mix prot.', true), ing('b5', '&#x1F357;', 'Pollo', 'Mix prot.', true), ing('b6', '&#x1F953;', 'Tocino', 'Mix prot.', true), ing('b7', '&#x1F990;', 'Camarón', 'Mix prot.', true), ing('b8', '&#x1F951;', 'Aguacate', 'Decorado', true), ing('b9', '&#x1F336;&#xFE0F;', 'Serrano', 'Decorado', true), ing('b10', '&#x1F331;', 'Cebollín', 'Decorado', true)], extras: [{ id: 'x_pollo', emoji: '&#x1F357;', name: 'Proteína extra — Pollo', note: '+$15', price: 15 }, { id: 'x_res', emoji: '&#x1F969;', name: 'Proteína extra — Res', note: '+$15', price: 15 }, { id: 'x_tocino', emoji: '&#x1F953;', name: 'Proteína extra — Tocino', note: '+$15', price: 15 }, { id: 'x_cam', emoji: '&#x1F990;', name: 'Proteína extra — Camarón', note: '+$15', price: 15 }]
+      ingredients: [ing('b1', '&#x1F35A;', 'Arroz (nat. o empanizado)', 'Base', false), ing('b2', '&#x1F9C0;', 'Philadelphia', 'Encima', true), ing('b3', '&#x1F41F;', 'Tampico', 'Encima', true), ing('b4', '&#x1F969;', 'Res', 'Mix prot.', true), ing('b5', '&#x1F357;', 'Pollo', 'Mix prot.', true), ing('b6', '&#x1F953;', 'Tocino', 'Mix prot.', true), ing('b7', '&#x1F990;', 'Camarón', 'Mix prot.', true), ing('b8', '&#x1F951;', 'Aguacate', 'Decorado', true), ing('b9', '&#x1F336;&#xFE0F;', 'Serrano', 'Decorado', true), ing('b10', '&#x1F331;', 'Cebollín', 'Decorado', true)], extras: [{ id: 'x_pollo', emoji: '&#x1F357;', name: 'Proteína extra — Pollo', note: '+$15', price: 15 }, { id: 'x_res', emoji: '&#x1F969;', name: 'Proteína extra — Res', note: '+$15', price: 15 }, { id: 'x_tocino', emoji: '&#x1F953;', name: 'Proteína extra — Tocino', note: '+$15', price: 15 }, { id: 'x_cam', emoji: '&#x1F990;', name: 'Proteína extra — Camarón', note: '+$15', price: 15 }, { id: 'x_surimi', emoji: '&#x1F980;', name: 'Proteína extra — Surimi', note: '+$15', price: 15 }]
     },
 
     {
@@ -363,7 +363,7 @@ var MENU = {
       ingredients: [ing('b1', '&#x1F964;', 'Coca-Cola', '600ml', false)], extras: []
     },
     {
-      id: 'ex1', dbId: 48, emoji: '&#x2795;', name: 'Extra — Ingrediente', price: 15, tag: null, isExtraIng: true,
+      id: 'ex1', dbId: 48, emoji: '&#x2795;', name: 'Extra — Ingrediente', price: 0, tag: null, isExtraIng: true,
       desc: 'Camarón, pollo, res, tocino, surimi, tampico, soya, anguila, chipotle o ranch. $15 c/u.',
       ingredients: [], extras: []
     },
@@ -595,10 +595,14 @@ function addNewInstance(itemId, e) {
   var iid = genId();
 
   // Pre-seleccionar sushis para La Caja y La Cajita
-  var initialMods = { removed: {}, extras: {}, sauces: {}, sauces2: {}, proteins: [], alga: null, extraIngs: [], sushiChoice: [], removedProteins: [] };
+  var initialMods = { removed: {}, extras: {}, sauces: {}, sauces2: {}, proteins: [], alga: null, estilo: null, extraIngs: [], sushiChoice: [], sushiSlots: {}, removedProteins: [] };
   if (item.hasSushiChoice) {
-    // Pre-seleccionar California, Bombazo y Sonora
     initialMods.sushiChoice = ['s1', 's2', 's3'];
+    initialMods.sushiSlots = {
+      's1': { alga: null, estilo: null, proteins: [] },
+      's2': { alga: null, estilo: null, proteins: [] },
+      's3': { alga: null, estilo: null, proteins: [] }
+    };
   }
 
   orderInstances.push({ instanceId: iid, itemId: itemId, item: item, mods: initialMods, extraCost: 0 });
@@ -629,8 +633,10 @@ function openModalEdit(iid, e) {
     sauces2: JSON.parse(JSON.stringify(sv.sauces2 || {})),
     proteins: (sv.proteins || []).slice(),
     alga: sv.alga || null,
+    estilo: sv.estilo || null,
     extraIngs: (sv.extraIngs || []).slice(),
     sushiChoice: (sv.sushiChoice || []).slice(),
+    sushiSlots: JSON.parse(JSON.stringify(sv.sushiSlots || {})),
     removedProteins: (sv.removedProteins || []).slice()
   };
   var insts = getItemInstances(inst.itemId);
@@ -662,6 +668,14 @@ function buildModalBody(item) {
     html += '<div class="alga-section"><div class="alga-section-title">🌿 ¿Con o sin alga?</div><div class="alga-grid">';
     html += '<div class="alga-btn' + (currentMods.alga === 'con' ? ' sel' : '') + '" id="alga-con" onclick="selAlga(\'con\')">🌿 Con alga</div>';
     html += '<div class="alga-btn' + (currentMods.alga === 'sin' ? ' sel' : '') + '" id="alga-sin" onclick="selAlga(\'sin\')">❌ Sin alga</div>';
+    html += '</div></div>';
+  }
+
+  // Estilo (Natural / Empanizado)
+  if (item.hasStyle) {
+    html += '<div class="alga-section"><div class="alga-section-title">🍳 ¿Estilo?</div><div class="alga-grid">';
+    html += '<div class="alga-btn' + (currentMods.estilo === 'natural' ? ' sel' : '') + '" id="estilo-natural" onclick="selEstilo(\'natural\')">🌿 Natural</div>';
+    html += '<div class="alga-btn' + (currentMods.estilo === 'empanizado' ? ' sel' : '') + '" id="estilo-empanizado" onclick="selEstilo(\'empanizado\')">🔥 Empanizado</div>';
     html += '</div></div>';
   }
 
@@ -724,22 +738,53 @@ function buildModalBody(item) {
     html += '</div><div class="protein-note">Todas incluidas · Sin costo extra al quitar</div></div>';
   }
 
-  // Sushi choice (La Caja y La Cajita)
+  // Sushi choice (La Caja y La Cajita) — personalización por sushi
   if (item.hasSushiChoice) {
-    var SUSHIS_DISP = [
-      { id: 's1', name: 'California', emoji: '&#x1F363;' },
-      { id: 's2', name: 'Bombazo', emoji: '&#x1F363;' },
-      { id: 's3', name: 'Sonora', emoji: '&#x1F363;' }
+    var SLOT_SUSHIS = [
+      { id: 's1', name: 'California', hasProtein: true },
+      { id: 's2', name: 'Bombazo', hasProtein: true },
+      { id: 's3', name: 'Sonora', hasProtein: true, proteinNote: 'Res y Tocino incluidos · Extras opcionales' }
     ];
-    html += '<div class="sushi-choice-section"><div class="sushi-choice-title">🍣 Elige los 3 sushis (1 de cada uno)</div><div class="sushi-choice-grid">';
-    SUSHIS_DISP.forEach(function (s) {
-      var isSelected = currentMods.sushiChoice && currentMods.sushiChoice.indexOf(s.id) >= 0;
-      html += '<div class="sushi-choice-btn' + (isSelected ? ' sel' : '') + '" id="scb-' + s.id + '" onclick="togSushiChoice(\'' + s.id + '\')">'
-        + '<span class="sc-emoji">' + s.emoji + '</span>'
-        + '<span class="sc-name">' + s.name + '</span>'
-        + '</div>';
+    if (!currentMods.sushiSlots || !currentMods.sushiSlots['s1']) {
+      currentMods.sushiSlots = {
+        's1': { alga: null, estilo: null, proteins: [] },
+        's2': { alga: null, estilo: null, proteins: [] },
+        's3': { alga: null, estilo: null, proteins: [] }
+      };
+    }
+    html += '<div class="ing-section"><div class="ing-section-title">🍣 Personaliza cada sushi</div>';
+    SLOT_SUSHIS.forEach(function (s) {
+      var sl = currentMods.sushiSlots[s.id] || { alga: null, estilo: null, proteins: [] };
+      html += '<div style="margin:8px 0;padding:10px;background:rgba(232,84,122,0.06);border-radius:10px;border:1px solid rgba(232,84,122,0.15)">';
+      html += '<div style="font-weight:600;font-size:13px;margin-bottom:8px;color:var(--primary)">🍣 ' + s.name + '</div>';
+      // Alga
+      html += '<div style="margin-bottom:6px"><div style="font-size:11px;color:var(--muted);margin-bottom:4px">🌿 Alga</div><div class="alga-grid">';
+      html += '<div class="alga-btn' + (sl.alga === 'con' ? ' sel' : '') + '" id="slot-alga-' + s.id + '-con" onclick="togSushiSlotAlga(\'' + s.id + '\',\'con\')">Con alga</div>';
+      html += '<div class="alga-btn' + (sl.alga === 'sin' ? ' sel' : '') + '" id="slot-alga-' + s.id + '-sin" onclick="togSushiSlotAlga(\'' + s.id + '\',\'sin\')">Sin alga</div>';
+      html += '</div></div>';
+      // Estilo
+      html += '<div style="margin-bottom:6px"><div style="font-size:11px;color:var(--muted);margin-bottom:4px">🍳 Estilo</div><div class="alga-grid">';
+      html += '<div class="alga-btn' + (sl.estilo === 'natural' ? ' sel' : '') + '" id="slot-estilo-' + s.id + '-natural" onclick="togSushiSlotEstilo(\'' + s.id + '\',\'natural\')">Natural</div>';
+      html += '<div class="alga-btn' + (sl.estilo === 'empanizado' ? ' sel' : '') + '" id="slot-estilo-' + s.id + '-empanizado" onclick="togSushiSlotEstilo(\'' + s.id + '\',\'empanizado\')">Empanizado</div>';
+      html += '</div></div>';
+      // Proteínas
+      if (s.hasProtein) {
+        html += '<div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">🥩 Proteína' + (s.id === 's3' ? '(s)' : '') + '</div><div class="protein-grid">';
+        PROTEINS.forEach(function (p) {
+          var isSel = sl.proteins.indexOf(p.id) >= 0;
+          html += '<div class="protein-btn' + (isSel ? ' sel' : '') + '" id="slot-prot-' + s.id + '-' + p.id + '" onclick="togSushiSlotProt(\'' + s.id + '\',\'' + p.id + '\')">'
+            + '<span class="p-emoji">' + p.emoji + '</span>'
+            + '<span class="p-name">' + p.name + '</span>'
+            + '</div>';
+        });
+        html += '</div>';
+        if (s.proteinNote) html += '<div class="sauce-note">' + s.proteinNote + '</div>';
+        else html += '<div class="sauce-note">Elige la proteína del sushi</div>';
+        html += '</div>';
+      }
+      html += '</div>';
     });
-    html += '</div><div class="sauce-note">Debes seleccionar exactamente 3 sushis diferentes</div></div>';
+    html += '</div>';
   }
 
   // Sauce 1
@@ -824,6 +869,40 @@ function selAlga(val) {
     var b = document.getElementById('alga-' + v);
     if (b) b.className = 'alga-btn' + (currentMods.alga === v ? ' sel' : '');
   });
+}
+function selEstilo(val) {
+  currentMods.estilo = val;
+  ['natural', 'empanizado'].forEach(function (v) {
+    var b = document.getElementById('estilo-' + v);
+    if (b) b.className = 'alga-btn' + (currentMods.estilo === v ? ' sel' : '');
+  });
+}
+function togSushiSlotAlga(sushiId, val) {
+  if (!currentMods.sushiSlots) currentMods.sushiSlots = {};
+  if (!currentMods.sushiSlots[sushiId]) currentMods.sushiSlots[sushiId] = { alga: null, estilo: null, proteins: [] };
+  currentMods.sushiSlots[sushiId].alga = val;
+  ['con', 'sin'].forEach(function (v) {
+    var b = document.getElementById('slot-alga-' + sushiId + '-' + v);
+    if (b) b.className = 'alga-btn' + (val === v ? ' sel' : '');
+  });
+}
+function togSushiSlotEstilo(sushiId, val) {
+  if (!currentMods.sushiSlots) currentMods.sushiSlots = {};
+  if (!currentMods.sushiSlots[sushiId]) currentMods.sushiSlots[sushiId] = { alga: null, estilo: null, proteins: [] };
+  currentMods.sushiSlots[sushiId].estilo = val;
+  ['natural', 'empanizado'].forEach(function (v) {
+    var b = document.getElementById('slot-estilo-' + sushiId + '-' + v);
+    if (b) b.className = 'alga-btn' + (val === v ? ' sel' : '');
+  });
+}
+function togSushiSlotProt(sushiId, pid) {
+  if (!currentMods.sushiSlots) currentMods.sushiSlots = {};
+  if (!currentMods.sushiSlots[sushiId]) currentMods.sushiSlots[sushiId] = { alga: null, estilo: null, proteins: [] };
+  var prots = currentMods.sushiSlots[sushiId].proteins;
+  var idx = prots.indexOf(pid);
+  if (idx >= 0) prots.splice(idx, 1); else prots.push(pid);
+  var b = document.getElementById('slot-prot-' + sushiId + '-' + pid);
+  if (b) b.className = 'protein-btn' + (prots.indexOf(pid) >= 0 ? ' sel' : '');
 }
 function togProt(pid) {
   var idx = currentMods.proteins.indexOf(pid);
@@ -935,10 +1014,26 @@ function confirmMods() {
     return;
   }
 
-  // Validar selección de sushis si el item lo requiere (La Caja y La Cajita)
-  if (inst.item.hasSushiChoice && (!currentMods.sushiChoice || currentMods.sushiChoice.length !== 3)) {
-    alert('🍣 Por favor selecciona exactamente 3 sushis diferentes (California, Bombazo, Sonora)');
+  // Validar estilo si el item lo requiere
+  if (inst.item.hasStyle && !currentMods.estilo) {
+    alert('🍳 Por favor indica el estilo: Natural o Empanizado');
     return;
+  }
+
+  // Validar personalización por sushi (La Caja y La Cajita)
+  if (inst.item.hasSushiChoice) {
+    var _slots = currentMods.sushiSlots || {};
+    var _slotNames = { s1: 'California', s2: 'Bombazo', s3: 'Sonora' };
+    var _slotIds = ['s1', 's2', 's3'];
+    for (var _si = 0; _si < _slotIds.length; _si++) {
+      var _sid = _slotIds[_si];
+      var _sl = _slots[_sid] || {};
+      if (!_sl.alga) { alert('🌿 Por favor indica la alga del ' + _slotNames[_sid]); return; }
+      if (!_sl.estilo) { alert('🍳 Por favor indica el estilo del ' + _slotNames[_sid]); return; }
+      if ((_sid === 's1' || _sid === 's2') && (!_sl.proteins || _sl.proteins.length === 0)) {
+        alert('🥩 Por favor elige la proteína del ' + _slotNames[_sid]); return;
+      }
+    }
   }
 
   // Calcular costos extra
@@ -985,6 +1080,10 @@ function confirmMods() {
       var exDef = (inst.item.extras || []).filter(function (e) { return e.id === key; })[0];
       if (exDef && exDef.price > 0) extraCost += exDef.price;
     });
+  }
+  // 4. Extra — Ingrediente: $15 por cada ingrediente seleccionado
+  if (inst.item.isExtraIng && currentMods.extraIngs && currentMods.extraIngs.length > 0) {
+    extraCost += currentMods.extraIngs.length * 15;
   }
   inst.extraCost = extraCost;
   inst.mods = JSON.parse(JSON.stringify(currentMods));
@@ -1115,8 +1214,28 @@ async function guardarPedidoBackend(clientName, clientPhone, clientAddress) {
             return ing ? ing.name : k;
           });
       }
-      if (m.extraIngs && m.extraIngs.length) mods.extras_ingredientes = m.extraIngs;
-      if (m.extras) mods.extras_producto = Object.keys(m.extras).filter(function (k) { return m.extras[k]; });
+      if (m.estilo) mods.estilo = m.estilo;
+      if (m.extraIngs && m.extraIngs.length) {
+        mods.extras_ingredientes = m.extraIngs;
+        mods.precio_extraIng = 15;
+      }
+      if (m.extras) {
+        mods.extras_producto = (item.extras || [])
+          .filter(function (ex) { return m.extras[ex.id]; })
+          .map(function (ex) { return { id: ex.id, name: ex.name, price: ex.price }; });
+      }
+      if (m.sushiSlots && Object.keys(m.sushiSlots).length) {
+        var _slotNamesB = { s1: 'California', s2: 'Bombazo', s3: 'Sonora' };
+        mods.slots = ['s1', 's2', 's3'].map(function (sid) {
+          var sl = m.sushiSlots[sid] || {};
+          return {
+            sushi: _slotNamesB[sid],
+            alga: sl.alga || null,
+            estilo: sl.estilo || null,
+            proteinas: sl.proteins || []
+          };
+        });
+      }
 
       return {
         id_producto: item.dbId || 0,
@@ -1176,27 +1295,35 @@ function updateBar() {
 function modsLabel(inst) {
   var m = inst.mods, item = inst.item, lines = '';
 
-  // Mostrar sushis seleccionados para La Caja y La Cajita
-  if (item.hasSushiChoice && m.sushiChoice && m.sushiChoice.length) {
-    var SUSHIS_DISP = {
-      's1': 'California',
-      's2': 'Bombazo',
-      's3': 'Sonora'
-    };
-    var sushiNames = m.sushiChoice.map(function (sid) { return SUSHIS_DISP[sid] || ''; }).filter(Boolean);
-    if (sushiNames.length) lines += '<div class="oi-mod-added">🍣 Sushis: ' + sushiNames.join(', ') + '</div>';
+  // Personalización por sushi en combos (La Caja y La Cajita)
+  if (item.hasSushiChoice && m.sushiSlots) {
+    var _sdNames = { s1: 'California', s2: 'Bombazo', s3: 'Sonora' };
+    ['s1', 's2', 's3'].forEach(function (sid) {
+      var sl = m.sushiSlots[sid];
+      if (!sl) return;
+      var parts = [];
+      if (sl.alga) parts.push('Alga: ' + (sl.alga === 'con' ? 'Con alga' : 'Sin alga'));
+      if (sl.estilo) parts.push('Estilo: ' + (sl.estilo === 'empanizado' ? 'Empanizado' : 'Natural'));
+      if (sl.proteins && sl.proteins.length) {
+        var pns = sl.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
+        parts.push('Proteína(s): ' + pns.join(', '));
+      }
+      lines += '<div class="oi-mod-added">🍣 ' + _sdNames[sid] + (parts.length ? ' — ' + parts.join(' · ') : '') + '</div>';
+    });
   }
 
   if (m.extraIngs && m.extraIngs.length)
-    lines += '<div class="oi-mod-added">➕ Ingrediente(s): ' + m.extraIngs.join(', ') + (m.extraIngs.length > 1 ? ' ($' + m.extraIngs.length * 15 + ')' : '') + '</div>';
+    lines += '<div class="oi-mod-added">➕ Ingrediente(s): ' + m.extraIngs.join(', ') + ' (+$' + (m.extraIngs.length * 15) + ')</div>';
   if (m.alga)
     lines += '<div class="oi-mod-added">🌿 Alga: ' + (m.alga === 'con' ? 'Con alga' : 'Sin alga') + '</div>';
+  if (m.estilo)
+    lines += '<div class="oi-mod-added">🍳 Estilo: ' + (m.estilo === 'empanizado' ? 'Empanizado' : 'Natural') + '</div>';
   if (m.proteins && m.proteins.length) {
     var pnames = m.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
     lines += '<div class="oi-mod-added">🥩 Proteína(s): ' + pnames.join(', ') + (m.proteins.length > 1 ? ' (+$' + ((m.proteins.length - 1) * 15) + ')' : '') + '</div>';
   }
   if (m.sauces && Object.keys(m.sauces).length)
-    lines += '<div class="oi-mod-added">🫙 Salsa: ' + SAUCES.filter(function (s) { return m.sauces[s.id]; }).map(function (s) { return s.name; }).join(', ') + '</div>';
+    lines += '<div class="oi-mod-added">🫙 Salsa boneles: ' + SAUCES.filter(function (s) { return m.sauces[s.id]; }).map(function (s) { return s.name; }).join(', ') + '</div>';
   if (m.sauces2 && Object.keys(m.sauces2).length)
     lines += '<div class="oi-mod-added">🫙 Salsa 2ª orden: ' + SAUCES.filter(function (s) { return m.sauces2[s.id]; }).map(function (s) { return s.name; }).join(', ') + '</div>';
   var rm = (item.ingredients || []).filter(function (i) { return m.removed && m.removed[i.id]; });
@@ -1256,25 +1383,33 @@ function doSendWhatsApp(clientName, clientPhone, clientAddress) {
     var m = inst.mods, item = inst.item, ec = inst.extraCost || 0;
     msg += '• ' + item.name + ' — $' + (item.price + ec) + '\n';
 
-    // Mostrar sushis seleccionados para La Caja y La Cajita
-    if (item.hasSushiChoice && m.sushiChoice && m.sushiChoice.length) {
-      var SUSHIS_DISP = {
-        's1': 'California',
-        's2': 'Bombazo',
-        's3': 'Sonora'
-      };
-      var sushiNames = m.sushiChoice.map(function (sid) { return SUSHIS_DISP[sid] || ''; }).filter(Boolean);
-      if (sushiNames.length) msg += '   🍣 Sushis: ' + sushiNames.join(', ') + '\n';
+    // Personalización por sushi (La Caja y La Cajita)
+    if (item.hasSushiChoice && m.sushiSlots) {
+      var _wSlotNames = { s1: 'California', s2: 'Bombazo', s3: 'Sonora' };
+      ['s1', 's2', 's3'].forEach(function (sid) {
+        var sl = m.sushiSlots[sid];
+        if (!sl) return;
+        var parts = [];
+        if (sl.alga) parts.push('Alga: ' + (sl.alga === 'con' ? 'Con alga' : 'Sin alga'));
+        if (sl.estilo) parts.push('Estilo: ' + (sl.estilo === 'empanizado' ? 'Empanizado' : 'Natural'));
+        if (sl.proteins && sl.proteins.length) {
+          var pns = sl.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
+          parts.push('Proteína(s): ' + pns.join(', '));
+        }
+        msg += '   🍣 ' + _wSlotNames[sid] + (parts.length ? ' — ' + parts.join(' · ') : '') + '\n';
+      });
     }
 
-    if (m.extraIngs && m.extraIngs.length) msg += '   + Ingrediente(s): ' + m.extraIngs.join(', ') + '\n';
+    if (m.extraIngs && m.extraIngs.length)
+      msg += '   + Extra ingrediente(s): ' + m.extraIngs.join(', ') + ' (+$' + (m.extraIngs.length * 15) + ')\n';
     if (m.alga) msg += '   Alga: ' + (m.alga === 'con' ? 'Con alga' : 'Sin alga') + '\n';
+    if (m.estilo) msg += '   Estilo: ' + (m.estilo === 'empanizado' ? 'Empanizado' : 'Natural') + '\n';
     if (m.proteins && m.proteins.length) {
       var pnames = m.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
       msg += '   Proteína(s): ' + pnames.join(', ') + (m.proteins.length > 1 ? ' (+$' + ((m.proteins.length - 1) * 15) + ')' : '') + '\n';
     }
     if (m.sauces && Object.keys(m.sauces).length)
-      msg += '   Salsa: ' + SAUCES.filter(function (s) { return m.sauces[s.id]; }).map(function (s) { return s.name; }).join(', ') + '\n';
+      msg += '   Salsa boneles: ' + SAUCES.filter(function (s) { return m.sauces[s.id]; }).map(function (s) { return s.name; }).join(', ') + '\n';
     if (m.sauces2 && Object.keys(m.sauces2).length)
       msg += '   Salsa 2ª orden boneles: ' + SAUCES.filter(function (s) { return m.sauces2[s.id]; }).map(function (s) { return s.name; }).join(', ') + '\n';
     var rm = (item.ingredients || []).filter(function (i) { return m.removed && m.removed[i.id]; });

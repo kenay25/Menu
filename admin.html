@@ -2806,10 +2806,17 @@
         lines.push('> Salsa alitas: ' + m.salsas_alitas.map(s => SALSAS_NOMBRES[s] || s).join(', '));
       if (m.sin_ingredientes && m.sin_ingredientes.length)
         lines.push('> SIN: ' + m.sin_ingredientes.join(', '));
-      if (m.extras_ingredientes && m.extras_ingredientes.length)
-        lines.push('> EXTRA ing: ' + m.extras_ingredientes.join(', '));
-      if (m.extras_producto && m.extras_producto.length)
-        lines.push('> EXTRA: ' + m.extras_producto.join(', '));
+      if (m.extras_ingredientes && m.extras_ingredientes.length) {
+        var precioIng = m.precio_extraIng || 15;
+        lines.push('> Extra: ' + m.extras_ingredientes.join(', ') + ' (+$' + (m.extras_ingredientes.length * precioIng) + ')');
+      }
+      if (m.extras_producto && m.extras_producto.length) {
+        var extStr = m.extras_producto.map(function(ex) {
+          if (typeof ex === 'object' && ex !== null) return ex.name + (ex.price > 0 ? ' (+$' + ex.price + ')' : '');
+          return String(ex);
+        });
+        lines.push('> Extra: ' + extStr.join(', '));
+      }
 
       return lines.join('<br>');
     }
@@ -3117,12 +3124,17 @@
         footer.push('🫙 Salsa alitas: ' + m.salsas_alitas.map(s => SALSAS_NOMBRES[s] || s).join(', '));
       if (m.sin_ingredientes && m.sin_ingredientes.length)
         footer.push('🚫 Sin: ' + m.sin_ingredientes.join(', '));
-      if (m.extras_ingredientes && m.extras_ingredientes.length)
-        footer.push('➕ Extra ingrediente: ' + m.extras_ingredientes.join(', '));
-      if (m.extras_producto && m.extras_producto.length)
-        footer.push('✅ Extra producto: ' + m.extras_producto.join(', '));
-      if (footer.length) html += '<div style="margin-top:4px">' + footer.join('<br>') + '</div>';
-
+      if (m.extras_ingredientes && m.extras_ingredientes.length) {
+        const precioIng = m.precio_extraIng || 15;
+        footer.push('➕ Extra ingrediente: ' + m.extras_ingredientes.join(', ') + ' (+$' + (m.extras_ingredientes.length * precioIng) + ')');
+      }
+      if (m.extras_producto && m.extras_producto.length) {
+        const extStr = m.extras_producto.map(ex => {
+          if (typeof ex === 'object' && ex !== null) return ex.name + (ex.price > 0 ? ' (+$' + ex.price + ')' : '');
+          return String(ex);
+        });
+        footer.push('✅ Extra: ' + extStr.join(', '));
+      }
       if (m.extras_ingredientes_detalle && m.extras_ingredientes_detalle.length) {
         footer.push('➕ Ingredientes extra: ' + m.extras_ingredientes_detalle.map(function (e) { return e.cantidad + '× ' + e.nombre + ' ($' + (e.cantidad * e.precio_unitario) + ')'; }).join(', '));
       }
@@ -3130,11 +3142,6 @@
         footer.push('➕ Extras: ' + m.extras_universales.map(function (e) { return e.cantidad + '× ' + e.nombre + ' ($' + (e.cantidad * e.precio_unitario) + ')'; }).join(', '));
       }
       if (footer.length) html += '<div style="margin-top:4px">' + footer.join('<br>') + '</div>';
-
-      if (m.extras_ingredientes_detalle && m.extras_ingredientes_detalle.length)
-        html.push('➕ Ingredientes extra: ' + m.extras_ingredientes_detalle.map(function (e) { return e.cantidad + '× ' + e.nombre; }).join(', '));
-      if (m.extras_universales && m.extras_universales.length)
-        html.push('➕ Extras: ' + m.extras_universales.map(function (e) { return e.cantidad + '× ' + e.nombre + ' ($' + (e.cantidad * e.precio_unitario) + ')'; }).join(', '));
 
       return html;
     }
