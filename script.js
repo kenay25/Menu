@@ -553,18 +553,25 @@ function refreshCardState(itemId) {
   container.innerHTML = insts.map(function (inst, idx) {
     var m = inst.mods, tags = [];
 
-    // Mostrar sushis seleccionados para La Caja y La Cajita
-    if (inst.item.hasSushiChoice && m.sushiChoice && m.sushiChoice.length) {
-      var SUSHIS_DISP = {
-        's1': 'California',
-        's2': 'Bombazo',
-        's3': 'Sonora'
-      };
-      var sushiNames = m.sushiChoice.map(function (sid) { return SUSHIS_DISP[sid] || ''; }).filter(Boolean);
-      if (sushiNames.length) tags.push('🍣 ' + sushiNames.join(', '));
+    // Mostrar personalización de sushis para La Caja y La Cajita
+    if (inst.item.hasSushiChoice && m.sushiSlots) {
+      var _crdNames = { s1: 'California', s2: 'Bombazo', s3: 'Sonora' };
+      ['s1', 's2', 's3'].forEach(function (sid) {
+        var sl = m.sushiSlots[sid];
+        if (!sl) return;
+        var parts = [];
+        if (sl.alga) parts.push(sl.alga === 'con' ? 'Con alga' : 'Sin alga');
+        if (sl.estilo) parts.push(sl.estilo === 'empanizado' ? 'Emp.' : 'Nat.');
+        if (sl.proteins && sl.proteins.length) {
+          var pns = sl.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
+          if (pns.length) parts.push(pns.join('+'));
+        }
+        tags.push('🍣 ' + _crdNames[sid] + (parts.length ? ' (' + parts.join(' · ') + ')' : ''));
+      });
     }
 
     if (m.alga) tags.push(m.alga === 'con' ? 'Con alga' : 'Sin alga');
+    if (m.estilo) tags.push(m.estilo === 'empanizado' ? 'Empanizado' : 'Natural');
     if (m.proteins && m.proteins.length) {
       var pnames = m.proteins.map(function (pid) {
         var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0];
