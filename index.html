@@ -2178,7 +2178,7 @@
 
 
   <!-- ═══════ Cargar script.js con funciones de validación ═══════ -->
-  <script src="script.js?v=20260425g"></script>
+  <script src="script.js?v=20260425i"></script>
 
   <script>
     /* ═══════════════════════════════════════════════
@@ -3908,10 +3908,9 @@
         var notasParaGuardar = document.getElementById('order-notes').value;
         closeClientModal(true);
         document.getElementById('order-notes').value = notasParaGuardar;
-        // 1. Abrir WhatsApp INMEDIATAMENTE — directo del gesto del usuario, sin async
-        doSendWhatsApp(name, phone, address, null);
-        // 2. Guardar en backend en segundo plano (no bloquea WhatsApp)
-        guardarPedidoBackend(name, phone, address, calleNum, entreCalles, referencias).then(function () {
+        var waWinEnvio = window.open('', '_blank'); // sync: escapa bloqueador de popups
+        guardarPedidoBackend(name, phone, address, calleNum, entreCalles, referencias).then(function (pedidoId) {
+          doSendWhatsApp(name, phone, address, pedidoId, waWinEnvio); // navega la ventana ya abierta
           _coloniaSeleccionada = null;
           _costoEnvioActual = 0;
           var select = document.getElementById('envio-colonia');
@@ -3924,10 +3923,9 @@
         var notasParaGuardar2 = document.getElementById('order-notes').value;
         closeClientModal(true);
         document.getElementById('order-notes').value = notasParaGuardar2;
-        // 1. Abrir WhatsApp INMEDIATAMENTE — directo del gesto del usuario, sin async
-        doSendWhatsApp(name, phone, null, null);
-        // 2. Guardar en backend en segundo plano
-        guardarPedidoBackend(name, phone, null).then(function () {
+        var waWinSucursal = window.open('', '_blank'); // sync: escapa bloqueador de popups
+        guardarPedidoBackend(name, phone, null).then(function (pedidoId) {
+          doSendWhatsApp(name, phone, null, pedidoId, waWinSucursal); // navega la ventana ya abierta
           document.getElementById('order-notes').value = '';
         });
       }
@@ -4238,7 +4236,7 @@
 
     /* ══ WHATSAPP ══ */
     var _tempPedidoCounter = 0;
-    function doSendWhatsApp(clientName, clientPhone, clientAddress, pedidoId) {
+    function doSendWhatsApp(clientName, clientPhone, clientAddress, pedidoId, waWin) {
       var notesEl = document.getElementById('order-notes');
       var notes = notesEl ? notesEl.value : '';
       var subtotal = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
@@ -4591,7 +4589,8 @@
       }
       msg += '\n🌸 La Esquina del Sushi · Blvd. Sonora #21';
 
-      window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
+      var waUrl = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(msg);
+      if (waWin) { waWin.location.href = waUrl; } else { window.open(waUrl, '_blank'); }
     }
 
     /* ══ AUTENTICACIÓN ══ */
