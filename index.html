@@ -4591,8 +4591,12 @@
 
       var encoded = encodeURIComponent(msg);
       var waUrl = 'whatsapp://send?phone=' + WA + '&text=' + encoded;
-      if (waWin) { try { waWin.close(); } catch (e) { } }
-      window.location.href = waUrl;
+      if (waWin) {
+        waWin.location.href = waUrl;
+        setTimeout(function () { try { waWin.close(); } catch (e) { } }, 1500);
+      } else {
+        window.location.href = waUrl;
+      }
     }
 
     /* ══ AUTENTICACIÓN ══ */
