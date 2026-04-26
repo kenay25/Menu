@@ -2178,7 +2178,7 @@
 
 
   <!-- ═══════ Cargar script.js con funciones de validación ═══════ -->
-  <script src="script.js?v=20260425c"></script>
+  <script src="script.js?v=20260425d"></script>
 
   <script>
     /* ═══════════════════════════════════════════════
@@ -4792,7 +4792,7 @@
           // Normalizar formato MySQL '2026-03-14 22:30:00' → ISO con timezone
           var _rawF = p.fecha || '';
           if (_rawF && !_rawF.endsWith('Z') && !_rawF.includes('+') && !_rawF.match(/-\d{2}:\d{2}$/))
-            _rawF = _rawF.replace(' ', 'T') + '-07:00';
+            _rawF = _rawF.replace(' ', 'T') + 'Z';
           var fecha = _rawF ? new Date(_rawF) : new Date(0);
           var fechaStr = fecha.toLocaleDateString('es-MX', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric', timeZone: 'America/Hermosillo' });
           var horaStr = fecha.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true, timeZone: 'America/Hermosillo' });
