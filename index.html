@@ -3906,15 +3906,12 @@
         if (!_coloniaSeleccionada) { alert('Por favor selecciona tu colonia para calcular el envío 🛵'); document.getElementById('envio-colonia').focus(); return; }
         var address = calleNum + (entreCalles ? ', entre ' + entreCalles : '') + (referencias ? ', ' + referencias : '');
         var notasParaGuardar = document.getElementById('order-notes').value;
-        // Guardar datos de envío ANTES de cerrar el modal (para que doSendWhatsApp los use)
-        var coloniaParaEnviar = _coloniaSeleccionada;
-        var costoParaEnviar = _costoEnvioActual;
-        closeClientModal(true); // preservarEnvio=true: no resetear costo/colonia todavía
+        closeClientModal(true);
         document.getElementById('order-notes').value = notasParaGuardar;
-        var waWinEnvio = window.open('', '_blank');
-        guardarPedidoBackend(name, phone, address, calleNum, entreCalles, referencias).then(function (pedidoId) {
-          doSendWhatsApp(name, phone, address, pedidoId, waWinEnvio);
-          // Limpiar después de enviar
+        // 1. Abrir WhatsApp INMEDIATAMENTE — directo del gesto del usuario, sin async
+        doSendWhatsApp(name, phone, address, null);
+        // 2. Guardar en backend en segundo plano (no bloquea WhatsApp)
+        guardarPedidoBackend(name, phone, address, calleNum, entreCalles, referencias).then(function () {
           _coloniaSeleccionada = null;
           _costoEnvioActual = 0;
           var select = document.getElementById('envio-colonia');
@@ -3927,9 +3924,10 @@
         var notasParaGuardar2 = document.getElementById('order-notes').value;
         closeClientModal(true);
         document.getElementById('order-notes').value = notasParaGuardar2;
-        var waWinSucursal = window.open('', '_blank');
-        guardarPedidoBackend(name, phone, null).then(function (pedidoId) {
-          doSendWhatsApp(name, phone, null, pedidoId, waWinSucursal);
+        // 1. Abrir WhatsApp INMEDIATAMENTE — directo del gesto del usuario, sin async
+        doSendWhatsApp(name, phone, null, null);
+        // 2. Guardar en backend en segundo plano
+        guardarPedidoBackend(name, phone, null).then(function () {
           document.getElementById('order-notes').value = '';
         });
       }
@@ -4240,7 +4238,7 @@
 
     /* ══ WHATSAPP ══ */
     var _tempPedidoCounter = 0;
-    function doSendWhatsApp(clientName, clientPhone, clientAddress, pedidoId, waWin) {
+    function doSendWhatsApp(clientName, clientPhone, clientAddress, pedidoId) {
       var notesEl = document.getElementById('order-notes');
       var notes = notesEl ? notesEl.value : '';
       var subtotal = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
@@ -4593,14 +4591,7 @@
       }
       msg += '\n🌸 La Esquina del Sushi · Blvd. Sonora #21';
 
-      var waUrl = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(msg);
-      var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-      if (isMobile) {
-        if (waWin) waWin.close();
-        window.open(waUrl, '_blank');
-      } else {
-        if (waWin) { waWin.location.href = waUrl; } else { window.open(waUrl, '_blank'); }
-      }
+      window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
     }
 
     /* ══ AUTENTICACIÓN ══ */
