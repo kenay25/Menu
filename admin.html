@@ -3160,13 +3160,14 @@
       if (autoRefreshInterval) clearInterval(autoRefreshInterval);
       autoRefreshInterval = setInterval(() => {
         if (userInteracting) return;
+        if (document.getElementById('modal-pedido').classList.contains('open')) return;
         const active = document.querySelector('.page.active');
         if (!active) return;
         const name = active.id.replace('page-', '');
         if (name === 'dashboard') cargarDashboard();
         else if (name === 'pedidos') cargarPedidosHoy(pedidosHoyFiltro);
         else if (name === 'menu') cargarMenu();
-      }, 30000);
+      }, 15000);
     }
 
     /* ══ AUTO-IMPRESIÓN DE PEDIDOS NUEVOS ═══════════════════════ */
@@ -3230,7 +3231,7 @@
       revisarPedidosNuevos();
 
       // Revisar cada 10 segundos
-      autoPrintInterval = setInterval(revisarPedidosNuevos, 10000);
+      autoPrintInterval = setInterval(revisarPedidosNuevos, 5000);
     }
 
     /**
@@ -3279,9 +3280,9 @@
       while (autoPrintCola.length > 0) {
         const id = autoPrintCola.shift();
         await autoImprimirPedido(id);
-        // Esperar 2 segundos entre impresiones
+        // Esperar 1 segundo entre impresiones
         if (autoPrintCola.length > 0) {
-          await new Promise(r => setTimeout(r, 2000));
+          await new Promise(r => setTimeout(r, 1000));
         }
       }
 
@@ -3313,7 +3314,7 @@
         printArea.innerHTML = generarTicketCliente(data);
 
         // Esperar a que el DOM actualice y lanzar impresión
-        await new Promise(r => setTimeout(r, 300));
+        await new Promise(r => setTimeout(r, 150));
         window.print();
 
         console.log('✅ Tickets impresos para pedido #' + idPedido);
@@ -3848,7 +3849,7 @@
         if (el) el.textContent = ahora.toLocaleString('es-MX', opts);
       }
       actualizar();
-      setInterval(actualizar, 30000);
+      setInterval(actualizar, 1000);
     }
     window.addEventListener('DOMContentLoaded', () => {
       const t = localStorage.getItem('admin_token');

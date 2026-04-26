@@ -2178,7 +2178,7 @@
 
 
   <!-- ═══════ Cargar script.js con funciones de validación ═══════ -->
-  <script src="script.js?v=20260425e"></script>
+  <script src="script.js?v=20260425f"></script>
 
   <script>
     /* ═══════════════════════════════════════════════
@@ -4739,10 +4739,9 @@
         var res = await fetch(API_URL + '/historial/mi-historial', { headers: { 'Authorization': 'Bearer ' + sesionActual.token } });
         var data = await res.json();
         if (!res.ok) { mostrarHistorialError(data.detail || 'No se encontraron pedidos'); return; }
-        // ── Fix zona horaria: agregar Z para que JS trate como UTC → Hermosillo UTC-7
         (data.pedidos || []).forEach(function (p) {
           if (p.fecha && !p.fecha.endsWith('Z') && !p.fecha.includes('+'))
-            p.fecha = p.fecha.replace(' ', 'T') + '-07:00';
+            p.fecha = p.fecha.replace(' ', 'T') + 'Z';
         });
         mostrarHistorialDatos(data);
       } catch (e) { mostrarHistorialError('Error de conexión'); }
