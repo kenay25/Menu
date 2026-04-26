@@ -42,10 +42,10 @@ var EXTRAS_SUSHI = [
   { id: 'ex_grat', emoji: '&#x1F9C0;', name: 'Gratinado', note: '+$25', price: 25 }
 ];
 var EXTRAS_CAJA = [
-  { id: 'ex_ranch', emoji: '&#x1FAD9;', name: 'Ranch', note: '+$25', price: 25 },
-  { id: 'ex_aderezo', emoji: '&#x1FAD9;', name: 'Aderezo', note: '+$25', price: 25 },
-  { id: 'ex_soya', emoji: '&#x1FAD9;', name: 'Soya', note: '+$25', price: 25 },
-  { id: 'ex_anguila', emoji: '&#x1FAD9;', name: 'Anguila', note: '+$25', price: 25 }
+  { id: 'ex_ranch', emoji: '&#x1FAD9;', name: 'Ranch', note: '+$15', price: 15 },
+  { id: 'ex_aderezo', emoji: '&#x1FAD9;', name: 'Aderezo', note: '+$15', price: 15 },
+  { id: 'ex_soya', emoji: '&#x1FAD9;', name: 'Soya', note: '+$15', price: 15 },
+  { id: 'ex_anguila', emoji: '&#x1FAD9;', name: 'Anguila', note: '+$15', price: 15 }
 ];
 
 /* ── Helper builders ────────────────────────── */
@@ -246,7 +246,7 @@ var MENU = {
     },
 
     {
-      id: 's7', dbId: 30, emoji: '&#x1F363;', name: 'Misil', price: 80, tag: null, hasAlga: true, hasStyle: true,
+      id: 's7', dbId: 30, emoji: '&#x1F363;', name: 'Misil', price: 80, tag: null,
       desc: 'Por dentro: relleno de philadelphia, tampico, tocino y res. Por fuera: chile verde empanizado.',
       ingredients: [ing('b1', '&#x1F359;', 'Philadelphia', 'Relleno', true), ing('b2', '&#x1F41F;', 'Tampico', 'Relleno', true), ing('b3', '&#x1F953;', 'Tocino', 'Relleno', true), ing('b4', '&#x1F969;', 'Res', 'Relleno', true), ing('b5', '&#x1F336;&#xFE0F;', 'Chile verde empanizado', 'Cubierta', false)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }]
     }
@@ -293,7 +293,7 @@ var MENU = {
     {
       id: 'en5', dbId: 37, emoji: '&#x1F336;&#xFE0F;', name: 'Chile Caribe Relleno', price: 30, tag: null,
       desc: 'Philadelphia, tocino, tampico y empanizado.',
-      ingredients: [ing('b1', '&#x1F336;&#xFE0F;', 'Chile caribe', 'Base', false), ing('b2', '&#x1F9C0;', 'Philadelphia', 'Relleno', false), ing('b3', '&#x1F953;', 'Tocino', 'Relleno', true), ing('b4', '&#x1F41F;', 'Tampico', 'Relleno', true)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }]
+      ingredients: [ing('b1', '&#x1F336;&#xFE0F;', 'Chile caribe', 'Base', false), ing('b2', '&#x1F9C0;', 'Philadelphia', 'Relleno', true), ing('b3', '&#x1F953;', 'Tocino', 'Relleno', true), ing('b4', '&#x1F41F;', 'Tampico', 'Relleno', true)], extras: [{ id: 'x1', emoji: '&#x1F9C0;', name: 'Queso gratinado', note: '+$25', price: 25 }]
     }
   ],
 
@@ -306,7 +306,7 @@ var MENU = {
     },
 
     {
-      id: 'esp5', dbId: 39, emoji: '&#x1F35A;', name: 'Gohan', price: 135, tag: 'popular',
+      id: 'esp5', dbId: 39, emoji: '&#x1F35A;', name: 'Gohan', price: 135, tag: 'popular', hasStyle: true,
       desc: 'Plancha de arroz natural o empanizado, philadelphia, tampico, res, pollo, tocino, aguacate, camarón, serrano y cebollín.',
       ingredients: [ing('b1', '&#x1F35A;', 'Arroz (nat. o empanizado)', 'Base', false), ing('b2', '&#x1F9C0;', 'Philadelphia', 'Encima', true), ing('b3', '&#x1F41F;', 'Tampico', 'Encima', true), ing('b4', '&#x1F969;', 'Res', 'Mix prot.', true), ing('b5', '&#x1F357;', 'Pollo', 'Mix prot.', true), ing('b6', '&#x1F953;', 'Tocino', 'Mix prot.', true), ing('b7', '&#x1F990;', 'Camarón', 'Mix prot.', true), ing('b8', '&#x1F951;', 'Aguacate', 'Decorado', true), ing('b9', '&#x1F336;&#xFE0F;', 'Serrano', 'Decorado', true), ing('b10', '&#x1F331;', 'Cebollín', 'Decorado', true)], extras: [{ id: 'x_pollo', emoji: '&#x1F357;', name: 'Proteína extra — Pollo', note: '+$15', price: 15 }, { id: 'x_res', emoji: '&#x1F969;', name: 'Proteína extra — Res', note: '+$15', price: 15 }, { id: 'x_tocino', emoji: '&#x1F953;', name: 'Proteína extra — Tocino', note: '+$15', price: 15 }, { id: 'x_cam', emoji: '&#x1F990;', name: 'Proteína extra — Camarón', note: '+$15', price: 15 }, { id: 'x_surimi', emoji: '&#x1F980;', name: 'Proteína extra — Surimi', note: '+$15', price: 15 }]
     },
@@ -355,7 +355,7 @@ var MENU = {
     {
       id: 'b1', dbId: 46, emoji: '&#x1F9CB;', name: 'Té 1 litro', price: 25, tag: null,
       desc: 'Té helado 1 litro.',
-      ingredients: [ing('b1', '&#x1F9CB;', 'Té helado', '1 litro', false)], extras: [{ id: 'x1', emoji: '&#x1F34B;', name: 'Limón', note: 'Gratis', price: 0 }]
+      ingredients: [ing('b1', '&#x1F9CB;', 'Té helado', '1 litro', false)], extras: []
     },
     {
       id: 'b2', dbId: 47, emoji: '&#x1F964;', name: 'Coca-Cola 600ml', price: 25, tag: null,
