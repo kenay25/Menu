@@ -2178,7 +2178,7 @@
 
 
   <!-- ═══════ Cargar script.js con funciones de validación ═══════ -->
-  <script src="script.js?v=20260425i"></script>
+  <script src="script.js?v=20260425j"></script>
 
   <script>
     /* ═══════════════════════════════════════════════
@@ -4589,7 +4589,11 @@
       }
       msg += '\n🌸 La Esquina del Sushi · Blvd. Sonora #21';
 
-      var waUrl = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(msg);
+      var encoded = encodeURIComponent(msg);
+      var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      var waUrl = isMobile
+        ? 'whatsapp://send?phone=' + WA + '&text=' + encoded
+        : 'https://wa.me/' + WA + '?text=' + encoded;
       if (waWin) { waWin.location.href = waUrl; } else { window.open(waUrl, '_blank'); }
     }
 
