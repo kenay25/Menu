@@ -2178,7 +2178,7 @@
 
 
   <!-- ═══════ Cargar script.js con funciones de validación ═══════ -->
-  <script src="script.js?v=20260425b"></script>
+  <script src="script.js?v=20260425c"></script>
 
   <script>
     /* ═══════════════════════════════════════════════
@@ -3911,8 +3911,9 @@
         var costoParaEnviar = _costoEnvioActual;
         closeClientModal(true); // preservarEnvio=true: no resetear costo/colonia todavía
         document.getElementById('order-notes').value = notasParaGuardar;
+        var waWinEnvio = window.open('', '_blank');
         guardarPedidoBackend(name, phone, address, calleNum, entreCalles, referencias).then(function (pedidoId) {
-          doSendWhatsApp(name, phone, address, pedidoId);
+          doSendWhatsApp(name, phone, address, pedidoId, waWinEnvio);
           // Limpiar después de enviar
           _coloniaSeleccionada = null;
           _costoEnvioActual = 0;
@@ -3926,8 +3927,9 @@
         var notasParaGuardar2 = document.getElementById('order-notes').value;
         closeClientModal(true);
         document.getElementById('order-notes').value = notasParaGuardar2;
+        var waWinSucursal = window.open('', '_blank');
         guardarPedidoBackend(name, phone, null).then(function (pedidoId) {
-          doSendWhatsApp(name, phone, null, pedidoId);
+          doSendWhatsApp(name, phone, null, pedidoId, waWinSucursal);
           document.getElementById('order-notes').value = '';
         });
       }
@@ -4238,7 +4240,7 @@
 
     /* ══ WHATSAPP ══ */
     var _tempPedidoCounter = 0;
-    function doSendWhatsApp(clientName, clientPhone, clientAddress, pedidoId) {
+    function doSendWhatsApp(clientName, clientPhone, clientAddress, pedidoId, waWin) {
       var notesEl = document.getElementById('order-notes');
       var notes = notesEl ? notesEl.value : '';
       var subtotal = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
@@ -4408,26 +4410,6 @@
                 if (exDef) msg += '   + Extra: ' + q + '× ' + exDef.name + ' (+$' + (exDef.price * q) + ')\n';
               }
             });
-          }
-
-          // Extras del item (nivel general)
-          var ax = (item.extras || []).filter(function (ex) { return m.extras && m.extras[ex.id]; });
-          if (ax.length) {
-            lines += '<div class="oi-mod-added">✅ Extra: ' + ax.map(function (ex) { return ex.name + (ex.price > 0 ? ' (+$' + ex.price + ')' : ' (gratis)'); }).join(' · ') + '</div>';
-          }
-          // Extras universales
-          if (m.universalExtras && Object.keys(m.universalExtras).length) {
-            var uxLines = [];
-            var allUx = [].concat(UNIVERSAL_EXTRAS_SUSHI, UNIVERSAL_EXTRAS_CAJA);
-            Object.keys(m.universalExtras).forEach(function (k) {
-              var q = m.universalExtras[k];
-              if (q > 0) {
-                var exDef = null;
-                for (var i = 0; i < allUx.length; i++) { if (allUx[i].id === k) { exDef = allUx[i]; break; } }
-                if (exDef) uxLines.push(q + '× ' + exDef.name + ' (+$' + (exDef.price * q) + ')');
-              }
-            });
-            if (uxLines.length) lines += '<div class="oi-mod-added">➕ Extras: ' + uxLines.join(' · ') + '</div>';
           }
 
           // ══ Todos los demás productos ═══════════════════════════════════════════
@@ -4610,7 +4592,8 @@
       }
       msg += '\n🌸 La Esquina del Sushi · Blvd. Sonora #21';
 
-      window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
+      var waUrl = 'https://wa.me/' + WA + '?text=' + encodeURIComponent(msg);
+      if (waWin) { waWin.location.href = waUrl; } else { window.open(waUrl, '_blank'); }
     }
 
     /* ══ AUTENTICACIÓN ══ */
