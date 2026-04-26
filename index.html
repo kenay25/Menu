@@ -2178,7 +2178,7 @@
 
 
   <!-- ═══════ Cargar script.js con funciones de validación ═══════ -->
-  <script src="script.js?v=20260425d"></script>
+  <script src="script.js?v=20260425e"></script>
 
   <script>
     /* ═══════════════════════════════════════════════
@@ -4428,11 +4428,12 @@
           }
           // Extras universales
           if (m.universalExtras && Object.keys(m.universalExtras).length) {
+            var _uxArr = /^(c|promo)/.test(item.id) ? UNIVERSAL_EXTRAS_CAJA : UNIVERSAL_EXTRAS_SUSHI;
             Object.keys(m.universalExtras).forEach(function (k) {
               var q = m.universalExtras[k];
               if (q > 0) {
                 var exDef = null;
-                for (var i = 0; i < UNIVERSAL_EXTRAS_SUSHI.length; i++) { if (UNIVERSAL_EXTRAS_SUSHI[i].id === k) { exDef = UNIVERSAL_EXTRAS_SUSHI[i]; break; } }
+                for (var i = 0; i < _uxArr.length; i++) { if (_uxArr[i].id === k) { exDef = _uxArr[i]; break; } }
                 if (exDef) msg += '   + Extra: ' + q + '× ' + exDef.name + ' (+$' + (exDef.price * q) + ')\n';
               }
             });
