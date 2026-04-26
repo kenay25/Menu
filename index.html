@@ -3908,26 +3908,26 @@
         var notasParaGuardar = document.getElementById('order-notes').value;
         closeClientModal(true);
         document.getElementById('order-notes').value = notasParaGuardar;
-        var waWinEnvio = window.open('', '_blank'); // sync: escapa bloqueador de popups
-        guardarPedidoBackend(name, phone, address, calleNum, entreCalles, referencias).then(function (pedidoId) {
-          doSendWhatsApp(name, phone, address, pedidoId, waWinEnvio); // navega la ventana ya abierta
-          _coloniaSeleccionada = null;
-          _costoEnvioActual = 0;
-          var select = document.getElementById('envio-colonia');
-          if (select) select.value = '';
-          var info = document.getElementById('envio-info');
-          if (info) info.classList.remove('visible');
-          document.getElementById('order-notes').value = '';
-        });
+        // Abrir WhatsApp SINCRÓNICAMENTE desde el gesto del usuario (antes del async)
+        doSendWhatsApp(name, phone, address, null);
+        _coloniaSeleccionada = null;
+        _costoEnvioActual = 0;
+        var select = document.getElementById('envio-colonia');
+        if (select) select.value = '';
+        var info = document.getElementById('envio-info');
+        if (info) info.classList.remove('visible');
+        document.getElementById('order-notes').value = '';
+        // Guardar en backend en segundo plano
+        guardarPedidoBackend(name, phone, address, calleNum, entreCalles, referencias);
       } else {
         var notasParaGuardar2 = document.getElementById('order-notes').value;
         closeClientModal(true);
         document.getElementById('order-notes').value = notasParaGuardar2;
-        var waWinSucursal = window.open('', '_blank'); // sync: escapa bloqueador de popups
-        guardarPedidoBackend(name, phone, null).then(function (pedidoId) {
-          doSendWhatsApp(name, phone, null, pedidoId, waWinSucursal); // navega la ventana ya abierta
-          document.getElementById('order-notes').value = '';
-        });
+        // Abrir WhatsApp SINCRÓNICAMENTE desde el gesto del usuario (antes del async)
+        doSendWhatsApp(name, phone, null, null);
+        document.getElementById('order-notes').value = '';
+        // Guardar en backend en segundo plano
+        guardarPedidoBackend(name, phone, null);
       }
     }
 
@@ -4591,12 +4591,7 @@
 
       var encoded = encodeURIComponent(msg);
       var waUrl = 'whatsapp://send?phone=' + WA + '&text=' + encoded;
-      if (waWin) {
-        waWin.location.href = waUrl;
-        setTimeout(function () { try { waWin.close(); } catch (e) { } }, 1500);
-      } else {
-        window.location.href = waUrl;
-      }
+      window.open(waUrl, '_blank');
     }
 
     /* ══ AUTENTICACIÓN ══ */
