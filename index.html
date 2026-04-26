@@ -2048,39 +2048,10 @@
     </div>
   </div>
 
-  <!-- ═══════ MODAL: PEDIDO CONFIRMADO ════════════════════════ -->
-  <div id="pedido-confirm-overlay"
-    style="display:none;position:fixed;inset:0;z-index:9500;background:rgba(26,10,16,0.88);align-items:center;justify-content:center;padding:20px">
-    <div
-      style="background:#FFF8F9;border-radius:24px;padding:32px 24px;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.5)">
-      <div id="confirm-loading" style="display:none;padding:20px 0">
-        <div style="font-size:36px;margin-bottom:12px">⏳</div>
-        <p style="color:#9E7080;font-size:14px">Registrando pedido...</p>
-      </div>
-      <div id="confirm-ready">
-        <div style="font-size:52px;margin-bottom:10px">✅</div>
-        <h3 style="font-family:'Noto Serif JP',serif;font-size:19px;color:#1A0A10;margin-bottom:4px">¡Pedido registrado!
-        </h3>
-        <div id="confirm-num" style="color:#E8547A;font-size:30px;font-weight:700;margin:10px 0;letter-spacing:1px">#---
-        </div>
-        <p style="color:#9E7080;font-size:13px;margin-bottom:22px;line-height:1.5">Tu pedido está guardado en el
-          sistema.<br>Toca para enviarlo por WhatsApp.</p>
-        <button onclick="abrirWhatsAppConfirmado()"
-          style="background:#25D366;border:none;color:white;padding:14px 0;border-radius:50px;font-size:15px;font-weight:600;cursor:pointer;width:100%;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:10px">
-          <svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;flex-shrink:0">
-            <path
-              d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
-            <path
-              d="M12 0C5.373 0 0 5.373 0 12c0 2.136.564 4.14 1.549 5.874L.057 23.617a.5.5 0 0 0 .617.617l5.743-1.492A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22A9.966 9.966 0 0 1 6.57 20.27l-.373-.222-3.865 1.004 1.025-3.755-.243-.389A9.96 9.96 0 0 1 2 12C2 6.486 6.486 2 12 2s10 4.486 10 10-4.486 10-10 10z" />
-          </svg>
-          Abrir WhatsApp
-        </button>
-        <button onclick="cerrarConfirmacion()"
-          style="background:transparent;border:1px solid #E8D0D8;color:#9E7080;padding:10px 0;border-radius:50px;font-size:13px;cursor:pointer;width:100%;font-family:'DM Sans',sans-serif">
-          Cerrar
-        </button>
-      </div>
-    </div>
+  <!-- ═══════ TOAST: REGISTRANDO PEDIDO ══════════════════════ -->
+  <div id="pedido-toast"
+    style="display:none;position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:9500;background:rgba(26,10,16,0.92);color:white;padding:12px 22px;border-radius:50px;font-size:14px;font-family:'DM Sans',sans-serif;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,0.4);transition:opacity 0.3s">
+    <span id="pedido-toast-msg">⏳ Registrando pedido...</span>
   </div>
 
   <!-- ═══════ MODAL: LOGIN / REGISTRO ══════════════════════════ -->
@@ -3921,27 +3892,15 @@
 
     var _pendingWAData = null;
 
-    function mostrarConfirmacion(pedidoId) {
-      var num = pedidoId ? '#' + pedidoId : '#T' + (++_tempPedidoCounter);
-      document.getElementById('confirm-num').textContent = num;
-      document.getElementById('confirm-loading').style.display = 'none';
-      document.getElementById('confirm-ready').style.display = 'block';
+    function _toastShow(msg) {
+      var t = document.getElementById('pedido-toast');
+      document.getElementById('pedido-toast-msg').textContent = msg;
+      t.style.display = 'block'; t.style.opacity = '1';
     }
-
-    function cerrarConfirmacion() {
-      document.getElementById('pedido-confirm-overlay').style.display = 'none';
-    }
-
-    function abrirWhatsAppConfirmado() {
-      cerrarConfirmacion();
-      if (!_pendingWAData) return;
-      var d = _pendingWAData; _pendingWAData = null;
-      doSendWhatsApp(d.name, d.phone, d.address, d.pedidoId);
-      // Limpiar estado después de abrir WhatsApp
-      _coloniaSeleccionada = null; _costoEnvioActual = 0;
-      var sel = document.getElementById('envio-colonia'); if (sel) sel.value = '';
-      var inf = document.getElementById('envio-info'); if (inf) inf.classList.remove('visible');
-      document.getElementById('order-notes').value = '';
+    function _toastHide() {
+      var t = document.getElementById('pedido-toast');
+      t.style.opacity = '0';
+      setTimeout(function () { t.style.display = 'none'; }, 300);
     }
 
     function submitOrder() {
@@ -3957,54 +3916,49 @@
       }
       var phone = validacion.completo;
 
-      var btnEl = document.querySelector('.btn-cs');
-      var btnHtml = btnEl ? btnEl.innerHTML : '';
-
-      function mostrarLoading() {
-        if (btnEl) { btnEl.disabled = true; btnEl.innerHTML = '⏳ Guardando...'; }
-        var ov = document.getElementById('pedido-confirm-overlay');
-        ov.style.display = 'flex';
-        document.getElementById('confirm-loading').style.display = 'block';
-        document.getElementById('confirm-ready').style.display = 'none';
-      }
-      function restaurarBtn() {
-        if (btnEl) { btnEl.disabled = false; btnEl.innerHTML = btnHtml; }
-      }
+      // Abrir ventana en blanco SINCRÓNICAMENTE desde el gesto del usuario
+      var waWin = window.open('', '_blank');
 
       if (orderType === 'envio') {
         var calleNum = document.getElementById('cl-calle-num').value.trim();
         var entreCalles = document.getElementById('cl-entre-calles').value.trim();
         var referencias = document.getElementById('cl-referencias').value.trim();
-        if (!calleNum) { alert('Por favor ingresa la calle y número 🏠'); document.getElementById('cl-calle-num').focus(); return; }
-        if (!entreCalles) { alert('Por favor ingresa las entre calles 📍'); document.getElementById('cl-entre-calles').focus(); return; }
-        if (!_coloniaSeleccionada) { alert('Por favor selecciona tu colonia para calcular el envío 🛵'); document.getElementById('envio-colonia').focus(); return; }
+        if (!calleNum) { alert('Por favor ingresa la calle y número 🏠'); document.getElementById('cl-calle-num').focus(); if (waWin) waWin.close(); return; }
+        if (!entreCalles) { alert('Por favor ingresa las entre calles 📍'); document.getElementById('cl-entre-calles').focus(); if (waWin) waWin.close(); return; }
+        if (!_coloniaSeleccionada) { alert('Por favor selecciona tu colonia para calcular el envío 🛵'); document.getElementById('envio-colonia').focus(); if (waWin) waWin.close(); return; }
         var address = calleNum + (entreCalles ? ', entre ' + entreCalles : '') + (referencias ? ', ' + referencias : '');
         var notasGuardadas = document.getElementById('order-notes').value;
-        mostrarLoading();
         closeClientModal(true);
         document.getElementById('order-notes').value = notasGuardadas;
+        _toastShow('⏳ Registrando pedido...');
         guardarPedidoBackend(name, phone, address, calleNum, entreCalles, referencias).then(function (pedidoId) {
-          _pendingWAData = { name: name, phone: phone, address: address, pedidoId: pedidoId };
-          restaurarBtn();
-          mostrarConfirmacion(pedidoId);
+          _toastHide();
+          doSendWhatsApp(name, phone, address, pedidoId, waWin);
+          _coloniaSeleccionada = null; _costoEnvioActual = 0;
+          var sel = document.getElementById('envio-colonia'); if (sel) sel.value = '';
+          var inf = document.getElementById('envio-info'); if (inf) inf.classList.remove('visible');
+          document.getElementById('order-notes').value = '';
         }).catch(function () {
-          _pendingWAData = { name: name, phone: phone, address: address, pedidoId: null };
-          restaurarBtn();
-          mostrarConfirmacion(null);
+          _toastHide();
+          doSendWhatsApp(name, phone, address, null, waWin);
+          _coloniaSeleccionada = null; _costoEnvioActual = 0;
+          var sel = document.getElementById('envio-colonia'); if (sel) sel.value = '';
+          var inf = document.getElementById('envio-info'); if (inf) inf.classList.remove('visible');
+          document.getElementById('order-notes').value = '';
         });
       } else {
         var notasGuardadas2 = document.getElementById('order-notes').value;
-        mostrarLoading();
         closeClientModal(true);
         document.getElementById('order-notes').value = notasGuardadas2;
+        _toastShow('⏳ Registrando pedido...');
         guardarPedidoBackend(name, phone, null).then(function (pedidoId) {
-          _pendingWAData = { name: name, phone: phone, address: null, pedidoId: pedidoId };
-          restaurarBtn();
-          mostrarConfirmacion(pedidoId);
+          _toastHide();
+          doSendWhatsApp(name, phone, null, pedidoId, waWin);
+          document.getElementById('order-notes').value = '';
         }).catch(function () {
-          _pendingWAData = { name: name, phone: phone, address: null, pedidoId: null };
-          restaurarBtn();
-          mostrarConfirmacion(null);
+          _toastHide();
+          doSendWhatsApp(name, phone, null, null, waWin);
+          document.getElementById('order-notes').value = '';
         });
       }
     }
@@ -4669,7 +4623,17 @@
 
       var encoded = encodeURIComponent(msg);
       var waUrl = 'whatsapp://send?phone=' + WA + '&text=' + encoded;
-      window.open(waUrl, '_blank');
+      if (waWin) {
+        try {
+          waWin.document.open();
+          waWin.document.write('<!DOCTYPE html><html><head><title>Abriendo WhatsApp...</title></head><body><script>window.location.replace(' + JSON.stringify(waUrl) + ');<\/script></body></html>');
+          waWin.document.close();
+        } catch (e) {
+          waWin.location.href = 'https://wa.me/' + WA + '?text=' + encoded;
+        }
+      } else {
+        window.location.href = waUrl;
+      }
     }
 
     /* ══ AUTENTICACIÓN ══ */
