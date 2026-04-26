@@ -4590,10 +4590,7 @@
       msg += '\n🌸 La Esquina del Sushi · Blvd. Sonora #21';
 
       var encoded = encodeURIComponent(msg);
-      var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-      var waUrl = isMobile
-        ? 'whatsapp://send?phone=' + WA + '&text=' + encoded
-        : 'https://wa.me/' + WA + '?text=' + encoded;
+      var waUrl = 'https://wa.me/' + WA + '?text=' + encoded;
       if (waWin) { waWin.location.href = waUrl; } else { window.open(waUrl, '_blank'); }
     }
 
