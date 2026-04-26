@@ -2225,6 +2225,12 @@
       { id: 'ux_soya', name: 'Soya', price: 15, emoji: '🍶' },
       { id: 'ux_anguila', name: 'Anguila', price: 15, emoji: '🍣' }
     ];
+    var UNIVERSAL_EXTRAS_CAJA_PREMIUM = [
+      { id: 'ux_ranch', name: 'Ranch', price: 25, emoji: '🥗' },
+      { id: 'ux_aderezo', name: 'Aderezo', price: 25, emoji: '🫙' },
+      { id: 'ux_soya', name: 'Soya', price: 25, emoji: '🍶' },
+      { id: 'ux_anguila', name: 'Anguila', price: 25, emoji: '🍣' }
+    ];
 
     /* ═══════ COLONIAS DE NAVOJOA - TARIFAS DE ENVÍO ═══════════════════════ */
     var COLONIAS_ENVIO = {
@@ -3250,7 +3256,7 @@
       /* ── Extras universales (todos excepto bebidas y el propio extra) ── */
       if (!item.isExtraIng && item.id !== 'b1' && item.id !== 'b2' && item.id !== 'ex1' && item.id !== 'ex2') {
         var isCaja = item.id.match(/^(c|promo)/);
-        var uExtras = isCaja ? UNIVERSAL_EXTRAS_CAJA : UNIVERSAL_EXTRAS_SUSHI;
+        var uExtras = (item.id === 'c6' || item.id === 'c7') ? UNIVERSAL_EXTRAS_CAJA_PREMIUM : (isCaja ? UNIVERSAL_EXTRAS_CAJA : UNIVERSAL_EXTRAS_SUSHI);
         if (uExtras && uExtras.length) {
           html += '<div class="extra-picker" style="margin-top:18px;border-top:1.5px solid var(--border);padding-top:18px"><div class="extra-picker-title">➕ Extras adicionales</div><div class="extra-picker-grid">';
           uExtras.forEach(function (ex) {
@@ -3615,7 +3621,7 @@
       // Extras universales
       if (currentMods.universalExtras) {
         var _isCajaInst = inst.item && /^(c|promo)/.test(inst.item.id);
-        var allUx = _isCajaInst ? UNIVERSAL_EXTRAS_CAJA : UNIVERSAL_EXTRAS_SUSHI;
+        var allUx = (inst.item.id === 'c6' || inst.item.id === 'c7') ? UNIVERSAL_EXTRAS_CAJA_PREMIUM : (_isCajaInst ? UNIVERSAL_EXTRAS_CAJA : UNIVERSAL_EXTRAS_SUSHI);
         Object.keys(currentMods.universalExtras).forEach(function (key) {
           var qty = currentMods.universalExtras[key];
           if (qty > 0) {
@@ -4036,7 +4042,7 @@
           if (m.universalExtras && Object.keys(m.universalExtras).length) {
             mods.extras_universales = [];
             var _isCajaBack = /^(c|promo)/.test(item.id);
-            var allUx = _isCajaBack ? UNIVERSAL_EXTRAS_CAJA : UNIVERSAL_EXTRAS_SUSHI;
+            var allUx = (item.id === 'c6' || item.id === 'c7') ? UNIVERSAL_EXTRAS_CAJA_PREMIUM : (_isCajaBack ? UNIVERSAL_EXTRAS_CAJA : UNIVERSAL_EXTRAS_SUSHI);
             Object.keys(m.universalExtras).forEach(function (k) {
               var q = m.universalExtras[k];
               if (q > 0) {
@@ -4129,7 +4135,7 @@
       if (m.universalExtras && Object.keys(m.universalExtras).length) {
         var uxLines = [];
         var _isCajaLabel = item.id && /^(c|promo)/.test(item.id);
-        var allUx = _isCajaLabel ? UNIVERSAL_EXTRAS_CAJA : UNIVERSAL_EXTRAS_SUSHI;
+        var allUx = (item.id === 'c6' || item.id === 'c7') ? UNIVERSAL_EXTRAS_CAJA_PREMIUM : (_isCajaLabel ? UNIVERSAL_EXTRAS_CAJA : UNIVERSAL_EXTRAS_SUSHI);
         Object.keys(m.universalExtras).forEach(function (k) {
           var q = m.universalExtras[k];
           if (q > 0) {
@@ -4434,7 +4440,8 @@
               var q = m.universalExtras[k];
               if (q > 0) {
                 var exDef = null;
-                for (var i = 0; i < UNIVERSAL_EXTRAS_CAJA.length; i++) { if (UNIVERSAL_EXTRAS_CAJA[i].id === k) { exDef = UNIVERSAL_EXTRAS_CAJA[i]; break; } }
+                var _uxCajaArr = (item.id === 'c6' || item.id === 'c7') ? UNIVERSAL_EXTRAS_CAJA_PREMIUM : UNIVERSAL_EXTRAS_CAJA;
+                for (var i = 0; i < _uxCajaArr.length; i++) { if (_uxCajaArr[i].id === k) { exDef = _uxCajaArr[i]; break; } }
                 if (exDef) msg += '   + Extra: ' + q + '× ' + exDef.name + ' (+$' + (exDef.price * q) + ')\n';
               }
             });
@@ -4456,7 +4463,7 @@
           }
           // Extras universales
           if (m.universalExtras && Object.keys(m.universalExtras).length) {
-            var _uxArr = /^(c|promo)/.test(item.id) ? UNIVERSAL_EXTRAS_CAJA : UNIVERSAL_EXTRAS_SUSHI;
+            var _uxArr = (item.id === 'c6' || item.id === 'c7') ? UNIVERSAL_EXTRAS_CAJA_PREMIUM : (/^(c|promo)/.test(item.id) ? UNIVERSAL_EXTRAS_CAJA : UNIVERSAL_EXTRAS_SUSHI);
             Object.keys(m.universalExtras).forEach(function (k) {
               var q = m.universalExtras[k];
               if (q > 0) {
