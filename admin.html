@@ -2817,6 +2817,12 @@
         });
         lines.push('Extra: ' + extStr.join(', '));
       }
+      if (m.extras_universales && m.extras_universales.length) {
+        var uxStr = m.extras_universales.map(function (ex) {
+          return ex.cantidad + '× ' + ex.nombre + ' (+$' + (ex.precio_unitario * ex.cantidad) + ')';
+        });
+        lines.push('Extra: ' + uxStr.join(', '));
+      }
 
       return lines.join('<br>');
     }
