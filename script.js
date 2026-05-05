@@ -2,7 +2,7 @@
    La Esquina del Sushi — Lógica y datos del menú
    ═══════════════════════════════════════════════ */
 
-var WA = '5216142342959';
+var WA = '526421342959';
 var API_URL = 'https://web-production-97d4.up.railway.app';
 var API_TOKEN = null;
 var _pedidosAbiertos = true;
