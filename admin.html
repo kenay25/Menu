@@ -2852,7 +2852,8 @@
       if (data.fecha_pedido) {
         try {
           const _fp = String(data.fecha_pedido);
-          const _d = new Date(_fp.endsWith('Z') ? _fp : _fp + 'Z');
+          const _fpNorm = _fp.includes('T') ? _fp : _fp.replace(' ', 'T');
+          const _d = new Date(_fpNorm.endsWith('Z') ? _fpNorm : _fpNorm + 'Z');
           if (!isNaN(_d)) {
             const _tz = { timeZone: 'America/Hermosillo' };
             const _h = _d.toLocaleString('es-MX', { ..._tz, hour: '2-digit', minute: '2-digit', hour12: true });
@@ -2942,7 +2943,8 @@
       if (data.fecha_pedido) {
         try {
           const _fp = String(data.fecha_pedido);
-          const _d = new Date(_fp.endsWith('Z') ? _fp : _fp + 'Z');
+          const _fpNorm = _fp.includes('T') ? _fp : _fp.replace(' ', 'T');
+          const _d = new Date(_fpNorm.endsWith('Z') ? _fpNorm : _fpNorm + 'Z');
           if (!isNaN(_d)) {
             const _tz = { timeZone: 'America/Hermosillo' };
             const _h = _d.toLocaleString('es-MX', { ..._tz, hour: '2-digit', minute: '2-digit', hour12: true });
