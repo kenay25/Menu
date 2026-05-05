@@ -2783,23 +2783,33 @@
       // ── Slots: La Caja, La Cajita ──
       if (m.slots && m.slots.length) {
         m.slots.forEach(slot => {
-          let parts = [];
-          if (slot.alga) parts.push('Alga: ' + (slot.alga === 'con' ? 'Con alga' : 'Sin alga'));
-          if (slot.estilo) parts.push('Estilo: ' + (slot.estilo === 'natural' ? 'Natural' : 'Empanizado'));
-          if (slot.proteinas && slot.proteinas.length)
-            parts.push('Proteína(s): ' + slot.proteinas.map(p => PROTEINAS_NOMBRES[p] || p).join(', '));
-          if (slot.sin_ingredientes && slot.sin_ingredientes.length)
-            parts.push('Sin: ' + slot.sin_ingredientes.join(', '));
           const sushiLabel = slot.sushi || slot.label || 'Sushi';
-          lines.push('🍣 ' + sushiLabel + (parts.length ? ' — ' + parts.join(' · ') : ''));
+          let desc = [];
+          if (slot.estilo && slot.alga) {
+            desc.push((slot.estilo === 'natural' ? 'Natural' : 'Empanizado') + ' ' + (slot.alga === 'con' ? 'con alga' : 'sin alga'));
+          } else {
+            if (slot.estilo) desc.push(slot.estilo === 'natural' ? 'Natural' : 'Empanizado');
+            if (slot.alga) desc.push(slot.alga === 'con' ? 'con alga' : 'sin alga');
+          }
+          if (slot.proteinas && slot.proteinas.length)
+            desc.push(slot.proteinas.map(p => PROTEINAS_NOMBRES[p] || p).join(', '));
+          if (slot.sin_ingredientes && slot.sin_ingredientes.length)
+            desc.push('sin ' + slot.sin_ingredientes.join(', '));
+          lines.push('- ' + sushiLabel + (desc.length ? ': ' + desc.join('. ') + '.' : ''));
         });
       } else {
-        if (m.alga) lines.push('Alga: ' + (m.alga === 'con' ? 'Con alga' : 'Sin alga'));
-        if (m.estilo) lines.push('Estilo: ' + (m.estilo === 'natural' ? 'Natural' : 'Empanizado'));
-        if (m.sushi_elegido) lines.push('Sushi: ' + m.sushi_elegido);
-        if (m.hielo) lines.push('Hielo: ' + (m.hielo === 'con' ? 'Con hielo' : 'Sin hielo'));
+        let desc = [];
+        if (m.estilo && m.alga) {
+          desc.push((m.estilo === 'natural' ? 'Natural' : 'Empanizado') + ' ' + (m.alga === 'con' ? 'con alga' : 'sin alga'));
+        } else {
+          if (m.alga) desc.push(m.alga === 'con' ? 'Con alga' : 'Sin alga');
+          if (m.estilo) desc.push(m.estilo === 'natural' ? 'Natural' : 'Empanizado');
+        }
+        if (m.sushi_elegido) desc.push(m.sushi_elegido);
+        if (m.hielo) desc.push(m.hielo === 'con' ? 'con hielo' : 'sin hielo');
         if (m.proteinas && m.proteinas.length)
-          lines.push('Proteína(s): ' + m.proteinas.map(p => PROTEINAS_NOMBRES[p] || p).join(', '));
+          desc.push(m.proteinas.map(p => PROTEINAS_NOMBRES[p] || p).join(', '));
+        if (desc.length) lines.push(desc.join('. ') + '.');
       }
 
       if (m.salsas && m.salsas.length)
