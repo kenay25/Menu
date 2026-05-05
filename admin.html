@@ -2933,9 +2933,19 @@
       let subtotalProductos = 0;
       data.productos.forEach(p => { subtotalProductos += parseFloat(p.subtotal); });
 
+      const hora = new Date(data.fecha_pedido + 'Z').toLocaleString('es-MX', {
+        hour: '2-digit', minute: '2-digit', hour12: true,
+        timeZone: 'America/Hermosillo'
+      });
+      const fecha = new Date(data.fecha_pedido + 'Z').toLocaleDateString('es-MX', {
+        day: 'numeric', month: 'short', year: 'numeric',
+        timeZone: 'America/Hermosillo'
+      });
+
       let html = `
         <div class="ticket-info">
           <p><strong>PEDIDO #${data.id_pedido}</strong></p>
+          <p>${fecha} — ${hora}</p>
           <p>${data.tipo_entrega === 'domicilio' ? 'DOMICILIO' : 'RECOGE EN SUCURSAL'}</p>
           <p>${data.nombre_cliente}</p>
           ${data.telefono_cliente ? `<p>Tel: ${data.telefono_cliente}</p>` : ''}
