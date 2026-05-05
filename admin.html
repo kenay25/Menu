@@ -3049,31 +3049,14 @@
             precio_unitario: 650,
             costo_extra: 0,
             subtotal: 650,
-            modificaciones: { salsas: ['sc6', 'sc9'] }
-          },
-          {
-            cantidad: 1,
-            nombre_producto: 'California',
-            precio_unitario: 0,
-            costo_extra: 0,
-            subtotal: 0,
-            modificaciones: { alga: 'con', estilo: 'empanizado', proteinas: ['p_pollo'] }
-          },
-          {
-            cantidad: 1,
-            nombre_producto: 'Bombazo',
-            precio_unitario: 0,
-            costo_extra: 0,
-            subtotal: 0,
-            modificaciones: { alga: 'sin', estilo: 'empanizado', proteinas: ['p_pollo'] }
-          },
-          {
-            cantidad: 1,
-            nombre_producto: 'Sonora',
-            precio_unitario: 0,
-            costo_extra: 0,
-            subtotal: 0,
-            modificaciones: { alga: 'sin', estilo: 'empanizado', proteinas: ['p_camaron'] }
+            modificaciones: {
+              slots: [
+                { sushi: 'California', alga: 'con', estilo: 'empanizado', proteinas: ['p_pollo'] },
+                { sushi: 'Bombazo', alga: 'sin', estilo: 'empanizado', proteinas: ['p_pollo'] },
+                { sushi: 'Sonora', alga: 'sin', estilo: 'empanizado', proteinas: ['p_camaron'] }
+              ],
+              salsas: ['sc6', 'sc9']
+            }
           }
         ]
       };
