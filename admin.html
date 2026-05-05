@@ -2813,23 +2813,26 @@
       }
 
       if (m.salsas && m.salsas.length)
-        lines.push('Salsa boneles: ' + m.salsas.map(s => SALSAS_NOMBRES[s] || s).join(', '));
+        lines.push('Boneles: ' + m.salsas.map(s => SALSAS_NOMBRES[s] || s).join(', '));
       if (m.salsas2 && m.salsas2.length)
-        lines.push('Salsa 2ª orden: ' + m.salsas2.map(s => SALSAS_NOMBRES[s] || s).join(', '));
+        lines.push('2ª orden: ' + m.salsas2.map(s => SALSAS_NOMBRES[s] || s).join(', '));
       if (m.salsas_alitas && m.salsas_alitas.length)
-        lines.push('Salsa alitas: ' + m.salsas_alitas.map(s => SALSAS_NOMBRES[s] || s).join(', '));
+        lines.push('Alitas: ' + m.salsas_alitas.map(s => SALSAS_NOMBRES[s] || s).join(', '));
       if (m.sin_ingredientes && m.sin_ingredientes.length)
         lines.push('Sin: ' + m.sin_ingredientes.join(', '));
       if (m.extras_ingredientes && m.extras_ingredientes.length) {
         var precioIng = m.precio_extraIng || 15;
-        lines.push('+ Extra ingrediente(s): ' + m.extras_ingredientes.join(', ') + ' (+$' + (m.extras_ingredientes.length * precioIng) + ')');
+        lines.push('+ ' + m.extras_ingredientes.join(', ') + ' (+$' + (m.extras_ingredientes.length * precioIng) + ')');
+      }
+      if (m.extras_ingredientes_detalle && m.extras_ingredientes_detalle.length) {
+        lines.push('+ ' + m.extras_ingredientes_detalle.map(function (e) { return e.cantidad + '× ' + e.nombre + ' (+$' + (e.cantidad * e.precio_unitario) + ')'; }).join(', '));
       }
       if (m.extras_producto && m.extras_producto.length) {
         var extStr = m.extras_producto.map(function (ex) {
           if (typeof ex === 'object' && ex !== null) return ex.name + (ex.price > 0 ? ' (+$' + ex.price + ')' : '');
           return String(ex);
         });
-        lines.push('Extra: ' + extStr.join(', '));
+        lines.push('+ ' + extStr.join(', '));
       }
       if (m.extras_universales && m.extras_universales.length) {
         var uxStr = m.extras_universales.map(function (ex) {
