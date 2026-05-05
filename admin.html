@@ -3044,7 +3044,7 @@
         entre_calles: tipo === 'domicilio' ? 'Entre Álamo y Cedro' : '',
         notas: notas,
         costo_envio: tipo === 'domicilio' ? 30 : 0,
-        total: tipo === 'domicilio' ? 680 : 650,
+        total: tipo === 'domicilio' ? 1010 : 980,
         productos: [
           {
             cantidad: 1,
@@ -3055,10 +3055,47 @@
             modificaciones: {
               slots: [
                 { sushi: 'California', alga: 'con', estilo: 'empanizado', proteinas: ['p_pollo'] },
-                { sushi: 'Bombazo', alga: 'sin', estilo: 'empanizado', proteinas: ['p_pollo'] },
-                { sushi: 'Sonora', alga: 'sin', estilo: 'empanizado', proteinas: ['p_camaron'] }
+                { sushi: 'Bombazo', alga: 'sin', estilo: 'empanizado', proteinas: ['p_camaron'], sin_ingredientes: ['Pepino'] },
+                { sushi: 'Sonora', alga: 'sin', estilo: 'natural', proteinas: ['p_res', 'p_tocino'] }
               ],
-              salsas: ['sc6', 'sc9']
+              salsas: ['sc6', 'sc9'],
+              sin_ingredientes: ['Aguacate']
+            }
+          },
+          {
+            cantidad: 1,
+            nombre_producto: 'Temaki Pollo',
+            precio_unitario: 120,
+            costo_extra: 15,
+            subtotal: 135,
+            modificaciones: {
+              alga: 'con',
+              estilo: 'empanizado',
+              proteinas: ['p_pollo'],
+              extras_ingredientes: ['Aguacate'],
+              precio_extraIng: 15
+            }
+          },
+          {
+            cantidad: 1,
+            nombre_producto: 'Boneless',
+            precio_unitario: 130,
+            costo_extra: 0,
+            subtotal: 130,
+            modificaciones: {
+              salsas2: ['sc2', 'sc4'],
+              salsas_alitas: ['sc1']
+            }
+          },
+          {
+            cantidad: 1,
+            nombre_producto: 'Orden de Alitas',
+            precio_unitario: 150,
+            costo_extra: 20,
+            subtotal: 170,
+            modificaciones: {
+              extras_producto: [{ name: 'Extra salsa', price: 20 }],
+              extras_universales: [{ cantidad: 2, nombre: 'Servilletas extra', precio_unitario: 0 }]
             }
           }
         ]
