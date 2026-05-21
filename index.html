@@ -2025,6 +2025,26 @@
           </div>
         </div>
 
+        <!-- ═══════ TIPO DE PAGO ═══════════════════════════════════════════════ -->
+        <div class="cf" id="cf-pago-wrap">
+          <label>💳 Método de pago</label>
+          <div class="order-type-toggle" style="margin-top:8px">
+            <button class="order-type-btn active" id="btn-pago-tienda" onclick="setPaymentType('efectivo')">💵 Pagar en tienda</button>
+            <button class="order-type-btn" id="btn-pago-transferencia" onclick="setPaymentType('transferencia')">🏦 Transferencia</button>
+          </div>
+          <div id="cf-transfer-info" style="display:none;margin-top:12px;background:#EAF4FB;border:1px solid rgba(52,152,219,0.3);border-radius:12px;padding:12px 14px">
+            <div style="font-size:11px;font-weight:700;color:#1A6A9A;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">🏦 Datos para transferencia</div>
+            <div style="font-size:13px;color:#1A0A10;line-height:2">
+              <b>Banco:</b> BBVA<br>
+              <b>Titular:</b> La Esquina del Sushi<br>
+              <b>CLABE:</b> 000000000000000000
+            </div>
+            <div style="margin-top:10px;background:#FFF8E1;border-radius:8px;padding:8px 10px;font-size:12px;color:#7D5A00;border:1px solid rgba(255,193,7,0.4)">
+              ⚠️ Favor de enviar su comprobante para hacer válido el pago.
+            </div>
+          </div>
+        </div>
+
         <!-- ═══════ NOTAS ESPECIALES ═══════════════════════════════════════════ -->
         <div class="cf">
           <label>📝 Notas especiales</label>

@@ -35,6 +35,7 @@ def crear_pedido(
         colonia_entrega=datos.colonia_entrega,
         costo_envio=datos.costo_envio,
         notas=datos.notas,
+        tipo_pago=datos.tipo_pago,
         total=datos.total,
         estado="recibido"
     )

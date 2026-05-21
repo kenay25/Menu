@@ -6,6 +6,7 @@ var WA = '526421342959';
 var API_URL = 'https://web-production-97d4.up.railway.app';
 var API_TOKEN = null;
 var _pedidosAbiertos = true;
+var paymentType = 'efectivo';
 
 /* ── Datos globales ─────────────────────────── */
 var PROTEINS = [
@@ -1121,6 +1122,7 @@ function sendWhatsApp() {
   document.getElementById('client-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
   setOrderType('recoger');
+  setPaymentType('efectivo');
 
   // Cargar teléfono del usuario si tiene sesión
   if (sesionActual && sesionActual.usuario.telefono) {
@@ -1153,6 +1155,12 @@ function closeClientModal() {
   document.getElementById('client-overlay').classList.remove('open');
   document.body.style.overflow = '';
 }
+function setPaymentType(type) {
+  paymentType = type;
+  document.getElementById('btn-pago-tienda').classList.toggle('active', type === 'efectivo');
+  document.getElementById('btn-pago-transferencia').classList.toggle('active', type === 'transferencia');
+  document.getElementById('cf-transfer-info').style.display = type === 'transferencia' ? 'block' : 'none';
+}
 function submitOrder() {
   var name = document.getElementById('cl-name').value.trim();
   if (!name) { alert('Por favor ingresa tu nombre 👤'); document.getElementById('cl-name').focus(); return; }
@@ -1169,13 +1177,13 @@ function submitOrder() {
 
     if (!address) { alert('Por favor ingresa la dirección de entrega 📍'); document.getElementById('cl-address').focus(); return; }
     closeClientModal();
-    guardarPedidoBackend(name, validacion.completo, address).then(function () {
-      doSendWhatsApp(name, validacion.completo, address);
+    guardarPedidoBackend(name, validacion.completo, address, paymentType).then(function () {
+      doSendWhatsApp(name, validacion.completo, address, paymentType);
     });
   } else {
     closeClientModal();
-    guardarPedidoBackend(name, null, null).then(function () {
-      doSendWhatsApp(name, null, null);
+    guardarPedidoBackend(name, null, null, paymentType).then(function () {
+      doSendWhatsApp(name, null, null, paymentType);
     });
   }
 }
@@ -1195,7 +1203,7 @@ async function obtenerToken() {
     return null;
   }
 }
-async function guardarPedidoBackend(clientName, clientPhone, clientAddress) {
+async function guardarPedidoBackend(clientName, clientPhone, clientAddress, pagoTipo) {
   try {
     var token = await obtenerToken();
     if (!token) return null;
@@ -1261,6 +1269,7 @@ async function guardarPedidoBackend(clientName, clientPhone, clientAddress) {
       tipo_entrega: tipo,
       direccion_entrega: clientAddress || null,
       notas: notes.trim() || null,
+      tipo_pago: pagoTipo || 'efectivo',
       total: total,
       productos: productos
     };
@@ -1374,7 +1383,7 @@ function clearOrder() {
 /* ══════════════════════════════════════════════
    ENVÍO POR WHATSAPP
    ══════════════════════════��════════════════���══ */
-function doSendWhatsApp(clientName, clientPhone, clientAddress) {
+function doSendWhatsApp(clientName, clientPhone, clientAddress, pagoTipo) {
   var notes = document.getElementById('order-notes').value;
   var total = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
 
@@ -1384,6 +1393,8 @@ function doSendWhatsApp(clientName, clientPhone, clientAddress) {
   if (clientPhone) msg += '📱 *Teléfono:* ' + clientPhone + '\n';
   if (clientAddress) msg += '📍 *Dirección:* ' + clientAddress + '\n';
   msg += '📦 *Tipo:* ' + (orderType === 'envio' ? 'Envío a domicilio' : 'Recoge en sucursal') + '\n';
+  msg += '💳 *Pago:* ' + (pagoTipo === 'transferencia' ? 'Transferencia bancaria' : 'Pago en tienda (efectivo/tarjeta)') + '\n';
+  if (pagoTipo === 'transferencia') msg += '   ↳ Favor de enviar comprobante para hacer válido el pago\n';
   msg += '━━━━━━━━━━━━━━━━━━━━\n\n';
 
   orderInstances.forEach(function (inst) {

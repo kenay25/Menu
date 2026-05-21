@@ -18,6 +18,7 @@ class Pedido(Base):
     colonia_entrega     = Column(Text,         nullable=True)
     costo_envio         = Column(Float,        nullable=True, default=0.0)
     notas               = Column(Text,         nullable=True)
+    tipo_pago           = Column(String(20),   nullable=True, default='efectivo')
     total               = Column(DECIMAL(10,2),nullable=False, default=0.00)
     estado              = Column(Enum("recibido", "preparando", "listo", "entregado", "cancelado"), nullable=False, default="recibido")
     fecha_pedido        = Column(DateTime,     nullable=False, server_default=func.now())

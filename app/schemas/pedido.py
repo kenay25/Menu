@@ -22,6 +22,7 @@ class PedidoEntrada(BaseModel):
     colonia_entrega:   Optional[str]
     costo_envio:       float = 0.0
     notas:             Optional[str]
+    tipo_pago:         Optional[str] = 'efectivo'
     total:             float
     productos:         List[DetallePedidoEntrada]
 
@@ -40,6 +41,7 @@ class PedidoRespuesta(BaseModel):
     colonia_entrega:    Optional[str]
     costo_envio:        float
     notas:              Optional[str]
+    tipo_pago:          Optional[str]
     total:              float
     estado:             str
     fecha_pedido:       datetime
