@@ -1394,7 +1394,11 @@ function doSendWhatsApp(clientName, clientPhone, clientAddress, pagoTipo) {
   if (clientAddress) msg += '📍 *Dirección:* ' + clientAddress + '\n';
   msg += '📦 *Tipo:* ' + (orderType === 'envio' ? 'Envío a domicilio' : 'Recoge en sucursal') + '\n';
   msg += '💳 *Pago:* ' + (pagoTipo === 'transferencia' ? 'Transferencia bancaria' : 'Pago en tienda (efectivo/tarjeta)') + '\n';
-  if (pagoTipo === 'transferencia') msg += '   ↳ Favor de enviar comprobante para hacer válido el pago\n';
+  if (pagoTipo === 'transferencia') {
+    msg += '   ↳ Opción 1 — HSBC · Eduardo Servin Hernandez · CLABE: 4910897085884351\n';
+    msg += '   ↳ Opción 2 — Banamex · Juliana Mabel Goldenberg · CLABE: 5204165653709497\n';
+    msg += '   ↳ Favor de enviar comprobante para hacer válido el pago\n';
+  }
   msg += '━━━━━━━━━━━━━━━━━━━━\n\n';
 
   orderInstances.forEach(function (inst) {
