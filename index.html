@@ -3978,16 +3978,16 @@
         closeClientModal(true);
         document.getElementById('order-notes').value = notasGuardadas;
         _toastShow('⏳ Registrando pedido...');
-        guardarPedidoBackend(name, phone, address, calleNum, entreCalles, referencias).then(function (pedidoId) {
+        guardarPedidoBackend(name, phone, address, calleNum, entreCalles, referencias, paymentType).then(function (pedidoId) {
           _toastHide();
-          doSendWhatsApp(name, phone, address, pedidoId, waWin);
+          doSendWhatsApp(name, phone, address, pedidoId, waWin, paymentType);
           _coloniaSeleccionada = null; _costoEnvioActual = 0;
           var sel = document.getElementById('envio-colonia'); if (sel) sel.value = '';
           var inf = document.getElementById('envio-info'); if (inf) inf.classList.remove('visible');
           document.getElementById('order-notes').value = '';
         }).catch(function () {
           _toastHide();
-          doSendWhatsApp(name, phone, address, null, waWin);
+          doSendWhatsApp(name, phone, address, null, waWin, paymentType);
           _coloniaSeleccionada = null; _costoEnvioActual = 0;
           var sel = document.getElementById('envio-colonia'); if (sel) sel.value = '';
           var inf = document.getElementById('envio-info'); if (inf) inf.classList.remove('visible');
@@ -3998,13 +3998,13 @@
         closeClientModal(true);
         document.getElementById('order-notes').value = notasGuardadas2;
         _toastShow('⏳ Registrando pedido...');
-        guardarPedidoBackend(name, phone, null).then(function (pedidoId) {
+        guardarPedidoBackend(name, phone, null, null, null, null, paymentType).then(function (pedidoId) {
           _toastHide();
-          doSendWhatsApp(name, phone, null, pedidoId, waWin);
+          doSendWhatsApp(name, phone, null, pedidoId, waWin, paymentType);
           document.getElementById('order-notes').value = '';
         }).catch(function () {
           _toastHide();
-          doSendWhatsApp(name, phone, null, null, waWin);
+          doSendWhatsApp(name, phone, null, null, waWin, paymentType);
           document.getElementById('order-notes').value = '';
         });
       }
@@ -4024,7 +4024,7 @@
         return API_TOKEN;
       } catch (e) { console.warn('Token menu: sin conexión', e); return null; }
     }
-    async function guardarPedidoBackend(clientName, clientPhone, clientAddress, calleNum, entreCalles, referencias) {
+    async function guardarPedidoBackend(clientName, clientPhone, clientAddress, calleNum, entreCalles, referencias, pagoTipo) {
       // Si no hay conexión el pedido igual se manda por WhatsApp — nunca bloqueamos al usuario
       try {
         var token = await obtenerToken();
@@ -4122,6 +4122,7 @@
           colonia_entrega: (_coloniaSeleccionada && COLONIAS_ENVIO[_coloniaSeleccionada]) ? COLONIAS_ENVIO[_coloniaSeleccionada].nombre : (_coloniaSeleccionada || null),
           costo_envio: _costoEnvioActual || 0,
           notas: notes.trim() || null,
+          tipo_pago: pagoTipo || 'efectivo',
           total: total,
           productos: productos
         };
@@ -4315,7 +4316,7 @@
 
     /* ══ WHATSAPP ══ */
     var _tempPedidoCounter = 0;
-    function doSendWhatsApp(clientName, clientPhone, clientAddress, pedidoId, waWin) {
+    function doSendWhatsApp(clientName, clientPhone, clientAddress, pedidoId, waWin, pagoTipo) {
       var notesEl = document.getElementById('order-notes');
       var notes = notesEl ? notesEl.value : '';
       var subtotal = orderInstances.reduce(function (s, o) { return s + (o.item.price + (o.extraCost || 0)); }, 0);
@@ -4338,6 +4339,12 @@
       msg += '📦 *Tipo:* ' + (orderType === 'envio' ? 'Envío a domicilio' : 'Recoge en sucursal') + '\n';
       if (orderType === 'envio' && _costoEnvioActual > 0) {
         msg += '🛵 *Envío:* $' + _costoEnvioActual + '\n';
+      }
+      msg += '💳 *Pago:* ' + (pagoTipo === 'transferencia' ? 'Transferencia bancaria' : 'Pago en tienda (efectivo/tarjeta)') + '\n';
+      if (pagoTipo === 'transferencia') {
+        msg += '   ↳ Opción 1 — HSBC · Eduardo Servin Hernandez · CLABE: 4910897085884351\n';
+        msg += '   ↳ Opción 2 — Banamex · Juliana Mabel Goldenberg · CLABE: 5204165653709497\n';
+        msg += '   ↳ Favor de enviar comprobante para hacer válido el pago\n';
       }
       msg += '━━━━━━━━━━━━━━━━━━━━\n\n';
 
