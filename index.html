@@ -3951,6 +3951,8 @@
     }
 
     function submitOrder() {
+      if (!confirm('⚠️ Revise su pedido\n\nUna vez generado no podrá modificarse ni cancelarse.\n\n¿Desea continuar?')) return;
+
       var name = document.getElementById('cl-name').value.trim();
       if (!name) { alert('Por favor ingresa tu nombre 👤'); document.getElementById('cl-name').focus(); return; }
 
