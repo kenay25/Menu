@@ -2955,7 +2955,7 @@
       }
 
       let html = `
-        <div class="ticket-info">
+        <div style="padding-bottom:4cm"><div class="ticket-info">
           <p><strong>PEDIDO #${data.id_pedido}</strong></p>
           ${_fechaHora ? `<p>${_fechaHora}</p>` : ''}
           <p>${data.tipo_entrega === 'domicilio' ? 'DOMICILIO' : 'RECOGE EN SUCURSAL'}</p>
@@ -3000,8 +3000,7 @@
           <p>Envio: $${envio.toLocaleString()}</p>
         `;
       }
-      html += `<div class="grand-total">TOTAL: $${parseFloat(data.total).toLocaleString()}</div></div>`;
-      html += `<div style="line-height:1.45;font-size:22px">&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</div>`;
+      html += `<div class="grand-total">TOTAL: $${parseFloat(data.total).toLocaleString()}</div></div></div>`;
 
       return html;
     }
