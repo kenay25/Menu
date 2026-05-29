@@ -1121,7 +1121,7 @@ function sendWhatsApp() {
   if (!orderInstances.length) { alert('¡Primero selecciona algo del menú! 🍣'); return; }
   document.getElementById('client-overlay').classList.add('open');
   document.body.style.overflow = 'hidden';
-  setOrderType('recoger');
+  setOrderType('envio');
   setPaymentType('efectivo');
 
   // Cargar teléfono del usuario si tiene sesión

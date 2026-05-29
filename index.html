@@ -1951,11 +1951,10 @@
           <div id="cf-saved-info" style="font-size:13px;color:#1A0A10;line-height:1.7"></div>
         </div>
         <div class="order-type-toggle">
-          <button class="order-type-btn active" id="btn-recoger" onclick="setOrderType('recoger')">🏪 Recoger en
-            sucursal</button>
-          <button class="order-type-btn" id="btn-envio" onclick="setOrderType('envio')">🛵 Envío a domicilio</button>
+          <button class="order-type-btn active" id="btn-envio" onclick="setOrderType('envio')">🛵 Envío a domicilio</button>
+          <button class="order-type-btn" id="btn-recoger" onclick="setOrderType('recoger')">🏪 Recoger en sucursal</button>
         </div>
-        <div id="cf-recoger-hint" style="margin-top:8px;background:#FFF8E1;border:1px solid rgba(255,193,7,0.4);border-radius:10px;padding:8px 12px;font-size:12px;color:#7D5A00">
+        <div id="cf-recoger-hint" style="display:none;margin-top:8px;background:#FFF8E1;border:1px solid rgba(255,193,7,0.4);border-radius:10px;padding:8px 12px;font-size:12px;color:#7D5A00">
           ⏱️ Tu pedido estará listo en aproximadamente <b>30–40 minutos</b>.
         </div>
         <div class="cf" id="cf-name-wrap">
@@ -2032,7 +2031,7 @@
         <div class="cf" id="cf-pago-wrap">
           <label>💳 Método de pago</label>
           <div class="order-type-toggle" style="margin-top:8px">
-            <button class="order-type-btn active" id="btn-pago-tienda" onclick="setPaymentType('efectivo')">💵 Pagar en tienda</button>
+            <button class="order-type-btn active" id="btn-pago-tienda" onclick="setPaymentType('efectivo')">💵  Efectivo</button>
             <button class="order-type-btn" id="btn-pago-transferencia" onclick="setPaymentType('transferencia')">🏦 Transferencia</button>
           </div>
           <div id="cf-transfer-info" style="display:none;margin-top:12px">
@@ -2742,7 +2741,7 @@
     /* ══ ESTADO ══ */
     var orderInstances = [], instanceCounter = 0;
     var currentItem = null, currentInstanceId = null, isNewInstance = false, currentMods = {};
-    var orderType = 'recoger';
+    var orderType = 'envio';
     function genId() { return 'inst_' + (++instanceCounter); }
 
     function setOrderType(type) {
