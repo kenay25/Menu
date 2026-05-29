@@ -1955,6 +1955,9 @@
             sucursal</button>
           <button class="order-type-btn" id="btn-envio" onclick="setOrderType('envio')">🛵 Envío a domicilio</button>
         </div>
+        <div id="cf-recoger-hint" style="margin-top:8px;background:#FFF8E1;border:1px solid rgba(255,193,7,0.4);border-radius:10px;padding:8px 12px;font-size:12px;color:#7D5A00">
+          ⏱️ Tu pedido estará listo en aproximadamente <b>30–40 minutos</b>.
+        </div>
         <div class="cf" id="cf-name-wrap">
           <label>👤 Nombre <span class="cf-required">*</span></label>
           <input type="text" id="cl-name" placeholder="Tu nombre completo" autocomplete="name">
@@ -2746,6 +2749,8 @@
       orderType = type;
       document.getElementById('btn-recoger').className = 'order-type-btn' + (type === 'recoger' ? ' active' : '');
       document.getElementById('btn-envio').className = 'order-type-btn' + (type === 'envio' ? ' active' : '');
+      var recogerHint = document.getElementById('cf-recoger-hint');
+      if (recogerHint) recogerHint.style.display = type === 'recoger' ? 'block' : 'none';
       var lbl = document.getElementById('cf-phone-label');
       if (lbl) lbl.innerHTML = (type === 'envio' ? '📱 Teléfono' : '📱 Tu número de celular') + ' <span class="cf-required">*</span>';
       document.getElementById('cf-address-wrap').classList.toggle('cf-hidden', type !== 'envio');
