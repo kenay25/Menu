@@ -4458,9 +4458,6 @@
 
       #print-area {
         display: block !important;
-        position: absolute;
-        top: 0;
-        left: 0;
         /* Ancho compensado: 80mm / 0.76 ≈ 105mm para que al comprimir quede en 80mm */
         width: 105mm;
         margin: 0;
@@ -4618,12 +4615,9 @@
          El &nbsp; se ancla al fondo del bloque para que la impresora térmica
          avance los 40mm completos y no los recorte como espacio vacío. */
       .ticket-feed {
+        display: block;
         height: 40mm;
         min-height: 40mm;
-        display: flex;
-        align-items: flex-end;
-        page-break-inside: avoid;
-        break-inside: avoid;
       }
     }
 
