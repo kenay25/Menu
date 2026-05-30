@@ -3001,7 +3001,8 @@
         `;
       }
       html += `<div class="grand-total">TOTAL: $${parseFloat(data.total).toLocaleString()}</div></div>`;
-      html += `<br><br><br><br><br><br><br><br>`;
+      // Espacio en blanco de ~4cm para el corte (el &nbsp; abajo evita que la impresora lo recorte)
+      html += `<div class="ticket-feed">&nbsp;</div>`;
 
       return html;
     }
@@ -4611,6 +4612,18 @@
       /* Ocultar imágenes emoji en impresión */
       #print-area img.emoji {
         display: none !important;
+      }
+
+      /* Espacio en blanco de ~4cm tras el TOTAL para el corte del ticket.
+         El &nbsp; se ancla al fondo del bloque para que la impresora térmica
+         avance los 40mm completos y no los recorte como espacio vacío. */
+      .ticket-feed {
+        height: 40mm;
+        min-height: 40mm;
+        display: flex;
+        align-items: flex-end;
+        page-break-inside: avoid;
+        break-inside: avoid;
       }
     }
 
