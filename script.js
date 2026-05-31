@@ -5,7 +5,7 @@
 var WA = '526421342959';
 var API_URL = 'https://web-production-97d4.up.railway.app';
 var API_TOKEN = null;
-var _pedidosAbiertos = true;
+var _pedidosAbiertos = true;a
 var paymentType = 'efectivo';
 
 /* ── Datos globales ─────────────────────────── */
