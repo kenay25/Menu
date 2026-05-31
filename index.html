@@ -3755,6 +3755,9 @@
         if (inst.item.id === 's3' && currentMods.proteins.indexOf('p_res') >= 0 && currentMods.proteins.indexOf('p_tocino') >= 0) {
           extraProts = Math.max(0, currentMods.proteins.length - 2);
         }
+        if (inst.item.id === 's11') {
+          extraProts = Math.max(0, currentMods.proteins.length - 2);
+        }
         if (extraProts > 0) {
           extraCost += extraProts * 15;
         }
