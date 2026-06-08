@@ -3317,7 +3317,6 @@
         return;
       }
 
-      // Buscar pedidos que no hayamos visto
       const nuevos = data.filter(p => !pedidosVistos.has(p.id_pedido));
 
       if (nuevos.length > 0) {
@@ -3378,7 +3377,7 @@
         await new Promise(r => setTimeout(r, 150));
         window.print();
 
-        console.log('✅ Tickets impresos para pedido #' + idPedido);
+        console.log('✅ Ticket impreso para pedido #' + idPedido);
 
         // Refrescar la tabla de pedidos si estamos en esa página
         const active = document.querySelector('.page.active');
