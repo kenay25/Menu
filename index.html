@@ -968,6 +968,7 @@
     .style-grid {
       display: flex;
       gap: 8px;
+      flex-wrap: wrap;
     }
 
     .style-btn {
@@ -2936,7 +2937,7 @@
           var sushiName = m.slotMods && m.slotMods[idx] && m.slotMods[idx].sushiName ? m.slotMods[idx].sushiName : sushisPorDefecto[idx];
           var tags = [];
           if (m.alga) tags.push(m.alga === 'con' ? 'Con alga' : 'Sin alga');
-          if (m.style) tags.push(m.style === 'natural' ? 'Natural' : 'Empanizado');
+          if (m.style) tags.push(m.style === 'natural' ? 'Natural' : m.style === 'mitad' ? 'Mitad y mitad' : 'Empanizado');
           if (m.proteins && m.proteins.length) {
             var pnames = m.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
             if (pnames.length) tags.push(pnames.join('+'));
@@ -2957,7 +2958,7 @@
       container.innerHTML = insts.map(function (inst, idx) {
         var m = inst.mods, tags = [];
         if (m.alga) tags.push(m.alga === 'con' ? 'Con alga' : 'Sin alga');
-        if (m.style) tags.push(m.style === 'natural' ? 'Natural' : 'Empanizado');
+        if (m.style) tags.push(m.style === 'natural' ? 'Natural' : m.style === 'mitad' ? 'Mitad y mitad' : 'Empanizado');
         if (m.ice) tags.push(m.ice === 'con' ? 'Con hielo' : 'Sin hielo');
         if (m.proteins && m.proteins.length) {
           var pnames = m.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
@@ -3096,9 +3097,10 @@
 
           // Estilo por slot
           if (slot.hasStyle) {
-            html += '<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🍳 ¿Natural o empanizado?</div><div class="style-grid">';
+            html += '<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🍳 ¿Natural, empanizado o mitad y mitad?</div><div class="style-grid">';
             html += '<div class="style-btn' + (sm.style === 'natural' ? ' sel' : '') + '" id="srstyle' + si + '-natural" onclick="selSlotStyle(' + si + ',\'natural\')">🌿 Natural</div>';
             html += '<div class="style-btn' + (sm.style === 'empanizado' ? ' sel' : '') + '" id="srstyle' + si + '-empanizado" onclick="selSlotStyle(' + si + ',\'empanizado\')">🍳 Empanizado</div>';
+            html += '<div class="style-btn' + (sm.style === 'mitad' ? ' sel' : '') + '" id="srstyle' + si + '-mitad" onclick="selSlotStyle(' + si + ',\'mitad\')">🌗 Mitad y mitad</div>';
             html += '</div></div>';
           }
 
@@ -3219,9 +3221,10 @@
           html += '</div></div>';
         }
         if (item.hasStyle) {
-          html += '<div class="style-section"><div class="style-section-title">🍳 ¿Natural o empanizado?</div><div class="style-grid">';
+          html += '<div class="style-section"><div class="style-section-title">🍳 ¿Natural, empanizado o mitad y mitad?</div><div class="style-grid">';
           html += '<div class="style-btn' + (currentMods.style === 'natural' ? ' sel' : '') + '" id="style-natural" onclick="selStyle(\'natural\')">🌿 Natural</div>';
           html += '<div class="style-btn' + (currentMods.style === 'empanizado' ? ' sel' : '') + '" id="style-empanizado" onclick="selStyle(\'empanizado\')">🍳 Empanizado</div>';
+          html += '<div class="style-btn' + (currentMods.style === 'mitad' ? ' sel' : '') + '" id="style-mitad" onclick="selStyle(\'mitad\')">🌗 Mitad y mitad</div>';
           html += '</div></div>';
         }
         if (item.hasIce) {
@@ -3407,7 +3410,7 @@
     }
     function togIng(ingId) { if (currentMods.removed[ingId]) delete currentMods.removed[ingId]; else currentMods.removed[ingId] = true; var row = document.getElementById('ming-' + ingId), rm = !!currentMods.removed[ingId]; row.className = 'ing-item' + (rm ? ' removed' : ''); row.querySelector('.ing-toggle').textContent = rm ? 'Volver a poner' : 'Quitar'; }
     function togExtra(exId, price) { if (currentMods.extras[exId]) delete currentMods.extras[exId]; else currentMods.extras[exId] = price || true; var row = document.getElementById('mex-' + exId), ad = !!currentMods.extras[exId]; if (row) { row.className = 'ing-item' + (ad ? ' extra-added' : ''); row.querySelector('.ing-toggle').textContent = ad ? 'Quitar' : 'Agregar'; } }
-    function selStyle(val) { currentMods.style = currentMods.style === val ? null : val;['natural', 'empanizado'].forEach(function (v) { var b = document.getElementById('style-' + v); if (b) b.className = 'style-btn' + (currentMods.style === v ? ' sel' : ''); }); }
+    function selStyle(val) { currentMods.style = currentMods.style === val ? null : val;['natural', 'empanizado', 'mitad'].forEach(function (v) { var b = document.getElementById('style-' + v); if (b) b.className = 'style-btn' + (currentMods.style === v ? ' sel' : ''); }); }
     // ── Funciones de slots para promociones ───────��──────────
     function selSlotSushi(si, name) {
       if (!currentMods.slotMods || !currentMods.slotMods[si]) return;
@@ -4203,7 +4206,7 @@
         if (uxLines.length) lines += '<div class="oi-mod-added">➕ Extras: ' + uxLines.join(' · ') + '</div>';
       }
       if (m.alga) lines += '<div class="oi-mod-added">🌿 Alga: ' + (m.alga === 'con' ? 'Con alga' : 'Sin alga') + '</div>';
-      if (m.style) lines += '<div class="oi-mod-added">🍳 Estilo: ' + (m.style === 'natural' ? 'Natural' : 'Empanizado') + '</div>';
+      if (m.style) lines += '<div class="oi-mod-added">🍳 Estilo: ' + (m.style === 'natural' ? 'Natural' : m.style === 'mitad' ? 'Mitad y mitad' : 'Empanizado') + '</div>';
       if (m.ice) lines += '<div class="oi-mod-added">🧊 Hielo: ' + (m.ice === 'con' ? 'Con hielo' : 'Sin hielo') + '</div>';
       if (m.proteins && m.proteins.length) {
         var pnames = m.proteins.map(function (pid) { var pr = PROTEINS.filter(function (x) { return x.id === pid; })[0]; return pr ? pr.name : ''; }).filter(Boolean);
@@ -4452,7 +4455,7 @@
 
               // Estilo
               var styleText = '';
-              if (sm.style) styleText = (sm.style === 'natural' ? 'Natural' : 'Empanizado');
+              if (sm.style) styleText = (sm.style === 'natural' ? 'Natural' : sm.style === 'mitad' ? 'Mitad y mitad' : 'Empanizado');
 
               // Proteínas
               var pnames = [];
@@ -4542,7 +4545,7 @@
 
           // Estilo (empanizado/natural)
           if (m.style) {
-            msg += '   Estilo: ' + (m.style === 'natural' ? 'Natural' : 'Empanizado') + '\n';
+            msg += '   Estilo: ' + (m.style === 'natural' ? 'Natural' : m.style === 'mitad' ? 'Mitad y mitad' : 'Empanizado') + '\n';
           }
 
           // Hielo
@@ -4656,8 +4659,7 @@
               var sushiName = sm.sushiName ? sm.sushiName : (slot ? slot.label : ('Slot ' + (si + 1)));
               var details = [];
               if (sm.alga) details.push('Alga: ' + (sm.alga === 'con' ? 'Con alga' : 'Sin alga'));
-              if (sm.style) details.push('Estilo: ' + (sm.style === 'natural' ? 'Natural' : 'Empanizado'));
-              if (sm.proteins && sm.proteins.length) {
+              if (sm.style) details.push('Estilo: ' + (sm.style === 'natural' ? 'Natural' : sm.style === 'mitad' ? 'Mitad y mitad' : 'Empanizado'));              if (sm.proteins && sm.proteins.length) {
                 var pnames = sm.proteins.map(function (pid) {
                   var pr = PROTEINS.find(function (x) { return x.id === pid; });
                   if (!pr && slot && slot.proteinOptions) pr = slot.proteinOptions.find(function (x) { return x.id === pid; });
