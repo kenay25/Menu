@@ -3556,10 +3556,6 @@
       if (bCon) bCon.className = 'alga-btn' + (val === 'con' ? ' sel' : '');
       if (bSin) bSin.className = 'alga-btn' + (val === 'sin' ? ' sel' : '');
     }
-    function selSlotStyle(si, val) {
-      if (!currentMods.slotMods || !currentMods.slotMods[si]) return;
-      currentMods.slotMods[si].style = val;
-    }
     function selSlotProtein(si, pid) {
       if (!currentMods.slotMods || !currentMods.slotMods[si]) return;
       // Toggle proteína (permitir múltiples)
@@ -3607,8 +3603,10 @@
       // Update buttons
       var bNat = document.getElementById('srstyle' + si + '-natural');
       var bEmp = document.getElementById('srstyle' + si + '-empanizado');
+      var bMit = document.getElementById('srstyle' + si + '-mitad');
       if (bNat) bNat.className = 'style-btn' + (val === 'natural' ? ' sel' : '');
       if (bEmp) bEmp.className = 'style-btn' + (val === 'empanizado' ? ' sel' : '');
+      if (bMit) bMit.className = 'style-btn' + (val === 'mitad' ? ' sel' : '');
     }
     function selIce(val) { currentMods.ice = currentMods.ice === val ? null : val;['con', 'sin'].forEach(function (v) { var b = document.getElementById('ice-' + v); if (b) b.className = 'alga-btn' + (currentMods.ice === v ? ' sel' : ''); }); }
 
