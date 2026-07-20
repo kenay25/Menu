@@ -2493,7 +2493,7 @@
         {
           id: 'c4', dbId: 5, img: 'img/lacharola.jpg', emoji: '&#x1F371;', name: 'Charola', price: 220, tag: 'popular', hasSauce: true, hasSauce1Only: true, desc: '1/2 California, 1/2 boneless, 1/2 papas sazonadas, dedos de queso y tampico.', promoSlots: [
             {
-              label: '1/2 California', hasProtein: true, hasAlga: true, hasStyle: true, sushiName: 'California',
+              label: '1/2 California', hasProtein: true, hasAlga: true, hasStyle: true, noMitad: true, sushiName: 'California',
               removable: [
                 { id: 'cha_philly', name: 'Philadelphia', emoji: '&#x1F9C0;' },
                 { id: 'cha_pepino', name: 'Pepino', emoji: '&#x1F952;' },
@@ -2510,7 +2510,7 @@
         {
           id: 'c3', dbId: 6, img: 'img/paquetellenes.jpg', emoji: '&#x1F371;', name: 'Paquetellenes', price: 150, tag: null, hasSauce: true, hasSauce1Only: true, desc: '1/2 sushi (bombazo, sonora o california), 1/2 boneless, 1/2 papas sazonadas.', promoSlots: [
             {
-              label: '1/2 Sushi', hasAlga: true, hasStyle: true, hasProtein: true, isSushiPicker: true, sushiOptions: ['Bombazo', 'California', 'Sonora'],
+              label: '1/2 Sushi', hasAlga: true, hasStyle: true, hasProtein: true, noMitad: true, isSushiPicker: true, sushiOptions: ['Bombazo', 'California', 'Sonora'],
               removable: [
                 { id: 'pq_philly', name: 'Philadelphia', emoji: '&#x1F9C0;' },
                 { id: 'pq_pepino', name: 'Pepino', emoji: '&#x1F952;' },
@@ -2529,7 +2529,7 @@
         {
           id: 'c2', dbId: 7, img: 'img/botix.jpg', emoji: '&#x1F371;', name: 'Botix', price: 120, tag: null, hasSauce: true, hasSauce1Only: true, desc: 'Mitad sushi (bombazo, sonora o california) mitad boneless. Salsa a elegir.', promoSlots: [
             {
-              label: '1/2 Sushi', hasAlga: true, hasStyle: true, hasProtein: true, isSushiPicker: true, sushiOptions: ['Bombazo', 'California', 'Sonora'],
+              label: '1/2 Sushi', hasAlga: true, hasStyle: true, hasProtein: true, noMitad: true, isSushiPicker: true, sushiOptions: ['Bombazo', 'California', 'Sonora'],
               removable: [
                 { id: 'bx_philly', name: 'Philadelphia', emoji: '&#x1F9C0;' },
                 { id: 'bx_pepino', name: 'Pepino', emoji: '&#x1F952;' },
@@ -3097,10 +3097,12 @@
 
           // Estilo por slot
           if (slot.hasStyle) {
-            html += '<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🍳 ¿Natural, empanizado o mitad y mitad?</div><div class="style-grid">';
+            html += '<div style="margin-bottom:8px"><div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px">🍳 ¿Natural o empanizado?</div><div class="style-grid">';
             html += '<div class="style-btn' + (sm.style === 'natural' ? ' sel' : '') + '" id="srstyle' + si + '-natural" onclick="selSlotStyle(' + si + ',\'natural\')">🌿 Natural</div>';
             html += '<div class="style-btn' + (sm.style === 'empanizado' ? ' sel' : '') + '" id="srstyle' + si + '-empanizado" onclick="selSlotStyle(' + si + ',\'empanizado\')">🍳 Empanizado</div>';
-            html += '<div class="style-btn' + (sm.style === 'mitad' ? ' sel' : '') + '" id="srstyle' + si + '-mitad" onclick="selSlotStyle(' + si + ',\'mitad\')">🌗 Mitad y mitad</div>';
+            if (!slot.noMitad) {
+              html += '<div class="style-btn' + (sm.style === 'mitad' ? ' sel' : '') + '" id="srstyle' + si + '-mitad" onclick="selSlotStyle(' + si + ',\'mitad\')">🌗 Mitad y mitad</div>';
+            }
             html += '</div></div>';
           }
 
