@@ -2780,15 +2780,21 @@
       let m = typeof mods === 'string' ? JSON.parse(mods) : mods;
       let lines = [];
 
+      function _estiloTexto(estilo) {
+        if (estilo === 'natural') return 'Natural';
+        if (estilo === 'mitad') return 'Mitad y mitad';
+        return 'Empanizado';
+      }
+
       // ── Slots: La Caja, La Cajita ──
       if (m.slots && m.slots.length) {
         m.slots.forEach(slot => {
           const sushiLabel = slot.sushi || slot.label || 'Sushi';
           let desc = [];
           if (slot.estilo && slot.alga) {
-            desc.push((slot.estilo === 'natural' ? 'Natural' : 'Empanizado') + ' ' + (slot.alga === 'con' ? 'con alga' : 'sin alga'));
+            desc.push(_estiloTexto(slot.estilo) + ' ' + (slot.alga === 'con' ? 'con alga' : 'sin alga'));
           } else {
-            if (slot.estilo) desc.push(slot.estilo === 'natural' ? 'Natural' : 'Empanizado');
+            if (slot.estilo) desc.push(_estiloTexto(slot.estilo));
             if (slot.alga) desc.push(slot.alga === 'con' ? 'con alga' : 'sin alga');
           }
           if (slot.proteinas && slot.proteinas.length)
@@ -2800,10 +2806,10 @@
       } else {
         let desc = [];
         if (m.estilo && m.alga) {
-          desc.push((m.estilo === 'natural' ? 'Natural' : 'Empanizado') + ' ' + (m.alga === 'con' ? 'con alga' : 'sin alga'));
+          desc.push(_estiloTexto(m.estilo) + ' ' + (m.alga === 'con' ? 'con alga' : 'sin alga'));
         } else {
           if (m.alga) desc.push(m.alga === 'con' ? 'Con alga' : 'Sin alga');
-          if (m.estilo) desc.push(m.estilo === 'natural' ? 'Natural' : 'Empanizado');
+          if (m.estilo) desc.push(_estiloTexto(m.estilo));
         }
         if (m.sushi_elegido) desc.push(m.sushi_elegido);
         if (m.hielo) desc.push(m.hielo === 'con' ? 'con hielo' : 'sin hielo');
@@ -3159,7 +3165,7 @@
         m.slots.forEach(slot => {
           let parts = [];
           if (slot.alga) parts.push('Alga: ' + (slot.alga === 'con' ? 'Con alga' : 'Sin alga'));
-          if (slot.estilo) parts.push('Estilo: ' + (slot.estilo === 'natural' ? 'Natural' : 'Empanizado'));
+          if (slot.estilo) parts.push('Estilo: ' + _estiloTexto(slot.estilo));
           if (slot.proteinas && slot.proteinas.length)
             parts.push('Proteína(s): ' + slot.proteinas.map(p => PROTEINAS_NOMBRES[p] || p).join(', '));
           if (slot.sin_ingredientes && slot.sin_ingredientes.length)
@@ -3173,7 +3179,7 @@
         // ── Item simple (sin slots) ──
         let lines = [];
         if (m.alga) lines.push('🌿 Alga: ' + (m.alga === 'con' ? 'Con alga' : 'Sin alga'));
-        if (m.estilo) lines.push('🍳 Estilo: ' + (m.estilo === 'natural' ? 'Natural' : 'Empanizado'));
+        if (m.estilo) lines.push('🍳 Estilo: ' + (m.estilo === 'natural' ? 'Natural' : m.estilo === 'mitad' ? 'Mitad y mitad' : 'Empanizado'));
         if (m.sushi_elegido) lines.push('🍣 Sushi: ' + m.sushi_elegido);
         if (m.hielo) lines.push('🧊 Hielo: ' + (m.hielo === 'con' ? 'Con hielo' : 'Sin hielo'));
         if (m.proteinas && m.proteinas.length)
